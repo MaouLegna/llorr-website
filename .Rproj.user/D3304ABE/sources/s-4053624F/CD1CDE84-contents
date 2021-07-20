@@ -1,0 +1,13 @@
+name: "llorr-website"
+title: "LLoRR Stats"
+description: |
+  (Legna’s) Legends of Runeterra Stats (with R)
+output_dir: "_site"
+navbar:
+  # left:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: about.html
+output: distill::distill_article
