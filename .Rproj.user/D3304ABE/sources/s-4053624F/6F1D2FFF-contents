@@ -1,0 +1,655 @@
+---
+title: "Matching games by 'Expected Win Rate'"
+description: |
+  Using a Pseudo-Propensity Score Matching to reduce sample bias when comparing win rates between players in LoR.
+base_url: https://llorr-stats.netlify.app  
+# preview: images/preview-mastery.png
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 06-15-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    self_contained: false
+# output:
+#   bookdown::html_document2:
+#     base_format: distill::distill_article
+#     toc: true
+#     toc_float: true    
+#     self_contained: false
+#     toc_depth: 2
+#     pandoc_args: ["--number-sections"]
+citation: false
+draft: false
+twitter:
+  site: "@Maou_Legna"
+  creator: "@Maou_Legna"
+---
+
+<!-- <style> -->
+<!-- html { -->
+<!--   scroll-behavior: smooth; -->
+<!-- } -->
+<!-- d-article { -->
+<!--     contain: none; -->
+<!--   } -->
+<!-- #TOC { -->
+<!--   position: fixed; -->
+<!--   z-index: 50; -->
+<!--   background: #ebebeb;     /* or   background: white; */ -->
+<!--   padding: 10px;           /* optional */ -->
+<!--   border-radius: 5px;      /* optional */ -->
+<!--   } -->
+
+<!-- /* Hide the ToC when resized to mobile or tablet:  480px, 768px, 900px */ -->
+<!-- @media screen and (max-width: 900px) { -->
+<!-- #TOC { -->
+<!--     position: relative; -->
+<!--   } -->
+<!-- } -->
+<!-- </style> -->
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  # lang='markdown',
+  R.options = list(width = 140,
+                   digits.secs=6),
+  # dev.args = list(bg = 'transparent'),
+  # dev = 'svglite',
+  fig.align = 'center',
+  out.width = '50%',
+  fig.asp = .75,
+  cache = FALSE, 
+  cache.rebuild = FALSE,
+  # root.dir = file.path("C:","LlorR"),
+  engine.path = list(
+    python = 'C:/anaconda/'
+  ),
+  #'distill options
+  # layout="l-body-outset",
+  preview=FALSE
+)
+
+library(tidyverse); library(kableExtra)
+
+# a basic pretty table
+kable_df <- function(..., digits=3) {
+  kable(..., digits=digits) %>% 
+    kable_styling(full_width = F)
+}
+
+# round for presentation
+rnd = function(x, digits = 3) format(round(x, digits), nsmall = digits) %>% as.numeric()
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(
+  active_foreground = "#0051BA",
+  hover_foreground = "#d22"
+  # font_family = "Amiri"
+)
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# use_python("C:/anaconda/")
+py_run_string("print('Hello World')")
+lor_deckcodes <- import("lor_deckcodes")
+py_module_available("lor_deckcodes")
+```
+
+# Introduction {.unnumbered}
+
+In the context of Collectable Card Games (CCG) win rates are probably the most desidered information from the community. If it's about decks, the meta is shaped around these values (also playrates), if it's between players it can be a proxy to define who are the strongest players. Yet, one has to be carefull when computing even just single means of win rates, results are based on the individual match ups (MU) between archetypes so that the aggregated WR of a deck is the result of a weighted mean among the different MU. When applyed to a player, again, the playrates are still a factor to consider but this is rarely done.
+
+## Example
+
+Let's create an example from Legends of Runeterra (LoR) to exaplain this player's WR bias in a simplified context where both of them use the same deck-archetype.
+
+-   PlayerA plays 10 games of Thralls (Lissandra / Taliyah) against 3 Nasus / Thresh and 7 against Azir / Irelia. The score being 4 wins and 6 loss.
+-   PlayerA plays 10 games of Thralls against 5 Nasus / Thresh and 5 against Lissandra/Trundle (TLC). The score being 6 wins and 4 loss.
+
+If we just looks at the aggregated win rate then the WR of PlayerB (60%) \> WR of PlayerA (40%) but saying that PlayerB is better than PlayerA would be disingenuous, the reason being, they played different MU with completely different excepted WR.
+
+While writing this document the expected WR are:
+
+-   Thralls vs Azir/Irelia: 20.2%
+-   Thralls vs Nasus/Thresh: 57.8%
+-   Thralls vs TLC: 69.3%
+
+So, the expected number of wins from PlayerA is `r (0.578*3)+(0.202*7)`
+
+While, the expected number of wins from PlayerB is `r (0.578*5)+(0.693*5)`
+
+The expected and actual results are pretty much the same for each player, but since we just showed they are obtained in different context the 2 WR can't be directly compared and we can't say who's the better player.
+
+Sample bias is a common problem in statistics and pretty much any social/medical study have to deal with it, but while we are not in the context of the golden standard, a Randomized Study, we can elaborate our data so that it's as similar as possible to it in which the data between each group of interest are as balanced as possible (**Ceteris Paribus / other things being equal**).
+
+The objective of this document will be to explain a possible way to apply those techniques to LoR and the comparison of WR among players.
+
+# Data
+
+```{r raw-data}
+#' load gameDT
+#'############
+fileDT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+LoR.Master.Matches.RMD <- fread(fileDT, header = T, na.strings = c("",NA)) %>%
+  filter( game_type=="Ranked") %>%
+  filter(game_version>"live_2_7" & game_version<"live_2_9")
+
+nGames <- NROW(LoR.Master.Matches.RMD)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine) )
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+```{r add_player_opponent}
+LoR.Master.Matches.RMD <- left_join(LoR.Master.Matches.RMD,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code"))
+LoR.Master.Matches.RMD <- left_join(LoR.Master.Matches.RMD,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code"))
+LoR.Master.Matches.RMD$player_2   <- LoR.Master.Matches.RMD$opponent_1
+LoR.Master.Matches.RMD$opponent_2 <- LoR.Master.Matches.RMD$player_1
+```
+
+```{r melt_matches}
+LoR.Melt.Matches.RMD <- LoR.Master.Matches.RMD %>% 
+  select( match_key,server,game_version,game_start_time_utc,total_turn_count,ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
+  melt(id.vars=c("match_key","server","game_version","game_start_time_utc","total_turn_count","factions_1","factions_2"), measure.vars=patterns( 
+    str_sub(
+      names(select(LoR.Master.Matches.RMD,ends_with("_1")))
+      ,end = -3) 
+  ),
+  value.name = str_sub(
+    names(select(LoR.Master.Matches.RMD,ends_with("_1")))
+    ,end = -3) 
+  )
+
+LoR.Melt.Account     <- LoR.Account.RMD %>% melt(., id.vars = c("RiotID"), measure.vars=c("puuid_1","puuid_2","puuid_3"),value.name=c("puuid"),variable.name="origin" )
+LoR.Melt.Matches.RMD <- left_join(LoR.Melt.Matches.RMD,LoR.Melt.Account,by="puuid") %>% select(!origin)
+```
+
+The data are a sample of `r NROW(LoR.Melt.Matches.RMD)` matches played at Master rank during patch 2.7 and 2.8 (so same buff/nerfs).
+
+```{r players}
+# AzIreliaID <- LoR.Melt.Matches.RMD[ player=="Azir / Irelia",  .N, by=c("RiotID") ] %>% arrange(desc(N)) %>% slice_head(n = 50)
+# NT.ID      <- LoR.Melt.Matches.RMD[ player=="Nasus / Thresh", .N, by=c("RiotID") ] %>% arrange(desc(N)) %>% slice_head(n = 30)
+# DiscardID  <- LoR.Melt.Matches.RMD[ player=="Draven / Jinx" , .N, by=c("RiotID") ] %>% arrange(desc(N)) %>% slice_head(n = 80)
+# 
+# c("Alanzq EUW","SouL Who Wanders 1337")
+# c("NeshNesh NA1","Italianex HAZE")
+# c("ShuKee EUW","Bülat EUW")
+```
+
+We are going to present 3 examples of pair of players who played three among the most popular archetypes:
+
+-   **Alanzq** and **SouL Who Wanders** when playing Azir / Irelia
+-   **Meliador0** and **Bülat** when playing Discard (Draven / Jinx)
+
+The players were chosen among those with the higher amount of games with the archetypes, but still a relevant difference in sample sized among the two on them.
+
+Also, there is a bit of personal curiosity and bias like for choosing the "Discard-derby" Bülat/Meliador and the pair of Alanzq/SouL Who Wanders for the memes.
+
+# Method
+
+To have comparable win rates one needs to balance the MU between the players. The easiest way is to match each game from groupA with another from groupB whose opponent's archatypes is the same. A match against NT with a game of NT, a game of Discard with a game of Discard and so on. While not far from what will be the proposed method, there's the risk of not being able to match too many games. Let's say that groupA because of the shard/server and timezone in which he plays, have higher chances of playing against rares decks, it could be be hard if not impossible to have a perfect MU-match in the "control group" groupB.
+
+To solve this problem I propose the use of a proxy to the MatchUp archtype: the excepeted Win Rate of the match played. If n archetypes have similar MU values, than if I can't match it by the exact MU I can select a game from one of the alternatives where I'm expected to have similar results. The assumption is that this wouldn't effect the mean WR if it is the only variable that needs to be considered.
+
+It's then necessary to define a caliber that limits the range of archetypes which we considered similar (the value used here is 2%). The fact I'm matching on a "pseudo"-continuous (it's discrete with possible domain (0,1)) variable and the use of a caliber could remind of the use of Propensity Score Matching (PSM). While the code used is indeed from a package mostly for PSM [(MatchIt)](https://cran.r-project.org/web/packages/MatchIt/MatchIt.pdf) the theory is completely different. 
+
+When using a propensity score we estimate the probability of treatment assignment conditional of observed covariates. The treament here would be being played by PlayerA or PlayerB. The PS would then be used to match sets of treatment and untreated subjects who share a similar value of propensity score. Treatment "effect" is estimated comparing outcomes between treated and untreated subjects in the matches sample. Here the "effect of a player (~skill)"  compared to someone else player would be comparing win rates obtained from the matched sample.
+
+Assuming that the archetypes are the only predictor variables, the model for the PS score is:
+
+$$
+logit(p=PlayerA|X) = \alpha + \sum_{i=1}^n \beta_{1} X_{1i} + \sum_{i=1}^n \beta_{2} X_{2i} + \sum_{i=1}^n \beta_{3} X_{1i}X_{2i}
+$$
+
+Where $\beta_1$ is a m-dimensional vector where m is the amount of archetypes (minus 1) a player played, and $\beta_2$ is the corresponding for the archetypes used by the opponent.
+
+We would have to drop the interaction component ($\beta_3$) as we don't have enough data but overall the model by itself is feasible. But again, we are not proposing the use of PS but an algorithm/procedure that works in a similar way also, the proposed change of using the MU-WR as proxy would simplify the model into a simple univariate logistic regression:
+
+$$
+logit(p=PlayerA|X) = \alpha + \beta_1 X_1
+$$
+Now $\beta_1$ is a single value as $X_1$ is now a continuous variable of the match ups win rates.
+
+Aside for archetypes, are there any other covariate we can use? All time-dependent covariates are excluded. For example the "starting game time" is pretty much a leaker variable of the playerID (players tend to have a similar pattern in the time they can play, even more different among different shards). The patch shouldn't be of any use. The remaining data which could be used are "order of play" (Fig:\@ref(fig:plot-example-order)) and "total turn count" (Fig:\@ref(fig:plot-example-turn)), but "turn order" should be already balanced as it's supposed to be random and equally distributed.
+
+```{r plot-example-order, fig.cap="Order of play"}
+require(patchwork)
+require(hrbrthemes)
+hrbrthemes::import_roboto_condensed()
+
+
+# LoR.Melt.Matches.RMD %>%
+#    filter( RiotID %in% c("Alanzq EUW","SouL Who Wanders 1337") ) %>%
+#    mutate( RiotID = ifelse( RiotID=="Alanzq EUW","Alanzq","SouL Who Wanders" )) %>%
+#    group_by(RiotID) %>%
+#    count(order_of_play) %>%
+#    mutate(freq = n / sum(n)) %>%
+#    ggplot(aes(x = order_of_play, y=freq, fill=factor(RiotID))) + 
+#    geom_bar(stat = "identity", position="dodge") +
+#    theme_ipsum() +
+#    theme(legend.position = "bottom") +
+#    # labs(color='ID') +
+#    scale_x_continuous("Order of Play", breaks = c(0,1)) +
+#    scale_y_continuous(labels = scales::percent) +
+#    scale_fill_manual(values=c("#69b3a2", "#404080"))
+LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Alanzq EUW","SouL Who Wanders 1337") ) %>%
+   mutate( RiotID = ifelse( RiotID=="Alanzq EUW","Alanzq","SouL Who Wanders" )) %>%
+   group_by(RiotID) %>%
+   count(order_of_play) %>%
+   mutate(order_of_play=factor(order_of_play+1)) %>%
+   mutate(freq = n / sum(n)) %>%
+   ggplot(aes(x = order_of_play, y=freq, fill=order_of_play )) + 
+   geom_bar(stat = "identity", position="dodge") +
+   facet_wrap(~RiotID) +
+   theme_ipsum() +
+   theme(legend.position = "none") +
+   labs(x = "Order of Play",y = "Percent", fill="") +
+   scale_y_continuous(labels = scales::percent) +
+   scale_fill_manual(values=c("#69b3a2", "#404080")) +
+
+
+LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Meliador0 EUW","Bülat EUW") ) %>%
+   mutate( RiotID = ifelse( RiotID=="Meliador0 EUW","Meliador0","Bülat" )) %>%
+   group_by(RiotID) %>%
+   count(order_of_play) %>%
+   mutate(order_of_play=factor(order_of_play+1)) %>%
+   mutate(freq = n / sum(n)) %>%
+   ggplot(aes(x = order_of_play, y=freq, fill=order_of_play )) + 
+   geom_bar(stat = "identity", position="dodge") +
+   facet_wrap(~RiotID) +
+   theme_ipsum() +
+   theme(legend.position = "none") +
+   labs(x = "Order of Play",y = "Percent", fill="") +
+   scale_y_continuous(labels = scales::percent) +
+   scale_fill_manual(values=c("#69b3a2", "#404080"))
+
+```
+
+```{r, plot-example-turn, fig.cap="Turn count"}
+LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Alanzq EUW","SouL Who Wanders 1337") ) %>%
+   mutate( RiotID = ifelse( RiotID=="Alanzq EUW","Alanzq","SouL Who Wanders" )) %>%
+   ggplot( aes(x=total_turn_count)) +
+    geom_histogram( aes(y =  ..density..,fill=RiotID)) +
+    facet_wrap(~RiotID) +
+    scale_fill_manual(values=c("#69b3a2", "#404080")) +
+    theme_ipsum() +
+    theme(legend.position = "none")+
+    labs(x = "Total Turn Count",y = "Percent", fill="") +
+    scale_y_continuous(labels = scales::percent) +
+
+LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Meliador0 EUW","Bülat EUW") ) %>%
+   mutate( RiotID = ifelse( RiotID=="Meliador0 EUW","Meliador0","Bülat" )) %>%
+   ggplot( aes(x=total_turn_count)) +
+    geom_histogram( aes(y =  ..density..,fill=RiotID)) +
+    facet_wrap(~RiotID) +
+    scale_fill_manual(values=c("#69b3a2", "#404080")) +
+    theme_ipsum() +
+    theme(legend.position = "none")+
+    labs(x = "Total Turn Count",y = "Percent", fill="") +
+    scale_y_continuous(labels = scales::percent)
+
+```
+
+In the first example (Azir/Irelia) there seems indeed to be balance for among the players' potential predictors while there seems to be a little unbalance in the "Discard example" for order of play. So, aside from visualization, it's better the check the balance by the numbers with the Odds Ratio (OR).
+
+-   Azir / Irelia
+
+<caption>
+
+(\#tab:OR-1)Tentative covariate balance for Azir/Irelia example
+
+</caption>
+
+```{r OR-1}
+require(gtsummary)
+
+LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Alanzq EUW","SouL Who Wanders 1337") ) %>%
+   mutate( numID = (RiotID %>% as.factor() %>% as.numeric()-1) ) %>%
+   select( numID, total_turn_count, order_of_play ) %>% 
+   rename( "ID"='numID','Total Turn Count'='total_turn_count','Order of Play'='order_of_play'  ) %>%
+   tbl_uvregression(                         ## produce univariate table
+     method = glm,                           ## define regression want to run (generalised linear model)
+     y = ID,                            ## define outcome variable
+     method.args = list(family = binomial),  ## define what type of glm want to run (logistic)
+     exponentiate = TRUE                     ## exponentiate to produce odds ratios (rather than log odds)
+)
+```
+
+-   Discard (Draven/Jinx)
+
+<caption>
+
+(\#tab:OR-2)Tentative covariate balance for Discard example
+
+</caption>
+
+```{r OR-2}
+LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Meliador0 EUW","Bülat EUW") ) %>%
+   mutate( numID = (RiotID %>% as.factor() %>% as.numeric()-1) ) %>%
+   select( numID, total_turn_count, order_of_play ) %>% 
+   rename( "ID"='numID','Total Turn Count'='total_turn_count','Order of Play'='order_of_play'  ) %>%
+   tbl_uvregression(                         ## produce univariate table
+     method = glm,                           ## define regression want to run (generalised linear model)
+     y = ID,                            ## define outcome variable
+     method.args = list(family = binomial),  ## define what type of glm want to run (logistic)
+     exponentiate = TRUE                     ## exponentiate to produce odds ratios (rather than log odds)
+)
+```
+
+In the "Discard-example" the unbalance was actually for the turn count. While now a potential addition to the model we won't use them as it would make the model easily reproducible for those who have not access to a match total turn count (number of times a players has initiative). Finally, the following tables display the distribution of the expected win rates for each player:
+
+```{r MU-table}
+MUtbl <- LoR.Melt.Matches.RMD %>%
+  # filter(game_version>"live_2_7" & game_version<"live_2_9") %>%
+  # filter(game_version>"live_2_9" ) %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome,server,game_version ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win") ) %>%
+  setDT()
+  
+MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
+MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
+MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
+
+MUtbl <- MUtbl %>%
+  mutate( CI := glue("( {percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)} )" ) )
+
+oppoLabel_AI <- MUtbl %>%
+  filter( player=="Azir / Irelia" ) %>%
+  filter(okCI==T | muGames > 500) %>%
+  arrange(desc(muGames)) %>%
+  pull(opponent)
+
+oppoLabel_Dis <- MUtbl %>%
+  filter( player=="Draven / Jinx" ) %>%
+  filter(okCI==T | muGames > 500) %>%
+  arrange(desc(muGames)) %>%
+  pull(opponent)
+```
+
+```{r muWR-DT}
+# Azir Irelia / Alanz Soul
+AI.DT <- inner_join(LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Alanzq EUW","SouL Who Wanders 1337") ) %>%
+   mutate( RiotID = ifelse( RiotID=="Alanzq EUW","Alanzq","SouL Who Wanders" )) %>%
+   mutate(ID = RiotID %>% factor() %>% as.numeric()-1) %>%
+   filter( player == "Azir / Irelia" & opponent %in% oppoLabel_AI ),
+   MUtbl[ ,.(player,opponent,muWR) ],
+   by = c("player","opponent")
+)
+
+# Discard
+Dis.DT <- inner_join(LoR.Melt.Matches.RMD %>%
+   filter( RiotID %in% c("Meliador0 EUW","Bülat EUW") ) %>%
+   mutate( RiotID = ifelse( RiotID=="Meliador0 EUW","Meliador0","Bülat" )) %>%
+   mutate(ID = RiotID %>% factor() %>% as.numeric()-1) %>%
+   filter( player == "Draven / Jinx" & opponent %in% oppoLabel_Dis ),
+   MUtbl[ ,.(player,opponent,muWR) ],
+   by = c("player","opponent")
+)
+```
+
+```{r muWR-hist-1, fig.cap="Expected WR distribution - Azir/Irelia example"}
+AI.DT %>%
+   ggplot( aes(x=muWR)) +
+    geom_histogram( aes(y =  ..density..,fill=RiotID)) +
+    facet_wrap(~RiotID) +
+    scale_fill_manual(values=c("#69b3a2", "#404080")) +
+    theme_ipsum() +
+    theme(legend.position = "none")+
+    labs(x = "Expected WR",y = "Percent", fill="")
+```
+
+```{r muWR-hist-2, fig.cap="Expected WR distribution - Discard example"}
+Dis.DT %>%
+   ggplot( aes(x=muWR)) +
+    geom_histogram( aes(y =  ..density..,fill=RiotID)) +
+    facet_wrap(~RiotID) +
+    scale_fill_manual(values=c("#69b3a2", "#404080")) +
+    theme_ipsum() +
+    theme(legend.position = "none")+
+    labs(x = "Expected WR",y = "Percent", fill="")
+```
+
+In the figures (Fig.\@ref(fig:muWR-hist-1) between Alanz and SWW there doesn't seems to be a big different in MU played but in Fig.\@ref(fig:muWR-hist-2)), the Discard example between Bülat and Meliador there's a clear difference in the MU distribution and so the expected WR distribution.
+
+# Analysis
+
+A good rule when matching a continuos variable is trimming the starting dataset so that both groups has the same range of possible values, simply put the values are restricted to the maxmin and minmax of each group.
+
+For Azir/Irelia the inizial range is `r c(min(AI.DT$muWR) %>% rnd  ,max(AI.DT$muWR)) %>% rnd`
+
+For Discard the inizial range is `r c(min(Dis.DT$muWR) %>% rnd,max(Dis.DT$muWR)) %>% rnd`
+
+```{r trim}
+trimmming <- function(df,PS,treat) {
+  df %>% as_tibble()
+  psmin <- max(by(df[,PS], df[,treat], min, na.rm=T))
+  # psmin <- max(by( {{DT}} %>% pull({{PS}}) , {{DT}} %>% pull({{treat}}), min, na.rm=T))
+  psmax <- min(by(df[,PS], df[,treat], max, na.rm=T))
+  # psmin <- min(by( {{DT}} %>% pull({{PS}}) , {{DT}} %>% pull({{treat}}), max, na.rm=T))
+  return(c(psmin,psmax))
+}
+
+trimmming <- function(df,PS,treat) {
+   # df %>% as_tibble()
+   psmin <- max(by(df[,PS], df[,treat], min, na.rm=T))
+   # psmin <- max(by( {{DT}} %>% pull({{PS}}) , {{DT}} %>% pull({{treat}}), min, na.rm=T))
+   psmax <- min(by(df[,PS], df[,treat], max, na.rm=T))
+   # psmin <- min(by( {{DT}} %>% pull({{PS}}) , {{DT}} %>% pull({{treat}}), max, na.rm=T))
+   return(c(psmin,psmax))
+}
+
+
+minmax.trim.AI  <- trimmming(AI.DT %>% as_tibble(),"muWR","RiotID" )
+# AI.DT %>%
+#   filter( (minmax.trim.AI[1] <= muWR & muWR <= minmax.trim.AI[2]) )
+
+minmax.trim.Dis <- trimmming(Dis.DT %>% as_tibble(),"muWR","RiotID" )
+# Dis.DT %>%
+#   filter( (minmax.trim.Dis[1] <= muWR & muWR <= minmax.trim.Dis[2]) )
+
+# AI.DT %>% ggplot(.,aes(factor(RiotID),muWR )) + geom_boxplot() +
+# Dis.DT %>% ggplot(.,aes(factor(RiotID),muWR )) + geom_boxplot()
+```
+
+Once trimmed, for Azir/Irelia, the range goes to to `r minmax.trim.AI %>% rnd`, for Discard there are no changes.
+
+The implementation of the matching is done as applying an optimal 1:1 matching.
+By applying a matching algorithm, compared to the usual Propensity Score Matching (PSM) procedure there's a problem by having multiple rows with the same MU WR (so more candidates for the match). Usually the algorithm choose the control unit with a specifc order (like the first by ascending/descending order) but it would be bad here as the match should ideally be chosen at random among all the exact or similar match (within the caliber).
+
+So, the solution proposed is to choose at random among the many match candidates, match the data, compute the resulting WR for each player and repeat the whole process n times (10\^5 in this document) and get the distribution of the mean WR. To make replicate the random component we just need to permute the data before at the start of each iteration of the matching.
+
+```{r MatchIt}
+# library(MatchIt)
+# 
+# # set.seed(123)
+# # seeds <- runif(10^5,0,10^7)
+# 
+# # m.out  <- matchit(treat ~ muWR, method = "nearest", data=Discard_keep, m.order = "random" )
+# # m.out_1  <- matchit(factor(RiotID) ~ muWR, method = "nearest", data=AI.DT, m.order = "random" )
+# m.obj <- matchit(ID ~ muWR, method = "exact",   data=Dis.DT, ratio = 1   )
+# m.obj <- matchit(ID ~ muWR, method = "optimal", data=Dis.DT, ratio = 1  )
+# m.data <- match.data(object=m.obj)
+# 
+# 
+# ggplot() +
+#   geom_histogram(data=subset(Dis.DT, RiotID=="Meliador0"),   aes(muWR, fill="Meliador0",  y= ..density..)) +
+#   geom_histogram(data=subset(Dis.DT, RiotID=="Bülat"),       aes(muWR, fill="Bülat",      y= -..density..)) +
+#   scale_fill_hue("Group") +
+#   
+# ggplot() +
+#   geom_histogram(data=subset(m.data, RiotID=="Meliador0"),   aes(muWR, fill="Meliador0",  y= ..density..)) +
+#   geom_histogram(data=subset(m.data, RiotID=="Bülat"),       aes(muWR, fill="Bülat",      y= -..density..)) +
+#   scale_fill_hue("Group")
+# 
+# 
+# ggplot() +
+#   geom_histogram(data=subset(Dis.DT, RiotID=="Meliador0"),   aes(muWR, fill="Meliador0",  y= ..count..)) +
+#   geom_histogram(data=subset(Dis.DT, RiotID=="Bülat"),       aes(muWR, fill="Bülat",      y= -..count..)) +
+#   scale_fill_hue("Group") +
+#   
+# ggplot() +
+#   geom_histogram(data=subset(m.data, RiotID=="Meliador0"),   aes(muWR, fill="Meliador0",  y= ..count..)) +
+#   geom_histogram(data=subset(m.data, RiotID=="Bülat"),       aes(muWR, fill="Bülat",      y= -..count..)) +
+#   scale_fill_hue("Group")
+```
+
+
+
+```{r optmatch}
+library(optmatch)
+propensity.model <- glm(ID ~ muWR, data = Dis.DT, family = binomial())
+distance <- match_on(propensity.model, caliper = 0.1,data = Dis.DT, )
+PS.match <- fullmatch(distance, data = Dis.DT, max.controls = 1)
+```
+
+For those who would like to replicate the process this is the code I used
+The matching results are as shown is Fig.\@ref(fig:plot-optmatch-1) and Fig.\@ref(fig:plot-optmatch-2).
+
+```{r plot-optmatch-1, fig.cap="Relative frequencies of Matched WR", preview=TRUE}
+ggplot() +
+  geom_histogram(data=subset(Dis.DT, RiotID=="Meliador0"),   aes(muWR, fill="Meliador0",  y= ..density..)) +
+  geom_histogram(data=subset(Dis.DT, RiotID=="Bülat"),       aes(muWR, fill="Bülat",      y= -..density..)) +
+  scale_fill_hue("Group") +
+  scale_fill_manual(values=c("#69b3a2", "#404080")) +
+  theme_ipsum() +
+  theme(legend.position = "bottom")+
+  labs(x = "Expected WR",y = "Percent", fill="") +
+  
+ggplot() +
+  geom_histogram(data=Dis.DT[matched(PS.match) & RiotID=="Meliador0"],   aes(muWR, fill="Meliador0",  y= ..density..)) +
+  geom_histogram(data=Dis.DT[matched(PS.match) & RiotID=="Bülat"],       aes(muWR, fill="Bülat",      y= -..density..)) +
+  scale_fill_hue("Group") +
+  scale_fill_manual(values=c("#69b3a2", "#404080")) +
+  theme_ipsum() +
+  theme(legend.position = "bottom")+
+  labs(x = "Expected WR",y = "Percent", fill="")
+```
+
+
+```{r plot-optmatch-2, fig.cap="Absolute frequencies of Matched WR"}
+ggplot() +
+  geom_histogram(data=subset(Dis.DT, RiotID=="Meliador0"),   aes(muWR, fill="Meliador0",  y= ..count..)) +
+  geom_histogram(data=subset(Dis.DT, RiotID=="Bülat"),       aes(muWR, fill="Bülat",      y= -..count..)) +
+  scale_fill_hue("Group") +
+  scale_fill_manual(values=c("#69b3a2", "#404080")) +
+  theme_ipsum() +
+  theme(legend.position = "bottom")+
+  labs(x = "Expected WR",y = "N", fill="") +
+  
+ggplot() +
+  geom_histogram(data= Dis.DT[matched(PS.match) & RiotID=="Meliador0"],   aes(muWR, fill="Meliador0",  y= ..count..)) +
+  geom_histogram(data= Dis.DT[matched(PS.match) & RiotID=="Bülat"],       aes(muWR, fill="Bülat",      y= -..count..)) +
+  scale_fill_hue("Group") +
+  scale_fill_manual(values=c("#69b3a2", "#404080")) +
+  theme_ipsum() +
+  theme(legend.position = "bottom")+
+  labs(x = "Expected WR",y = "N", fill="")
+```
+
+With Fig.\@ref(fig:plot-optmatch-2) in particular it's possible to see how the matching perfectly create the balance we wanted to archive but as mentioned, the result is dependent on the order of the rows, so I did 10^4 permutations of both example data.
+
+# Results
+
+```{r permute-and-compute}
+# N = 10^4
+# set.seed(123)
+# Dis.res <- matrix(NA, nrow = N, ncol = 2) %>% as.data.table() %>% mutate_all(funs(as.numeric(as.factor(.)))) %>% setnames(new = c("P1wr","P2wr"))
+# AI.res  <- matrix(NA, nrow = N, ncol = 2) %>% as.data.table() %>% mutate_all(funs(as.numeric(as.factor(.)))) %>% setnames(new = c("P1wr","P2wr"))
+# 
+# for ( i in 1:N ) {
+#   cat(i," ")
+#   perm.DT <- Dis.DT[ sample(nrow(Dis.DT)),  ]
+#   propensity.model <- glm(ID ~ muWR, data = perm.DT, family = binomial())
+#   distance <- match_on(propensity.model, caliper = 0.1,data = perm.DT, )
+#   PS.match <- fullmatch(distance, data = perm.DT, max.controls = 1)  
+#   
+#   Dis.res[i, c("P1wr","P2wr"):= perm.DT[matched(PS.match)] %>%
+#     group_by(RiotID) %>%
+#     summarise( WR=mean(game_outcome=="win") ) %>% pull(WR) %>% as.list() ] 
+# }
+# 
+# fwrite(Dis.res,"PS_Discard.csv")
+# 
+# set.seed(123)
+# for ( i in 1:N ) {
+#   # cat(i," ")
+#   perm.DT <- AI.DT[ sample(nrow(AI.DT)),  ]
+#   propensity.model <- glm(ID ~ muWR, data = perm.DT, family = binomial())
+#   distance <- match_on(propensity.model, caliper = 0.1,data = perm.DT, )
+#   PS.match <- fullmatch(distance, data = perm.DT, max.controls = 1)
+# 
+#   AI.res[i, c("P1wr","P2wr"):= perm.DT[matched(PS.match)] %>%
+#     group_by(RiotID) %>%
+#     summarise( WR=mean(game_outcome=="win") ) %>% pull(WR) %>% as.list() ]
+# }
+# 
+# fwrite(AI.res,"PS_AzIrelia.csv")
+# 
+Dis.res <- fread(file.path("C:","LlorR","data","clean","PS_Discard.csv" ))
+AI.res  <- fread(file.path("C:","LlorR","data","clean","PS_AzIrelia.csv"))
+```
+
+```{r}
+Out <- matrix( NA, ncol = 2, nrow = 4 ) %>% as.data.frame() 
+
+colnames(Out) <- c("No Matching","Matched")
+rownames(Out) <- c("Bülat","Meliador0","Alanzq","SouL Who Wanders")
+
+Out[1:2,1] <- prop.test(x = c(Dis.DT[RiotID=="Bülat", sum(game_outcome=="win")],Dis.DT[RiotID=="Meliador0",sum(game_outcome=="win")] ),
+          n = c(Dis.DT[RiotID=="Bülat",.N], Dis.DT[RiotID=="Meliador0",.N]))$estimate	%>% unname() %>% scales::percent(.,accuracy = 0.01)
+
+Out[3:4,1] <- prop.test(x = c(AI.DT[RiotID=="Alanzq",sum(game_outcome=="win")],AI.DT[RiotID=="SouL Who Wanders",sum(game_outcome=="win")] ),
+          n = c(AI.DT[RiotID=="Alanzq",.N], AI.DT[RiotID=="SouL Who Wanders",.N]))$estimate %>% scales::percent(.,accuracy = 0.01)
+
+Out[1:2,2] <- t.test(Dis.res[,P1wr],Dis.res[,P2wr])$estimate %>% scales::percent(.,accuracy = 0.01)
+Out[3:4,2] <- t.test(AI.res[,P1wr],AI.res[,P2wr])$estimate %>% scales::percent(.,accuracy = 0.01)
+```
+
+
+```{r}
+require(gt)
+
+Out %>% 
+  kbl() %>%
+  kable_minimal()
+  # rmarkdown::paged_table(.  ,  options = list(rows.print = 15, cols.print = 5))
+  # gt() 
+  # kbl() %>%
+  # kable_material(c("striped", "hover"))
+```
+
+Sadly for me, I didn't choose an example that showed significant results by matching or not, still it's not like the results has too often and the objective of this article is to make people more aware of the sample bias problem.
+
+While the mean for the "treat group" doesn't change as it's the "control group" the one that's reduced here to match the other one, it's not like it doesn't change even by a little at each iteration/permutation. This can be seens by the distribution of WR obtained of the 10^4 permutations.
+
+```{r, layout="l-body-outset"}
+ggplot(Dis.res, aes(P1wr)) + geom_histogram() + labs(x="Bülat WR",title = "Matched samples Win rate distribution")
+```

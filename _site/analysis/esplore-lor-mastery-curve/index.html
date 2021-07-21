@@ -1,0 +1,4605 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { color: #20794d; } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #20794d; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+  <!--radix_placeholder_meta_tags-->
+<title>LLoRR Stats: An exploratory analysis to Mastery Curve in LoR</title>
+
+<meta property="description" itemprop="description" content="Applying the concept of Learning Curve to Legends of Runeterras&#39; decks."/>
+
+<link rel="canonical" href="https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/"/>
+
+<!--  https://schema.org/Article -->
+<meta property="article:published" itemprop="datePublished" content="2021-07-19"/>
+<meta property="article:created" itemprop="dateCreated" content="2021-07-19"/>
+<meta name="article:author" content="Valentino (Legna) Vazzoler"/>
+
+<!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+<meta property="og:title" content="LLoRR Stats: An exploratory analysis to Mastery Curve in LoR"/>
+<meta property="og:type" content="article"/>
+<meta property="og:description" content="Applying the concept of Learning Curve to Legends of Runeterras&#39; decks."/>
+<meta property="og:url" content="https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/"/>
+<meta property="og:image" content="https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-2-1.png"/>
+<meta property="og:image:width" content="1248"/>
+<meta property="og:image:height" content="936"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="LLoRR Stats"/>
+
+<!--  https://dev.twitter.com/cards/types/summary -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:title" content="LLoRR Stats: An exploratory analysis to Mastery Curve in LoR"/>
+<meta property="twitter:description" content="Applying the concept of Learning Curve to Legends of Runeterras&#39; decks."/>
+<meta property="twitter:url" content="https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/"/>
+<meta property="twitter:image" content="https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-2-1.png"/>
+<meta property="twitter:image:width" content="1248"/>
+<meta property="twitter:image:height" content="936"/>
+<meta property="twitter:site" content="@Maou_Legna"/>
+<meta property="twitter:creator" content="@Maou_Legna"/>
+
+<!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+<script type="text/json" id="radix-rmarkdown-metadata">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","base_url","author","date","output","citation","draft","twitter","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["An exploratory analysis to Mastery Curve in LoR"]},{"type":"character","attributes":{},"value":["Applying the concept of Learning Curve to Legends of Runeterras' decks."]},{"type":"character","attributes":{},"value":["https://llorr-stats.netlify.app"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Valentino (Legna) Vazzoler"]}]}]},{"type":"character","attributes":{},"value":["07-19-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[false]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["site","creator"]}},"value":[{"type":"character","attributes":{},"value":["@Maou_Legna"]},{"type":"character","attributes":{},"value":["@Maou_Legna"]}]},{"type":"character","attributes":{},"value":["https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/"]},{"type":"character","attributes":{},"value":["https://llorr-stats.netlify.app/analysis/esplore-lor-mastery-curve/"]}]}
+</script>
+<!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["esplore-lor-mastery-curve_files/anchor-4.2.2/anchor.min.js","esplore-lor-mastery-curve_files/bowser-1.9.3/bowser.min.js","esplore-lor-mastery-curve_files/distill-2.2.21/template.v2.js","esplore-lor-mastery-curve_files/figure-html5/print-plot-Chrono-1.png","esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-1.png","esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-2-1.png","esplore-lor-mastery-curve_files/figure-html5/print-plot-Support-1.png","esplore-lor-mastery-curve_files/figure-html5/tweet1-1.png","esplore-lor-mastery-curve_files/figure-html5/tweet2-1.png","esplore-lor-mastery-curve_files/figure-html5/unnamed-chunk-5-1.png","esplore-lor-mastery-curve_files/header-attrs-2.9/header-attrs.js","esplore-lor-mastery-curve_files/jquery-1.11.3/jquery.min.js","esplore-lor-mastery-curve_files/panelset-0.2.6/panelset.css","esplore-lor-mastery-curve_files/panelset-0.2.6/panelset.js","esplore-lor-mastery-curve_files/popper-2.6.0/popper.min.js","esplore-lor-mastery-curve_files/tippy-6.2.7/tippy-bundle.umd.min.js","esplore-lor-mastery-curve_files/tippy-6.2.7/tippy-light-border.css","esplore-lor-mastery-curve_files/tippy-6.2.7/tippy.css","esplore-lor-mastery-curve_files/tippy-6.2.7/tippy.umd.min.js","esplore-lor-mastery-curve_files/webcomponents-2.0.0/webcomponents.js"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+<meta name="distill:offset" content="../.."/>
+
+<script type="application/javascript">
+
+  window.headroom_prevent_pin = false;
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // initialize headroom for banner
+    var header = $('header').get(0);
+    var headerHeight = header.offsetHeight;
+    var headroom = new Headroom(header, {
+      tolerance: 5,
+      onPin : function() {
+        if (window.headroom_prevent_pin) {
+          window.headroom_prevent_pin = false;
+          headroom.unpin();
+        }
+      }
+    });
+    headroom.init();
+    if(window.location.hash)
+      headroom.unpin();
+    $(header).addClass('headroom--transition');
+
+    // offset scroll location for banner on hash change
+    // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+    window.addEventListener("hashchange", function(event) {
+      window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+    });
+
+    // responsive menu
+    $('.distill-site-header').each(function(i, val) {
+      var topnav = $(this);
+      var toggle = topnav.find('.nav-toggle');
+      toggle.on('click', function() {
+        topnav.toggleClass('responsive');
+      });
+    });
+
+    // nav dropdowns
+    $('.nav-dropbtn').click(function(e) {
+      $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+      $(this).parent().siblings('.nav-dropdown')
+         .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $("body").click(function(e){
+      $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $(".nav-dropdown").click(function(e){
+      e.stopPropagation();
+    });
+  });
+</script>
+
+<style type="text/css">
+
+/* Theme (user-documented overrideables for nav appearance) */
+
+.distill-site-nav {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: #0F2E3D;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.distill-site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.distill-site-nav a:hover {
+  color: white;
+}
+
+@media print {
+  .distill-site-nav {
+    display: none;
+  }
+}
+
+.distill-site-header {
+
+}
+
+.distill-site-footer {
+
+}
+
+
+/* Site Header */
+
+.distill-site-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.distill-site-header .nav-left {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header .nav-left {
+    margin-left: 0;
+  }
+}
+
+
+.distill-site-header .nav-right {
+  float: right;
+  margin-right: 8px;
+}
+
+.distill-site-header a,
+.distill-site-header .title {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 10px 14px 10px;
+}
+
+.distill-site-header .title {
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.distill-site-header .logo {
+  padding: 0;
+}
+
+.distill-site-header .logo img {
+  display: none;
+  max-height: 20px;
+  width: auto;
+  margin-bottom: -4px;
+}
+
+.distill-site-header .nav-image img {
+  max-height: 18px;
+  width: auto;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+
+
+@media screen and (min-width: 1000px) {
+  .distill-site-header .logo img {
+    display: inline-block;
+  }
+  .distill-site-header .nav-left {
+    margin-left: 20px;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 20px;
+  }
+  .distill-site-header .title {
+    padding-left: 12px;
+  }
+}
+
+
+.distill-site-header .nav-toggle {
+  display: none;
+}
+
+.nav-dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.nav-dropdown .nav-dropbtn {
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 16px 10px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  margin-top: 1px;
+  z-index: 2;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 200px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 2px;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-dropdown-content hr {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dropdown-active {
+  display: block;
+}
+
+.nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+  color: black;
+  padding: 6px 24px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.nav-dropdown-content .nav-dropdown-header {
+  display: block;
+  padding: 5px 24px;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropbtn {
+  color: white;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.nav-right .nav-dropdown-content {
+  margin-left: -45%;
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+  .distill-site-header a.nav-toggle {
+    float: right;
+    display: block;
+  }
+  .distill-site-header .title {
+    margin-left: 0;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 0;
+  }
+  .distill-site-header {
+    overflow: hidden;
+  }
+  .nav-right .nav-dropdown-content {
+    margin-left: 0;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-header.responsive {position: relative; min-height: 500px; }
+  .distill-site-header.responsive a.nav-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .distill-site-header.responsive a,
+  .distill-site-header.responsive .nav-dropdown {
+    display: block;
+    text-align: left;
+  }
+  .distill-site-header.responsive .nav-left,
+  .distill-site-header.responsive .nav-right {
+    width: 100%;
+  }
+  .distill-site-header.responsive .nav-dropdown {float: none;}
+  .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+  .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Site Footer */
+
+.distill-site-footer {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 3;
+  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Headroom */
+
+d-title {
+  padding-top: 6rem;
+}
+
+@media print {
+  d-title {
+    padding-top: 4rem;
+  }
+}
+
+.headroom {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.headroom--transition {
+  transition: all .4s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+/* adjust viewport for navbar height */
+/* helps vertically center bootstrap (non-distill) content */
+.min-vh-100 {
+  min-height: calc(100vh - 100px) !important;
+}
+
+</style>
+
+<script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+<link href="../../site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+<link href="../../site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+<script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
+<script src="../../site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+<script src="../../site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+<script type="application/javascript">
+
+function getMeta(metaName) {
+  var metas = document.getElementsByTagName('meta');
+  for (let i = 0; i < metas.length; i++) {
+    if (metas[i].getAttribute('name') === metaName) {
+      return metas[i].getAttribute('content');
+    }
+  }
+  return '';
+}
+
+function offsetURL(url) {
+  var offset = getMeta('distill:offset');
+  return offset ? offset + '/' + url : url;
+}
+
+function createFuseIndex() {
+
+  // create fuse index
+  var options = {
+    keys: [
+      { name: 'title', weight: 20 },
+      { name: 'categories', weight: 15 },
+      { name: 'description', weight: 10 },
+      { name: 'contents', weight: 5 },
+    ],
+    ignoreLocation: true,
+    threshold: 0
+  };
+  var fuse = new window.Fuse([], options);
+
+  // fetch the main search.json
+  return fetch(offsetURL('search.json'))
+    .then(function(response) {
+      if (response.status == 200) {
+        return response.json().then(function(json) {
+          // index main articles
+          json.articles.forEach(function(article) {
+            fuse.add(article);
+          });
+          // download collections and index their articles
+          return Promise.all(json.collections.map(function(collection) {
+            return fetch(offsetURL(collection)).then(function(response) {
+              if (response.status === 200) {
+                return response.json().then(function(articles) {
+                  articles.forEach(function(article) {
+                    fuse.add(article);
+                  });
+                })
+              } else {
+                return Promise.reject(
+                  new Error('Unexpected status from search index request: ' +
+                            response.status)
+                );
+              }
+            });
+          })).then(function() {
+            return fuse;
+          });
+        });
+
+      } else {
+        return Promise.reject(
+          new Error('Unexpected status from search index request: ' +
+                      response.status)
+        );
+      }
+    });
+}
+
+window.document.addEventListener("DOMContentLoaded", function (event) {
+
+  // get search element (bail if we don't have one)
+  var searchEl = window.document.getElementById('distill-search');
+  if (!searchEl)
+    return;
+
+  createFuseIndex()
+    .then(function(fuse) {
+
+      // make search box visible
+      searchEl.classList.remove('hidden');
+
+      // initialize autocomplete
+      var options = {
+        autoselect: true,
+        hint: false,
+        minLength: 2,
+      };
+      window.autocomplete(searchEl, options, [{
+        source: function(query, callback) {
+          const searchOptions = {
+            isCaseSensitive: false,
+            shouldSort: true,
+            minMatchCharLength: 2,
+            limit: 10,
+          };
+          var results = fuse.search(query, searchOptions);
+          callback(results
+            .map(function(result) { return result.item; })
+          );
+        },
+        templates: {
+          suggestion: function(suggestion) {
+            var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+              ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+              : '';
+            var html = `
+              <div class="search-item">
+                <h3>${suggestion.title}</h3>
+                <div class="search-item-description">
+                  ${suggestion.description || ''}
+                </div>
+                <div class="search-item-preview">
+                  ${img}
+                </div>
+              </div>
+            `;
+            return html;
+          }
+        }
+      }]).on('autocomplete:selected', function(event, suggestion) {
+        window.location.href = offsetURL(suggestion.path);
+      });
+      // remove inline display style on autocompleter (we want to
+      // manage responsive display via css)
+      $('.algolia-autocomplete').css("display", "");
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+
+});
+
+</script>
+
+<style type="text/css">
+
+.nav-search {
+  font-size: x-small;
+}
+
+/* Algolioa Autocomplete */
+
+.algolia-autocomplete {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: sub;
+  background-color: white;
+  color: black;
+  padding: 6px;
+  padding-top: 8px;
+  padding-bottom: 0;
+  border-radius: 6px;
+  border: 1px #0F2E3D solid;
+  width: 180px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-nav .algolia-autocomplete {
+    display: none;
+    visibility: hidden;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete {
+    display: inline-block;
+    visibility: visible;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+    margin-left: 0;
+    width: 400px;
+    max-height: 400px;
+  }
+}
+
+.algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+  width: 90%;
+  outline: none;
+  border: none;
+}
+
+.algolia-autocomplete .aa-hint {
+  color: #999;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+  width: 550px;
+  max-height: 70vh;
+  overflow-x: visible;
+  overflow-y: scroll;
+  padding: 5px;
+  margin-top: 3px;
+  margin-left: -150px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #999;
+  border-top: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+  cursor: pointer;
+  padding: 5px 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+  border-bottom: none;
+  margin-bottom: 2px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+  overflow: hidden;
+  font-size: 0.8em;
+  line-height: 1.4em;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+  font-size: 1rem;
+  margin-block-start: 0;
+  margin-block-end: 5px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+  display: inline-block;
+  overflow: hidden;
+  height: 2.8em;
+  width: 80%;
+  margin-right: 4%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+  display: inline-block;
+  width: 15%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+  height: 3em;
+  width: auto;
+  display: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+  display: initial;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+  background-color: #eee;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+</style>
+
+
+<!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+<style type="text/css">
+
+body {
+  background-color: white;
+}
+
+.pandoc-table {
+  width: 100%;
+}
+
+.pandoc-table>caption {
+  margin-bottom: 10px;
+}
+
+.pandoc-table th:not([align]) {
+  text-align: left;
+}
+
+.pagedtable-footer {
+  font-size: 15px;
+}
+
+d-byline .byline {
+  grid-template-columns: 2fr 2fr;
+}
+
+d-byline .byline h3 {
+  margin-block-start: 1.5em;
+}
+
+d-byline .byline .authors-affiliations h3 {
+  margin-block-start: 0.5em;
+}
+
+.authors-affiliations .orcid-id {
+  width: 16px;
+  height:16px;
+  margin-left: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+  padding-bottom: 2px;
+}
+
+d-title .dt-tags {
+  margin-top: 1em;
+  grid-column: text;
+}
+
+.dt-tags .dt-tag {
+  text-decoration: none;
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0em 0.4em;
+  margin-right: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 70%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+d-article table.gt_table td,
+d-article table.gt_table th {
+  border-bottom: none;
+}
+
+.html-widget {
+  margin-bottom: 2.0em;
+}
+
+.l-screen-inset {
+  padding-right: 16px;
+}
+
+.l-screen .caption {
+  margin-left: 10px;
+}
+
+.shaded {
+  background: rgb(247, 247, 247);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .html-widget {
+  margin-bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .shaded-content {
+  background: white;
+}
+
+.text-output {
+  margin-top: 0;
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+d-article {
+  padding-top: 2.5rem;
+  padding-bottom: 30px;
+}
+
+d-appendix {
+  padding-top: 30px;
+}
+
+d-article>p>img {
+  width: 100%;
+}
+
+d-article h2 {
+  margin: 1rem 0 1.5rem 0;
+}
+
+d-article h3 {
+  margin-top: 1.5rem;
+}
+
+d-article iframe {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 2.0em;
+  width: 100%;
+}
+
+/* Tweak code blocks */
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: auto;
+}
+
+d-article div.sourceCode {
+  background-color: white;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 10px;
+  font-size: 12px;
+  border-left: 2px solid rgba(0,0,0,0.1);
+}
+
+d-article pre {
+  font-size: 12px;
+  color: black;
+  background: none;
+  margin-top: 0;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+d-article pre a {
+  border-bottom: none;
+}
+
+d-article pre a:hover {
+  border-bottom: none;
+  text-decoration: underline;
+}
+
+d-article details {
+  grid-column: text;
+  margin-bottom: 0.8em;
+}
+
+@media(min-width: 768px) {
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: visible !important;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+d-article pre {
+  font-size: 14px;
+}
+
+}
+
+figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* CSS for d-contents */
+
+.d-contents {
+  grid-column: text;
+  color: rgba(0,0,0,0.8);
+  font-size: 0.9em;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 0.25em;
+  justify-self: start;
+}
+
+@media(min-width: 1000px) {
+  .d-contents.d-contents-float {
+    height: 0;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: center;
+    padding-right: 3em;
+    padding-left: 2em;
+  }
+}
+
+.d-contents nav h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.d-contents li {
+  list-style-type: none
+}
+
+.d-contents nav > ul {
+  padding-left: 0;
+}
+
+.d-contents ul {
+  padding-left: 1em
+}
+
+.d-contents nav ul li {
+  margin-top: 0.6em;
+  margin-bottom: 0.2em;
+}
+
+.d-contents nav a {
+  font-size: 13px;
+  border-bottom: none;
+  text-decoration: none
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.d-contents nav a:hover {
+  text-decoration: underline solid rgba(0, 0, 0, 0.6)
+}
+
+.d-contents nav > ul > li > a {
+  font-weight: 600;
+}
+
+.d-contents nav > ul > li > ul {
+  font-weight: inherit;
+}
+
+.d-contents nav > ul > li > ul > li {
+  margin-top: 0.2em;
+}
+
+
+.d-contents nav ul {
+  margin-top: 0;
+  margin-bottom: 0.25em;
+}
+
+.d-article-with-toc h2:nth-child(2) {
+  margin-top: 0;
+}
+
+
+/* Figure */
+
+.figure {
+  position: relative;
+  margin-bottom: 2.5em;
+  margin-top: 1.5em;
+}
+
+.figure img {
+  width: 100%;
+}
+
+.figure .caption {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5em;
+}
+
+.figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.figure .caption a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.figure .caption b,
+.figure .caption strong, {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+/* Citations */
+
+d-article .citation {
+  color: inherit;
+  cursor: inherit;
+}
+
+div.hanging-indent{
+  margin-left: 1em; text-indent: -1em;
+}
+
+/* Citation hover box */
+
+.tippy-box[data-theme~=light-border] {
+  background-color: rgba(250, 250, 250, 0.95);
+}
+
+.tippy-content > p {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+
+/* Tweak 1000px media break to show more text */
+
+@media(min-width: 1000px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 16px;
+  }
+
+  .grid {
+    grid-column-gap: 16px;
+  }
+
+  d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+  }
+  figure .caption, .figure .caption, figure figcaption {
+    font-size: 13px;
+  }
+}
+
+@media(min-width: 1180px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 32px;
+  }
+
+  .grid {
+    grid-column-gap: 32px;
+  }
+}
+
+
+/* Get the citation styles for the appendix (not auto-injected on render since
+   we do our own rendering of the citation appendix) */
+
+d-appendix .citation-appendix,
+.d-appendix .citation-appendix {
+  font-size: 11px;
+  line-height: 15px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 18px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.02);
+  padding: 10px 18px;
+  border-radius: 3px;
+  color: rgba(150, 150, 150, 1);
+  overflow: hidden;
+  margin-top: -12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Include appendix styles here so they can be overridden */
+
+d-appendix {
+  contain: layout style;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-top: 60px;
+  margin-bottom: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0,0,0,0.5);
+  padding-top: 60px;
+  padding-bottom: 48px;
+}
+
+d-appendix h3 {
+  grid-column: page-start / text-start;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.65);
+}
+
+d-appendix h3 + * {
+  margin-top: 1em;
+}
+
+d-appendix ol {
+  padding: 0 0 0 15px;
+}
+
+@media (min-width: 768px) {
+  d-appendix ol {
+    padding: 0 0 0 30px;
+    margin-left: -30px;
+  }
+}
+
+d-appendix li {
+  margin-bottom: 1em;
+}
+
+d-appendix a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+d-appendix > * {
+  grid-column: text;
+}
+
+d-appendix > d-footnote-list,
+d-appendix > d-citation-list,
+d-appendix > distill-appendix {
+  grid-column: screen;
+}
+
+/* Include footnote styles here so they can be overridden */
+
+d-footnote-list {
+  contain: layout style;
+}
+
+d-footnote-list > * {
+  grid-column: text;
+}
+
+d-footnote-list a.footnote-backlink {
+  color: rgba(0,0,0,0.3);
+  padding-left: 0.5em;
+}
+
+
+
+/* Anchor.js */
+
+.anchorjs-link {
+  /*transition: all .25s linear; */
+  text-decoration: none;
+  border-bottom: none;
+}
+*:hover > .anchorjs-link {
+  margin-left: -1.125em !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Social footer */
+
+.social_footer {
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.67);
+}
+
+.disqus-comments {
+  margin-right: 30px;
+}
+
+.disqus-comment-count {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#disqus_thread {
+  margin-top: 30px;
+}
+
+.article-sharing a {
+  border-bottom: none;
+  margin-right: 8px;
+}
+
+.article-sharing a:hover {
+  border-bottom: none;
+}
+
+.sidebar-section.subscribe {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.subscribe p {
+  margin-bottom: 0.5em;
+}
+
+
+.article-footer .subscribe {
+  font-size: 15px;
+  margin-top: 45px;
+}
+
+
+.sidebar-section.custom {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.custom p {
+  margin-bottom: 0.5em;
+}
+
+/* Styles for listing layout (hide title) */
+.layout-listing d-title, .layout-listing .d-title {
+  display: none;
+}
+
+/* Styles for posts lists (not auto-injected) */
+
+
+.posts-with-sidebar {
+  padding-left: 45px;
+  padding-right: 45px;
+}
+
+.posts-list .description h2,
+.posts-list .description p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.posts-list .description h2 {
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.posts-list h2.post-tag {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 12px;
+}
+.posts-list {
+  margin-top: 60px;
+  margin-bottom: 24px;
+}
+
+.posts-list .post-preview {
+  text-decoration: none;
+  overflow: hidden;
+  display: block;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+}
+
+.post-preview-last {
+  border-bottom: none !important;
+}
+
+.posts-list .posts-list-caption {
+  grid-column: screen;
+  font-weight: 400;
+}
+
+.posts-list .post-preview h2 {
+  margin: 0 0 6px 0;
+  line-height: 1.2em;
+  font-style: normal;
+  font-size: 24px;
+}
+
+.posts-list .post-preview p {
+  margin: 0 0 12px 0;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+.posts-list .post-preview .thumbnail {
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  position: relative;
+  max-width: 500px;
+}
+.posts-list .post-preview img {
+  width: 100%;
+  display: block;
+}
+
+.posts-list .metadata {
+  font-size: 12px;
+  line-height: 1.4em;
+  margin-bottom: 18px;
+}
+
+.posts-list .metadata > * {
+  display: inline-block;
+}
+
+.posts-list .metadata .publishedDate {
+  margin-right: 2em;
+}
+
+.posts-list .metadata .dt-authors {
+  display: block;
+  margin-top: 0.3em;
+  margin-right: 2em;
+}
+
+.posts-list .dt-tags {
+  display: block;
+  line-height: 1em;
+}
+
+.posts-list .dt-tags .dt-tag {
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0.3em 0.4em;
+  margin-right: 0.2em;
+  margin-bottom: 0.4em;
+  font-size: 60%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.posts-list img {
+  opacity: 1;
+}
+
+.posts-list img[data-src] {
+  opacity: 0;
+}
+
+.posts-more {
+  clear: both;
+}
+
+
+.posts-sidebar {
+  font-size: 16px;
+}
+
+.posts-sidebar h3 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.categories ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categories li {
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0;
+}
+
+.categories li>a {
+  border-bottom: none;
+}
+
+.categories li>a:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.categories .active {
+  font-weight: 600;
+}
+
+.categories .category-count {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+@media(min-width: 768px) {
+  .posts-list .post-preview h2 {
+    font-size: 26px;
+  }
+  .posts-list .post-preview .thumbnail {
+    float: right;
+    width: 30%;
+    margin-bottom: 0;
+  }
+  .posts-list .post-preview .description {
+    float: left;
+    width: 45%;
+  }
+  .posts-list .post-preview .metadata {
+    float: left;
+    width: 20%;
+    margin-top: 8px;
+  }
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.5em;
+    font-size: 16px;
+  }
+  .posts-with-sidebar .posts-list {
+    float: left;
+    width: 75%;
+  }
+  .posts-with-sidebar .posts-sidebar {
+    float: right;
+    width: 20%;
+    margin-top: 60px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+
+/* Improve display for browsers without grid (IE/Edge <= 15) */
+
+.downlevel {
+  line-height: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+}
+
+.downlevel .d-title {
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+}
+
+.downlevel .d-title h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1em;
+  margin: 0 0 0.5rem;
+}
+
+.downlevel .d-title p {
+  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.55em;
+  margin-top: 0;
+}
+
+.downlevel .d-byline {
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  font-size: 0.8rem;
+  line-height: 1.8em;
+}
+
+.downlevel .section-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.downlevel .d-article {
+  font-size: 1.06rem;
+  line-height: 1.7em;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+
+.downlevel .d-appendix {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: none;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.5);
+  padding-top: 40px;
+  padding-bottom: 48px;
+}
+
+.downlevel .footnotes ol {
+  padding-left: 13px;
+}
+
+.downlevel .base-grid,
+.downlevel .distill-header,
+.downlevel .d-title,
+.downlevel .d-abstract,
+.downlevel .d-article,
+.downlevel .d-appendix,
+.downlevel .distill-appendix,
+.downlevel .d-byline,
+.downlevel .d-footnote-list,
+.downlevel .d-citation-list,
+.downlevel .distill-footer,
+.downlevel .appendix-bottom,
+.downlevel .posts-container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media(min-width: 768px) {
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+  padding-left: 150px;
+  padding-right: 150px;
+  max-width: 900px;
+}
+}
+
+.downlevel pre code {
+  display: block;
+  border-left: 2px solid rgba(0, 0, 0, .1);
+  padding: 0 0 0 20px;
+  font-size: 14px;
+}
+
+.downlevel code, .downlevel pre {
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+.downlevel .posts-list .post-preview {
+  color: inherit;
+}
+
+
+
+</style>
+
+<script type="application/javascript">
+
+function is_downlevel_browser() {
+  if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                 window.navigator.userAgent)) {
+    return true;
+  } else {
+    return window.load_distill_framework === undefined;
+  }
+}
+
+// show body when load is complete
+function on_load_complete() {
+
+  // add anchors
+  if (window.anchors) {
+    window.anchors.options.placement = 'left';
+    window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+  }
+
+
+  // set body to visible
+  document.body.style.visibility = 'visible';
+
+  // force redraw for leaflet widgets
+  if (window.HTMLWidgets) {
+    var maps = window.HTMLWidgets.findAll(".leaflet");
+    $.each(maps, function(i, el) {
+      var map = this.getMap();
+      map.invalidateSize();
+      map.eachLayer(function(layer) {
+        if (layer instanceof L.TileLayer)
+          layer.redraw();
+      });
+    });
+  }
+
+  // trigger 'shown' so htmlwidgets resize
+  $('d-article').trigger('shown');
+}
+
+function init_distill() {
+
+  init_common();
+
+  // create front matter
+  var front_matter = $('<d-front-matter></d-front-matter>');
+  $('#distill-front-matter').wrap(front_matter);
+
+  // create d-title
+  $('.d-title').changeElementType('d-title');
+
+  // create d-byline
+  var byline = $('<d-byline></d-byline>');
+  $('.d-byline').replaceWith(byline);
+
+  // create d-article
+  var article = $('<d-article></d-article>');
+  $('.d-article').wrap(article).children().unwrap();
+
+  // move posts container into article
+  $('.posts-container').appendTo($('d-article'));
+
+  // create d-appendix
+  $('.d-appendix').changeElementType('d-appendix');
+
+  // flag indicating that we have appendix items
+  var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+  // replace footnotes with <d-footnote>
+  $('.footnote-ref').each(function(i, val) {
+    appendix = true;
+    var href = $(this).attr('href');
+    var id = href.replace('#', '');
+    var fn = $('#' + id);
+    var fn_p = $('#' + id + '>p');
+    fn_p.find('.footnote-back').remove();
+    var text = fn_p.html();
+    var dtfn = $('<d-footnote></d-footnote>');
+    dtfn.html(text);
+    $(this).replaceWith(dtfn);
+  });
+  // remove footnotes
+  $('.footnotes').remove();
+
+  // move refs into #references-listing
+  $('#references-listing').replaceWith($('#refs'));
+
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    var id = $(this).attr('id');
+    $('.d-contents a[href="#' + id + '"]').parent().remove();
+    appendix = true;
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+  });
+
+  // show d-appendix if we have appendix content
+  $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+  // localize layout chunks to just output
+  $('.layout-chunk').each(function(i, val) {
+
+    // capture layout
+    var layout = $(this).attr('data-layout');
+
+    // apply layout to markdown level block elements
+    var elements = $(this).children().not('details, div.sourceCode, pre, script');
+    elements.each(function(i, el) {
+      var layout_div = $('<div class="' + layout + '"></div>');
+      if (layout_div.hasClass('shaded')) {
+        var shaded_content = $('<div class="shaded-content"></div>');
+        $(this).wrap(shaded_content);
+        $(this).parent().wrap(layout_div);
+      } else {
+        $(this).wrap(layout_div);
+      }
+    });
+
+
+    // unwrap the layout-chunk div
+    $(this).children().unwrap();
+  });
+
+  // remove code block used to force  highlighting css
+  $('.distill-force-highlighting-css').parent().remove();
+
+  // remove empty line numbers inserted by pandoc when using a
+  // custom syntax highlighting theme
+  $('code.sourceCode a:empty').remove();
+
+  // load distill framework
+  load_distill_framework();
+
+  // wait for window.distillRunlevel == 4 to do post processing
+  function distill_post_process() {
+
+    if (!window.distillRunlevel || window.distillRunlevel < 4)
+      return;
+
+    // hide author/affiliations entirely if we have no authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+    if (!have_authors)
+      $('d-byline').addClass('hidden');
+
+    // article with toc class
+    $('.d-contents').parent().addClass('d-article-with-toc');
+
+    // strip links that point to #
+    $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+    // add orcid ids
+    $('.authors-affiliations').find('.author').each(function(i, el) {
+      var orcid_id = front_matter.authors[i].orcidID;
+      if (orcid_id) {
+        var a = $('<a></a>');
+        a.attr('href', 'https://orcid.org/' + orcid_id);
+        var img = $('<img></img>');
+        img.addClass('orcid-id');
+        img.attr('alt', 'ORCID ID');
+        img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+        a.append(img);
+        $(this).append(a);
+      }
+    });
+
+    // hide elements of author/affiliations grid that have no value
+    function hide_byline_column(caption) {
+      $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+    }
+
+    // affiliations
+    var have_affiliations = false;
+    for (var i = 0; i<front_matter.authors.length; ++i) {
+      var author = front_matter.authors[i];
+      if (author.affiliation !== "&nbsp;") {
+        have_affiliations = true;
+        break;
+      }
+    }
+    if (!have_affiliations)
+      $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+    // published date
+    if (!front_matter.publishedDate)
+      hide_byline_column("Published");
+
+    // document object identifier
+    var doi = $('d-byline').find('h3:contains("DOI")');
+    var doi_p = doi.next().empty();
+    if (!front_matter.doi) {
+      // if we have a citation and valid citationText then link to that
+      if ($('#citation').length > 0 && front_matter.citationText) {
+        doi.html('Citation');
+        $('<a href="#citation"></a>')
+          .text(front_matter.citationText)
+          .appendTo(doi_p);
+      } else {
+        hide_byline_column("DOI");
+      }
+    } else {
+      $('<a></a>')
+         .attr('href', "https://doi.org/" + front_matter.doi)
+         .html(front_matter.doi)
+         .appendTo(doi_p);
+    }
+
+     // change plural form of authors/affiliations
+    if (front_matter.authors.length === 1) {
+      var grid = $('.authors-affiliations');
+      grid.children('h3:contains("Authors")').text('Author');
+      grid.children('h3:contains("Affiliations")').text('Affiliation');
+    }
+
+    // remove d-appendix and d-footnote-list local styles
+    $('d-appendix > style:first-child').remove();
+    $('d-footnote-list > style:first-child').remove();
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // hoverable references
+    $('span.citation[data-cites]').each(function() {
+      var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+      window.tippy(this, {
+        allowHTML: true,
+        content: refHtml,
+        maxWidth: 500,
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start'
+      });
+    });
+
+    // clear polling timer
+    clearInterval(tid);
+
+    // show body now that everything is ready
+    on_load_complete();
+  }
+
+  var tid = setInterval(distill_post_process, 50);
+  distill_post_process();
+
+}
+
+function init_downlevel() {
+
+  init_common();
+
+   // insert hr after d-title
+  $('.d-title').after($('<hr class="section-separator"/>'));
+
+  // check if we have authors
+  var front_matter = JSON.parse($("#distill-front-matter").html());
+  var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+  // manage byline/border
+  if (!have_authors)
+    $('.d-byline').remove();
+  $('.d-byline').after($('<hr class="section-separator"/>'));
+  $('.d-byline a').remove();
+
+  // remove toc
+  $('.d-contents').remove();
+
+  // move appendix elements
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+  });
+
+
+  // inject headers into references and footnotes
+  var refs_header = $('<h3></h3>');
+  refs_header.text('References');
+  $('#refs').prepend(refs_header);
+
+  var footnotes_header = $('<h3></h3');
+  footnotes_header.text('Footnotes');
+  $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+  // move appendix-bottom entries to the bottom
+  $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+  $('.appendix-bottom').remove();
+
+  // remove appendix if it's empty
+  if ($('.d-appendix').children().length === 0)
+    $('.d-appendix').remove();
+
+  // prepend separator above appendix
+  $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+  // trim code
+  $('pre>code').each(function(i, val) {
+    $(this).html($.trim($(this).html()));
+  });
+
+  // move posts-container right before article
+  $('.posts-container').insertBefore($('.d-article'));
+
+  $('body').addClass('downlevel');
+
+  on_load_complete();
+}
+
+
+function init_common() {
+
+  // jquery plugin to change element types
+  (function($) {
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+        attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+        return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+  })(jQuery);
+
+  // prevent underline for linked images
+  $('a > img').parent().css({'border-bottom' : 'none'});
+
+  // mark non-body figures created by knitr chunks as 100% width
+  $('.layout-chunk').each(function(i, val) {
+    var figures = $(this).find('img, .html-widget');
+    if ($(this).attr('data-layout') !== "l-body") {
+      figures.css('width', '100%');
+    } else {
+      figures.css('max-width', '100%');
+      figures.filter("[width]").each(function(i, val) {
+        var fig = $(this);
+        fig.css('width', fig.attr('width') + 'px');
+      });
+
+    }
+  });
+
+  // auto-append index.html to post-preview links in file: protocol
+  // and in rstudio ide preview
+  $('.post-preview').each(function(i, val) {
+    if (window.location.protocol === "file:")
+      $(this).attr('href', $(this).attr('href') + "index.html");
+  });
+
+  // get rid of index.html references in header
+  if (window.location.protocol !== "file:") {
+    $('.distill-site-header a[href]').each(function(i,val) {
+      $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+    });
+  }
+
+  // add class to pandoc style tables
+  $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+  $('.kable-table').children('table').addClass('pandoc-table');
+
+  // add figcaption style to table captions
+  $('caption').parent('table').addClass("figcaption");
+
+  // initialize posts list
+  if (window.init_posts_list)
+    window.init_posts_list();
+
+  // implmement disqus comment link
+  $('.disqus-comment-count').click(function() {
+    window.headroom_prevent_pin = true;
+    $('#disqus_thread').toggleClass('hidden');
+    if (!$('#disqus_thread').hasClass('hidden')) {
+      var offset = $(this).offset();
+      $(window).resize();
+      $('html, body').animate({
+        scrollTop: offset.top - 35
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (is_downlevel_browser())
+    init_downlevel();
+  else
+    window.addEventListener('WebComponentsReady', init_distill);
+});
+
+</script>
+
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    sans-serif;
+  --mono-font:       monospace;
+  --body-font:       sans-serif;
+  --navbar-font:     sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+</style>
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #881C03;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    'Fira Mono', sans-serif;
+  --mono-font:       monospace;
+  --body-font:       'Lato', sans-serif;
+  --navbar-font:     'Roboto', sans-serif;        /* edited */
+  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       white;
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #007fff;
+  --font-weight:      900;
+}
+
+
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+
+body {
+  background-color: whitesmoke;
+}
+
+/* snow, milk, ivory, pearl, paper, corn silk, seashell, linen, cream, alabaster */
+
+.screenshot {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}</style>
+<style type="text/css">
+/* base style */
+
+/* FONT FAMILIES */
+
+:root {
+  --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+body,
+.posts-list .post-preview p,
+.posts-list .description p {
+  font-family: var(--body-font), var(--body-default);
+}
+
+h1, h2, h3, h4, h5, h6,
+.posts-list .post-preview h2,
+.posts-list .description h2 {
+  font-family: var(--heading-font), var(--heading-default);
+}
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: var(--mono-font), var(--mono-default);
+}
+
+
+/*-- TITLE --*/
+d-title h1,
+.posts-list > h1 {
+  color: var(--title-color, black);
+}
+
+d-title h1 {
+  font-size: var(--title-size, 50px);
+}
+
+/*-- HEADERS --*/
+d-article h1,
+d-article h2,
+d-article h3,
+d-article h4,
+d-article h5,
+d-article h6 {
+  color: var(--header-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- BODY --*/
+d-article > p,  /* only text inside of <p> tags */
+d-article > ul, /* lists */
+d-article > ol {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+  font-size: var(--body-size, 1.06rem);
+}
+
+
+/*-- CODE --*/
+d-article div.sourceCode code,
+d-article pre code {
+  font-size: var(--code-size, 14px);
+}
+
+/*-- ASIDE --*/
+d-article aside {
+  font-size: var(--aside-size, 12px);
+  color: var(--aside-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- FIGURE CAPTIONS --*/
+figure .caption,
+figure figcaption,
+.figure .caption {
+  font-size: var(--fig-cap-size, 13px);
+  color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- METADATA --*/
+d-byline h3 {
+  font-size: var(--heading-size, 0.6rem);
+  color: var(--heading-color, rgba(0, 0, 0, 0.5));
+}
+
+d-byline {
+  font-size: var(--body-size, 0.8rem);
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+d-byline a,
+d-article d-byline a {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- TABLE OF CONTENTS --*/
+.d-contents nav h3 {
+  font-size: var(--heading-size, 18px);
+}
+
+.d-contents nav a {
+  font-size: var(--contents-size, 13px);
+}
+
+/*-- APPENDIX --*/
+d-appendix h3 {
+  font-size: var(--heading-size, 15px);
+  color: var(--heading-color, rgba(0, 0, 0, 0.65));
+}
+
+d-appendix {
+  font-size: var(--text-size, 0.8em);
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+d-appendix d-footnote-list a.footnote-backlink {
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+.distill-site-header .title {
+  font-size: var(--title-size, 18px);
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.distill-site-header a,
+.nav-dropdown .nav-dropbtn {
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.nav-dropdown .nav-dropbtn {
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  font-size: var(--text-size, 15px);
+}
+
+.distill-site-header a:hover,
+.nav-dropdown:hover .nav-dropbtn {
+  color: var(--hover-color, white);
+}
+
+.distill-site-header {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer a:hover {
+  color: var(--hover-color, white);
+}</style>
+<!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.9/header-attrs.js"></script>
+  <link href="../../site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="../../site_libs/panelset-0.2.6/panelset.js"></script>
+  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
+  <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="../../site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="../../site_libs/anchor-4.2.2/anchor.min.js"></script>
+  <script src="../../site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="../../site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+<!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"An exploratory analysis to Mastery Curve in LoR","description":"Applying the concept of Learning Curve to Legends of Runeterras' decks.","authors":[{"author":"Valentino (Legna) Vazzoler","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-07-19T00:00:00.000+02:00","citationText":"Vazzoler, 2021"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a class="logo">
+<img src="../../images/logo.png" alt="Logo"/>
+</a>
+<a href="../../index.html" class="title">LLoRR Stats</a>
+<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
+</div>
+<div class="nav-right">
+<a href="../../index.html">Home</a>
+<a href="../../report.html">MetaReport</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Blog
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="../../analysis.html">Analysis</a>
+<hr/>
+<a href="../../blog.html">Other</a>
+</div>
+</div>
+<a href="../../about.html">About</a>
+<a href="https://github.com/MaouLegna">
+<i class="fab fa-github-alt fa-1x" aria-hidden="true"></i>
+</a>
+<a href="https://twitter.com/Maou_Legna">
+<i class="fab fa-twitter fa-1x" aria-hidden="true"></i>
+</a>
+<a href="https://rpubs.com/Legna">
+<i class="fab fa-r-project" aria-hidden="true"></i>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>An exploratory analysis to Mastery Curve in LoR</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p><p>Applying the concept of Learning Curve to Legends of Runeterras’ decks.</p></p>
+</div>
+
+<div class="d-byline">
+  Valentino (Legna) Vazzoler  
+  
+<br/>07-19-2021
+</div>
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#introduction"><strong>INTRODUCTION</strong></a></li>
+<li><a href="#materials-and-method"><strong>MATERIALS AND METHOD</strong></a>
+<ul>
+<li><a href="#data"><strong>Data</strong></a></li>
+<li><a href="#creating-the-curve"><strong>Creating the curve</strong></a>
+<ul>
+<li><a href="#lurk">Lurk</a></li>
+<li><a href="#chrono-squad">Chrono Squad</a></li>
+<li><a href="#jinxlulu">Jinx/Lulu</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#conlusions"><strong>Conlusions</strong></a></li>
+</ul>
+</nav>
+</div>
+<h1 id="introduction"><strong>INTRODUCTION</strong></h1>
+<p>Win rate is the most common and most useful metric when evaluating a deck in a Collectible Card Games (CCG) but that value alone may not tell the full story. In Legends of Runeterra (LoR), a common example for saying that the win rate alone isn’t enough is citing “Lee Sin (MT/IO)” decks.</p>
+<p>In the ladder, acroos all Masters’ players, even when LeeSin win rate was only ranging around 50% it was considered an undisputed Tier-1 choice (similar now with Akshan/Lee?), so why was as such when it wasn’t an highly performing deck? Because:</p>
+<ul>
+<li><p>It was a strong option in a more controlled format like during tournaments</p></li>
+<li><p>Because that win rate included both “noobs” and more experienced player with the deck. It is a common opinion in the community that only after playing an huge amount of games with Lee that a player would learn how to pilot the deck and bring it to its fullest potential, changing radically the match ups more in its favor.</p></li>
+</ul>
+<p>From my knowledge there’s no <strong>hard data</strong> to support the claim but just the overall feeling from the community, but this doesn’t mean that the hyphotesis is not solid. Learning curve are a thing and in the context of “Runeterra” it was perfectly showed by an ex-Rioter when talking about certain champion learning-curve in League of Legends (LoL)</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="esplore-lor-mastery-curve_files/figure-html5/tweet1-1.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<p>The reason I’m showing this tweet as an example should be easy to understand: here, I’ll try to replicate those graphs for LoR.</p>
+<h1 id="materials-and-method"><strong>MATERIALS AND METHOD</strong></h1>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<h2 id="data"><strong>Data</strong></h2>
+<p>The dataset consist of at most <strong>137270</strong> games played after the application of patch 2.11 so after <strong>2021-06-30 19:00:00 CEST</strong>.</p>
+<p>These are games collected following two criteria:</p>
+<ul>
+<li><p>Games from Master players</p></li>
+<li><p>Games from the previous top32 players from the latest Seasonal (EU and NA).</p></li>
+</ul>
+<p>From these I filtered the games only on Constructed pvp modes (Normal,Ranked,StandardGauntlet,Bo3ChallengeLobby). <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>With 2.12 there has been an addition of several cards that heavily affected the metagame so there’s a case to restrict the analysis only to games on the same patch (2_11 or 2_12). In addition, since we are talking about learning curve it may be intuitive to leave all games between two human players (all pvp constructed modes) but some may think that it’s only appropriate to limit the data to Ranked games. By considering both factors the data we start with are distributed like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div id="jvxdouvjvg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#jvxdouvjvg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jvxdouvjvg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jvxdouvjvg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jvxdouvjvg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jvxdouvjvg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jvxdouvjvg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jvxdouvjvg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jvxdouvjvg .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jvxdouvjvg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jvxdouvjvg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jvxdouvjvg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jvxdouvjvg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jvxdouvjvg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#jvxdouvjvg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jvxdouvjvg .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jvxdouvjvg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jvxdouvjvg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#jvxdouvjvg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jvxdouvjvg .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#jvxdouvjvg .gt_left {
+  text-align: left;
+}
+
+#jvxdouvjvg .gt_center {
+  text-align: center;
+}
+
+#jvxdouvjvg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jvxdouvjvg .gt_font_normal {
+  font-weight: normal;
+}
+
+#jvxdouvjvg .gt_font_bold {
+  font-weight: bold;
+}
+
+#jvxdouvjvg .gt_font_italic {
+  font-style: italic;
+}
+
+#jvxdouvjvg .gt_super {
+  font-size: 65%;
+}
+
+#jvxdouvjvg .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>N</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_11</strong>, N = 56,161<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_12</strong>, N = 81,109<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">pvp</td>
+<td class="gt_row gt_center">137,270</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center"></td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">notRanked</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">5,608 (10.0%)</td>
+<td class="gt_row gt_center">21,437 (26%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Ranked</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">50,553 (90%)</td>
+<td class="gt_row gt_center">59,672 (74%)</td></tr>
+  </tbody>
+  
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="4">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          n (%)
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<hr />
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<p>While this is the available dataset one should ask: which decks should I check? They need of course be decks that doesn’t exist before patch 2.11 or that they were soo rare that I can assume my reference population didn’t play them at all. Luckily the choice of patch 2.11 is not at random as it introduced a small expansion “Rise of the Underworld” that introduced a couple of new meta decks. In addition it would be wiser to choose decks whose structure is mostly defined by a limited range of choices because of the limited card-pool. In addition</p>
+<p>What follows are decks that I considred potential candidate for this analysis and the respective sample size available:</p>
+<ul>
+<li><p>Lurk (Pyke/Rek’Sai) - n°games: <strong>29959</strong></p></li>
+<li><p>“Chrono Squad” <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> (Ekko/Zilean) - n°games: <strong>3894</strong></p></li>
+<li><p>Yeti - n°games: <strong>1241</strong> with PnZ and n°games: <strong>959</strong> with Noxus - being more popular thanks to the introduction or Abominable Guardian</p></li>
+<li><p>Elnuk - n°games: <strong>412</strong> - being more popular thanks to the introduction or Volunteer Elnuk</p></li>
+<li><p>Lulu/Jinx - n°games: <strong>3724</strong> - not new but very rarely played and not only risen in popularity in 2.12 but also made stronger thanks to Boom Baboon</p></li>
+</ul>
+<p>Those are max numbers of games available, their number could be reduced depending on the subset we would prefer to use like the patch and pvp-mode chosen. This numbers can be seen in Tab:<a href="#tab:table-summary-2">1</a></p>
+<caption>
+<p><span id="tab:table-summary-2">Table 1: </span>Summary table</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body">
+<div id="lppuonwmxs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#lppuonwmxs .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#lppuonwmxs .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#lppuonwmxs .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#lppuonwmxs .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#lppuonwmxs .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#lppuonwmxs .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#lppuonwmxs .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#lppuonwmxs .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lppuonwmxs .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lppuonwmxs .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#lppuonwmxs .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#lppuonwmxs .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#lppuonwmxs .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#lppuonwmxs .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lppuonwmxs .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lppuonwmxs .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#lppuonwmxs .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#lppuonwmxs .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lppuonwmxs .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#lppuonwmxs .gt_left {
+  text-align: left;
+}
+
+#lppuonwmxs .gt_center {
+  text-align: center;
+}
+
+#lppuonwmxs .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#lppuonwmxs .gt_font_normal {
+  font-weight: normal;
+}
+
+#lppuonwmxs .gt_font_bold {
+  font-weight: bold;
+}
+
+#lppuonwmxs .gt_font_italic {
+  font-style: italic;
+}
+
+#lppuonwmxs .gt_super {
+  font-size: 65%;
+}
+
+#lppuonwmxs .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+        <span class="gt_column_spanner"><strong>2_11</strong></span>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+        <span class="gt_column_spanner"><strong>2_12</strong></span>
+      </th>
+    </tr>
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>N</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>notRanked</strong>, N = 1,833<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Ranked</strong>, N = 24,136<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>N</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>notRanked</strong>, N = 3,117<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Ranked</strong>, N = 11,103<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">player</td>
+<td class="gt_row gt_center">25,969</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">14,220</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center"></td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Ekko / Zilean</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">351 (12%)</td>
+<td class="gt_row gt_center">2,661 (88%)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">442 (50%)</td>
+<td class="gt_row gt_center">440 (50%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Elnuk (FR/PZ)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">69 (19%)</td>
+<td class="gt_row gt_center">285 (81%)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">21 (36%)</td>
+<td class="gt_row gt_center">37 (64%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Jinx / Lulu</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">141 (9.3%)</td>
+<td class="gt_row gt_center">1,372 (91%)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">390 (18%)</td>
+<td class="gt_row gt_center">1,821 (82%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Pyke / Rek'Sai</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">1,075 (5.6%)</td>
+<td class="gt_row gt_center">18,225 (94%)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">2,068 (19%)</td>
+<td class="gt_row gt_center">8,591 (81%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Yeti (FR/NX)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">92 (11%)</td>
+<td class="gt_row gt_center">717 (89%)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">111 (74%)</td>
+<td class="gt_row gt_center">39 (26%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Yeti (FR/PZ)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">105 (11%)</td>
+<td class="gt_row gt_center">876 (89%)</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center">85 (33%)</td>
+<td class="gt_row gt_center">175 (67%)</td></tr>
+  </tbody>
+  
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="7">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          n (%)
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<p>As shown in the above table there’s an high number of games of Lurk games but way lower for everything else. Still, using only one example would result on a terrible external validation so it would be better to at least add a couple more cases (not that with just three is much better).</p>
+<p>Looking at the number in Tab:<a href="#tab:table-summary-2">1</a> the best candidate are “Chrono Squad” (Ekko/Zilean) and Jinx/Lulu. “Chrono Squad” dataset also may potentially be better since while the numbers for Jinx/Lulu aren’t that bad, “Chrono Squad” games are mostly on patch 2.11 so mostly in a stable metagame and expected average win rate.</p>
+<h2 id="creating-the-curve"><strong>Creating the curve</strong></h2>
+<p>Before trying to recreate the mastery curve we must be sure how it’s created.</p>
+<p>The main question is: taking in account two players: one with 100 games and one with 50 games. Do I have 150 points using the win rates from 1 to 100 games and 1 to 50 games or do I have only 2 points? One corresponding to 100 games and one for 50 games? Luckily it seems another tweet is helping:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="esplore-lor-mastery-curve_files/figure-html5/tweet2-1.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<p>He’s saying there’s a lack of players with “exactly” 389 games on Ivern which means/suggest he can’t use the data of Ivern players with 390+ games.</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<h3 id="lurk">Lurk</h3>
+<p>The tweet means/suggest that on the x-axis of the mastery curve plot we have the average of win rates of players with exactly n games. This limitation will be shown with some initial resultsing graphs (Fig:<a href="#fig:print-plot-Lurk">1</a>)</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span id="fig:print-plot-Lurk"></span>
+<img src="esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-1.png" alt="Lurk master curve on different settings" width="50%" />
+<p class="caption">
+Figure 1: Lurk master curve on different settings
+</p>
+</div>
+</div>
+<p>The aboves graphs shows the fitted mastery curve on three different settings:</p>
+<ul>
+<li><p>Using all pvp-modes with games from the top32 EU/NA Seasonal players, fitted with a linear model which use the number of games as covariate up to the quadratic term. While it shows a positive “mastery-coefficient” there’s too much noise with error bands way too wide and a too limited sample pool.</p></li>
+<li><p>The second plot add all the players collected up to the moment of the analysis and it’s possible too see a clearer trend. Compared to the LoL-example from Blastoise we are clearly in a similar case to the Invern graph where we lack data points. While compared to the mean results there seems to be a positive “mastery-coefficient” the fitted curve doesn’t seems appropriate most likely overestimating the effect of skills.</p></li>
+<li><p>To solve the fit-problem the third plot use a loess method again up to the quadratic term of the number of games on the same sample used for the second graph. Here the graph again seems to suggest there is a positive “mastery-coefficient” but compared to the mean results it’s more an additive (capped) and not moltiplicative factor which can be considered after about 50/100 games.</p></li>
+</ul>
+<p>Something that nedds to be considered is that: while for the top32 I’m sure I have collected all their games, this isn’t sure for everyone else so it’s safe to assume that for every other player the effective number of games with Lurk is m &gt;= n where n is the number of games I collected. This may impact on the curve as I may have higher WR for a corresponding number of games that’s effectively lower than the real number. Also a question is: is the sample appropriate? As mentioned at the start this sample contains both patch 2.11 and 2.12. On those patches Lurk wasn’t effected as a deck structure but the metagame around itself surely changed and it also effected the expected win rate (Tab:<a href="#tab:table-WR-lurk">2</a>)</p>
+<caption>
+<p><span id="tab:table-WR-lurk">Table 2: </span>Win Rate between patches</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body">
+<div id="evfmdohqhs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#evfmdohqhs .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#evfmdohqhs .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#evfmdohqhs .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#evfmdohqhs .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#evfmdohqhs .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#evfmdohqhs .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#evfmdohqhs .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#evfmdohqhs .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#evfmdohqhs .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#evfmdohqhs .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#evfmdohqhs .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#evfmdohqhs .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#evfmdohqhs .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#evfmdohqhs .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfmdohqhs .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfmdohqhs .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#evfmdohqhs .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#evfmdohqhs .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#evfmdohqhs .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#evfmdohqhs .gt_left {
+  text-align: left;
+}
+
+#evfmdohqhs .gt_center {
+  text-align: center;
+}
+
+#evfmdohqhs .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#evfmdohqhs .gt_font_normal {
+  font-weight: normal;
+}
+
+#evfmdohqhs .gt_font_bold {
+  font-weight: bold;
+}
+
+#evfmdohqhs .gt_font_italic {
+  font-style: italic;
+}
+
+#evfmdohqhs .gt_super {
+  font-size: 65%;
+}
+
+#evfmdohqhs .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_11</strong>, N = 18,870<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_12</strong>, N = 9,916<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong><sup class="gt_footnote_marks">2</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">winRate</td>
+<td class="gt_row gt_center">9,670 (51%)</td>
+<td class="gt_row gt_center">5,333 (54%)</td>
+<td class="gt_row gt_center"><0.001</td></tr>
+  </tbody>
+  
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="4">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          n (%)
+          <br />
+        </p>
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>2</em>
+          </sup>
+           
+          Two sample test for equality of proportions
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<p>What follows in (Fig:<a href="#fig:print-plot-Lurk-2">2</a>) is the mastery curve using only patch 2.11 side by side with the one previsouly obtained with both patches (loess fit, all pvp modes).</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span id="fig:print-plot-Lurk-2"></span>
+<img src="esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-2-1.png" alt="Comparison of Lurk master curve with loess fit using only patch 2.11 or both 2.11 and 2.12 with all pvp modes" width="50%" data-distill-preview=1 />
+<p class="caption">
+Figure 2: Comparison of Lurk master curve with loess fit using only patch 2.11 or both 2.11 and 2.12 with all pvp modes
+</p>
+</div>
+</div>
+<p>Using only patch 2.11 the skill-coefficient is not as clear as in the other setting. The trend is not as clear and there’s a lack of point for an higher number of games still while using both patches there’s the risk that the higher WR is a result of also playing in a patch where the deck is a little favorable.</p>
+<p>Still, if the sample is almost too little for the case with the highest amount of games, what abou the other two cases mentioned?</p>
+<h3 id="chrono-squad">Chrono Squad</h3>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<p>Before showing the plot for this case, is the Win Rate a possible confounding effect like in Lurk? It seems that’s not the case here as seen in (Tab:<a href="#tab:table-WR-Chrono">3</a>)</p>
+<caption>
+<p><span id="tab:table-WR-Chrono">Table 3: </span>Win Rate between patches</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body">
+<div id="xqhbcptits" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#xqhbcptits .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xqhbcptits .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xqhbcptits .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xqhbcptits .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xqhbcptits .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xqhbcptits .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xqhbcptits .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xqhbcptits .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xqhbcptits .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xqhbcptits .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xqhbcptits .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xqhbcptits .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xqhbcptits .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#xqhbcptits .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xqhbcptits .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xqhbcptits .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xqhbcptits .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#xqhbcptits .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xqhbcptits .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#xqhbcptits .gt_left {
+  text-align: left;
+}
+
+#xqhbcptits .gt_center {
+  text-align: center;
+}
+
+#xqhbcptits .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xqhbcptits .gt_font_normal {
+  font-weight: normal;
+}
+
+#xqhbcptits .gt_font_bold {
+  font-weight: bold;
+}
+
+#xqhbcptits .gt_font_italic {
+  font-style: italic;
+}
+
+#xqhbcptits .gt_super {
+  font-size: 65%;
+}
+
+#xqhbcptits .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_11</strong>, N = 2,853<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_12</strong>, N = 666<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong><sup class="gt_footnote_marks">2</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">winRate</td>
+<td class="gt_row gt_center">1,225 (43%)</td>
+<td class="gt_row gt_center">292 (44%)</td>
+<td class="gt_row gt_center">0.7</td></tr>
+  </tbody>
+  
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="4">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          n (%)
+          <br />
+        </p>
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>2</em>
+          </sup>
+           
+          Two sample test for equality of proportions
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<p>Since there doesn’t seems to be a difference in performance for “ChronoSquad” the graph (Fig:<a href="#fig:print-plot-Chrono">3</a>) will include games from both patches.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span id="fig:print-plot-Chrono"></span>
+<img src="esplore-lor-mastery-curve_files/figure-html5/print-plot-Chrono-1.png" alt="Chrono Squad master curve with loess fit" width="50%" />
+<p class="caption">
+Figure 3: Chrono Squad master curve with loess fit
+</p>
+</div>
+</div>
+<p>As feared the sample size can’t be ignored while evalutating this graph. Again it seems there’s indeed an initial “skill-coefficient” that affects the overall performance which seems to peak after ~20 games and continue to be stabke again as an additive effect, yet the expected win rate is way too close to the error bands (which may be a little conservative) for most of the curve and it’s than inside the band for the values corresponding to the highest amoutn of games. Sure, it doesn’t makes sense from a causal point of view saying that the win rate decrease after a certain amount of games (after accounting for potential confonding effects) but we can’t do more with the little amount of games available. Lastly, let’s see the case of Jinx/Lulu</p>
+<h3 id="jinxlulu">Jinx/Lulu</h3>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<p>Again, before anything, let’s see if there are differences in the win rates between patches:</p>
+<caption>
+<p><span id="tab:table-WR-Support">Table 4: </span>Win Rate between patches</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body">
+<div id="ysscafoqri" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ysscafoqri .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ysscafoqri .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ysscafoqri .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ysscafoqri .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ysscafoqri .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ysscafoqri .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ysscafoqri .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ysscafoqri .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ysscafoqri .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ysscafoqri .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ysscafoqri .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ysscafoqri .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ysscafoqri .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#ysscafoqri .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ysscafoqri .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ysscafoqri .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ysscafoqri .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ysscafoqri .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ysscafoqri .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ysscafoqri .gt_left {
+  text-align: left;
+}
+
+#ysscafoqri .gt_center {
+  text-align: center;
+}
+
+#ysscafoqri .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ysscafoqri .gt_font_normal {
+  font-weight: normal;
+}
+
+#ysscafoqri .gt_font_bold {
+  font-weight: bold;
+}
+
+#ysscafoqri .gt_font_italic {
+  font-style: italic;
+}
+
+#ysscafoqri .gt_super {
+  font-size: 65%;
+}
+
+#ysscafoqri .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_11</strong>, N = 1,495<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>2_12</strong>, N = 2,172<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong><sup class="gt_footnote_marks">2</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">winRate</td>
+<td class="gt_row gt_center">834 (56%)</td>
+<td class="gt_row gt_center">1,277 (59%)</td>
+<td class="gt_row gt_center">0.076</td></tr>
+  </tbody>
+  
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="4">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          n (%)
+          <br />
+        </p>
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>2</em>
+          </sup>
+           
+          Two sample test for equality of proportions
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<p>The decks seems to have gained a lot with the latest patch (2.12) and so it would be follish to aggregate the data but I’ll also show that case the effect we would have on the other plots.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span id="fig:print-plot-Support"></span>
+<img src="esplore-lor-mastery-curve_files/figure-html5/print-plot-Support-1.png" alt="Comparison of Jinx/Lulu master curve with loess fit using only patch 2.11 or both 2.11 and 2.12 with all pvp modes" width="50%" />
+<p class="caption">
+Figure 4: Comparison of Jinx/Lulu master curve with loess fit using only patch 2.11 or both 2.11 and 2.12 with all pvp modes
+</p>
+</div>
+</div>
+<p>Overall this case is quite “the mess”, quite fitting since we are talking of loose scews like Jinx and Lulu.</p>
+<p>Jokes aside:</p>
+<p>The graph with only games with patch 2.11 is the worst among the ones obtained up until this point and it doesn’t suggest the presence of even a little skill-coefficient, heck not even a negative one. A possible explanation could be that it’s because since I’m using all the players and this deck was already rarely played, this is the result of the problem mentioned before where for some players the actual number of games played is higher than the one in my possession. Sadly, this doesn’t explain why for only patch 2.12 I see again what looks like the steepness of a small learning curve. Sadly in the third plot with the information in our possession it’s pretty much impossible to know whatever the absence on a skill-coefficient is masked by the higher expcted win rate for games played also in patch 2.11 or it’s indeed “the correct” behaviour. If anything this example highlist the importance of an appropriate sample.</p>
+<h1 id="conlusions"><strong>Conlusions</strong></h1>
+<p>The presence or lack of a skill-factor when playing an huge number of games with certain LoR-decks may still be debatable but aside for the Jinx/Lulu example a first explatory analysis suggest that <strong>there’s indeed an initial increase in the mean win rate compared to later results</strong>. The analysis also highlisted the requiment of a huge amount of games just to have a good curve (Lurk data) that if limited to a single patch correspond to an highly popular deck making this not applicable to most decks, at least with the current API/DB limitation. An idea could be try to repeat this analysis after a new mayor release of cards without a champion expansion that immediately follows. The release of the last region and main release of the next expansion in August doesn’t seems a good choicr as it should have too many cards so with less players focuing on specific decks. On the other hand the second/third expansion may be a better candidate.</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Bo3ChallengeLobby are friendly Bo3 introduced from patch 2.12<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p><a href="https://www.youtube.com/watch?v=7eL5kj5FE4E">Legendary meme</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom"></div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<div class="distill-site-nav distill-site-footer">
+  <p>Â© 2021 Vazzoler Valentino</p>
+  <p>LlorR Stats was created under Riot Gamesâ€™ â€œLegal Jibber Jabberâ€ policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</p>
+</div>
+<!--/radix_placeholder_navigation_after_body-->
+
+
+</body>
+
+</html>

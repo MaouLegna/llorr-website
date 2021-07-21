@@ -1,0 +1,643 @@
+# Matches.DT <- data.table(player      = LoR.Melt.Matches.RMD$player,
+#                          opponent    = LoR.Melt.Matches.RMD$opponent,
+#                          outcome     = LoR.Melt.Matches.RMD$game_outcome,
+#                          server      = LoR.Melt.Matches.RMD$server
+# )
+# 
+# 
+# Matches.DT <- Matches.DT %>% filter(outcome!="tie")
+# Matches.DT.byCC <- Matches.DT[,.(games=.N, win=sum(outcome=="win"), WR=mean(outcome=="win")),by=.(player,opponent) ]
+# 
+# Matches.DT.byCC[player=="Azir (NX/SH)" | player=="Azir / Darius",player:="Azir / Noxus"]
+# 
+# fwrite(
+# Matches.DT.byCC %>%
+#   filter(player=="Azir / Noxus") %>%
+#   filter(games > 30) %>%
+#   arrange(desc(WR)),
+# "AzirNX_n30.csv")
+
+
+
+
+#'**************************************************************************** *
+# GEOM LINE + RECT --------------------------------------------------------
+#'**************************************************************************** *
+
+Champion.deck.daily <- LoR.Melt.Matches.RMD %>%
+  rename(.,"champions"="player") %>%
+  mutate(date = date(game_start_time_utc) ) %>%
+  group_by(date,champions) %>% 
+  summarise(n= n()) %>%
+  mutate(freq = round(n / sum(n),4)*100 )
+
+fct_values <- Champion.deck.daily %>%
+  filter(date == "2021-05-11") %>%
+  mutate(top5 = fct_lump(champions, n = 5, w = freq, ties.method = "max")) %>% pull(top5) %>% levels()
+
+Champion.deck.daily <- Champion.deck.daily %>%
+  mutate(top5 = fct_other(champions, keep=fct_values[fct_values!="Other"]))
+
+Champion.daily.top <- Champion.deck.daily %>% 
+  group_by(date) %>% 
+  mutate(max_score = max(n)) %>% 
+  # ungroup() %>%
+  filter(n==max_score)
+
+Champion.daily.top$group <- change_group(Champion.daily.top$champions)
+
+Champion.daily.top <- Champion.daily.top %>%
+  group_by(group) %>%
+  mutate(start = min(date)) %>% 
+  mutate(end   = max(date)) %>%
+  distinct(start,end,.keep_all = T) %>%
+  select(champions,start,end,freq) %>%
+  mutate(start = start-1) %>%
+  mutate(median_x = start + floor((end-start)/2))
+
+Champion.daily.top$start[1] <- Champion.daily.top$start[1]+1
+
+p <- ggplot() + 
+  geom_rect(data=Champion.daily.top, 
+            mapping=aes(xmin=start, xmax=end, ymin=0, ymax=20, fill=champions), alpha=0.2) +
+  geom_line(aes(x=date, y=freq, group=champions,colour=top5) ,data=Champion.deck.daily) +
+  labs(title = "Play Rate by date", x = "Date", y = "Play Rate") +
+  scale_fill_manual(values=c("Azir / Irelia" = "pink", "Nasus / Thresh" = "green")) +
+  theme( legend.position = "none" )
+
+fig <- ggplotly(p, tooltip = c("champions","freq"))
+fig
+
+#'**************************************************************************** *
+# INTERACTIVE NETWORK -----------------------------------------------------
+#'**************************************************************************** *
+
+
+library(igraph)
+library(networkD3)
+
+# create a dataset:
+data <- data_frame(
+  from=c("A", "A", "B", "D", "C", "D", "E", "B", "C", "D", "K", "A", "M"),
+  to=c("B", "E", "F", "A", "C", "A", "B", "Z", "A", "C", "A", "B", "K")
+)
+
+data <- data_frame(
+  from=c("A", "A", "B"),
+  to=c("B", "E", "F")
+)
+
+p <- simpleNetwork(data, height="100px", width="100px")
+p
+
+#'**************************************************************************** *
+# WHOSE WAIFU IRELIA IS? --------------------------------------------------
+#'**************************************************************************** *
+
+Irelia   <- LoR.Melt.Matches.RMD %>% select( starts_with( c("Region","Champion","Card") )) %>% searchDecks(.,string = "Irelia")
+
+Irelia.freq <- apply(Irelia,1 , function(x) names(recodeChampionCode[recodeChampionCode %in% x] ) ) %>% unlist(.,use.names = F) %>% tabyl(.,sort=T) %>% arrange(desc(percent))
+Irelia.freq <- Irelia.freq[-1,1:2]
+Irelia.freq$freq <- prop.table(Irelia.freq$n)
+# sum(Irelia.freq$n)
+Irelia.freq <- setnames(Irelia.freq[,1:3],c("champion","n","freq"))
+Irelia.freq$champion <- fct_recode(Irelia.freq$champion,!!!recodeCardsCode)
+
+Irelia.freq
+
+#'**************************************************************************** *
+
+Zilean   <- LoR.Melt.Matches.RMD %>% select( starts_with( c("Region","Champion","Card") )) %>% searchDecks(.,string = "Zilean")
+
+Zilean.freq <- apply(Zilean,1 , function(x) names(recodeChampionCode[recodeChampionCode %in% x] ) ) %>% unlist(.,use.names = F) %>% tabyl(.,sort=T) %>% arrange(desc(percent))
+Zilean.freq <- Zilean.freq[-1,1:2]
+Zilean.freq$freq <- prop.table(Zilean.freq$n)
+# sum(Zilean.freq$n)
+Zilean.freq <- setnames(Zilean.freq[,1:3],c("champion","n","freq"))
+Zilean.freq$champion <- fct_recode(Zilean.freq$champion,!!!recodeCardsCode)
+
+Zilean.freq
+
+#'**************************************************************************** *
+
+Malphite <- LoR.Melt.Matches.RMD %>% select( starts_with( c("Region","Champion","Card") )) %>% searchDecks(.,string = "Malphite")
+
+Malphite.freq <- apply(Malphite,1 , function(x) names(recodeChampionCode[recodeChampionCode %in% x] ) ) %>% unlist(.,use.names = F) %>% tabyl(.,sort=T) %>% arrange(desc(percent))
+Malphite.freq <- Malphite.freq[-1,1:2]
+Malphite.freq$freq <- prop.table(Malphite.freq$n)
+# sum(Malphite.freq$n)
+Malphite.freq <- setnames(Malphite.freq[,1:3],c("champion","n","freq"))
+Malphite.freq$champion <- fct_recode(Malphite.freq$champion,!!!recodeCardsCode)
+
+Malphite.freq
+
+#'**************************************************************************** *
+# WORDCLOUD -----------------------------------------------------------
+#'**************************************************************************** *
+
+# list.levels$game_version[ list.levels$game_version > "live_2_6" ]
+
+NT.table <- NT.table %>% as.data.table()
+NT.topDeck <- LoR.Deck %>% filter(deck_code %in% NT.dCode[1:10,deck_code]) %>% meanCards()
+
+NT.topDeck <- NT.topDeck %>% as.data.table()
+setDT(NT.topDeck)
+setnames(NT.topDeck, new = c("card","copies"))
+
+# NT.topDeck <- NT.topDeck %>%  mutate(angle = 90 * sample(c(0, 1), n(), replace = TRUE, prob = c(60, 40)))
+
+set.seed(123)
+# ggplot(data = NT.topDeck, aes(label = card, size = N )) + 
+p1 <- ggplot(data = NT.topDeck, aes(label = card, size = copies, col = as.character(copies))) +
+  geom_text_wordcloud(rm_outside = TRUE, max_steps = 1,
+                      grid_size = 1, eccentricity = .9) +
+  scale_size_area(max_size = 15) +
+  scale_color_brewer(palette = "Paired", direction = -1) +
+  theme_void() 
+
+
+p2 <- tableGrob(NT.topDeck, rows = NULL)
+text <- "The Wordcloud is made with the Cards that compose the 10 most common decklist most with Nasus/Thresh. The bigger the word the more it means the card is shared among the lists. The table is showring the same results but by showing the 'expected number of copies of each card'."
+
+p3 <- splitTextGrob(text)
+# p2 <-  ggtexttable(NT.topDeck, rows = NULL)
+ggarrange(p1,p2,ncol=2)
+
+
+theme( plot.title = element_text(face = "bold", size = 12, hjust = 0.6), axis.title.x = element_text(face = "bold"), axis.title.y = element_text(face = "bold")) +
+  labs(x = "Region", y = "Play Rate",
+       caption = "Relative frequencies of Regions Play Rate by number of cards in a deck") +
+  annotate(geom="text", x=1, y=0.15, col="black",label = paste("n =",nGames))
+
+NT.topDeck
+
+# sumToOne <- function(vec) {
+#   vec/sum(vec,na.rm = T)
+# }
+# 
+# LoR.Melt.Matches.RMD %>%
+#   filter(str_detect(game_version,"live_2_12")) %>%
+#   pull(player) %>%
+#   tabyl(.,player,show_na = F) %>% 
+#   rename_all(~c("player","n","freq")) %>%
+#   filter(freq > 0.005) %>% # 0.5%
+#   pull(freq) %>%
+#   sumToOne() %>%
+#   CUB::gini(prob = .)
+#   
+# c(1/3,1/3,NA) %>%
+#   sumToOne() %>%
+#   purrr::discard(is.na) %>%
+#   CUB::gini(prob = .)
+# 
+# freqEx <- LoR.Melt.Matches.RMD %>%
+#   filter(str_detect(game_version,"live_2_12")) %>%
+#   pull(player) %>%
+#   tabyl(.,player,show_na = F) %>% 
+#   rename_all(~c("player","n","freq")) %>%
+#   filter(freq > 0.005) %>% # 0.5%
+#   pull(freq) %>%
+#   sumToOne()
+# 
+# freqEx <- freqEx*100
+# sum(freqEx^2)
+
+# ineq(., type = c("Gini"), na.rm = TRUE)
+# sum(c(1/6,1/3,1/2)*(1-c(1/6,1/3,1/2)))*(3/2)
+# prob <- c(1/3,1/3,1/3)
+
+
+LoR.Deck %>%
+  # filter( str_detect(archetype,"(FR/NX)"))
+  filter(Region.01=="faction_Freljord_Name" | Region.02=="faction_Freljord_Name") %>%
+  rowwise() %>%
+  mutate(withCard = +sum(str_detect(c_across(contains("Card")), "04FR018"),na.rm=T)) %>%   # "Abominable Guardian" # Il + è come as.numeric()
+  filter(withCard >= 1) %>%
+  tabyl(Region.02)
+
+
+data_text %>%
+  filter_all(any_vars(str_detect(., 'text')))
+
+
+
+LoR.Match.DT[ puuid_1 %in% DT$puuid ]
+# LoR.Top32.DT <- LoR.Top32.DT[ !(is.na(server) & status==200)  ]
+
+LoR.Account %>%
+  # filter(activeShard=="asia") %>%
+  filter(str_detect(gameName,"Zooben79"))
+  
+  # get_dupes(gameName,activeShard)
+
+# LoR.Account %>%
+#   filter(master=="master" & activeShard=="americas") %>%
+#   get_dupes(gameName)
+
+HighRanked.puuid <- LoR.Match.DT[game_type == "Ranked" & game_version >"live_2_12",
+                                 .(match_key, puuid_1, puuid_2, origin, server)]
+
+
+left_join(HighRanked.puuid.Melt, LoR.Account.Melt, by = "puuid") %>%
+  filter(server == "americas") %>%
+  filter(gameName %in% "Deus")
+
+# JoinEU.master <- JoinEU %>%
+#   # filter(gameName %in% "Harkos") %>%
+#   filter(gameName %in% missingEU) %>%
+
+
+
+
+x <- data.frame(a=1, b=2)
+
+x %>% rename_at(vars(names(.)), ~letters[3:4])
+
+x %>% rename_all(~letters[3:4])
+
+x %>% rename_all(funs(str_c('prefix_', .)))
+
+x %>% rename_at(vars(-starts_with("a")), ~str_c(., "_b"))  # approx.
+
+# apply dplyr::rename() to a list
+x %>% purrr::set_names(., ~c(a = "RainTomorrow", b = "RISK_MM")[.])
+
+
+
+
+# "Roll-up" values into one row per group (per "personID") 
+cases_rolled <- obs %>% 
+  
+  # create groups by name
+  group_by(personID) %>% 
+  
+  # order the rows within each group (e.g. by date)
+  arrange(date, .by_group = TRUE) %>% 
+  
+  # For each column, paste together all values within the grouped rows, separated by ";"
+  summarise(
+    across(everything(),                           # apply to all columns
+           ~paste0(na.omit(.x), collapse = "; "))) # function is defined which combines non-NA values
+
+# live_patch_min <- LoR.Match.DT[,str_detect(game_mode, 'Seasonal') & str_detect(game_version, '2_10') ] %>% which() %>% min()
+# SearchDT       <- LoR.Match.DT[live_patch_min:NROW(LoR.Match.DT)][is.na(status) | status %!in% c(200,404),c("match_key","server","status")] %>% as_tibble()
+
+path.DT   <- file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","Runeterra")
+fileDT    <- dir(path.DT, pattern = "LoR_MatchDT_", full.names = TRUE) %>% max()
+
+fileDT_ACCOUNT  <- list.files(path = path.DT, pattern = "LoR_ACCOUNT_") %>% max()
+LoR.Account     <- fread(file.path(path.DT,fileDT_ACCOUNT), header=T, na.strings = c("",NA), encoding = 'UTF-8')
+
+LoR.Deck        <- fread(file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","Runeterra","LoR_DECK.csv"),
+                         na.strings = c("",NA))
+#'**************************************************************************** *
+
+header <- fread(fileDT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# classMatchDT
+LoR.Match.DT   <- fread(fileDT, header = FALSE, na.strings = c("",NA), skip = (1633189-1))
+colnames( LoR.Match.DT ) <- unlist(header)
+
+LoR.Match.DT[str_detect(game_mode, 'Seasonal') & str_detect(game_version, '2_10') & server=="europe"  ]
+LoR.Match.DT[str_detect(game_mode, 'Seasonal') & str_detect(game_version, '2_10') & server=="americas"]
+LoR.Match.DT[str_detect(game_mode, 'Seasonal') & str_detect(game_version, '2_10') & server=="asia"    ]
+
+
+# library(readr)
+# MatchKeys <- LoR.Match.RMD[str_detect(game_mode, 'Seasonal') & str_detect(game_version, '2_10') & server=="europe"  ] %>% pull(match_key)
+# write.table(MatchKeys,"SeasonalEUKey.txt",col.names = FALSE, row.names = FALSE)
+# read.table("SeasonalEUKey.txt")
+
+#'**************************************************************************** *
+# 3D PLOT ----------------------------------------------------------------------
+#'**************************************************************************** *
+
+# preTripleTriad <- MUtbl %>%
+#   # filter(okCI=T) %>%
+#   filter(opponent %in% c("Azir / Irelia","Lissandra / Trundle (FR/SI)","Nasus / Thresh") ) %>%
+#   arrange(player) %>%
+#   group_by(player) %>% 
+#   filter(n() == 3 & games > 10) %>% as.data.table()
+# 
+# preTripleTriad[player=="Garen / Sivir"]
+# 
+# TripleTriad <- MUtbl %>%
+#   # filter(okCI=T) %>%
+#   filter(opponent %in% c("Azir / Irelia","Lissandra / Trundle (FR/SI)","Nasus / Thresh") ) %>%
+#   arrange(player) %>%
+#   group_by(player) %>% 
+#   filter(n() == 3 & games > 10) %>% # fermarsi qui per il grafico
+#   # filter(games>10) %>%
+#   # left_join(TripleTriad %>%
+#   select(player,opponent,WR) %>%
+#   spread(opponent,WR) %>%
+#   setnames(new=c("opponent","AzIrelia","TLC","NT")) %>%
+#   ungroup() %>%
+#   rowwise() %>% mutate(mean = mean(x = c(AzIrelia, TLC, NT)))
+#     
+# 
+# 
+# left_join(TripleTriad %>%
+#   select(player,opponent,WR) %>%
+#   spread(opponent,WR) %>%
+#   setnames(new=c("opponent","AzIrelia","TLC","NT")) %>%
+#   ungroup(),TripleTriad,by=c("opponent"="player")) %>%
+#   filter(AzIrelia>0.50 & TLC>0.50 & NT > 0.50) %>%
+#   filter(games > 10)
+# 
+# 
+# 
+# plot_ly(data = TripleTriad %>% na.omit(), x = ~AzIrelia, y = ~NT, z = ~TLC, type="scatter3d", mode="markers",
+#         marker = list(color = ~mean, colorscale = c('#FFE1A1', '#683531'), showscale = TRUE))
+# 
+# TripleTriad %>% filter(AzIrelia > 0.6)
+# 
+# plot_ly(TripleTriad, x = ~AzIrelia, y = ~NT, z = ~TLC)
+# 
+# LoR.Melt.Matches.RMD[player=="Garen / Sivir"] %>% pull(deck_code) %>% table()
+# 
+# matchit
+
+##########
+
+#'**************************************************************************** *
+# CREATE MATRIX -----------------------------------------------------------
+#'**************************************************************************** *
+
+deck.matrix <- LoR.Card$cardCode %>% purrr::map_dfc(setNames, object = list(numeric()))
+# IceRocks <- LoR.Melt.Matches.RMD %>% select(deck_code,starts_with("Region"),starts_with("Card")) %>% searchDecks(.,string = c("Lissandra","Taliyah") ) %>% pull(deck_code) %>% unique()
+IceRocks <- LoR.Melt.Matches.RMD %>% searchDecks(.,string = c("Lissandra") ) %>% pull(deck_code) %>% unique()
+Subset <- LoR.Deck %>% filter(deck_code %in% IceRocks) %>% select(starts_with("Card"))
+# Subset <- LoR.Deck %>% filter(deck_code %in% IceRocks) %>% select(starts_with("Card"))
+
+for (i in 1:length(IceRocks)) {
+  DeckRow <- Subset[i,]  %>% unlist(.,use.names = F) %>% table()  
+  deck.matrix[NROW(deck.matrix)+1, names(DeckRow)] <- DeckRow %>% unname() %>% as.list()
+}
+
+deck.matrix <- deck.matrix %>% mutate_all(~replace(., is.na(.), 0))
+
+#'**************************************************************************** *
+# GET DISTANCE ------------------------------------------------------------
+#'**************************************************************************** *
+
+#' Return the Eisen cosine dissimilarity matrix from a matrix
+#' @param Matrix matrix where I caculate the distance matrix
+eisen_cos.sim <- function(DF) {
+    # For cosine similarity matrix
+    Matrix <- as.matrix(DF)
+    sim <- Matrix / sqrt(rowSums(Matrix * Matrix))
+    sim <- sim %*% t(sim)
+    # Convert to cosine dissimilarity matrix (distance matrix).
+    D_sim <- as.dist(1 - sim)
+    return(D_sim)
+}
+
+D_sim <- eisen_cos.sim(deck.matrix)
+
+hc.complete <- hclust(D_sim, method = "average")
+# plot(hc.complete)
+
+fviz_dist(D_sim)
+fviz_dend(hc.complete, cex = 0.5)
+
+# Compute cophentic distance
+res.coph <- cophenetic(hc.complete)
+# Correlation between cophenetic distance and the original distance
+cor(D_sim, res.coph)
+
+
+kNNdistplot(deck.matrix, k = 782)
+abline(h=3, col = "red", lty=2)
+res <- dbscan(deck.matrix, eps = 8, minPts = 782)
+res
+DBSCAN.clstr <- cbind(IceRocks,res$cluster) %>% as.data.table() %>% rename("cluster"="V2")
+names(DBSCAN.clstr)[1] <- "deck_code"
+left_join(DBSCAN.clstr,LoR.Deck[,.(deck_code,archetype)],by=c("deck_code")) %>% tabyl(archetype,cluster )
+
+
+DBSCAN.clstr[ cluster %in% c(0,1,2) ]
+
+
+
+brks <- c(0.499999999,seq(0.50,1,0.01))
+clrs = colorRampPalette( c("white","#629F62") )(length(brks)+1)
+
+
+
+cos.sim(deck.matrix,deck.matrix)
+
+
+deck.matrix[names(DeckRow)] <- DeckRow %>% unname()
+
+library(RColorBrewer)
+
+colorRampPalette( c("green","white") )(50)
+
+library(cluster) 
+# to perform different types of hierarchical clustering
+# package functions used: daisy(), diana(), clusplot()
+
+divisive.clust <- diana(as.matrix(D_sim), 
+                        diss = TRUE, keep.diss = TRUE)
+plot(divisive.clust, main = "Divisive")
+
+# complete
+aggl.clust.c <- hclust(D_sim, method = "complete")
+plot(aggl.clust.c,
+     main = "Agglomerative, complete linkages")
+
+
+#'**************************************************************************** *
+# HYSTOGRAMN WITH IMAGE IN CLASSES NAMES ----------------------------------
+#'**************************************************************************** *
+
+library(cowplot)
+library(ggplot2)
+library(magick)
+df <- data.frame(countries = c("Norway", "Spain", "Germany", "Canada", "China"),
+                 values = c(10, 20, 30, 22, 19))
+p <- ggplot(df, aes(x = countries, y = values))+
+  geom_bar(stat = "identity")+
+  theme_bw()
+
+pimage <- axis_canvas(p, axis = 'x')+
+  cowplot::draw_image("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/320px-Flag_of_Canada_%28Pantone%29.svg.png", x = 0.5, scale = 0.5)+
+  cowplot::draw_image("https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/640px-Flag_of_the_People%27s_Republic_of_China.svg.png", x = 1.5, scale = 0.5)+
+  cowplot::draw_image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/320px-Flag_of_Germany.svg.png", x = 2.5, scale = 0.5)+
+  cowplot::draw_image("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Norway.svg/320px-Flag_of_Norway.svg.png", x = 3.5, scale = 0.5)+
+  cowplot::draw_image("https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Flag_of_Spain.svg/320px-Flag_of_Spain.svg.png", x = 4.5, scale = 0.5)
+
+
+ggdraw(insert_xaxis_grob(p, pimage, position = "center"))
+
+#'################################
+
+# Glue URL
+#' Title
+#'
+#' @param url URL end point
+#' @param api Riot API
+#' @param dry_run If True return url
+#'
+#' @export
+get_url = function(url, api, dry_run = FALSE) {
+  url <- httr::modify_url(
+    url = glue::glue(url),
+    query = list(api_key = api)
+  ) %>%
+    stringr::str_replace_all(" ", "+")
+  
+  if (dry_run) {
+    return(url)
+  } else {
+    data <- httr::GET(url)
+  }
+  
+  if (data$status_code != 200) {
+    msg <- httr::content(data)$status$message
+    status_code <- data$status_code
+    
+    output <- glue::glue("GET error: {msg} (Status Code: {status_code}, URL: {url})")
+    return(output)
+  } else {
+    return(data)
+  }
+}
+
+#' Route TFT region
+#'
+#' @param region region
+#'
+#' @export
+route_tft <- function(region) {
+  region <- tolower(region)
+  if (stringr::str_detect(region, "(oc)|(na)|(br)|(la)|(las)")) {
+    output <- "americas"
+  } else if (stringr::str_detect(region, "(kr)|(jp)")) {
+    output <- "asia"
+  } else if (stringr::str_detect(region, "(eu)|(tr)|(ru)")) {
+    output <- "europe"
+  } else {
+    stop(glue::glue("{region} not defined"))
+  }
+  
+  return(output)
+}
+
+#' Check tier input
+#'
+#' @param tier Input for tier
+#'
+#' @export
+check_tier <- function(tier) {
+  tier <- toupper(tier)
+  
+  if (tier == "DIAMOND" || tier == "PLATINUM" || tier == "GOLD" ||
+      tier == "SILVER" || tier == "BRONZE" || tier == "IRON") {
+    return(tier)
+  } else {
+    warning(glue::glue("Incorrect tier, got {tier},
+                       expected: DIAMOND, PLATINUM, GOLD, SILVER, BRONZE, IRON"))
+  }
+}
+
+#' Check division input
+#'
+#' @param division Input for division
+#'
+#' @export
+check_division <- function(division) {
+  # If input is numeric then do conversion
+  if(!is.character(division)) {
+    division <- switch(
+      division,
+      "I",
+      "II",
+      "III",
+      "IV"
+    )
+    
+    # If input is out of range then it'll return NULL
+    if (is.null(division)) {
+      warning("Incorrect input")
+    }
+  }
+  
+  # Check if input is one of the 4 division
+  if (division == "I" || division == "II" ||
+      division == "III"|| division == "IV") {
+    return(division)
+  } else {
+    warning("Incorrect input")
+  }
+  
+}
+
+#' Check queue input
+#'
+#' @param queue Queue name, acceptable input: RANKED_SOLO_5x5, RANKED_FLEX_SR, RANKED_FLEX_TT
+#'
+#' @export
+check_queue <- function(queue) {
+  if (queue == "RANKED_SOLO_5x5" || queue == "RANKED_FLEX_SR" || queue == "RANKED_FLEX_TT") {
+    return(queue)
+  } else {
+    warning(glue::glue("Incorrect queue name, got: {queue}"))
+  }
+}
+
+
+#' Check if api key is valid
+#'
+#' @param api Riot API
+#' @param game Game to test API on. Note development key will work on any game
+#' but production key might be limited your focused game. Acceptable input:
+#' tft, league, any
+#'
+#' @export
+check_api <- function(api, game = "any") {
+  game <- tolower(game)
+  
+  if (game == "league") {
+    data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/lol/status/v3/shard-data?api_key={api}"))
+  } else if (game == "tft") {
+    data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/tft/league/v1/challenger?api_key={api}"))
+  } else {
+    data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={api}"))
+  }
+  
+  if (data$status_code != 200) {
+    return(FALSE)
+  } else {
+    return(TRUE)
+  }
+}
+
+#' Get user's id
+#'
+#' @param name User name
+#' @param api Riot API
+#' @param region User's region
+#' @param game Gamemode. Acceptable input: tft, league, any. Default to any
+#'
+#' @export
+get_user_id <- function(name, region, api, game = "any") {
+  # Make sure API is valid
+  if(!check_api(api, game)) {
+    stop("Invalid API")
+  }
+  
+  # Get data base on input
+  if (game == "league" | game == "any") {
+    data <- httr::GET(glue::glue("https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{name}?api_key={api}"))
+  } else if (game == "tft") {
+    data <- httr::GET(glue::glue("https://{region}.api.riotgames.com/tft/summoner/summoners/by-name/{name}?api_key={api}"))
+  } else {
+    stop(glue::glue("invalid game input, got: {game}"))
+  }
+  
+  # Sanity check
+  if (data$status_code != 200) {stop(glue::glue("Cannot access data, error: {content(data)}"))}
+  
+  return(httr::content(data))
+}

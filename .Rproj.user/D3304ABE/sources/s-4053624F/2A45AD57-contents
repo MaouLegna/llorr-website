@@ -1,0 +1,77 @@
+#'**************************************************************************** *
+
+LoR.Master.Matches.RMD  <- LoR.Match.RMD[ game_mode=="SeasonalTournamentLobby" & game_version=="live_2_6_11", ] %>% copy()
+SeasonalPuuid           <- LoR.Master.Matches.RMD %>% select(puuid_1,puuid_2) %>% unlist(.,use.names = F) %>% unique()
+
+LoR.Melt.Matches.RMD <- LoR.Master.Matches.RMD %>% select(match_key,server,game_start_time_utc,ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>% melt(id.vars=c("match_key","server"), measure.vars=patterns( str_sub( names(select(LoR.Master.Matches.RMD,ends_with("_1"))) ,end = -3) ), value.name = str_sub( names(select(LoR.Master.Matches.RMD,ends_with("_1"))) ,end = -3) )
+
+LoR.Melt.Account <- melt( LoR.Account.RMD[, .(puuid_1,puuid_2,puuid_3,gameName,tagLine) ], id.vars = c("gameName","tagLine"), measure.vars=c("puuid_1","puuid_2","puuid_3"),value.name=c("puuid") )
+
+#'**************************************************************************** *
+# UPDATE SEASONAL ACCOUNTS ------------------------------------------------
+#'**************************************************************************** *
+
+LoR.Account.RMD[ activeShard=="europe"   & seasonal=="seasonal", .N]
+LoR.Account.RMD[ activeShard=="europe"   & seasonal=="seasonal" & master=="master", .N]
+LoR.Account.RMD[ activeShard=="americas" & seasonal=="seasonal", .N]
+LoR.Account.RMD[ activeShard=="americas" & seasonal=="seasonal" & master=="master", .N]
+LoR.Account.RMD[ activeShard=="asia"     & seasonal=="seasonal", .N]
+LoR.Account.RMD[ activeShard=="asia"     & seasonal=="seasonal" & master=="master", .N]
+
+
+#'**************************************************************************** *
+# SEASONAL ----------------------------------------------------------------
+#'**************************************************************************** *
+
+LineUP.Melt <- left_join(LoR.Melt.Matches.RMD ,LoR.Melt.Account,by=c("puuid")) %>% select(gameName,tagLine,deck_code ) %>% distinct()
+LineUp.DT   <- LineUP.Melt %>% group_by(gameName,tagLine) %>% summarize(list = list(sort(unique(deck_code))) )
+
+LineUP.Melt %>% distinct(gameName,tagLine)
+LineUp.DT %>% distinct(gameName,tagLine) %>% NROW()
+
+Seasonal.LineUp.DT <- do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$list[x]) ) )
+
+Seasonal.LineUp.DT[!is.na(deck_1), .N]
+Seasonal.LineUp.DT[!is.na(deck_2), .N]
+Seasonal.LineUp.DT[!is.na(deck_3), .N]
+
+
+
+#'**************************************************************************** *
+
+prop.test(32,96,0.95)
+
+# Deck del seasonal da soli
+Seasonal.Deck.DT <- left_join(left_join(LoR.Melt.Matches.RMD,LoR.Melt.Account,by=c("puuid")) %>% select(gameName,tagLine,deck_code ) %>% distinct(),LoR.Deck, by=c("deck_code"))
+Seasonal.Deck.DT[,player   := extract_champions_table(Seasonal.Deck.DT %>% select(starts_with("Champion") ))]
+sort(table(Seasonal.Deck.DT$player),decreasing = T) %>% as.data.table()
+
+
+
+
+
+NT_deck_code <- FullLineUP_deck %>% filter(player=="Nasus / Thresh") %>% pull(deck_code)
+NT_row <- length(NT_deck_code)
+
+# NT_deck_structure <- getDeck_structure_tibble("CMCACAQFAQBAIBIDCABQIBYCDIXQKAIFBMRDAMJUAIAQCBIZAICAOO2RAEAQIB3Z")
+NT_deck_structure <- getDeck_structure_tibble(NT_deck_code)
+NT_deck_structure$Copies <- factor(NT_deck_structure$Copies, levels = c(1,2,3))
+
+tabyl(NT_deck_structure,Name,Copies) %>% 
+  adorn_totals("col") %>% 
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 1) %>%
+  adorn_ns() %>%
+  rename(.,One=2,Two=3,Three=4) %>%
+  arrange(desc(Total),One,Two,Three) %>% 
+  mutate(., Play_Rate = as.numeric(str_extract_all(Total,  "(?<=\\().+?(?=\\))"))/NT_row*100) %>%
+  # hux(.) %>%
+  #   map_background_color(everywhere,6, by_ranges(seq(0,100,10), drsimonj_pal("scale")(12))) %>%
+  relocate(.,Name,Play_Rate,Three,Two,One,Total) %>%
+  mutate(., Play_Rate = paste(round(Play_Rate,2),"%") )
+
+
+
+
+FullLineUP_deck <- create_db_deck(Seasonal.LineUp.DT[!is.na(deck_3),] %>% unlist(.,use.names = F))
+FullLineUP_deck$player <- extract_champions_table(FullLineUP_deck)

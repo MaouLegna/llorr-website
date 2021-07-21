@@ -1,9 +1,27 @@
 ---
-title: "About this site"
+title: "About this site and me"
 description: |
   Some additional details about the website
+image: images/avatar.jpg
+# color1: "#828393"
+# color2: "#5A59A3"
+# angle: 130
+links:
+  - label: Twitter
+    url: "https://twitter.com/Maou_Legna"
+  - label: RPubs
+    url: "https://rpubs.com/Legna"
+  - label: Email
+    url: "mailto:valentino.vazzoler.86@gmail.com"
+output:
+  postcards::trestles
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+- Everything is collected with Riot's API. It's still a development key so the amount of data I can scrap is quite limited.
+- All data is assumed to be almost always from players at Master ranks. When a new player is added to the leaderboard I start searching their match-history, since the Riot API return the last 20 matches without any other metadata of a match, initially I may recover some matches from Diamond too, but from that point onward those games are in Master ranks.
+- All results are aimed at Master rank: play rate and win rate are relative to the reference population and results at lower ranks may differ. For Plat+ <a href="https://twitter.com/KozmicPlays/">Kozmic</a> and <a href="https://twitter.com/drlor4/">Dr.Lor</a> provide better (and more consolidated) data.
+- At the start of a season I may recover all games played at Master but once my rate-limit is less than the average number of games played, my approach is to extract a random sample of games played in the current patch. I won't give priority to the most recent games or I may easily create bias in the sample.

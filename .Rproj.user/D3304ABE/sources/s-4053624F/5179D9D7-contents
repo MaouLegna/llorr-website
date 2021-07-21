@@ -1,0 +1,55 @@
+#'**************************************************************************** *
+# READ DB ----------------------------------------------------------------------
+#'**************************************************************************** *
+
+# NameEU800 <- fread(file.path(file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","Runeterra","LoR_LADDER_EU_ShurimaS.csv")),   header=T, na.strings = c("",NA), encoding = 'UTF-8') %>% slice_head(n=800) %>% pull(name)
+# NameNA800 <- fread(file.path(file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","Runeterra","LoR_LADDER_NA_ShurimaS.csv")),   header=T, na.strings = c("",NA), encoding = 'UTF-8') %>% slice_head(n=800) %>% pull(name)
+# NameAS800 <- fread(file.path(file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","Runeterra","LoR_LADDER_ASIA_ShurimaS.csv")), header=T, na.strings = c("",NA), encoding = 'UTF-8') %>% slice_head(n=800) %>% pull(name) # 466
+
+#'**************************************************************************** *
+
+# (LoR.Account %>%
+#   mutate( RiotID = paste(gameName,tagLine) ))[RiotID %in% (semi_join( LoR.Account %>% mutate( RiotID = paste(gameName,tagLine) ),
+#                                                                       LoR.Melt.Seasonal, by = c("RiotID"="userID")  ) %>%
+#                                                              pull(RiotID)),]
+
+#'**************************************************************************** *
+
+LineUp.DT <- left_join(LoR.Melt.Seasonal %>% filter(server=="europe") ,LoR.Account.Melt ,by=c("userID"="RiotID")) %>% 
+  select(userID,player ) %>% 
+  # distinct() %>% 
+  group_by(userID) %>%
+  summarise(list = list(sort(unique(player))) )
+
+# LineUp.DT %>% distinct(gameName,tagLine) %>% NROW()
+
+Seasonal.LineUp.DT <- do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$list[x]) ) )
+
+
+
+Seasonal.LineUp.DT %>%
+  mutate( LU := glue("{deck_1} - {deck_2} - {deck_3}" ) ) %>%
+  filter(!is.na(deck_3)) %>%
+  tabyl(LU) %>%
+  arrange(desc(n))
+
+#'**************************************************************************** *
+#  ----------------------------------------------------------------------------
+#'**************************************************************************** *
+
+LoR.Melt.Seasonal %>%
+  arrange(game_start_time_utc) %>%
+  # mutate( time = as.Date(game_start_time_utc)) %>%
+  # filter( time > "2021-06-15" ) %>%
+  group_by( userID,opponentID ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ) ) %>%
+  # filter( userID == "てなりかずき OEC" ) %>%
+  group_by( userID  ) %>%
+  summarise( matches = n() ) %>% 
+  
+  pull(matches) %>%
+  tabyl() %>%
+  arrange(.)
+# ungroup()
+
+

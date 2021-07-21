@@ -1,0 +1,793 @@
+---
+title: "An exploratory analysis to Mastery Curve in LoR"
+description: |
+  Applying the concept of Learning Curve to Legends of Runeterra'decks.
+author:
+  - name: Valentino (Legna) Vazzoler
+    # url: https://example.com/norajones
+    # affiliation: Spacely Sprockets
+    # affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+
+---
+
+```{css, echo=FALSE}
+    body {
+      # max-width: 1920px !important;
+      background-color: whitesmoke;
+    }
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  # lang='markdown',
+  R.options = list(width = 140,
+                   digits.secs=6),
+  # dev.args = list(bg = 'transparent'),
+  # dev = 'svglite',
+  fig.align = 'center',
+  out.width = '50%',
+  fig.asp = .75,
+  cache = FALSE, 
+  cache.rebuild = FALSE,
+  root.dir = file.path("C:","LlorR"),
+  engine.path = list(
+    python = 'C:/anaconda/'
+  )
+)
+
+library(tidyverse); library(kableExtra)
+
+# a basic pretty table
+kable_df <- function(..., digits=3) {
+  kable(..., digits=digits) %>% 
+    kable_styling(full_width = F)
+}
+
+# round for presentation
+# rnd = function(x, digits = 3) format(round(x, digits), nsmall = digits)
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# use_python("C:/anaconda/")
+py_run_string("print('Hello World')")
+lor_deckcodes <- import("lor_deckcodes")
+py_module_available("lor_deckcodes")
+```
+
+# **INTRODUCTION**
+
+Win rate is the most common and most useful metric when evaluating a deck in a Collectible Card Games (CCG) but that value alone may not tell the full story. In Legends of Runeterra (LoR), a common example for saying that the win rate alone isn't enough is citing "Lee Sin (MT/IO)" decks.
+
+In the ladder, acroos all Masters' players, even when LeeSin win rate was only ranging around 50% it was considered an undisputed Tier-1 choice (similar now with Akshan/Lee?), so why was as such when it wasn't an highly performing deck? Because:
+
+-   It was a strong option in a more controlled format like during tournaments
+
+-   Because that win rate included both "noobs" and more experienced player with the deck. It is a common opinion in the community that only after playing an huge amount of games with Lee that a player would learn how to pilot the deck and bring it to its fullest potential, changing radically the match ups more in its favor.
+
+From my knowledge there's no **hard data** to support the claim but just the overall feeling from the community, but this doesn't mean that the hyphotesis is not solid. Learning curve are a thing and in the context of "Runeterra" it was perfectly showed by an ex-Rioter when talking about certain champion learning-curve in League of Legends (LoL)
+
+```{r tweet1}
+tweetrmd::tweet_screenshot(tweetrmd::tweet_url("blaustoise", "1075515580570980352"))
+```
+
+The reason I'm showing this tweet as an example should be easy to understand: here, I'll try to replicate those graphs for LoR.
+
+# **MATERIALS AND METHOD**
+
+```{r raw-data}
+#' load gameDT
+#'############
+fileDT <- list.files(path = file.path("C:","LlorR","data","raw"),
+                     pattern = "LoR_MatchDT_",full.names = T) %>% max()
+header        <- fread(fileDT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(fileDT, header = FALSE, na.strings = c("",NA),
+                       skip = (1888267)
+                       ) # Patch 2.11
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+
+#' load top32
+#'############
+file.Top32 <- list.files(path = file.path("C:","LlorR","data","raw"),
+                      pattern = "LoR_Top32_",full.names = T) %>% max()
+LoR.Top32.RMD <- fread(file.Top32, header = T, na.strings = c("", NA))
+
+#' load Account
+#'#############
+file.Account <- list.files(path = file.path("C:","LlorR","data","raw"),
+                             pattern = "LoR_ACCOUNT_",full.names = T) %>% max()
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
+  pivot_longer(
+  cols = c("puuid_1","puuid_2","puuid_3","puuid_4"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+  # select( puuid=puuid_4,
+  #         RiotID,
+  #         server=activeShard,seasonal)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(input = file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+LoR.Match.RMD <- rbind(LoR.Match.RMD,
+                       LoR.Top32.RMD) %>%
+  distinct(match_key,.keep_all = T)
+```
+
+```{r filter-games}
+# Filter games for Ranked / Current Patch
+LoR.Master.Matches.RMD <- LoR.Match.RMD %>%
+  filter( game_type %in% c("Normal","Ranked","StandardGauntlet") | game_mode == "Bo3ChallengeLobby" ) %>%
+  mutate( game_start_time_cest = force_tz(game_start_time_utc, "CEST") ) %>%
+  filter( game_start_time_cest > as.POSIXct("2021-06-30 19:00:00", tz = "CEST") ) %>%
+  filter( game_version > 'live_2_11' | game_version < 'live_2_13')
+  # filter( str_detect(game_version, '2_11') )
+
+nGames <- NROW(LoR.Master.Matches.RMD)
+```
+
+## **Data**
+
+The dataset consist of at most **`r nGames`** games played after the application of patch 2.11 so after **2021-06-30 19:00:00 CEST**.
+
+These are games collected following two criteria:
+
+-   Games from Master players
+
+-   Games from the previous top32 players from the latest Seasonal (EU and NA).
+
+From these I filtered the games only on Constructed pvp modes (Normal,Ranked,StandardGauntlet,Bo3ChallengeLobby). [^1]
+
+With 2.12 there has been an addition of several cards that heavily affected the metagame so there's a case to restrict the analysis only to games on the same patch (2_11 or 2_12). In addition, since we are talking about learning curve it may be intuitive to leave all games between two human players (all pvp constructed modes) but some may think that it's only appropriate to limit the data to Ranked games. By considering both factors the data we start with are distributed like this:
+
+```{r table-summary-1}
+LoR.Master.Matches.RMD <- LoR.Master.Matches.RMD %>%
+  mutate( patch = ifelse(str_detect(game_version,"2_11")==T,"2_11","2_12"),
+          pvp   = ifelse(game_type=="Ranked","Ranked","notRanked")
+          ) 
+# %>% filter(game_type %in% c("Ranked"))
+
+
+
+LoR.Master.Matches.RMD %>% 
+  select(patch, pvp) %>%
+  gtsummary::tbl_summary(.,by = patch) %>%
+  gtsummary::add_n() # add column with total number of non-missing observations
+```
+
+```{r add-player-opponent}
+#' Add archetypes for both players
+#'################################
+LoR.Master.Matches.RMD <- left_join(LoR.Master.Matches.RMD,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code"))
+LoR.Master.Matches.RMD <- left_join(LoR.Master.Matches.RMD,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code"))
+LoR.Master.Matches.RMD$player_2   <- LoR.Master.Matches.RMD$opponent_1
+LoR.Master.Matches.RMD$opponent_2 <- LoR.Master.Matches.RMD$player_1
+
+LoR.Master.Matches.RMD$oppoppuid_1  <- LoR.Master.Matches.RMD$puuid_2
+LoR.Master.Matches.RMD$oppoppuid_2  <- LoR.Master.Matches.RMD$puuid_1
+```
+
+```{r melt}
+LoR.Melt.Matches.RMD <- LoR.Master.Matches.RMD %>% 
+  select( match_key,server,game_start_time_utc,game_version,ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","puuid_1","puuid_2"), measure.vars=patterns( 
+    str_sub(
+      names(select(LoR.Master.Matches.RMD ,ends_with("_1")))
+      ,end = -3) 
+  ),
+  value.name = str_sub(
+    names(select(LoR.Master.Matches.RMD ,ends_with("_1")))
+    ,end = -3) 
+  ) %>% left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+        left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid"))
+
+LoR.Melt.Matches.RMD <- left_join(LoR.Melt.Matches.RMD,LoR.Deck %>% select(!archetype),by="deck_code")
+```
+
+------------------------------------------------------------------------
+
+```{r server-fix}
+#' Sistema i valori di server
+# LoR.Melt.Matches.RMD[ is.na(server) & puuid %in% LoR.Account.RMD[ server=="europe"   & seasonal=="top32" ,puuid ], server:="europe" ]
+# LoR.Melt.Matches.RMD[ is.na(server) & puuid %in% LoR.Account.RMD[ server=="americas" & seasonal=="top32" ,puuid ], server:="americas" ]
+# 
+# LoR.Melt.Matches.RMD[ is.na(server) & oppoppuid %in% LoR.Account.RMD[ server=="europe"   & seasonal=="top32" ,puuid ], server:="europe"   ]
+# LoR.Melt.Matches.RMD[ is.na(server) & oppoppuid %in% LoR.Account.RMD[ server=="americas" & seasonal=="top32" ,puuid ], server:="americas" ]
+# LoR.Melt.Matches.RMD[ is.na(server) ]
+```
+
+[^1]: Bo3ChallengeLobby are friendly Bo3 introduced from patch 2.12
+
+While this is the available dataset one should ask: which decks should I check? They need of course be decks that doesn't exist before patch 2.11 or that they were soo rare that I can assume my reference population didn't play them at all. Luckily the choice of patch 2.11 is not at random as it introduced a small expansion "Rise of the Underworld" that introduced a couple of new meta decks. In addition it would be wiser to choose decks whose structure is mostly defined by a limited range of choices because of the limited card-pool. In addition
+
+What follows are decks that I considred potential candidate for this analysis and the respective sample size available:
+
+-   Lurk (Pyke/Rek'Sai) - n°games: **`r LoR.Melt.Matches.RMD[player=="Pyke / Rek'Sai",.N]`**
+
+-   "Chrono Squad" [^2] (Ekko/Zilean) - n°games: **`r LoR.Melt.Matches.RMD[player=="Ekko / Zilean",.N]`**
+
+-   Yeti - n°games: **`r LoR.Melt.Matches.RMD[player=="Yeti (FR/PZ)",.N]`** with PnZ and n°games: **`r LoR.Melt.Matches.RMD[player=="Yeti (FR/NX)",.N]`** with Noxus - being more popular thanks to the introduction or Abominable Guardian
+
+-   Elnuk - n°games: **`r LoR.Melt.Matches.RMD[player=="Elnuk (FR/PZ)",.N]`** - being more popular thanks to the introduction or Volunteer Elnuk
+
+-   Lulu/Jinx - n°games: **`r LoR.Melt.Matches.RMD[player=="Jinx / Lulu",.N]`** - not new but very rarely played and not only risen in popularity in 2.12 but also made stronger thanks to Boom Baboon
+
+Those are max numbers of games available, their number could be reduced depending on the subset we would prefer to use like the patch and pvp-mode chosen. This numbers can be seen in Tab:\@ref(tab:table-summary-2)
+
+<caption>
+
+(\#tab:table-summary-2)Summary table
+
+</caption>
+
+```{r table-summary-2}
+LoR.Melt.Matches.RMD %>% 
+  filter(player %in% c("Pyke / Rek'Sai","Ekko / Zilean","Yeti (FR/PZ)","Yeti (FR/NX)","Elnuk (FR/PZ)","Jinx / Lulu")) %>%
+  left_join(.,LoR.Master.Matches.RMD[,.(match_key,patch,pvp)],by="match_key") %>%
+  select(player,patch, pvp) %>%
+  gtsummary::tbl_strata(
+    strata = patch,
+     ~ .x %>%
+        gtsummary::tbl_summary(by = pvp,percent = "row") %>%
+        gtsummary::add_n()
+  )
+```
+
+As shown in the above table there's an high number of games of Lurk games but way lower for everything else. Still, using only one example would result on a terrible external validation so it would be better to at least add a couple more cases (not that with just three is much better).
+
+Looking at the number in Tab:\@ref(tab:table-summary-2) the best candidate are "Chrono Squad" (Ekko/Zilean) and Jinx/Lulu. "Chrono Squad" dataset also may potentially be better since while the numbers for Jinx/Lulu aren't that bad, "Chrono Squad" games are mostly on patch 2.11 so mostly in a stable metagame and expected average win rate.
+
+## **Creating the curve**
+
+Before trying to recreate the mastery curve we must be sure how it's created.
+
+The main question is: taking in account two players: one with 100 games and one with 50 games. Do I have 150 points using the win rates from 1 to 100 games and 1 to 50 games or do I have only 2 points? One corresponding to 100 games and one for 50 games? Luckily it seems another tweet is helping:
+
+```{r tweet2, fig.width=4, fig.height=3}
+tweetrmd::tweet_screenshot(tweetrmd::tweet_url("blaustoise", "1075515586027782147"))
+```
+
+He's saying there's a lack of players with "exactly" 389 games on Ivern which means/suggest he can't use the data of Ivern players with 390+ games.
+
+```{r}
+#' Pyke mean win rate for reference on the curve graph
+PykeMWR <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Pyke / Rek'Sai", mean(game_outcome=="win") ]
+PykeMWR_2_11 <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Pyke / Rek'Sai" & str_detect(game_version,"2_11"), mean(game_outcome=="win") ]
+PykeMWR_2_12 <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Pyke / Rek'Sai" & str_detect(game_version,"2_12"), mean(game_outcome=="win") ]
+
+# LurkMatrix <- cbind(
+# LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Pyke / Rek'Sai" & str_detect(game_version,"2_11"), (factor(game_outcome, levels=c("win","loss")) %>% as.numeric()-1) ] %>% tabyl() %>% pull(n),
+# LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Pyke / Rek'Sai" & str_detect(game_version,"2_12"), (factor(game_outcome, levels=c("win","loss")) %>% as.numeric()-1) ] %>% tabyl() %>% pull(n)
+# ) %>% as.matrix()
+```
+
+### Lurk
+
+The tweet means/suggest that on the x-axis of the mastery curve plot we have the average of win rates of players with exactly n games. This limitation will be shown with some initial resultsing graphs (Fig:\@ref(fig:print-plot-Lurk))
+
+```{r print-plot-Lurk, layout="l-page", fig.cap="Lurk master curve on different settings"}
+
+require(hrbrthemes)
+# library(questionr)
+# library(gtsummary)
+
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  filter( player == "Pyke / Rek'Sai") %>%
+  #' only top32
+  filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "lm", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = PykeMWR, color="red") +
+  labs(x="Total Games", y="Win Rate",title="Lurk \n Mastery Curve",subtitle = "Only Top32 (EU/NA)") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  ylim(0, 1 ) +
+  
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  filter( player == "Pyke / Rek'Sai") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "lm", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = PykeMWR, color="red") +
+  labs(x="Total Games", y="Win Rate",title="Lurk \n Mastery Curve",subtitle = "All players",caption = "linear model fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  ylim(0, 1 ) +
+  
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  filter( player == "Pyke / Rek'Sai") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = PykeMWR, color="red") +
+  geom_segment(aes( x=200, y=0.82,xend=200,yend=0.52 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=200,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Lurk in patch \n 2.11-2.12",size=2.5,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Lurk \n Mastery Curve",subtitle = "All players",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0,100)
+  
+# LoR.Melt.Matches.RMD %>%
+#   filter( game_outcome != "tie" & !is.na(refID) ) %>%
+#   filter( player == "Pyke / Rek'Sai") %>%
+#   #' only top32
+#   # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+#   select( refID,game_start_time_utc,game_outcome) %>%
+#   arrange(refID,game_start_time_utc) %>%
+#   mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+#   group_by(refID) %>%
+#   mutate( nGames = row_number() ) %>%
+#   arrange(refID,game_start_time_utc) %>%
+#   mutate( nWin = cumsum(game_outcome)) %>%
+#   ungroup() %>%
+#   mutate( meanWR = nWin/nGames ) %>%
+#   group_by(refID) %>%
+#   slice_max(nGames) %>%
+#   ungroup() %>%
+#   # group_by( nGames ) %>%
+#   # # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+#   # summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+#   ggplot(aes(x = nGames, y = meanWR)) +
+#   geom_point() +
+#   geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+#   geom_hline(yintercept = PykeMWR, color="red") +
+#   geom_segment(aes( x=200, y=0.82,xend=200,yend=0.52 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+#   geom_label(aes(x=200,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Lurk in patch \n 2.11-2.12",size=2.5,fill="#FDCE2A" ) +
+#   labs(x="Total Games", y="Win Rate",title="Lurk \n Mastery Curve",subtitle = "All players",caption = "loess fit") +
+#   theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+#   theme( legend.position = "none" ) +
+#   ylim(0, 1 ) +
+#   xlim(0,100)
+  
+plot_annotation(title = 'Deck Mastery Curve')
+
+# fit <- loess(meanWR ~ nGames + nGames^2, data = testData)
+
+# LoR.Deck[1:5,] %>%
+#  rowwise() %>%
+#  filter( any(str_detect(c_across(contains("Region")), "Bilge")) )
+#  
+# 
+# LoR.Deck[1:5,] %>%
+#   filter(if_any(contains("Region"), ~str_detect(., "Bilgewater") ))
+```
+
+The aboves graphs shows the fitted mastery curve on three different settings:
+
+- Using all pvp-modes with games from the top32 EU/NA Seasonal players, fitted with a linear model which use the number of games as covariate up to the quadratic term. While it shows a positive "mastery-coefficient" there's too much noise with error bands way too wide and a too limited sample pool.
+
+- The second plot add all the players collected up to the moment of the analysis and it's possible too see a clearer trend. Compared to the LoL-example from Blastoise we are clearly in a similar case to the Invern graph where we lack data points. While compared to the mean results there seems to be a positive "mastery-coefficient" the fitted curve doesn't seems appropriate most likely overestimating the effect of skills.
+
+- To solve the fit-problem the third plot use a loess method again up to the quadratic term of the number of games on the same sample used for the second graph. Here the graph again seems to suggest there is a positive "mastery-coefficient" but compared to the mean results it's more an additive (capped) and not moltiplicative factor which can be considered after about 50/100 games.
+
+Something that nedds to be considered is that: while for the top32 I'm sure I have collected all their games, this isn't sure for everyone else so it's safe to assume that for every other player the effective number of games with Lurk is m >= n where n is the number of games I collected. This may impact on the curve as I may have higher WR for a corresponding number of games that's effectively lower than the real number. Also a question is: is the sample appropriate? As mentioned at the start this sample contains both patch 2.11 and 2.12. On those patches Lurk wasn't effected as a deck structure but the metagame around itself surely changed and it also effected the expected win rate (Tab:\@ref(tab:table-WR-lurk))
+
+<caption>
+
+(\#tab:table-WR-lurk)Win Rate between patches
+
+</caption>
+
+```{r table-WR-lurk}
+LoR.Melt.Matches.RMD %>%
+  mutate( patch = ifelse(str_detect(game_version,"2_11")==T,"2_11","2_12"),
+          winRate = (factor(game_outcome, levels=c("loss","win")) %>% as.numeric()-1)) %>%
+  filter(game_outcome != "tie" & !is.na(refID) & player == "Pyke / Rek'Sai") %>%
+  select(patch,winRate ) %>%
+  gtsummary::tbl_summary(by = patch) %>%
+  gtsummary::add_p(
+  # perform t-test for all variables
+  test = everything() ~ "prop.test"
+  # assume equal variance in the t-test
+  # test.args = all_tests("prop.test") ~ list(var.equal = TRUE)
+  )
+```
+
+What follows in (Fig:\@ref(fig:print-plot-Lurk-2)) is the mastery curve using only patch 2.11 side by side with the one previsouly obtained with both patches (loess fit, all pvp modes).
+
+```{r print-plot-Lurk-2, layout="l-page", fig.cap="Comparison of Lurk master curve with loess fit using only patch 2.11 or both 2.11 and 2.12 with all pvp modes"}
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  filter( str_detect(game_version,"2_11") ) %>%
+  filter( player == "Pyke / Rek'Sai") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = PykeMWR_2_11, color="red") +
+  geom_segment(aes( x=100, y=0.82,xend=100,yend=0.51 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=100,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Lurk in patch \n 2.11",size=3.5,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Lurk \n Mastery Curve",subtitle = "All players / Only Patch 2.11",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0, 150) +
+  
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  # filter( str_detect(game_version,"2_11") ) %>%
+  filter( player == "Pyke / Rek'Sai") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = PykeMWR, color="red") +
+  geom_segment(aes( x=100, y=0.82,xend=100,yend=0.53 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=100,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Lurk in patch \n 2.11-2.12",size=3.5,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Lurk \n Mastery Curve",subtitle = "All players / Patch 2.11 - 2.12",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0, 150)  +
+  
+plot_annotation(title = 'Deck Mastery Curve')
+```
+Using only patch 2.11 the skill-coefficient is not as clear as in the other setting. The trend is not as clear and there's a lack of point for an higher number of games still while using both patches there's the risk that the higher WR is a result of also playing in a patch where the deck is a little favorable.
+
+Still, if the sample is almost too little for the case with the highest amount of games, what abou the other two cases mentioned?
+
+### Chrono Squad
+
+```{r}
+ChronoMWR <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Ekko / Zilean", mean(game_outcome=="win") ]
+ChronoMWR_2_11 <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Ekko / Zilean" & str_detect(game_version,"2_11"), mean(game_outcome=="win") ]
+ChronoMWR_2_12 <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Ekko / Zilean" & str_detect(game_version,"2_12"), mean(game_outcome=="win") ]
+```
+
+Before showing the plot for this case, is the Win Rate a possible confounding effect like in Lurk? It seems that's not the case here as seen in (Tab:\@ref(tab:table-WR-Chrono))
+
+<caption>
+
+(\#tab:table-WR-Chrono)Win Rate between patches
+
+</caption>
+
+```{r table-WR-Chrono}
+LoR.Melt.Matches.RMD %>%
+  mutate( patch = ifelse(str_detect(game_version,"2_11")==T,"2_11","2_12"),
+          winRate = (factor(game_outcome, levels=c("loss","win")) %>% as.numeric()-1)) %>%
+  filter(game_outcome != "tie" & !is.na(refID) & player == "Ekko / Zilean") %>%
+  select(patch,winRate ) %>%
+  gtsummary::tbl_summary(by = patch) %>%
+  gtsummary::add_p(
+  # perform t-test for all variables
+  test = everything() ~ "prop.test"
+  # assume equal variance in the t-test
+  # test.args = all_tests("prop.test") ~ list(var.equal = TRUE)
+  )
+```
+Since there doesn't seems to be a difference in performance for "ChronoSquad" the graph (Fig:\@ref(fig:print-plot-Chrono)) will include games from both patches.
+
+```{r print-plot-Chrono, layout="l-page", fig.cap="Chrono Squad master curve with loess fit"}
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  # filter( str_detect(game_version,"2_11") ) %>%
+  filter( player == "Ekko / Zilean") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = ChronoMWR, color="red") +
+  geom_segment(aes( x=100, y=0.82,xend=100,yend=0.43 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=100,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Ekko/Zilean in patch \n 2.11-2.12",size=3.5,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Ekko/Zilean \n Mastery Curve",subtitle = "All players / Patch 2.11 - 2.12",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0, 150)
+
+# fit <- loess(meanWR ~ nGames + nGames^2, data = testData)
+
+# LoR.Deck %>%
+#  rowwise() %>%
+#  filter( any(str_detect(c_across(contains("Card")), "04PZ017")) )
+  
+# LoR.Melt.Matches.RMD %>%
+#   filter( deck_code %in% (LoR.Deck %>% filter(if_any(contains("Card"), ~str_detect(., "04PZ017") )) %>% pull(deck_code) ) ) %>%
+#   # tabyl(player) %>% arrange(desc(n))
+#   filter( player == "Aphelios / Viktor") %>%
+#   # tabyl(player) %>% arrange(desc(n)) %>%
+#   tabyl(game_outcome)
+```
+
+As feared the sample size can't be ignored while evalutating this graph. Again it seems there's indeed an initial "skill-coefficient" that affects the overall performance which seems to peak after ~20 games and continue to be stabke again as an additive effect, yet the expected win rate is way too close to the error bands (which may be a little conservative) for most of the curve and it's than inside the band for the values corresponding to the highest amoutn of games. Sure, it doesn't makes sense from a causal point of view saying that the win rate decrease after a certain amount of games (after accounting for potential confonding effects) but we can't do more with the little amount of games available. Lastly, let's see the case of Jinx/Lulu
+
+### Jinx/Lulu
+
+```{r}
+Jinx_Lulu_MWR <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Jinx / Lulu", mean(game_outcome=="win") ]
+Jinx_Lulu_MWR_2_11 <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Jinx / Lulu" & str_detect(game_version,"2_11"), mean(game_outcome=="win") ]
+Jinx_Lulu_MWR_2_12 <- LoR.Melt.Matches.RMD[ game_outcome != "tie" & !is.na(refID) & player == "Jinx / Lulu" & str_detect(game_version,"2_12"), mean(game_outcome=="win") ]
+```
+
+Again, before anything, let's see if there are differences in the win rates between patches:
+
+<caption>
+
+(\#tab:table-WR-Support)Win Rate between patches
+
+</caption>
+
+```{r table-WR-Support}
+LoR.Melt.Matches.RMD %>%
+  mutate( patch = ifelse(str_detect(game_version,"2_11")==T,"2_11","2_12"),
+          winRate = (factor(game_outcome, levels=c("loss","win")) %>% as.numeric()-1)) %>%
+  filter(game_outcome != "tie" & !is.na(refID) & player == "Jinx / Lulu") %>%
+  select(patch,winRate ) %>%
+  gtsummary::tbl_summary(by = patch) %>%
+  gtsummary::add_p(
+  # perform t-test for all variables
+  test = everything() ~ "prop.test"
+  # assume equal variance in the t-test
+  # test.args = all_tests("prop.test") ~ list(var.equal = TRUE)
+  )
+```
+
+The decks seems to have gained a lot with the latest patch (2.12) and so it would be follish to aggregate the data but I'll also show that case the effect we would have on the other plots.
+
+```{r print-plot-Support, layout="l-page", fig.cap="Comparison of Jinx/Lulu master curve with loess fit using only patch 2.11 or both 2.11 and 2.12 with all pvp modes"}
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  filter( str_detect(game_version,"2_11") ) %>%
+  filter( player == "Jinx / Lulu") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = Jinx_Lulu_MWR_2_11, color="red") +
+  geom_segment(aes( x=75, y=0.82,xend=75,yend=0.55 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=75,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Jinx / Lulu in patch \n 2.11",size=2,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Jinx / Lulu \n Mastery Curve",subtitle = "All players / Only Patch 2.11",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0, 100) +
+  
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  filter( str_detect(game_version,"2_12") ) %>%
+  filter( player == "Jinx / Lulu") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = Jinx_Lulu_MWR_2_12, color="red") +
+  # geom_segment(aes( x=100, y=0.82,xend=100,yend=0.55 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  # geom_label(aes(x=100,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Jinx / Lulu in patch \n 2.12",size=3.5,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Jinx / Lulu \n Mastery Curve",subtitle = "All players / Only Patch 2.12",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0, 100) +  
+  
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  # filter( str_detect(game_version,"2_11") ) %>%
+  filter( player == "Jinx / Lulu") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  geom_hline(yintercept = Jinx_Lulu_MWR, color="red") +
+  geom_segment(aes( x=75, y=0.82,xend=75,yend=0.58 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=75,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Jinx / Lulu in patch \n 2.11-2.12",size=2,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Jinx / Lulu \n Mastery Curve",subtitle = "All players \n Patch 2.11 - 2.12",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0, 1 ) +
+  xlim(0, 100)  +
+  
+plot_annotation(title = 'Deck Mastery Curve')
+```
+Overall this case is quite "the mess", quite fitting since we are talking of loose scews like Jinx and Lulu.
+
+Jokes aside:
+
+The graph with only games with patch 2.11 is the worst among the ones obtained up until this point and it doesn't suggest the presence of even a little skill-coefficient, heck not even a negative one. A possible explanation could be that it's because since I'm using all the players and this deck was already rarely played, this is the result of the problem mentioned before where for some players the actual number of games played is higher than the one in my possession. Sadly, this doesn't explain why for only patch 2.12 I see again what looks like the steepness of a small learning curve. Sadly in the third plot with the information in our possession it's pretty much impossible to know whatever the absence on a skill-coefficient is masked by the higher expcted win rate for games played also in patch 2.11 or it's indeed "the correct" behaviour. If anything this example highlist the importance of an appropriate sample.
+
+# **Conlusions**
+
+The presence or lack of a skill-factor when playing an huge number of games with certain LoR-decks may still be debatable but aside for the Jinx/Lulu example a first explatory analysis suggest that **there's indeed an initial increase in the mean win rate compared to later results**. The analysis also highlisted the requiment of a huge amount of games just to have a good curve (Lurk data) that if limited to a single patch correspond to an highly popular deck making this not applicable to most decks, at least with the current API/DB limitation. An idea could be try to repeat this analysis after a new mayor release of cards without a champion expansion that immediately follows. The release of the last region and main release of the next expansion in August doesn't seems a good choicr as it should have too many cards so with less players focuing on specific decks. On the other hand the second/third expansion may be a better candidate.
+
+```{r}
+LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" & !is.na(refID) ) %>%
+  # filter( str_detect(game_version,"2_11") ) %>%
+  filter( player == "Azir / Irelia") %>%
+  #' only top32
+  # filter( refID %in% (LoR.Account.RMD %>% filter(seasonal=="top32") %>% distinct(refID) %>% pull()) ) %>%
+  select( refID,game_start_time_utc,game_outcome) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( game_outcome = (factor(game_outcome) %>% as.numeric()-1) ) %>%
+  group_by(refID) %>%
+  mutate( nGames = row_number() ) %>%
+  arrange(refID,game_start_time_utc) %>%
+  mutate( nWin = cumsum(game_outcome)) %>%
+  ungroup() %>%
+  mutate( meanWR = nWin/nGames ) %>%
+  group_by(refID) %>%
+  slice_max(nGames) %>%
+  ungroup() %>%
+  group_by( nGames ) %>%
+  # mutate( nWin = sum(nWin), totPlayer=n(), meanWR = nWin/(totPlayer*nGames) ) %>% distinct(nGames,meanWR) %>% 
+  summarise(meanWR = mean(meanWR), .groups = "drop") %>%
+  ggplot(aes(x = nGames, y = meanWR)) +
+  geom_line() +
+  geom_smooth(method = "loess", formula = 'y ~ x + x^2') +
+  # geom_hline(yintercept = Jinx_Lulu_MWR, color="red") +
+  # geom_segment(aes( x=75, y=0.82,xend=75,yend=0.58 ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  # geom_label(aes(x=75,y=0.82,alpha="semitransparent"),label="Mean Win Rate \n of Jinx / Lulu in patch \n 2.11-2.12",size=2,fill="#FDCE2A" ) +
+  labs(x="Total Games", y="Win Rate",title="Jinx / Lulu \n Mastery Curve",subtitle = "All players \n Patch 2.11 - 2.12",caption = "loess fit") +
+  theme_ipsum_rc(axis_title_face = "bold",plot_title_face = "bold",plot_title_size = 12,subtitle_size = 10,axis_text_size = 5) +
+  theme( legend.position = "none" ) +
+  ylim(0.30,0.70  ) +
+  xlim(0, 100)
+```
+
+
+[^2]: [Legendary meme](https://www.youtube.com/watch?v=7eL5kj5FE4E)

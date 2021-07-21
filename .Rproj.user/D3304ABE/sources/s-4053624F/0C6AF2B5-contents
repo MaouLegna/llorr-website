@@ -1,0 +1,55 @@
+---
+title: ''
+draft: false
+# avatar: images/Conan.jpg
+bio: Statistician from Italy (VE/PD). When in doubt Ceteris Paribus 
+# education:
+#   courses:
+#   - course: MSc in Statistical Science
+#     institution: University of Padua
+#     year: 2019
+email: valentino.vazzoler.86@gmail.com
+highlight_name: false
+# interests:
+# - Causal Inference
+# - CCG
+# - Medical Statistics
+# organizations:
+# - name:
+#   url: 
+# role: MSc in Statistical Science /          Aspiring Data Analyst
+social:
+- icon: envelope
+  icon_pack: fas
+  link: mailto?subject=valentinovazzoler@gmail.com
+- display:
+    header: true
+  icon: twitter
+  icon_pack: fab
+  label: Follow me on Twitter
+  link: https://twitter.com/Maou_Legna
+# - icon: graduation-cap
+#   icon_pack: fas
+#   link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
+- icon: r-project
+  icon_pack: fab
+  link: https://rpubs.com/Legna/
+# - icon: github
+#   icon_pack: fab
+#   link: https://github.com/gcushen
+# - icon: linkedin
+#   icon_pack: fab
+#   link: https://www.linkedin.com/
+superuser: true
+title: Vazzoler Valentino (Legna)
+---
+
+- Everything is collected with Riot's API. It's still a development key so the amount of data I can scrap is quite limited.
+- All data is assumed to be almost always from players at Master ranks. When a new player is added to the leaderboard I start searching their match-history, since the Riot API return the last 20 matches without any other metadata of a match, initially I recover some matches from Diamond too, but from that point onward those games are in Master ranks.
+- In cases of duplicated nicks or when the automatic process can't find certain player, I recover their info thanks to LoRMasterTracker by <a href="https://twitter.com/Storm_lor/">Storm</a>
+- All results are aimed at Master rank: play rate and win rate are relative to the reference population and results at lower ranks may differ. For Plat+ <a href="https://twitter.com/KozmicPlays/">Kozmic</a> and <a href="https://twitter.com/drlor4/">Dr.Lor</a> provide better (and more consolidated) data.
+- At the start of a season I may recover all games played at Master but once my rate-limit is less than the average number of games played, my approach is to extract a random sample of games played in the current patch. I won't give priority to the most recent games or I may easily create bias in the sample.
+
+<!---
+{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
+-->

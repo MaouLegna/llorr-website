@@ -1,13 +1,38 @@
 name: "llorr-website"
 title: "LLoRR Stats"
+theme: llorr_theme.css
+base_url: https://llorr-stats.netlify.app
 description: |
-  (Legna’s) Legends of Runeterra Stats (with R)
+  "Statistics, Data, Science"
+# description: |
+#   (Legna’s) Legends of Runeterra Stats (with R)
 output_dir: "_site"
 navbar:
-  # left:
+  logo:
+    image: images/logo.png
+    # href: https://www.rstudio.com
+  search: true
+  source_url: true
   right:
     - text: "Home"
       href: index.html
+    - text: "MetaReport"  
+      href: report.html
+    - text: "Blog"
+      menu:
+        - text: "Analysis"
+          href: analysis.html
+        - text: "---"
+        - text: "Other"
+          href: blog.html  
     - text: "About"
       href: about.html
+    - icon: fab fa-github-alt fa-1x
+      href: https://github.com/MaouLegna
+    # - icon: fa fa-rss fa-1x
+    #   href: index.xml
+    - icon: fab fa-twitter fa-1x
+      href: https://twitter.com/Maou_Legna
+    - icon: fab fa-r-project
+      href: https://rpubs.com/Legna
 output: distill::distill_article

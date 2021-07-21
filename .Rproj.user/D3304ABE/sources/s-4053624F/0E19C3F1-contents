@@ -1,0 +1,370 @@
+---
+title: "An Irelia's World"
+author: 'by Legna'
+date: '2021-06-09'
+slug: Irelia
+categories:
+  - R
+  - Theory
+tags:
+  - Time Series
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2021-06-09'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+output: html_document
+---
+
+Irelia's presence has been a staple of the meta ever since her appearence on patch 2.7
+
+Combining an high playrate with an high win rate a common opinion is that the deck is too powerful as even when people tried to counter it, for example with dragons, it would still remain the best performing deck . This analysis is going to tackle exactly this last point: that we lived in a meta that tried to counter Irelia but couldn't.
+
+```{r setup, include=FALSE, warning=FALSE}
+path.DT <- file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","Runeterra")
+source(file.path(path.DT, paste("LoR_main", ".R", sep="")))
+
+use_python("C:/anaconda/")
+py_run_string("print('Hello World')")
+lor_deckcodes <- import("lor_deckcodes")
+py_module_available("lor_deckcodes")
+```
+
+## Data
+
+```{r raw-data, cache=TRUE, echo=FALSE, results="hide", warning=FALSE}
+# file.Match.DT   <- list.files(path = path.DT, pattern = "LoR_MatchDT_") %>% max()
+# LoR.Match.RMD   <- fread(file.path(path.DT, file.Match.DT), colClasses=classMatchDT, header=T, na.strings = c("",NA))
+# LoR.Deck        <- fread(paste0(path.DT,"LoR_DECK.csv"), na.strings = c("",NA))
+LoR.Match.RMD <- fread(file.path("C:","Users","Valentino Vazzoler","Desktop","R - LoR","LoR - Analisi","ExtendedDT.csv"), header=T, na.strings = c("",NA))
+```
+
+```{r sample-games, echo=FALSE}
+LoR.Master.Matches.RMD <- LoR.Match.RMD %>%
+  filter( game_type=="Ranked" | game_mode=="StandardGauntletLobby") %>%
+  filter(game_version > "live_2_6" ) # I also want the patch before the expansion
+
+nGames <- NROW(LoR.Master.Matches.RMD)
+```
+
+```{r add_player_opponent, echo=FALSE}
+# LoR.Master.Matches.RMD$player_1   <- LoR.Deck[LoR.Master.Matches.RMD$deck_code_1, on="deck_code" ] %>% get_full_combination_from_deck_code()
+# LoR.Master.Matches.RMD$opponent_1 <- LoR.Deck[LoR.Master.Matches.RMD$deck_code_2, on="deck_code" ] %>% get_full_combination_from_deck_code()
+# # LoR.Master.Matches.RMD$player_1   <- LoR.Deck[LoR.Master.Matches.RMD$deck_code_1, on="deck_code" ] %>% select(starts_with("Champion")) %>% extract_champions_table()
+# # LoR.Master.Matches.RMD$opponent_1 <- LoR.Deck[LoR.Master.Matches.RMD$deck_code_2, on="deck_code" ] %>% select(starts_with("Champion")) %>% extract_champions_table()
+# LoR.Master.Matches.RMD$player_2   <- LoR.Master.Matches.RMD$opponent_1
+# LoR.Master.Matches.RMD$opponent_2 <- LoR.Master.Matches.RMD$player_1
+```
+
+```{r melt-matches, echo=FALSE}
+LoR.Melt.Matches.RMD <- LoR.Master.Matches.RMD %>% 
+  select( match_key,server,game_start_time_utc,game_version,ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","factions_1","factions_2"), measure.vars=patterns( 
+    str_sub(
+      names(select(LoR.Master.Matches.RMD,ends_with("_1")))
+      ,end = -3) 
+  ),
+  value.name = str_sub(
+    names(select(LoR.Master.Matches.RMD,ends_with("_1")))
+    ,end = -3) 
+  )
+
+DT_2_6 <- LoR.Melt.Matches.RMD %>% filter(game_version<"live_2_7")
+```
+
+```{r Irelia-DB, echo=FALSE, message=FALSE}
+options("digits.secs"=6)
+
+Irelia <- LoR.Melt.Matches.RMD %>%
+  filter(game_version>"live_2_7" & game_version<"live_2_9") %>%
+  filter(player=="Azir / Irelia") %>%
+  filter(game_outcome!="tie") %>%
+  # filter(server=="asia") %>%
+  arrange(game_start_time_utc) %>%
+  copy()
+
+# Irelia[,game_start_time_utc := strptime(game_start_time_utc, "%Y-%m-%dT%H:%M:%OS", tz = "UTC") ]
+Irelia[, game_outcome_num    := ifelse(game_outcome=="win",1,0) ]
+Irelia[, game_start_time_utc := as.POSIXct(game_start_time_utc, "%Y-%m-%dT%H:%M:%OS", tz = "UTC") ]
+Irelia[, cumWR := cummean(game_outcome_num) ]
+
+Irelia <- Irelia %>% 
+  select(!contains("factions")) %>%
+  select(-variable,-participants,-puuid,-deck_id,-deck_code)
+```
+
+The data use `r NROW(Irelia)` matches from patch `r min(Irelia$game_version) |> str_sub(start=6)` up until patch 2.9. There is complete coverage of all games at Master.
+
+The games are then filtered using the following methodology:
+
+- I estimate the win rate (WR) and their confidence interval (CI) for all match ups (MU) using all shards and games played in patch 2.7/2.8 I could include patch 2.9 as it should not have changed the *direction* of many MU (if not at all) but "better safe than sorry".
+
+```{r MU, echo=FALSE}
+# Irelia %>%
+#   group_by(opponent) %>%
+#   slice_tail(n = 1) %>% as.data.table() # top_n(1, row_number())
+
+MU <- Irelia %>%
+  group_by(opponent) %>%
+  mutate( muWin   = sum(game_outcome=="win") ) %>%
+  mutate( muGames = n()) %>%
+  # mutate( muGames = row_number() ) %>%
+  mutate( muWR  = mean(game_outcome=="win") ) %>%
+  # mutate( muWR_2  = muWin/muGames ) %>%
+  select(opponent,muWin,muGames,muWR) %>%
+  distinct(opponent,.keep_all = T) %>%
+  as.data.table()
+  
+MU[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
+MU[, okCI:=(!between(0.50,LCI,UCI)) ]
+MU[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
+```
+
+- I filter all MU whose CI doesn't include 50% or have less than 500 games, as aside for the mirror it's possible to have MU which are too near the 50% benchmark. Actually the only case aside for the mirror that's included with the "500 games clause" it's Nightfall whose data suggest to have a negative direction for Azir/Irelia. Still, Nightfall is grouped with the "counter" decks.
+
+```{r explore-data, echo=FALSE}
+MU %>%
+  filter(okCI==F) %>%
+  filter(muGames>500) %>%
+  select(!(okCI | direction)) %>% 
+  kbl() %>%
+  kable_minimal()
+
+```
+The reason to filter the data is to be sure enough about the direction of the MU. Of the archetypes (champion+regions) left I group them as "counters" or "weak" depending is the WR is below or higher than 50% for Azir/Irelia meaning is Azir Irelia has a 55% against such MU, it's a "weak" deck.
+
+```{r MU-Final, echo=FALSE, message=FALSE, warning=FALSE}
+oppoLabel <- MU %>%
+  filter(okCI==T | muGames > 500) %>%
+  filter(opponent!="Azir / Irelia") %>%
+  arrange(desc(muGames)) %>%
+  pull(opponent)
+
+Irelia[                     opponent %in% oppoLabel, cumWR_keep:=cummean(game_outcome_num)]
+```
+
+By filtering I reduce all cases to `r percent( (MU[opponent %in% oppoLabel, sum(muGames)] / MU[opponent !="Azir / Irelia",sum(muGames)]), accuracy = 0.1)` at the matches collected. Of these `r percent( (MU[opponent =="Azir / Irelia" , sum(muGames)] / MU[,sum(muGames)]), accuracy = 0.1)` are made from mirrors which are also excluded.
+
+At least for the global results this doesn't seems to effect the overall "performance" of Azir/Irelia
+
+```{r coverage, echo=FALSE, message=FALSE, warning=FALSE}
+# percent( (MU[opponent %in% oppoLabel, sum(muGames)] / MU[opponent !="Azir / Irelia",sum(muGames)]), accuracy = 0.1)
+# percent( (MU[opponent =="Azir / Irelia" , sum(muGames)] / MU[,sum(muGames)]), accuracy = 0.1)
+
+# WR all'ultimo game
+Irelia %>% 
+  tail(n=1) %>% 
+  select(cumWR,cumWR_keep) %>% 
+  rename('cumulative WR'='cumWR','(filtered) cumulated WR'='cumWR_keep') %>% 
+  mutate_each(funs(as.character(scales::percent(.,accuracy = 0.01))))  %>% 
+  kbl() %>%
+  kable_minimal()
+
+```
+
+All that's left is computing the cumulative play rates and win rates of Azir/Irelia either at a global scale or shard-specific.
+
+**Note**: since it can be an interesting info, those are the combinations that counters Irelia:
+
+```{r playRates, echo=FALSE, message=FALSE, warning=FALSE}
+
+# LoR.Melt.Matches.RMD %>%
+#   # filter(player =="Nasus / Swain") %>%
+#   filter(puuid %in% c("JSGo709SE47GkpHXRZY7xd4XKL6__VmnXqG6D8UlAnY8Mbw_KnKExievrGczSQxYrRdP5xcUZq8Gfw",
+# "MzbktU4YTZr63jPJv6kKUofSLfBzZrHY6SIQfDA4Ls4joJlRcVH6e-VS7-9YPzdmaDL_TPtSN23OMg",
+# "t43wbjD3OK1FLGsd1wBxx696t0NKR3dgbbllHkO71WBtJqCCjapa67wkZZNPUvMGSQWsIPLt2iut5g") ) %>%
+#   pull(player) %>%
+#   table()
+#   
+#   
+#   pull(deck_code) %>% table()
+
+
+# Irelia <- Irelia %>% select(!direction)
+
+MU[okCI==T & direction=="NEG"] %>%
+  select(!(okCI | direction)) %>% 
+  arrange(muWR) %>%
+  mutate_at(vars(muWR,LCI,UCI),       funs(as.character(scales::percent(.,accuracy = 0.01)))) %>%
+  mutate(newcol = map2(muWin, muGames,  ~ binom.test(.x, n = .y,p = 0.5,alternative = "less") %>% 
+                  {tibble(pvalue = .[["p.value"]]
+                         # ,
+                         # CI_lower = .[["conf.int"]][[1]], 
+                         # CI_upper = .[["conf.int"]][[2]]
+                         )})) %>%
+  unnest %>%
+  kbl() %>%
+  kable_material(c("striped", "hover"))
+
+# binom.test(5,24,0.5,"less")
+
+
+
+```
+
+For those who may complain about the small numbers of some of these cases: this is exactly why I filtered to those with a good enough CI. They may be rare occurrences but the direction is safe enough. Not to mention that if you are interested just in the direction of the MU we can use a binomial test with H0 and an unidirectional with alternative hypothesis: true probability of success is less than 0.5
+
+All values not only are below the 0.05 benchmark, but also below 0.01. We are really confident about those MU directions.
+
+```{r plot-global, fig.cap="Global trend", echo=FALSE, message=FALSE, warning=FALSE}
+
+# Cumulative WR - keeped oppo
+# Irelia[server=="europe"   & opponent %in% oppoLabel, cumWR_keep_EU  :=cummean(game_outcome_num) ]
+# Irelia[server=="americas" & opponent %in% oppoLabel, cumWR_keep_NA  :=cummean(game_outcome_num) ]
+# Irelia[server=="asia"     & opponent %in% oppoLabel, cumWR_keep_ASIA:=cummean(game_outcome_num) ]
+
+# Cumulative WR - MU specific
+# Irelia[, cumWR := cummean(game_outcome_num) ]
+# Irelia[server=="europe"  , cumWR_EU   := cummean(game_outcome_num) ]
+# Irelia[server=="americas", cumWR_NA   := cummean(game_outcome_num) ]
+# Irelia[server=="asia"    , cumWR_ASIA := cummean(game_outcome_num) ]
+
+# Cumulative WR - MU specific
+# Irelia[, ':=' (muCWin=cumsum(game_outcome_num),muGames=.N,muCWR=cummean(game_outcome_num)) ,by=.(opponent) ]
+# Irelia[server=="europe"  , ':=' (muCWin_EU=cumsum(game_outcome_num),muGames_EU=.N,muCWR_EU=cummean(game_outcome_num)) ,by=.(opponent) ]
+# Irelia[server=="americas", ':=' (muCWin_NA=cumsum(game_outcome_num),muGames_NA=.N,muCWR_NA=cummean(game_outcome_num)) ,by=.(opponent) ]
+# Irelia[server=="asia"    , ':=' (muCWin_ASIA=cumsum(game_outcome_num),muGames_ASIA=.N,muCWR_ASIA=cummean(game_outcome_num)) ,by=.(opponent) ]
+
+prePatch_PR <- left_join(DT_2_6 %>%
+  filter(opponent %in% oppoLabel) ,
+  MU[,.(opponent,direction)]) %>%
+  pull(direction) %>% tabyl()
+
+Irelia <- left_join(Irelia,MU[,.(opponent,muWR,direction)],by="opponent")
+
+Irelia %>%
+  filter(opponent %in% oppoLabel) %>%
+  mutate(sumNEG  = cumsum(direction=="NEG") ) %>%
+  mutate(sumPOS  = cumsum(direction=="POS") ) %>%
+  mutate(playNEG := sumNEG/row_number()) %>%
+  mutate(playPOS := sumPOS/row_number()) %>%
+  select(game_start_time_utc,cumWR_keep,playNEG,playPOS) %>%
+  melt(., id="game_start_time_utc") %>%
+  mutate(variable = factor(variable, levels=c("cumWR_keep", "playPOS", "playNEG"), labels=c("Irelia's WR", "Positive MU", "Negative MU") )) %>%
+  # pull(variable) %>% table()
+  ggplot(aes(x = game_start_time_utc,y = value,colour=variable)) +
+  # geom_point() +
+  geom_line() +
+  # geom_smooth() +
+  ylim(0.3, 0.7) +
+  scale_x_datetime(date_minor_breaks = "1 day") +
+  # scale_color_manual(values=c("darkgreen", "red", "blue")) +
+  geom_hline(aes(yintercept = prePatch_PR[prePatch_PR$.=="POS","percent"]), color="blue", linetype="dashed") + # POS è WR di Irelia >  0.50 quindi favorevoli a lei
+  geom_hline(aes(yintercept = prePatch_PR[prePatch_PR$.=="NEG","percent"]), color="red",  linetype="dashed") +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = prePatch_PR[prePatch_PR$.=="POS","percent"]+0.02, label = "mean PR of \n decks weak to Irelia \n before 2.7", size = 3) +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = prePatch_PR[prePatch_PR$.=="NEG","percent"]+0.02, label = "mean PR of \n Irelia counters \n before 2.7", size = 3) +
+  labs(x = "Date",y = "Percent", title = "Evolution of PlayRates for archetypes weak/strong against Azir/Irelia", subtitle = "All Shards") +
+  theme(legend.position =  "bottom") +
+  scale_color_manual(labels = c("Irelia's WR", "PR of negative MU for Irelia", "PR of positive MU for Irelia"), values = c("darkgreen", "red","blue"))
+```
+
+```{r plot-EU, fig.cap="EU trend", echo=FALSE, message=FALSE, warning=FALSE}
+EU_prePatch_PR <- left_join(DT_2_6 %>%
+  filter(opponent %in% oppoLabel) %>%
+    filter(server=="europe")
+  ,
+  MU[,.(opponent,direction)]) %>%
+  pull(direction) %>% tabyl()
+
+Irelia %>%
+  filter(opponent %in% oppoLabel) %>%
+  filter(server=="europe") %>%
+  mutate(sumNEG  = cumsum(direction=="NEG") ) %>%
+  mutate(sumPOS  = cumsum(direction=="POS") ) %>%
+  mutate(playNEG := sumNEG/row_number()) %>%
+  mutate(playPOS := sumPOS/row_number()) %>%
+  select(game_start_time_utc,cumWR_keep,playNEG,playPOS) %>%
+  melt(., id="game_start_time_utc") %>%
+  ggplot(aes(x = game_start_time_utc,y = value,colour=variable)) +
+  # geom_point() +
+  geom_line() +
+  # geom_smooth() +
+  ylim(0.3, 0.7) +
+  scale_x_datetime(date_minor_breaks = "1 day") +
+  # scale_color_manual(values=c("darkgreen", "red", "blue")) +
+  geom_hline(aes(yintercept = EU_prePatch_PR[EU_prePatch_PR$.=="POS","percent"]), color="blue", linetype="dashed") + # POS è WR di Irelia >  0.50 quindi favorevoli a lei
+  geom_hline(aes(yintercept = EU_prePatch_PR[EU_prePatch_PR$.=="NEG","percent"]), color="red",  linetype="dashed") +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = EU_prePatch_PR[EU_prePatch_PR$.=="POS","percent"]+0.02, label = "mean PR of \n decks weak to Irelia \n before 2.7", size = 3) +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = EU_prePatch_PR[EU_prePatch_PR$.=="NEG","percent"]+0.02, label = "mean PR of \n Irelia counters \n before 2.7", size = 3) +
+  labs(x = "Date",y = "Percent", title = "Evolution of PlayRates for archetypes weak/strong against Azir/Irelia", subtitle = "EU only") +
+  theme(legend.position =  "bottom") +
+  scale_color_manual(labels = c("Irelia's WR", "PR of negative MU for Irelia", "PR of positive MU for Irelia"), values = c("darkgreen", "red","blue"))
+
+# ggsave("EU-IreliaWorld.png")
+```
+
+```{r plot-NA, fig.cap="NA trend", echo=FALSE, message=FALSE, warning=FALSE}
+NA_prePatch_PR <- left_join(DT_2_6 %>%
+  filter(opponent %in% oppoLabel) %>%
+    filter(server=="americas")
+  ,
+  MU[,.(opponent,direction)]) %>%
+  pull(direction) %>% tabyl()
+
+Irelia %>%
+  filter(opponent %in% oppoLabel) %>%
+  filter(server=="americas") %>%
+  mutate(sumNEG  = cumsum(direction=="NEG") ) %>%
+  mutate(sumPOS  = cumsum(direction=="POS") ) %>%
+  mutate(playNEG := sumNEG/row_number()) %>%
+  mutate(playPOS := sumPOS/row_number()) %>%
+  select(game_start_time_utc,cumWR_keep,playNEG,playPOS) %>%
+  melt(., id="game_start_time_utc") %>%
+  ggplot(aes(x = game_start_time_utc,y = value,colour=variable)) +
+  # geom_point() +
+  geom_line() +
+  # geom_smooth() +
+  ylim(0.3, 0.7) +
+  scale_x_datetime(date_minor_breaks = "1 day") +
+  # scale_color_manual(values=c("darkgreen", "red", "blue")) +
+  geom_hline(aes(yintercept = NA_prePatch_PR[NA_prePatch_PR$.=="POS","percent"]), color="blue", linetype="dashed") + # POS è WR di Irelia >  0.50 quindi favorevoli a lei
+  geom_hline(aes(yintercept = NA_prePatch_PR[NA_prePatch_PR$.=="NEG","percent"]), color="red",  linetype="dashed") +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = NA_prePatch_PR[NA_prePatch_PR$.=="POS","percent"]+0.02, label = "mean PR of \n decks weak to Irelia \n before 2.7", size = 3) +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = NA_prePatch_PR[NA_prePatch_PR$.=="NEG","percent"]+0.02, label = "mean PR of \n Irelia counters \n before 2.7", size = 3) +
+  labs(x = "Date",y = "Percent", title = "Evolution of PlayRates for archetypes weak/strong against Azir/Irelia", subtitle = "NA-only") +
+  theme(legend.position =  "bottom") +
+  scale_color_manual(labels = c("Irelia's WR", "PR of negative MU for Irelia", "PR of positive MU for Irelia"), values = c("darkgreen", "red","blue"))
+
+ggsave("NA-IreliaWorld.png")
+```
+
+```{r plot-ASIA, fig.cap="Asia trend", echo=FALSE, message=FALSE, warning=FALSE}
+ASIA_prePatch_PR <- left_join(DT_2_6 %>%
+  filter(opponent %in% oppoLabel) %>%
+    filter(server=="asia")
+  ,
+  MU[,.(opponent,direction)]) %>%
+  pull(direction) %>% tabyl()
+
+
+Irelia %>%
+  filter(opponent %in% oppoLabel) %>%
+  filter(server=="asia") %>%
+  mutate(sumNEG  = cumsum(direction=="NEG") ) %>%
+  mutate(sumPOS  = cumsum(direction=="POS") ) %>%
+  mutate(playNEG := sumNEG/row_number()) %>%
+  mutate(playPOS := sumPOS/row_number()) %>%
+  select(game_start_time_utc,cumWR_keep,playNEG,playPOS) %>%
+  melt(., id="game_start_time_utc") %>%
+  ggplot(aes(x = game_start_time_utc,y = value,colour=variable)) +
+  # geom_point() +
+  geom_line() +
+  # geom_smooth() +
+  ylim(0.3, 0.7) +
+  scale_x_datetime(date_minor_breaks = "1 day") +
+  # scale_color_manual(values=c("darkgreen", "red", "blue")) +
+  geom_hline(aes(yintercept = ASIA_prePatch_PR[ASIA_prePatch_PR$.=="POS","percent"]), color="blue", linetype="dashed") + # POS è WR di Irelia >  0.50 quindi favorevoli a lei
+  geom_hline(aes(yintercept = ASIA_prePatch_PR[ASIA_prePatch_PR$.=="NEG","percent"]), color="red",  linetype="dashed") +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = ASIA_prePatch_PR[ASIA_prePatch_PR$.=="POS","percent"], label = "mean PR of \n decks weak to Irelia \n before 2.7", size = 3) +
+  annotate("text", x =  as.POSIXct("2021-05-25") ,y = ASIA_prePatch_PR[ASIA_prePatch_PR$.=="NEG","percent"], label = "mean PR of \n Irelia counters \n before 2.7", size = 3) +
+  labs(x = "Date",y = "Percent", title = "Evolution of PlayRates for archetypes weak/strong against Azir/Irelia", subtitle = "ASIA-only") +
+  theme(legend.position =  "bottom") +
+  scale_color_manual(labels = c("Irelia's WR", "PR of negative MU for Irelia", "PR of positive MU for Irelia"), values = c("darkgreen", "red","blue"))
+
+ggsave("ASIA-IreliaWorld.png")
+```
