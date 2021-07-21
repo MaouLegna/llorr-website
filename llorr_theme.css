@@ -92,3 +92,11 @@ body {
 .screenshot {
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
+
+/* .panelset {
+  --panel-tab-foreground: currentColor;
+  --panel-tab-active-foreground: #0051BA;
+  --panel-tab-hover-foreground: #d22;
+  --panel-tabs-border-bottom: #ddd;
+  --panel-tab-inactive-opacity: 0.5;
+} */
