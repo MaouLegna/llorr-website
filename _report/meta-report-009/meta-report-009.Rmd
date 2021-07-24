@@ -1,0 +1,36 @@
+---
+title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°9)"
+description: |
+  Second week of patch 2.8 Added the LMI
+base_url: https://llorr-stats.netlify.app  
+preview: "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04MT008T1-full.png"
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 06-01-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    self_contained: false
+citation: false
+draft: false
+twitter:
+  site: "@Maou_Legna"
+  creator: "@Maou_Legna"
+---
+
+> Up until I recreate all previous reports (before #16), these pages will provide the link to the RPubs release which was was the 'original' version of the reports. [^1]
+
+<aside>
+$\downarrow$ **Click on the image to be redirected to the report** $\downarrow$
+```{r, echo=FALSE}
+htmltools::a(
+  href="https://rpubs.com/Legna/MetaReport_009",
+  htmltools::img(src="https://dd.b.pvp.net/latest/set4/en_us/img/cards/04MT008T1-full.png")
+)
+```
+</aside>
+
+
+[^1]: Also, in case I'll recreate the previous reports I must highlight: since my data collection is quite limited the numbers I will obtain will differs as in the meanwhile I collected additional games for the timeframe of interest

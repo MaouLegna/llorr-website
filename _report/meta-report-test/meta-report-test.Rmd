@@ -1,0 +1,67 @@
+---
+title: "THE TESTING META REPORT NAME IS TOO LONG, IT IS EVEN LONGER!!!"
+description: |
+  Quick testing page for CSS / Format / Functions and other stuff.
+base_url: https://llorr-stats.netlify.app
+preview:   
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 12-06-1986
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    self_contained: false
+citation: false
+draft: true
+twitter:
+  site: "@Maou_Legna"
+  creator: "@Maou_Legna"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r echo=FALSE}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
+```
+
+
+# section
+::: l-page
+
+::::: {.panelset}
+
+
+::: {.panel}
+
+## Tab 1 {.panel-name}
+
+Alé, la qualità aumenta sensibilmente ora
+
+:::
+
+
+::: {.panel}
+
+## Tab 2 {.panel-name}
+
+Wow, funziona per bene!
+
+:::
+
+
+:::::
+
+:::

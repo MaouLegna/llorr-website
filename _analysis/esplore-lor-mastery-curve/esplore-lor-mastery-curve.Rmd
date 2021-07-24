@@ -420,16 +420,6 @@ LoR.Melt.Matches.RMD %>%
 #   xlim(0,100)
   
 plot_annotation(title = 'Deck Mastery Curve')
-
-# fit <- loess(meanWR ~ nGames + nGames^2, data = testData)
-
-# LoR.Deck[1:5,] %>%
-#  rowwise() %>%
-#  filter( any(str_detect(c_across(contains("Region")), "Bilge")) )
-#  
-# 
-# LoR.Deck[1:5,] %>%
-#   filter(if_any(contains("Region"), ~str_detect(., "Bilgewater") ))
 ```
 
 The aboves graphs shows the fitted mastery curve on three different settings:
