@@ -12,16 +12,112 @@ site: distill::distill_website
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
-  dev.args = list(bg = 'transparent'),
-  # dev='svglite',
-  fig.align='center',
-  #out.width='75%', fig.asp=.75,
-  cache.rebuild = F,
-  cache = F
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=9,
+  fig.height=6,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
 )
 
+#' R Option
+require(Hmisc)    # provides knitrSet and other functions like hidingToC
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
 
-library(tidyverse)
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+#' Python
+py_run_string("print('Hello World')")
+lor_deckcodes <- import("lor_deckcodes")
+py_module_available("lor_deckcodes")
+```
+
+---
+
+# Data
+
+```{r raw-data}
+#' load gameDT
+#'############
+# fileDT <- list.files(path = file.path("C:","LlorR","data","raw"),
+#                      pattern = "LoR_MatchDT_",full.names = T) %>% max()
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA) ) # Patch 2.11
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load top32
+#'############
+# file.Top32 <- list.files(path = file.path("C:","LlorR","data","raw"),
+#                       pattern = "LoR_Top32_",full.names = T) %>% max()
+# file.Top32 <- file.path("C:","LlorR","data","raw","LoR_Top32.csv")
+# LoR.Top32.RMD <- fread(file.Top32, header = T, na.strings = c("", NA))
+
+#' load Account
+#'#############
+file.Account <- list.files(path = file.path("C:","LlorR","data","raw"),
+                             pattern = "LoR_ACCOUNT_",full.names = T) %>% max()
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
+  pivot_longer(
+  cols = c("puuid_1","puuid_2","puuid_3","puuid_4"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+  # select( puuid=puuid_4,
+  #         RiotID,
+  #         server=activeShard,seasonal)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+# LoR.Match.RMD <- rbind(LoR.Match.RMD,
+#                        LoR.Top32.RMD) %>%
+#   distinct(match_key,.keep_all = T)
+```
+
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( str_detect(game_version, '2_12') ) %>%
+  filter( game_start_time_utc >= as.POSIXct("2021-07-14 21:00:00", tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
+
+nGames <- NROW(LoR.Melt.Matches.RMD)/2
 ```
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
@@ -141,6 +237,28 @@ ggplot(aes(x = x, y = value), data = gdat) +
 ```
 
 ---
+
+```{r get-WR}
+MUtbl <- LoR.Melt.Matches.RMD %>%
+  # filter(game_version>"live_2_7" & game_version<"live_2_9") %>%
+  # filter(game_version>"live_2_9" ) %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome,server,game_version ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win") ) %>%
+  setDT()
+  
+MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
+MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
+MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
+
+MUtbl <- MUtbl %>%
+  mutate( CI := glue("({percent(LCI,accuracy = 0.1)}-{percent(UCI,accuracy = 0.1)})" ) )
+
+# fwrite(MUtbl,file.path("C:","LlorR","data","clean","MUtbl.csv"))
+```
 
 All previous analysis have been uploaded.
 

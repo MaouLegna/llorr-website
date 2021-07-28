@@ -58,7 +58,7 @@ lor_deckcodes <- import("lor_deckcodes")
 py_module_available("lor_deckcodes")
 ```
 
-```{r panelset_style}
+```{r panelset-style}
 xaringanExtra::style_panelset_tabs(font_family = "Roboto",
                                    active_foreground = "white",
                                    hover_foreground = "black",
@@ -77,8 +77,6 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 
 #' load Account
 #'#############
-# file.Account <- list.files(path = file.path("C:","LlorR","data","raw"),
-#                              pattern = "LoR_ACCOUNT_",full.names = T) %>% max()
 file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
 LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
   mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
@@ -105,72 +103,16 @@ namesList.NA.RMD     <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_NA
 namesList.ASIA.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_ASIA.csv"))$name
 ```
 
-```{r filter-prepare-games}
-LoR.Master.Matches.RMD <- LoR.Match.RMD %>%
-  filter( game_type=="Ranked" ) %>%
-  filter( str_detect(game_version, '2_12') ) %>%
-  # mutate( game_start_time_cest = force_tz(game_start_time_utc, "CEST") ) %>%
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 )
-```
-
-```{r melt-matches}
-LoR.Melt.Matches.RMD <- LoR.Master.Matches.RMD %>% 
-  select( match_key,server,game_start_time_utc,game_version,ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version"), measure.vars=patterns( 
-    str_sub(
-      names(select(LoR.Master.Matches.RMD,ends_with("_1")))
-      ,end = -3) 
-  ),
-  value.name = str_sub(
-    names(select(LoR.Master.Matches.RMD,ends_with("_1")))
-    ,end = -3) 
-  ) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-  left_join(.,LoR.Deck %>% select(!archetype),by=("deck_code"))
-```
-
-```{r process-old-data}
-LoR.Old.Matches.RMD <- LoR.Match.RMD %>%
-  filter( game_type=="Ranked" ) %>%
-  # filter( str_detect(game_version, '2_12') ) %>%
-  # mutate( game_start_time_cest = force_tz(game_start_time_utc, "CEST") ) %>%
-  filter( game_start_time_utc >= as.POSIXct(params$prev, tz = "UTC") & game_start_time_utc < as.POSIXct(params$start, tz = "UTC") ) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 )
-
-LoR.Old.Matches.RMD <- LoR.Old.Matches.RMD %>% 
-  select( match_key,server,game_start_time_utc,game_version,ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version"), measure.vars=patterns( 
-    str_sub(
-      names(select(LoR.Master.Matches.RMD,ends_with("_1")))
-      ,end = -3) 
-  ),
-  value.name = str_sub(
-    names(select(LoR.Master.Matches.RMD,ends_with("_1")))
-    ,end = -3) 
-  ) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-  left_join(.,LoR.Deck %>% select(!archetype),by=("deck_code"))
-```
-
 ```{r nGames-data}
-nGames_live <- slice(LoR.Match.RMD, min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start) ])):max(which(LoR.Match.RMD[,game_start_time_utc < as.POSIXct(params$end)]))  ) %>% tabyl(status,show_na = T) %>% setDT()
-nGames <- NROW(LoR.Melt.Matches.RMD)/2
-max_time <- LoR.Master.Matches.RMD %>% 
+minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
+maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
+max_time <- LoR.Match.RMD %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
   slice_max(game_start_time_utc) %>% 
   pull(game_start_time_utc) 
 ```
 
 ```{r process-weeekly-data-info}
-minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
-maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
-
 nGames_live <- LoR.Match.RMD %>% 
   slice(minrow_live:maxrow_live) %>%
   mutate( game_type = case_when(
@@ -179,13 +121,13 @@ nGames_live <- LoR.Match.RMD %>%
     TRUE ~ as.character(game_type)
     )) %>%
   mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) %>% fct_infreq() ) %>%
-  # tabyl(game_type)
-  filter( status==404 | is.na(status) | (game_start_time_utc >= as.POSIXct(params$start) & game_start_time_utc < as.POSIXct(params$end)) ) %>% 
+  filter( status==404 | is.na(status) | (game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & str_detect(game_version, '2_12') ) ) %>% 
   tabyl(game_type)
+
+nGames <- nGames_live[nGames_live$game_type=="Ranked","n"]
 ```
 
-
-Number of (Ranked) games analyzed: **`r (nGames %>% format(.,scientific = F))`**
+Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`**
 
 ```{r table-nGames-data, layout="l-body"}
 nGames_tbl <- nGames_live %>%
@@ -246,9 +188,66 @@ nGames_tbl
 # )
 ```
 
-`r kableExtra::text_spec("Note:", color = "red")` While I'll use the site more, some may prefer the format I use in RPubs (mainly the better toc) so I'll try to also create an RPub version or provide more tools / pages for an easier search of the data.
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( str_detect(game_version, '2_12') ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
 
-[^1]: EU Master players in the ladder: `r NROW(namesList.EU.RMD)` while the number of Master players I recovered from matches is: `r masterEU` so missing: `r NROW(namesList.EU.RMD)-masterEU` \| NA Master players in the ladder: `r NROW(namesList.NA.RMD)` while the number of Master players I recovered from matches is: `r masterNA` so missing: `r NROW(namesList.NA.RMD)-masterNA` \| ASIA Master players in the ladder: `r NROW(namesList.ASIA.RMD)` while the number of Master players I recovered from matches is: `r masterASIA` so missing: `r NROW(namesList.ASIA.RMD)-masterASIA`
+nGames <- NROW(LoR.Melt.Matches.RMD)/2
+```
+
+```{r prepare-old-data}
+LoR.Old.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$prev, tz = "UTC") & game_start_time_utc < as.POSIXct(params$start, tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
+```
+
+`r kableExtra::text_spec("Note:", color = "red")` While I'll use the site more, some may prefer the format I use in RPubs (mainly the better toc) so I'll try to also create an RPub version or provide more tools / pages for an easier search of the data.
 
 # Regions
 
@@ -280,9 +279,9 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
 #   select(factions) %>%
 #   separate_rows(factions,sep=",") %>%
 #   tabyl(factions,show_na=F) %>%
-#   tibble() %>% 
+#   tibble() %>%
 #   rename_all(~c("region","n","freq")) %>%
-#   mutate(region = fct_recode(region,!!!recodeRegLevels)) %>% 
+#   mutate(region = fct_recode(region,!!!recodeRegLevels)) %>%
 #   add_column(., icon = list.levels$iconRegion)
 # 
 # Old.Region.Freq.Server <- LoR.Old.Matches.RMD %>%
@@ -300,16 +299,8 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
 ### Plot {.panel-name}
 
 ```{r plot-Region}
-# sxLabel <- row.names(Region.Freq)
-# sxLabel[with(Region.Freq, freq > 0.03)] <- ""
-
-# Region.Freq$text <- format(Region.Freq$freq*100,2)
-
-# sxLabel <- round(Region.Freq$freq*100,2) %>% ifelse(. > 4,  . , "")
-# dxLabel <- round(Region.Freq$freq*100,2)
-# # sxLabel <- ifelse(as.numeric(sxLabel) > 4,  sxLabel , "")
-# dxLabel <- ifelse(as.numeric(dxLabel) <= 4, dxLabel , "")
-
+# sxLabel <- round(Region.Freq$freq*100,2) / # sxLabel <- ifelse(as.numeric(sxLabel) > 4,  sxLabel , "")
+# dxLabel <- round(Region.Freq$freq*100,2) / # dxLabel <- ifelse(as.numeric(dxLabel) <= 4, dxLabel , "")
 RegionByRegion <- Region.Freq %>%
   ggplot(aes(x = reorder(region, freq), y = freq)) +
   geom_bar_pattern(
@@ -360,20 +351,10 @@ RegionByRegion <- Region.Freq %>%
 
 RegionByRegion
 ```
-
 :::
 
 ::: {.panel}
 ### Table {.panel-name}
-
-```{r print-tableFreq}
-# Region.Freq[,c("region","freq")] %>%
-#   cbind(.,Region.Freq.Server) %>%
-#   arrange(desc(freq)) %>%
-#   mutate_if(is.numeric, funs(scales::percent(.,accuracy = 0.1)) ) %>%
-#   kable_df("html", col.names = c("Region","PlayRate","America","Asia","Europe")) %>%
-#   column_spec(c(1,2), bold = T)
-```
 
 ```{r print-tableFreq-gt}
 Region.Freq.tbl <- Region.Freq %>%
@@ -437,11 +418,6 @@ Region.Freq.tbl
 Card.Subset <- LoR.Melt.Matches.RMD %>%
   select( starts_with( "Card" ) )
 
-# LoR.Deck %>%
-#   mutate(across(contains("Card.4"), ~map(.,~str_sub(.x, start=3,end=4)) )) %>%
-#   unnest()
-# LoR.Melt.Matches.RMD[ starts_with( "Card" ), lapply(.SD, str_sub, start = 3, end = 4)]
-
 Regions.Freq.byCards <- LoR.Melt.Matches.RMD %>%
   select( starts_with( "Card") ) %>% 
   map_df(.,~str_sub(.x, start=3,end=4) ) %>%
@@ -451,9 +427,6 @@ Regions.Freq.byCards <- LoR.Melt.Matches.RMD %>%
   rename_all(~c("region","n","freq")) %>% 
   mutate(.,region := as.character(region))
   
-
-# Regions.Freq.byCards <- subCards %>% unlist(use.names = FALSE) %>% tabyl(., show_na = F) %>% setDT() %>% setnames(.,new = c("region","n","freq")) %>% mutate(.,region := as.character(region))
-
 setorderv(Regions.Freq.byCards, c("region"), c(1))
 
 # Regions.Freq.byCards <- as.tibble(Regions.Freq.byCards)
@@ -548,15 +521,6 @@ RegionByCards
 ::: {.panel}
 ### Table {.panel-name}
 
-```{r print-tableFreq_byCard }
-# Regions.Freq.byCards[,c("region","freq")] %>%
-#   cbind(.,Regions.Freq.byCards.Server) %>%
-#   arrange(desc(freq)) %>%
-#   mutate_if(is.numeric, funs(scales::percent(.,accuracy = 0.1)) ) %>%
-#   kable_df("html", col.names = c("Region","PlayRate","America","Asia","Europe")) %>%
-#   column_spec(c(1,2), bold = T)
-```
-
 ```{r print-tableFreq_byCard-gt}
 Region.Freq.byCards.tbl <- Regions.Freq.byCards[,c("region","freq")] %>%
   cbind(.,Regions.Freq.byCards.Server) %>%
@@ -615,22 +579,14 @@ Region.Freq.byCards.tbl
 # Champions Combinations
 
 ```{r process-tableChampion}
-ChampionCombo <- LoR.Melt.Matches.RMD[,.(player)] %>% copy()
-
-CC.table <- ChampionCombo %>% as.vector() %>% tabyl(.,player) %>% setnames(c("player","n","freq"))
-# %>% adorn_pct_formatting(digits = 2)
-
-ChampionCombo.byReg <- data.table(player = as.vector(ChampionCombo),
-                                  server = LoR.Melt.Matches.RMD$server)
-
-CC.tableByReg <- ChampionCombo.byReg %>%
-  melt(id.var=c("server")) %>%
-  select(value,server) %>%
-  tabyl(value,server) %>%
+CC.tableByReg <- LoR.Melt.Matches.RMD %>%
+  tabyl(player,server) %>%
   adorn_percentages("col")
-# %>%  adorn_pct_formatting(digits = 2)
 
-CC.table <- CC.table %>% cbind(.,CC.tableByReg[,c("americas","asia","europe")])
+CC.table <- LoR.Melt.Matches.RMD %>%
+  tabyl(player) %>%
+  rename_all(~c("player","n","freq")) %>%
+  left_join(.,CC.tableByReg,by="player")
 ```
 
 ## Play Rates
@@ -729,39 +685,79 @@ fct_values <- LoR.Melt.Matches.RMD %>%
 ```
 
 ```{r plot-date-by-date}
-meta_evo <- ggplot() +
-  geom_line(aes(game_start_time_utc, cumFreq, colour = champions), data = Champion.deck.daily ) +
-  gghighlight::gghighlight(champions %in% fct_values[-1], label_key = champions,
-                           label_params = list(size = 2.5,           # text size
-                                               segment.linetype=5, # type of the line - dashed
-                                               segment.size=0.2,   # 0.5 mm default
-                                               # segment.curvature = -1e-20,
-                                               # arrow = arrow(length = unit(0.015, "npc")),
-                                               alpha = 0.85,
-                                               force=3,
-                                               point.padding=unit(1,'lines'),
-                                               vjust=1,
-                                               direction='y'
-                                               )
-                           # use_direct_label = FALSE
-                           ) +
-  ylim(NA,0.1) +
-  labs(x = "Date",y = "Percent", title = "Evolution of Play Rate over time") +
-  scale_x_datetime(expand = c(0.02,0.01),date_minor_breaks = "1 day"
-                   # limits = c(Sys.Date() + 1)                      # Expand the limit to make space to the lines?
-                   ) +
-  scale_y_continuous(limits = c(0, 0.15 ),
-                     breaks = seq(0,0.3,0.05),
-                     expand = c(-0.001,0.02),
-                     labels = scales::percent_format(accuracy = 1) ) +
+meta_evo <- ggplot(
+   # The ggplot object has associated the data for the highlighted countries
+  data = Champion.deck.daily %>% filter(champions %in% fct_values[-1]),
+  aes(game_start_time_utc, cumFreq, group = champions)
+  ) +
+  ## Lines for the non-highlighted countries
+  geom_line(
+    data = Champion.deck.daily %>% filter(champions %!in% fct_values[-1]),
+    color = "grey75",
+    size = .6,
+    alpha = .5
+  ) +
+  ## Lines for the highlighted countries.
+  # It's important to put them after the grey lines
+  # so the colored ones are on top
+  geom_line(
+    aes(color = champions),
+    size = .9
+  ) +
+  # geom_text(aes(label=champions,color = champions))
+  geom_text_repel(
+    data = Champion.deck.daily %>% filter(champions %in% fct_values[-1]) %>% group_by(champions) %>% slice_max(game_start_time_utc,n=1),
+    aes(label=str_to_upper(champions),color = champions),
+    # aes(color = champions, label = champions),
+    family = "Lato",
+    fontface = "bold",
+    size = 3,
+    direction = "y",
+    xlim = c(as.POSIXct(max(Champion.deck.daily$game_start_time_utc) + hours(24)), NA),
+    force = 3,
+    hjust = 1,
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 15
+  ) +
+  scale_x_datetime(
+    # expand = c(0.02,0.01),
+    date_minor_breaks = "1 day",
+    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(24))
+    # limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC"))
+  )  +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0,0.20),
+    breaks = seq(0,0.20,0.02),
+    labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
+  ) +
+  scale_color_manual(
+    values = c(rcartocolor::carto_pal(n = 10, name = "Vivid")[1:10-1], "grey50")
+  ) +
+  labs(x = "Date",
+       y = "Percent",
+       title = "Evolution of Play Rate over time"
+       # caption = glue::glue("Data from Riot API • Ranked games from Master players • ... ")
+  ) +
+  # tab_footnote(
+  #   footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
+  #      ) + 
   theme_bw() +
-  theme( plot.title    = element_text(face = "bold", size = 15),
-         axis.title.x  = element_text(face = "bold", size = 12),
-         axis.title.y  = element_text(face = "bold", size = 12),
-         axis.text.x   = element_text(size = 8),
-         )
+  theme(
+    plot.title    = element_text(face = "bold", size = 15),
+    axis.title.x  = element_text(face = "bold", size = 12),
+    axis.title.y  = element_text(face = "bold", size = 12),
+    axis.text.x   = element_text(size = 8),
+    legend.position = "none"
+  )
 
 meta_evo
+
 ```
 
 ## Win Rates
@@ -816,7 +812,7 @@ WR.DT %>%
 ::: {.panel}
 ### Underdog {.panel-name}
 
-Top Win rates of the least played combination of champions. Play rate $\in$ [0.1%,1%)[^2].
+Top Win rates of the least played combination of champions. Play rate $\in$ [0.1%,1%)[^1].
 
 ```{r print-under-tableWinRate}
 WR.DT %>%
@@ -835,7 +831,7 @@ WR.DT %>%
 <!-- Close Win Rate panelset -->
 
 
-[^2]: Min number of games 50, during the times a meta/ladder just changed.
+[^1]: Min number of games 50, during the times a meta/ladder just changed.
 
 # Match Ups
 
@@ -986,52 +982,29 @@ Akshan? Viego? Akshan Lee? Those are all boring choices and don't need any help 
 ::: {.panel}
 ## Sivir / Twisted Fate
 
-```{r Deck_structure}
-# SubDeck_deck_code <- LoR.Melt.Matches.RMD %>% searchDecks(.,string = c("Ashe","LeBlanc")) %>% pull(deck_code)
+`r kableExtra::text_spec("Update:", color = "red")` Modified the color to be more uniform with the rest of the report and site.
 
+```{r deck-structure}
 SubDeck_deck_code <- LoR.Melt.Matches.RMD %>%
   filter( player == "Sivir / Twisted Fate" ) %>%
   pull(deck_code)
 
-SubDeck_row <- length(SubDeck_deck_code)
-SubDeck_deck_structure <- getDeck_structure_tbl(SubDeck_deck_code)
-SubDeck_deck_structure$Copies <- factor(SubDeck_deck_structure$Copies, levels = c(1,2,3))
+brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
+clrs = colorRampPalette( c("white","steelblue") )(length(brks)+1)
+
+get_deck_structure(SubDeck_deck_code) %>%
+    datatable(.,
+              colnames = c("Card","Play Rate","3","2","1"),
+              options = list(
+                columnDefs = list(list(className = 'dt-center', targets = "_all")),
+                # dom = 't',
+                headerCallback = DT::JS("function(thead) {","  $(thead).css('font-size', '8pt');","}" )
+              )) %>%
+    formatStyle(c("playrate","3","2","1"), backgroundColor = styleInterval(brks,clrs )) %>%
+    formatPercentage(c("playrate","3","2","1"), 1) %>%
+    formatStyle(1, fontWeight = 'bold', fontSize = "10pt") %>%
+    formatStyle(0, fontWeight = 'bold', fontSize = "10pt")
 ```
-
-```{r print_table_structure_SubDeck }
-PrepareDT <- tabyl(SubDeck_deck_structure,Name,Copies) %>%
-  adorn_totals("col") %>%
-  adorn_percentages("row") %>%
-  adorn_pct_formatting(digits = 1) %>%
-  adorn_ns() %>%
-  rename(.,One=2,Two=3,Three=4) %>%
-  # arrange(desc(Total),One,Two,Three) %>%
-  mutate(., Play_Rate = as.numeric(str_extract_all(Total,  "(?<=\\().+?(?=\\))"))/SubDeck_row)
-
-brks <- c(seq(0.50,1,0.01))
-clrs = colorRampPalette( c("white","#629F62") )(length(brks)+1)
-
-tabyl(SubDeck_deck_structure,Name,Copies) %>%
-  adorn_totals("col") %>%
-  adorn_percentages("row") %>%
-  select(1:4) %>%
-  cbind(.,PrepareDT$Play_Rate) %>%
-  rename(.,"One"=2,"Two"=3,"Three"=4,"Play_Rate"=5) %>%
-  arrange(desc(Play_Rate),"Three","Two","One") %>%
-  relocate(.,1,5,4,3,2) %>%
-  datatable(.,
-          colnames = c("Card","Plat Rate","3","2","1"),
-          options = list(
-            columnDefs = list(list(className = 'dt-center', targets = "_all")),
-            # dom = 't',
-            headerCallback = DT::JS("function(thead) {","  $(thead).css('font-size', '8pt');","}" )
-          )) %>%
-  formatStyle(c("Play_Rate","Three","Two","One"), backgroundColor = styleInterval(brks,clrs )) %>%
-  formatPercentage(c("Play_Rate","Three","Two","One"), 1) %>%
-  formatStyle(1, fontWeight = 'bold', fontSize = "10pt") %>%
-  formatStyle(0, fontWeight = 'bold', fontSize = "10pt")
-```
-
 
 > How to read the table: <br> - Play rate: How often a card is included in this class of decks / the table is order by this column. <br> - 3/2/1 is the relative and absolute frequency of the number of copies in the decks that plays them <br> - Frequencies from 50% to 100% are colored from shades of green to white to identify more easily the highest values
 
@@ -1158,7 +1131,9 @@ The conclusion? Well, I guess it can differ for different point of views. Indeed
 
 # LoR-Meta Index (LMI)
 
-> The LMI [^3] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+> The LMI [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+
+[^2]: [LMI - Early Theory](https://llorr-stats.netlify.app/analysis/lmi/)
 
 ```{r data-aggregation}
 DT.Aggreation <- WR.DT %>%
@@ -1209,8 +1184,6 @@ fig <- DT.Aggreation %>%
 fig
 ```
 
-
-[^3]: [LMI - Early Theory](https://llorr-stats.netlify.app/analysis/lmi/)
 
 # Cards Presence
 
