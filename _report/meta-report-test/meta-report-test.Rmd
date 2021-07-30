@@ -86,7 +86,7 @@ LoR.Match.RMD <- fread(file.DT, header = T, na.strings = c("", NA))
 ```
 
 ```{r prepare-data}
-LoR.Ranked.RMD <- LoR.Match.RMD %>%
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   #' Base filters
   filter( game_type=="Ranked" ) %>%
   # filter( game_start_time_utc >= as.POSIXct(params$prev, tz = "UTC") & game_start_time_utc < as.POSIXct(params$start, tz = "UTC") ) %>%
@@ -289,8 +289,8 @@ calendar <- tibble(start = seq(as.POSIXct("2020-04-29 21:00:00", tz = "UTC"),Sys
                    label = glue("Week {index}")
                    )
 
-# region.freq.history  <- map2_df( .x = calendar$start, .y = calendar$end, ~get_factions_freq(x = LoR.Ranked.RMD, start = .x ,end = .y,format = "long" )   )
-# weekly.patch.history <- map2_chr( .x = calendar$start, .y = calendar$end, ~get_patch_main(x = LoR.Ranked.RMD, start = .x ,end = .y )   )
+region.freq.history  <- map2_df( .x = calendar$start, .y = calendar$end, ~get_factions_freq(x = LoR.Melt.Matches.RMD, start = .x ,end = .y,format = "long" )   )
+weekly.patch.history <- map2_chr( .x = calendar$start, .y = calendar$end, ~get_patch_main(x = LoR.Melt.Matches.RMD, start = .x ,end = .y )   )
 # 
 region.history <- cbind(
 calendar,
@@ -307,11 +307,14 @@ region.freq.history
           TRUE ~ patch
           )
   ) %>%
-  add_column( sample_size = map2_dbl(.x = calendar$start, .y = calendar$end, .f = ~NROW( LoR.Ranked.RMD %>% 
-                                                            dplyr::filter( game_start_time_utc >= .x & game_start_time_utc < .y )
+  add_column( sample_size = map2_dbl(.x = calendar$start, .y = calendar$end, .f = ~NROW( LoR.Match.RMD %>% 
+                                                            dplyr::filter( game_start_time_utc >= as.POSIXct(.x, tz = "UTC") & game_start_time_utc < as.POSIXct(.y, tz = "UTC") & game_type == "Ranked" )
                                                           ) ) ) %>%
   rowwise() %>%
   mutate(gini = DescTools::Gini( c_across(contains("_freq")),na.rm = T ))
+
+# LoR.Match.RMD %>%
+#   dplyr::filter( game_start_time_utc >= as.POSIXct("2021-07-21 21:00:00", tz = "UTC") & game_start_time_utc < as.POSIXct("2021-07-28 21:00:00", tz = "UTC"))
 
 fwrite(region.history,file.path("C:","LlorR","data","clean","Factions_History.csv"))
 region.history <- fread(file.path("C:","LlorR","data","clean","Factions_History.csv"))
@@ -319,7 +322,7 @@ region.history <- fread(file.path("C:","LlorR","data","clean","Factions_History.
 
 ```{r format-region}
 region.formatted <- region.history %>%
-  filter(index %in% c(47:65)) %>%
+  filter(index %in% 46:NROW(region.history) ) %>%
   # slice_tail(n = 2) %>%
   pivot_longer(
     cols = "Bilgewater_freq":"Shurima_freq",

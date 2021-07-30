@@ -22,7 +22,7 @@ params:
   prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
   start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
   end:   "2021-07-21 21:00:00" #UTC tz / 'current' week end
-  skip:  1888267  # Patch 2.11
+  skip:  1888233  # Patch 2.11 - after removing a few games
 ---
 
 ```{r setup, include=FALSE}

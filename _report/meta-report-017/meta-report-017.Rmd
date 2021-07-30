@@ -22,7 +22,7 @@ params:
   prev:  "2021-07-14 21:00:00" #UTC tz / 'previous' week start
   start: "2021-07-21 21:00:00" #UTC tz / 'current' week start
   end:   "2021-07-28 21:00:00" #UTC tz / 'current' week end
-  skip:  1888267  # Patch 2.11
+  skip:  1888233  # Patch 2.11 - after removing a few games
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +81,7 @@ file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
 LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
   mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
   pivot_longer(
-  cols = c("puuid_1","puuid_2","puuid_3","puuid_4"),
+  cols = c("puuid_1","puuid_2","puuid_3","puuid_4","puuid"),
   names_to = "origin",
   values_to = "puuid"
 )
@@ -704,7 +704,7 @@ meta_evo <- ggplot(
   ) +
   # geom_text(aes(label=champions,color = champions))
   geom_text_repel(
-    data = Champion.deck.daily %>% filter(champions %in% fct_values[-1]) %>% group_by(champions) %>% slice_max(game_start_time_utc,n=1),
+    data = Champion.deck.daily %>% filter(champions %in% fct_values[-1]) %>% group_by(champions) %>% slice_max(game_start_time_utc,n=1) %>% distinct(game_start_time_utc,champions,.keep_all = T),
     aes(label=str_to_upper(champions),color = champions),
     # aes(color = champions, label = champions),
     family = "Lato",
@@ -725,7 +725,7 @@ meta_evo <- ggplot(
   scale_x_datetime(
     # expand = c(0.02,0.01),
     date_minor_breaks = "1 day",
-    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(6))
+    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(24))
     # limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC"))
   )  +
   scale_y_continuous(

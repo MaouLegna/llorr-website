@@ -3,7 +3,7 @@ title: "LLoRR Stats"
 theme: llorr_theme.css
 base_url: https://llorr-stats.netlify.app
 description: |
-  "Statistics, Data, Science"
+  "Statistics, Data, Legends of Runeterra"
 # description: |
 #   (Legna’s) Legends of Runeterra Stats (with R)
 output_dir: "_site"
@@ -18,13 +18,15 @@ navbar:
       href: index.html
     - text: "MetaReport"  
       href: report.html
+    - text: "MatchUps"  
+      href: mu.html  
     - text: "Blog"
       menu:
         - text: "Analysis"
           href: analysis.html
         - text: "---"
         - text: "Other"
-          href: blog.html  
+          href: blog.html
     - text: "About"
       href: about.html
     - icon: fab fa-github-alt fa-1x
