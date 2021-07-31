@@ -23,121 +23,79 @@ params:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
-  eval = TRUE,
   warning = FALSE,
   error = FALSE,
   message = FALSE,
-  comment = NA,
-  R.options = list(width = 140,
-                   digits.secs=6),
-  dev.args = list(bg = 'transparent'), # make graphics with transparent background
-  fig.align = 'center',
-  fig.width=9,
-  fig.height=6,
-  engine.path = list(
-    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
-  ),
-  #'distill options
-  layout="l-body-outset",
-  preview=FALSE
+  dev.args = list(bg = 'transparent'),
+  # dev='svglite',
+  fig.align='center',
+  #out.width='75%', fig.asp=.75,
+  cache.rebuild = F,
+  cache = F
 )
 
-#' R Option
-require(Hmisc)    # provides knitrSet and other functions like hidingToC
-source(file.path("C:","LlorR","scripts","lor_main.R" ))
-
-xaringanExtra::use_panelset()
+# source(file.path("C:","LlorR","scripts","lor_main.R" ))
 options(digits.secs = 6)
+options(scipen=999)
+
+library(tidyverse)
+library(data.table)
+library(DT)
 ```
 
-```{r load-n-prepare-data}
-#' load DeckDT
-#'############
-LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"), select = c("deck_code","archetype"),na.strings = c("",NA))
-
-#' load gameDT
-#'############
-file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-LoR.Match.RMD <- fread(file.DT, header = T, na.strings = c("",NA) ) %>%
-  #' Base filters
-  filter( game_type=="Ranked" ) %>%
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") ) %>%
-  #' 'process' data
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
-  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
-  #' melt data
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-    str_sub(
-      names(select(.,ends_with("_1")))
-      ,end = -3)
-  ),
-  value.name = str_sub(
-    names(select(.,ends_with("_1")))
-    ,end = -3)
-  )
-
-nGames <- NROW(LoR.Match.RMD)/2
+```{r load-data}
+# file.Match.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "LoR_Melt_MatchDT_", full.names = T) %>% max()
+# LoR.Melt.Matches.RMD <- fread(file.Match.DT, header = T, na.strings = c("", NA))
 ```
 
-```{r get-WR}
-MUtbl <- LoR.Match.RMD %>%
-  filter( game_start_time_utc >= as.POSIXct("2021-07-14 21:00:00", tz = "UTC") ) %>%
-  # filter(game_version>"live_2_9" ) %>%
-  filter(game_outcome!="tie") %>%
-  select( player,opponent,game_outcome,server,game_version ) %>%
-  group_by(player,opponent) %>%
-  summarise( muWin   = sum(game_outcome=="win"),
-             muGames = n(),
-             muWR=mean(game_outcome=="win") ) %>%
-  setDT()
-  
-MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
-MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
-MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
+```{r load-MU}
+file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
+MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
 
-MUtbl <- MUtbl %>%
-  mutate( CI := glue("({percent(LCI,accuracy = 0.1)}-{percent(UCI,accuracy = 0.1)})" ) )
+sum(MUtbl$muGames)
 ```
-
-
 
 # Match Up Table
 
-Match-Up table with data from the 2.12 [^1]
+Number of **matches**: `r sum(MUtbl$muGames)/2` / **games** : `r sum(MUtbl$muGames)`
 
-Since the values aren't too heavily affected by new data I won't update it too often. Will probably be each 2 days or so (more often at the start of a season).
+Last Update: `r Sys.time()`
 
-[^1]: Last Update: `r Sys.time()`
+Since the values aren't too heavily affected by new data I won't update it too often. Will probably be each 2 days or so (more often at the start of a season). [^1]
+
+[^1]: since I had to implement a couple of corrections I can 'confirm' that updating the file is a bit heavy sometimes to my 'potato pc', even worse if it happens during the data collection. So I have to confirm I can't update it hourly/all days as I would ideally.
 
 While on the report I do some filtering removing cases with too few games, here I left EVERYTHING to allows people plays as much as they want with the table (as usual from Ranked games), so if you want to remove "the dirt" **remember to use the filter**.
 
 ---
 
-```{r print-tableGrid, layout="l-page"}
-MUtbl %>% 
+```{r print-tableGrid, layout="l-page", preview=TRUE}
+MUtbl.DT <- MUtbl %>% 
   # filter(muGames>30) %>%
   mutate( direction = replace(direction, muWR==0.5, "TIE" ) ) %>%
   mutate( player = factor(player), opponent = factor(opponent), direction = factor(direction), okCI = factor(okCI) ) %>%
-  datatable(., rownames = FALSE, colnames = c('Player'='player','Opponent'='opponent','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames','LowerCI'='LCI','UpperCI'='UCI','Direction MU'='direction','Result Test'='okCI','CI'='CI'),
+  select( -CI ) %>%
+  datatable(., rownames = FALSE, colnames = c('Player'='player','Opponent'='opponent','Regions'='factions','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames','LowerCI'='LCI','UpperCI'='UCI','Direction MU'='direction','Result Test'='okCI'),
             # options = list(filter = 'top'),
             filter = list(position = 'top', clear = FALSE)
   ) %>% 
   formatPercentage('Win Rate', 1) %>%
   formatPercentage('LowerCI', 1) %>%
   formatPercentage('UpperCI', 1)
+
+MUtbl.DT
 ```
 
 ---
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
-* LowerCI / UpperCI - are simply the lower and upper bound of the confidence interval, it can help in case one to restrict the result based on the "precision" of the win rate estimation (not the correct statistical definition but a 'semplification').
+* **Regions** - regions of the 'Player' deck. In case I may add an 'Oppo-Region' additional column.
 
-* Result Test - if true it means that the unidirectional test for testing if the **direction** of the MU is correct has a p-value lower than 0.05 (it reject the hyphotesis of the win rate being a 0.5 giving support to the hypothesis that the direction of the MU is indeed correct. Again not the exact definmition. Use to filter the results that is safer to assume are correct regarding the **direction** of the MU.
+* **LowerCI / UpperCI** - are simply the lower and upper bound of the confidence interval, it can help in case one to restrict the result based on the "precision" of the win rate estimation (not the correct statistical definition but a 'semplification').
 
-* Direction MU - simply if the MU is positive or negative for the 'Player' (or tie in case the win rate is exactly 0.5)
+* **Result Test** - if true it means that the unidirectional test for testing if the **direction** of the MU is correct has a p-value lower than 0.05 (it reject the hyphotesis of the win rate being a 0.5 giving support to the hypothesis that the direction of the MU is indeed correct. Again not the exact definmition. Use to filter the results that is safer to assume are correct regarding the **direction** of the MU.
+
+* **Direction MU** - simply if the MU is positive or negative for the 'Player' (or tie in case the win rate is exactly 0.5)
 
 I'm planning to improve and expand the options once I decide how to implement the ideas I have.
