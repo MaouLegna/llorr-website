@@ -51,8 +51,6 @@ library(DT)
 ```{r load-MU}
 file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
 MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
-
-sum(MUtbl$muGames)
 ```
 
 # Match Up Table
