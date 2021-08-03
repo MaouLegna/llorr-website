@@ -1,0 +1,340 @@
+---
+title: "DEFINING ARCHETYPES #1: LOOKING AT THE DIFFERENCES IN AKSHAN / SIVIR DECKS WITH TWO OR MORE DIFFERENT CHAMPIONS"
+description: |
+  First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra
+base_url: https://llorr-stats.netlify.app
+preview: "images/preview-mastery.png"
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 08-01-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true    
+    toc_depth: 3
+    self_contained: false
+citation: false
+draft: TRUE
+twitter:
+  site: "@Maou_Legna"
+  creator: "@Maou_Legna"
+params:
+  prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
+  start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
+  end:   "2021-08-04 21:00:00" #UTC tz / 'current' week end
+  skip:  1850000  # Patch 2.11 - after removing a few games  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  # lang='markdown',
+  R.options = list(width = 140,
+                   digits.secs=6,
+                   scipen=999),
+  # dev.args = list(bg = 'transparent'),
+  # dev = 'svglite',
+  fig.align = 'center',
+  out.width = '50%',
+  fig.asp = .75,
+  cache = FALSE, 
+  cache.rebuild = FALSE,
+  # root.dir = file.path("C:","LlorR"),
+  engine.path = list(
+    python = 'C:/anaconda/'
+  )
+)
+
+#' R Option
+options(digits.secs = 6)
+options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+library(tidyverse); library(kableExtra)
+
+#' panelset
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(
+  active_foreground = "#0051BA",
+  hover_foreground = "#d22"
+  # font_family = "Amiri"
+)
+
+#' Python
+# use_python("C:/anaconda/")
+# py_run_string("print('Hello World')")
+# lor_deckcodes <- import("lor_deckcodes")
+# py_module_available("lor_deckcodes")
+```
+
+# Introduction
+
+This series of article/analysis are meant to rappresent my journey in how to define archetypes.
+
+Archetypes in Legends of Runeterra are *currently* defined by me by the combinations of champions and regions. While a lazy method it's(was?) a first approximation that worked decently aside for some exception while always knowing the disadvantage that the number of possible classes will is probably too high compared to the number of available games (at least at Master). On the other side of the spectrum the most restricting classification would with a dichotomical variables, something like using the **Super Archetypes** from viciousSyndicate (vS): *initiative* and *resource* decks [^1. Every other archetype classification is in immediatiate and it's a vast ocean of possibilities with no 'correct' solution.
+
+[^1]: their definition, example and so on will be a topic for the future.
+
+As everything needs to be done step by step, what is the most evident problem in the current archetype definition:
+
+```{r tweet1}
+require(tweetrmd)
+tweet_screenshot(tweet_url("drlor4", "1420488109603442688"),
+                 maxwidth = 400)
+```
+
+The answer would be: lack of aggregation for decks which share a similar deck but differs only in the champions used sometimes by even just one card.
+
+Ever since Dragons decks turned into legit meta options (also 'Overwhelm' decks with "Renekton / Sejuani / Sivir") deck with 3 champions (often in a ratio 3-2-1) have become more widely used and they are their *acceptance* as legfit option increased without being considered some wacky tech. Of course I'm just talking about *acceptance*, I'm not talking about performances or if they are indeed the better option, again this could be a topic for the future and not regarding the archetypes definitions.
+
+So, returning to the tweet, in the current patch at the moment I'm writing this (2.13) a clear case of three champions being played togheter are: Akshan / Sivir / Zed. While I will at least give the number for the overall frequencies by which "n champion" decks are played I'll here mostly focus on these 3.
+
+**Note**: I'm aware that the aggregation problem is not limited to cases with three champions but even with 2 (see Viego) but one must proceed with baby steps and tackling the 'three champ' problem is probably more important.
+
+# Data
+
+```{r raw-data}
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = 1850000 ) # ~2.11/2.12
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
+  pivot_longer(
+  cols = c("puuid","puuid_1","puuid_2","puuid_3","puuid_4"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+```{r account-info}
+masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+
+namesList.EU.RMD     <- length(lor_leaderboard("europe")$name)
+namesList.NA.RMD     <- length(lor_leaderboard("americas")$name)
+namesList.ASIA.RMD   <- length(lor_leaderboard("asia")$name)
+```
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  ###############
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+  #' 'process' data
+  #################
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  ############
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  ########################
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  #' nChamp
+  #########
+  rowwise() %>%
+  mutate(champions = extract_champions(c_across(contains("Champion")) ) ) %>%
+  ungroup() %>%
+  mutate( nChamp = str_count(champions,pattern = "/")+1) %>%
+  mutate( nChamp = replace(nChamp, str_detect(player,"Championless"),0) ) %>%
+  select(-ends_with("puuid"),-refID)
+```
+
+```{r ASZ}
+#' Akshan / Sivir / Zed abs freq
+################################
+ASZ <- LoR.Melt.Matches.RMD %>%
+  filter( champions == "Akshan / Sivir / Zed" ) %>%
+  NROW()
+```
+
+Let's start by informing how the amount of 'Akshan/Sivir/Zed' amoutnto `r ASZ`.
+
+Now, hoe big is this number? Let's see the distribution of the number of champions in decks and the number inside Sivir/Zed and Sivir/Akshan decks
+
+```{r table-nChamp}
+require(gtsummary)
+require(gt)
+
+tbl1 <- LoR.Melt.Matches.RMD %>%
+  mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Zed"))  ,"Sivir/Zed","no Sivir/Zed") ) %>%
+  select(nChamp,SZ) %>%
+  gtsummary::tbl_summary(., by = SZ, label = nChamp ~ "#Champion") %>%
+  gtsummary::add_overall()
+  # gtsummary::as_gt() %>%
+  # gt::tab_source_note(gt::md(glue::glue("Ranked games from {params$start} to {params$end}")))
+
+tbl2 <- LoR.Melt.Matches.RMD %>%
+  mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Akshan"))  ,"Sivir/Akshan","no Sivir/Akshan") ) %>%
+  select(nChamp,SZ) %>%
+  gtsummary::tbl_summary(., by = SZ, label = nChamp ~ "#Champion")
+  # gtsummary::add_overall()
+  # gtsummary::as_gt() %>%
+  # gt::tab_source_note(gt::md(glue::glue("Ranked games from {params$start} to {params$end}")))
+  
+tbl <- tbl_merge( 
+    tbls = list(tbl1, tbl2),
+    tab_spanner = c("**Zed**", "**Akshan**")
+  )
+  # modify_spanning_header(stat_0_1 ~ NA)
+
+tbl %>%
+  as_gt() %>%
+  tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+  )
+
+```
+
+```{r}
+tblData <- LoR.Melt.Matches.RMD %>%
+  tabyl(nChamp)
+
+#' overall freq of 3 champ decks
+################################
+nChamp3.percent <- tblData %>%
+  filter(nChamp == 3) %>%
+  pull(percent) %>%
+  percent(accuracy = 0.01)
+
+nChamp3 <- tblData %>%
+  filter(nChamp == 3) %>%
+  pull(n)
+  
+
+#' freq of decks with 3 champs among decks with Sivir Zed
+##########################################################
+SZ3.percent <- LoR.Melt.Matches.RMD %>%
+  mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Zed"))  ,"Sivir/Zed","no Sivir/Zed") )
+
+#' Absolute number for SivirZed3
+################################
+SZ3 <- LoR.Melt.Matches.RMD %>%
+  mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Zed"))  ,"Sivir/Zed","no Sivir/Zed") ) %>%
+  filter( SZ == "Sivir/Zed" ) %>%
+  tabyl(nChamp) %>%
+  filter(nChamp == 3) %>%
+  pull(n)
+
+#' Absolute number for SivirAkshan3  
+###################################
+SA3 <- LoR.Melt.Matches.RMD %>%
+  mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Akshan"))  ,"Sivir/Akshan","no Sivir/Akshan") ) %>%
+  filter( SZ == "Sivir/Akshan" ) %>%
+  tabyl(nChamp) %>%
+  filter(nChamp == 3) %>%
+  pull(n)
+
+# sprintf(paste0("",round(tblData[4,"percent"]*100,2),"%%"))
+```
+The overall prevalence of '3 champions deck' while it may looks higher than common believes (`r nChamp3.percent`) the value is mostly carried by the Akshan/Sivir/Zed which amoutn to  decks as they are about half the cases of 3 champs decks `r round(ASZ/nChamp3,3)`%
+
+Also worth noticing is how among the Sivir/Zed and Sivir/Akshan decks the '3 champ' option is choosen also about half of the times and the other half is indeed mostly Akshan/Sivir/Zed decks `r round(ASZ/SZ3,3)`% when we consider Sivir/Zed decks and `r round(ASZ/SA3,3)`% when we consider Sivir/Akshan decks.
+
+# Methods
+
+While the comparisons can all be done at the same time, it's wiser to go step by step.
+
+```{r}
+library(DiagrammeR)
+
+grViz("
+      digraph TB {
+
+      # node definitions with substituted label text
+      node [fontname = Arial, shape = oval, color = Gold, style = filled, fontcolor = Black]
+      a [label = '@@1']
+      
+      node [fontname = Arial] // sets as circles
+      b [label = '@@2']
+      c [label = '@@3']
+      
+      subgraph {
+        rank = same; b; c;
+      }
+      
+      # add node statements
+      a -> {b,c} [color = green, label = 'subset']
+      b -> a [color = red]
+      c -> a [color = red]
+      
+      b->c 
+      c->b 
+      
+      }
+      [1]: 'Akshan/Sivir/Zed'
+      [2]: 'Sivir/Akshan'
+      [3]: 'Sivir/Zed'
+      
+      ")
+```
+* The first step would be finding whenever Akshan/Sivir/Zed decks are a general 
+
+```{r}
+SZgt <- LoR.Melt.Matches.RMD %>%
+  filter(nChamp %in% 3 ) %>%
+  filter( str_detect(champions,"Sivir") & str_detect(champions,"Zed") ) %>%
+  select(champions) %>%
+  separate_rows(champions,sep = " / ") %>%
+  janitor::tabyl(champions) %>%
+  arrange(desc(n)) %>%
+  mutate( percent = percent*3 ) %>%
+  gt() %>%
+  tab_header(
+    title = "Champions Frequencies",
+    subtitle = "Prevalance of champions in Sivir/Zed with 3 Champions"
+  ) %>%
+  cols_label(
+    champions = md(str_to_title("**champions**")),
+    n = md(str_to_title("**n**")),
+    percent = md(str_to_title("**percent**"))
+  ) %>%
+  fmt_percent(
+    columns = c(3),
+    decimals = 2
+  ) 
+
+SZgt %>%
+  tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+  )
+  
+```
+Not surprisingly Akshan is pretty much the "third champion" almost all of the times.
+
+---
+

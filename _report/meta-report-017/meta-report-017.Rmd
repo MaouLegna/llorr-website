@@ -22,7 +22,7 @@ params:
   prev:  "2021-07-14 21:00:00" #UTC tz / 'previous' week start
   start: "2021-07-21 21:00:00" #UTC tz / 'current' week start
   end:   "2021-07-28 21:00:00" #UTC tz / 'current' week end
-  skip:  1888233  # Patch 2.11 - after removing a few games
+  skip:  1850000  # Patch 2.11 - after removing a few games
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +81,7 @@ file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
 LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
   mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
   pivot_longer(
-  cols = c("puuid_1","puuid_2","puuid_3","puuid_4","puuid"),
+  cols = c("puuid","puuid_1","puuid_2","puuid_3","puuid_4"),
   names_to = "origin",
   values_to = "puuid"
 )
@@ -94,13 +94,13 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 # Data {.unnumbered}
 
 ```{r account-info}
-masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% count()/4
-masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% count()/4
-masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% count()/4
+masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
 
-namesList.EU.RMD     <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_EU.csv"))$name
-namesList.NA.RMD     <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_NA.csv"))$name
-namesList.ASIA.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_ASIA.csv"))$name
+namesList.EU.RMD     <- length(lor_leaderboard("europe")$name)
+namesList.NA.RMD     <- length(lor_leaderboard("americas")$name)
+namesList.ASIA.RMD   <- length(lor_leaderboard("asia")$name)
 ```
 
 ```{r nGames-data}
