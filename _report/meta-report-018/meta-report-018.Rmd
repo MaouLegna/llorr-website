@@ -77,7 +77,7 @@ meta() %>%
   meta_social(
     title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°18)",
     url = "https://llorr-stats.netlify.app/",
-    image = "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH130-full.png",
+    image = "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03IO002T1-full.png",
     image_alt = "Akshan lv1",
     og_type = "website",
     og_author = "Legna",
@@ -814,7 +814,6 @@ meta_evo <- ggplot(
   )
 
 meta_evo
-
 ```
 
 ## Win Rates
@@ -852,6 +851,8 @@ WR.DT <- LoR.Melt.Matches.RMD %>%
   ungroup() %>%
   mutate( playrate = nGames/sum(nGames) )
 
+options(scipen = 999)
+
 WR.DT.Reg <- LoR.Melt.Matches.RMD %>%
   filter(game_outcome!="tie") %>%
   select( player,opponent,game_outcome,server ) %>%
@@ -862,7 +863,16 @@ WR.DT.Reg <- LoR.Melt.Matches.RMD %>%
             ) %>%
   ungroup() %>%
   group_by(server) %>%
-  mutate( sumGames = sum(nGames), playrate = nGames/sumGames, server = str_to_title(server) )
+  mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) %>%
+  left_join(.,WR.DT[,c("player","playrate")],by="player") 
+
+# WR.DT.Reg %>%
+#   group_by(player) %>%
+#   summarise( WIN = sum(nWin), GAMES = sum(nGames)  ) %>%
+#   filter( player %in% c("Viego (FR/SI)","Jarvan IV / Shen") )
+# 
+# WR.DT %>%
+#   filter( player %in% c("Viego (FR/SI)","Jarvan IV / Shen") )
 ```
 ::: l-body-outset
 
@@ -874,9 +884,11 @@ Win rates of the most played combination of champions. Play Rate \>= 1% in at le
 
 ```{r print-tableWinRate}
 WR.DT.Reg %>%
-  arrange(desc(WR)) %>%
+  arrange(desc(playrate)) %>%
   filter(playrate >= 0.01) %>%
-  relocate(player,WR,nWin,nGames,playrate,server) %>%
+  # slice_max(player,n = 10, with_ties = T) %>%
+  arrange(desc(playrate)) %>%
+  relocate(player,WR,nWin,nGames,regPlayrate,server) %>%
   reactable(., groupBy = "player",
             # searchable = TRUE,
             bordered = TRUE,
@@ -908,18 +920,17 @@ WR.DT.Reg %>%
                     }"
                 ),format = colFormat(percent = TRUE,digits = 1),
               ),
+              regPlayrate   = colDef(name = "Play Rate",
+                # aggregate = JS("function(values, rows) {
+                # var total = 0;
+                # rows.forEach(function(row) {
+                #   total += row['playrate'];
+                # }
+                # return avg = total / rows.length;                               
+                # }"),
+                format = colFormat(percent = TRUE,digits = 1)),
               sumGames   = colDef(show=F),
-              playrate   = colDef(name = "Play Rate", aggregate = JS(
-                "function(values, rows) {
-                    var totalGames = 0
-                    var totalsumGames = 0
-                    rows.forEach(function(row) {
-                    totalGames   += row['nGames']
-                    totalsumGames += row['sumGames']
-                    })
-                  return totalGames / totalsumGames
-                    }"
-                ),format = colFormat(percent = TRUE,digits = 1))
+              playrate   = colDef(show=F)
   )
 )
 ```
@@ -986,7 +997,7 @@ WRTop10 <- setorderv(WRTop10, c("player","opponent"), c(1,1))
 ::: {.panel}
 ## Match-up Grid {.panel-name}
 
-Just a different way to print the table of the MU grid, more an experimentation
+The win rates on the grid are among the 10 most played champion combination.
 
 ```{r prepare-flex}
 require(flextable)
@@ -1049,7 +1060,7 @@ ft
 ::: {.panel}
 ## Match-up Grid v2 {.panel-name}
 
-The win rates on the grid are among the 10 most played champion combination.
+Just the OG way I used to display the grid. Aside for the different color palette it doesn't bring more information compared to the other version that actually use more shades and which is also easier to the eyes. I'll probably remove this version the next week.
 
 ```{r tablesGrid}
 grid <- matrix(WRTop10$muWR, nrow = 10, ncol = 10, byrow = T)
@@ -1088,6 +1099,7 @@ datatable(grid,
   formatStyle(0, fontWeight = 'bold', fontSize = "8pt")
 ```
 :::
+
 :::::
 <!-- Close MU panelset -->
 :::
@@ -1114,13 +1126,11 @@ MUtbl %>%
 
 # Deck Structure of the week {.tabset .tabset-fade .tabset-pills}
 
-I guess it's fine showing a meta deck once in a while, so of course the obvious choice is the rising star: Lulu/zed
+I guess it's fine showing a meta deck once in a while, so of course the obvious choice is the rising star: Lulu/Zed
 
 ::::: {.panelset}
 ::: {.panel}
 ## Lulu / Zed (DE/IO)
-
-Let's start with Viego and the other star of this event: Akshan
 
 ```{r deck-structure-prepare}
 brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
@@ -1151,7 +1161,6 @@ get_deck_structure(SubDeck_deck_code) %>%
 
 > How to read the table: <br> - Play rate: How often a card is included in this class of decks / the table is order by this column. <br> - 3/2/1 is the relative and absolute frequency of the number of copies in the decks that plays them <br> - Frequencies from 50% to 100% are colored from shades of green to white to identify more easily the highest values
 
-:::
 :::::
 <!-- Close Deck Structure panelset -->
 
