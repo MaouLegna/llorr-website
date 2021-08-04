@@ -300,7 +300,7 @@ grViz("
       
       ")
 ```
-* The first step would be finding whenever Akshan/Sivir/Zed decks are a general 
+* The first step would be finding whenever Sivir/Zed (SZ) and Sivir/Akshan (SA) decks are a specific case of Akshan/Sivir/Zed (ASZ) decks.
 
 ```{r}
 SZgt <- LoR.Melt.Matches.RMD %>%

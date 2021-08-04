@@ -97,3 +97,66 @@ The format of the table is the usual way I display the match-ups data but I also
 * **Direction MU** - simply if the MU is positive or negative for the 'Player' (or tie in case the win rate is exactly 0.5)
 
 I'm planning to improve and expand the options once I decide how to implement the ideas I have.
+
+```{r}
+# bscols(
+#     widths = c(2, 9),
+#     list(
+#       # filter_checkbox("type", "Type", data, ~Type),
+#       filter_slider("nGames", "nGames", data, ~nGames, width = "100%")
+#       # filter_select("mfr", "Manufacturer", data, ~Manufacturer)
+#     ),
+# data %>%
+#   # arrange(desc(WR)) %>%
+#   # filter(playrate >= 0.01) %>%
+#   # relocate(player,WR,nWin,nGames,playrate,server) %>%
+#   reactable(., groupBy = "player",
+#             searchable = TRUE,
+#             bordered = TRUE,
+#             # wrap = FALSE,
+#             highlight = TRUE,
+#             # filterable = TRUE,
+#             defaultColDef = colDef(
+#               # header = function(value) str_to_title(value),
+#               #  cell = function(value) format(value, nsmall = 1),
+#               align = "center",
+#               minWidth = 70,
+#               headerStyle = list(background = "#f7f7f8")
+#             ),
+#             columns = list(
+#               player = colDef(name = "Champions",minWidth = 100),
+#               server = colDef(name = "Server", aggregate = "unique"),
+#               nWin   = colDef(name = "#Win", aggregate = "sum"),
+#               nGames = colDef(name = "#Games", aggregate = "sum"),
+#               WR     = colDef(name = "WinRate", aggregate = JS(
+#                 "function(values, rows) {
+#                     var totalWin = 0
+#                     var totalGames = 0
+#                     rows.forEach(function(row) {
+#                     totalWin   += row['nWin']
+#                     totalGames += row['nGames']
+#                     })
+#                   return totalWin / totalGames
+#                     }"
+#                 ),format = colFormat(percent = TRUE,digits = 1),
+#               ),
+#               sumGames   = colDef(show=F),
+#               playrate   = colDef(name = "Play Rate", aggregate = JS(
+#                 "function(values, rows) {
+#                     var totalGames = 0
+#                     var totalsumGames = 0
+#                     rows.forEach(function(row) {
+#                     totalGames   += row['nGames']
+#                     totalsumGames += row['sumGames']
+#                     })
+#                   return totalGames / totalsumGames
+#                     }"
+#                 ),format = colFormat(percent = TRUE,digits = 1))
+#     )
+#   )
+# )
+# 
+# # cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
+# data <- SharedData$new(WR.DT)
+```
+

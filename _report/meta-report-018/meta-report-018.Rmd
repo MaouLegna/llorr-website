@@ -1,0 +1,1326 @@
+---
+title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°18)"
+description: |
+  First week of patch 2.13 / Ruination Event 3° week
+base_url: https://llorr-stats.netlify.app
+preview: "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03IO002T1-full.png"
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 08-04-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+draft: false
+# twitter:
+#   site: "@Maou_Legna"
+#   creator: "@Maou_Legna"
+params:
+  prev:  "2021-07-21 21:00:00" #UTC tz / 'previous' week start
+  start: "2021-07-28 21:00:00" #UTC tz / 'current' week start
+  end:   "2021-08-04 21:00:00" #UTC tz / 'current' week end
+  skip:  1950000  # ~ Patch 2.12
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=9,
+  fig.height=6,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
+)
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+#' Python
+py_run_string("print('Hello World')")
+lor_deckcodes <- import("lor_deckcodes")
+py_module_available("lor_deckcodes")
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
+```
+
+```{r twitter-meta, echo = FALSE}
+library(metathis)
+meta() %>%
+  meta_description(
+    "First week of patch 2.13 / Ruination Event 3° week"
+  ) %>% 
+  meta_viewport() %>% 
+  meta_social(
+    title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°18)",
+    url = "https://llorr-stats.netlify.app/",
+    image = "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH130-full.png",
+    image_alt = "Akshan lv1",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
+
+
+```{r raw-data}
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
+  pivot_longer(
+  cols = contains("puuid"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+# Data {.unnumbered}
+
+```{r account-info}
+masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+
+namesList.EU.RMD   <- lor_leaderboard("europe")$name
+namesList.NA.RMD   <- lor_leaderboard("americas")$name
+namesList.ASIA.RMD <- lor_leaderboard("asia")$name
+```
+
+```{r nGames-data}
+minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
+maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
+
+max_time <- LoR.Match.RMD %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
+  slice_max(game_start_time_utc) %>% 
+  pull(game_start_time_utc) 
+
+nGames <- LoR.Match.RMD %>% 
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
+  tabyl(game_type) %>%
+  filter( game_type=="Ranked" ) %>%
+  pull(n)
+```
+
+Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`**
+
+```{r table-nGames-data, layout="l-body"}
+nGames_tbl <- LoR.Match.RMD %>%
+  #' Stay only 'among' the row with the games in the time-frame I want
+  ####################################################################
+  slice(minrow_live:maxrow_live) %>%
+  #' Extrapolate Friendly and 'to Scrap' matches
+  ##############################################
+  mutate( game_type = case_when(
+    status==404   ~ "Friendly",
+    is.na(status) ~ "to Scrap",
+    TRUE ~ as.character(game_type)
+    )) %>%
+  #' Give to the new game_types a game_start_time_utc among the timeframe on interest
+  #' so it can be used a filter without worrying about other parameter like status and so on
+  ##########################################################################################
+  mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% c("Friendly","to Scrap"),  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+  mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) %>% fct_infreq() ) %>%
+  select(Status=game_type,Server=server) %>%
+  #' Create tbl
+  #############
+  tbl_summary() %>%
+  modify_footnote(
+    update = stat_0 ~
+      md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
+  ) %>%
+  # modify_header(label ~ "**Variable**") %>%
+  bold_labels() %>%
+  as_gt() %>%
+  tab_header(
+    title = "by the Numbers",
+    subtitle = "Patch 2.13 first week / Master players"
+    # subtitle = glue::glue("Data for games in {params$start}")
+  ) %>%
+  tab_footnote(
+    footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
+    locations = cells_title(groups = c("subtitle"))
+    ) %>%
+  tab_footnote(
+    footnote = md(glue::glue("EU Master players in the ladder: {length(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
+                              NA Master players in the ladder: {length(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
+                              ASIA Master players in the ladder: {length(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
+    locations = cells_title(groups = c("subtitle"))
+  ) %>%
+  tab_options(data_row.padding = px(1.2))
+  
+nGames_tbl %>%
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+# gtsave(nGames_tbl,"images/rep_data.png")
+```
+
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
+```
+
+```{r prepare-old-data}
+LoR.Old.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$prev, tz = "UTC") & game_start_time_utc < as.POSIXct(params$start, tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
+```
+
+# Regions
+
+## Gini Index
+
+I decided to add an additional information to help interpret the state of the Regions' Play Rates: the Gini Index.
+
+The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
+
+Also, the HHI is used by <a href="https://twitter.com/drlor4/">Dr.LoR</a> is just another way to measure the Gini Index. So let's also add some reproducibility / comparable numbers.
+
+Before showing this weeks results I thought it would be better to have a generalized idea of past data. The following plot display the Gini Index over the latest 17 weeks for region frequencies by inclusion rate.
+
+```{r, fig.height=5, fig.width=12}
+past.freq <- fread(file.path("C:","LlorR","data","clean","Factions_History.csv")) %>% slice((n()-16):n())
+
+ggplot(past.freq, aes(x = label, y = gini)) +
+  geom_point() +
+  ylim(c(0,0.50)) +
+  labs(title = "Gini Index over time",
+      subtitle = "Value based on the Region's play rate estimated with inclusion rate",
+      caption = glue::glue("Last Data Update: {Sys.Date()}"),
+      x = "Patch / Week", y = "Gini Index") +
+  theme( plot.title    = element_text(face = "bold"),
+         axis.title.x  = element_text(face = "bold"),
+         axis.title.y  = element_text(face = "bold") )
+
+```
+
+
+## Play Rate
+::: l-body-outset
+
+```{r process-tableFreq}
+Region.Freq <- LoR.Melt.Matches.RMD %>%
+  select(factions) %>%
+  separate_rows(factions,sep=",") %>%
+  tabyl(factions,show_na=F) %>%
+  tibble() %>% 
+  rename_all(~c("region","n","freq")) %>%
+  mutate(region = fct_recode(region,!!!recodeRegLevels)) %>% 
+  add_column(., icon = list.levels$iconRegion)
+
+Region.Freq.Server <- LoR.Melt.Matches.RMD %>%
+  select(server,factions) %>%
+  separate_rows(factions,sep=",") %>%
+  tabyl(factions,server, show_na = F) %>%
+  adorn_percentages("col") %>%
+  mutate(region = fct_recode(factions,!!!recodeRegLevels),.keep = "unused")
+
+Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
+```
+
+```{r process-tableFreq-old}
+# Old.Region.Freq <- LoR.Old.Matches.RMD %>%
+#   select(factions) %>%
+#   separate_rows(factions,sep=",") %>%
+#   tabyl(factions,show_na=F) %>%
+#   tibble() %>%
+#   rename_all(~c("region","n","freq")) %>%
+#   mutate(region = fct_recode(region,!!!recodeRegLevels)) %>%
+#   add_column(., icon = list.levels$iconRegion)
+# 
+# Old.Region.Freq.Server <- LoR.Old.Matches.RMD %>%
+#   select(server,factions) %>%
+#   separate_rows(factions,sep=",") %>%
+#   tabyl(factions,server, show_na = F) %>%
+#   adorn_percentages("col") %>%
+#   mutate(region = fct_recode(factions,!!!recodeRegLevels),.keep = "unused")
+# 
+# Old.Region.Freq <- full_join(Old.Region.Freq,Old.Region.Freq.Server,by="region")
+```
+::::: {.panelset}
+::: {.panel}
+
+### Plot {.panel-name}
+
+```{r plot-Region}
+# sxLabel <- round(Region.Freq$freq*100,2) / # sxLabel <- ifelse(as.numeric(sxLabel) > 4,  sxLabel , "")
+# dxLabel <- round(Region.Freq$freq*100,2) / # dxLabel <- ifelse(as.numeric(dxLabel) <= 4, dxLabel , "")
+RegionByRegion <- Region.Freq %>%
+  ggplot(aes(x = reorder(region, freq), y = freq)) +
+  geom_bar_pattern(
+    aes(
+      pattern_filename = region,
+    ),
+    stat            = 'identity',
+    pattern         = 'image',
+    pattern_type    = 'none',
+    fill            = list.levels$colorRegion.Balco,
+    colour          = 'black',
+    pattern_scale   = -2,
+    pattern_filter  = 'point',
+    pattern_gravity = 'east'
+  ) +
+  theme_bw() +
+  theme(legend.position = 'none') +
+  labs(
+    title = "Regions Play Rate",
+    subtitle = "number of times a region is included in a deck",
+    x = "Region",
+    y = "Play Rate"
+    # caption = "number of times a region is included in a deck"
+
+  ) +
+  theme( plot.title    = element_text(face = "bold", size = 15),
+         plot.subtitle = element_text(size = 12),
+         axis.title.x  = element_text(face = "bold", size = 12),
+         axis.title.y  = element_text(face = "bold", size = 12),
+         axis.text.x   = element_text(size = 8)
+         ) +
+  annotate(geom = 'text', 
+         x = 1.0, 
+         y = 0.15, 
+         hjust = 0.5,
+         label = glue::glue('n = {nGames}\nGini Index = {round(DescTools::Gini(Region.Freq$freq,na.rm = T),3)}'), 
+         fontface = 'bold') +
+  coord_flip() +
+  scale_pattern_filename_discrete(choices = regionIcons) +
+  scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
+  scale_fill_manual("legend", values = list.levels$colorRegion.Balco) +
+  scale_y_continuous(limits = c(0, round(max(Region.Freq$freq+0.04 ),3) ),
+                     breaks = seq(0,0.5,0.04),
+                     expand = c(-0.001,0.02),
+                     labels = scales::percent_format(accuracy = 1) ) +
+  guides(fill = "none") +
+  #' Adding the text of the frequencies
+  geom_text(aes(label = round(Region.Freq$freq*100,2) %>% ifelse(. >= 4,  . , "")),
+            hjust = 2.2, size = 5,position = position_dodge(width = 1)) +
+  geom_text(aes(label = round(Region.Freq$freq*100,2) %>% ifelse(. <  4,  . , "")),
+            hjust = -0.5, size = 5,position = position_dodge(width = 1))
+  # geom_table(data = df,
+  #            aes(x = x, y = y, label = tb),
+  #            table.theme = ttheme_gtlight,
+  #            # size = 3,
+  #            parse = T,
+  #            colour = "darkblue",
+  #            stat = "fmt_tb",
+  #            tb.vars = c(SampleSize = "n", GiniIndex = "gini") # rename
+  #            # tb.rows = 
+  #             )
+
+RegionByRegion
+```
+:::
+
+::: {.panel}
+### Table {.panel-name}
+
+```{r print-tableFreq-gt}
+Region.Freq.tbl <- Region.Freq %>%
+  select(-n,-icon) %>%
+  arrange(desc(freq)) %>%
+  gt( ) %>%
+  tab_header(
+    title = "Region Play Rate",
+    subtitle = "Relative Frequencies by Inclusion Rate of a Region"
+  ) %>%
+  tab_spanner(
+    label = "Shard",
+    columns = c(americas, asia, europe)
+  ) %>%
+  fmt_percent(
+    columns = c(2:5),
+    decimals = 2
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = 1
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = c(2:5)
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      columns = 1,
+    )
+  ) %>%
+  cols_label(
+    region   = md("**Region**"),
+    freq     = md("**Freq**"),
+    americas = md("**America**"),
+    asia     = md("**Asia**"),
+    europe   = md("**Europe**")
+  ) %>%
+   tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+Region.Freq.tbl
+
+# Region.Freq.tbl <- gtsave(
+#     "images/reg_freq.png",
+# )
+```
+:::
+:::::
+<!-- Close Region 1 panelset -->
+:::
+
+## Play Rate by number of Cards
+::: l-body-outset
+
+```{r process-tableFreq_byCard}
+Card.Subset <- LoR.Melt.Matches.RMD %>%
+  select( starts_with( "Card" ) )
+
+Regions.Freq.byCards <- LoR.Melt.Matches.RMD %>%
+  select( starts_with( "Card") ) %>% 
+  map_df(.,~str_sub(.x, start=3,end=4) ) %>%
+  mutate_all(~fct_recode(.,!!!recodeRegShort)) %>%
+  unlist(use.names = FALSE) %>% 
+  tabyl(., show_na = F) %>% 
+  rename_all(~c("region","n","freq")) %>% 
+  mutate(.,region := as.character(region))
+  
+setorderv(Regions.Freq.byCards, c("region"), c(1))
+
+# Regions.Freq.byCards <- as.tibble(Regions.Freq.byCards)
+Regions.Freq.byCards$freq <- round(Regions.Freq.byCards$freq,4)
+Regions.Freq.byCards$icon <- list.levels$iconRegion
+
+Regions.Freq.byCards.Server <- LoR.Melt.Matches.RMD %>%
+  select( starts_with( "Card") ) %>% 
+  map_df(.,~str_sub(.x, start=3,end=4) ) %>%
+  mutate_all(~fct_recode(.,!!!recodeRegShort)) %>%
+  add_column(server = LoR.Melt.Matches.RMD$server) %>%
+  melt(id.var=c("server")) %>%
+  select(value,server) %>%
+  tabyl(value,server, show_na = F) %>%
+  adorn_percentages("col") %>%
+  select(c(2,3,4))  
+
+Card.tableByRegPlot <- LoR.Melt.Matches.RMD %>%
+  select( starts_with( "Card") ) %>% 
+  map_df(.,~str_sub(.x, start=3,end=4) ) %>%
+  mutate_all(~fct_recode(.,!!!recodeRegShort)) %>%
+  add_column(server = LoR.Melt.Matches.RMD$server) %>%
+  melt(id.var=c("server")) %>%
+  select(value,server) %>% table() %>% prop.table(.,margin = 2) %>% as.data.table()
+```
+
+::::: {.panelset}
+::: {.panel}
+### Plot {.panel-name}
+
+```{r plotRegion_byCards}
+Regions.Freq.byCards$text <- format(Region.Freq$freq*100,2)
+
+sxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
+dxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
+sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "")
+dxLabel_card <- ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card , "")
+
+RegionByCards <- Regions.Freq.byCards %>%
+  ggplot(aes(x = reorder(region, freq), y = freq)) +
+  geom_bar_pattern(
+    aes(
+      pattern_filename = region,
+    ),
+    stat            = 'identity',
+    pattern         = 'image',
+    pattern_type    = 'none',
+    fill            = list.levels$colorRegion.Balco,
+    colour          = 'black',
+    pattern_scale   = -2,
+    pattern_filter  = 'point',
+    pattern_gravity = 'east'
+  ) +
+  theme_bw() +
+  theme(legend.position = 'none') +
+  labs(
+    title = "Regions Play Rate",
+    subtitle = "number of times a card within a region is included in a deck",
+    x = "Region",
+    y = "Play Rate"
+    # caption = "number of times a region is included in a deck
+  ) +
+  theme( plot.title    = element_text(face = "bold", size = 15),
+         plot.subtitle = element_text(size = 12),
+         axis.title.x  = element_text(face = "bold", size = 12),
+         axis.title.y  = element_text(face = "bold", size = 12),
+         axis.text.x   = element_text(size = 8)
+         ) +
+  annotate(geom = 'text', 
+         x = 1.0, 
+         y = 0.15, 
+         hjust = 0.5,
+         label = glue::glue('n = {nGames}\nGini Index = {round(DescTools::Gini(Regions.Freq.byCards$freq,na.rm = T),3)}'), 
+         fontface = 'bold') +
+  coord_flip() +
+
+  scale_pattern_filename_discrete(choices = regionIcons) +
+  scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
+  scale_fill_manual("legend", values = list.levels$colorRegion.Balco) +
+  # nome of the table
+  scale_y_continuous(limits = c(0, round(max(Regions.Freq.byCards$freq+0.04 ),3) ),
+                     breaks = seq(0,0.5,0.04),
+                     expand = c(-0.001,0.02),
+                     labels = scales::percent_format(accuracy = 1) ) +
+  # geom_text(aes(label=format(freq*100,2)),
+  #           hjust = 2, size = 5,position = position_dodge(width = 1)) +
+  geom_text(aes(label=sxLabel_card),
+            hjust = 2.2, size = 5,position = position_dodge(width = 1)) +
+  geom_text(aes(label=dxLabel_card),
+            hjust = -0.5, size = 5,position = position_dodge(width = 1)) +
+  guides(fill = "none")
+
+RegionByCards
+```
+:::
+
+::: {.panel}
+### Table {.panel-name}
+
+```{r print-tableFreq_byCard-gt}
+Region.Freq.byCards.tbl <- Regions.Freq.byCards[,c("region","freq")] %>%
+  cbind(.,Regions.Freq.byCards.Server) %>%
+  arrange(desc(freq)) %>%
+  gt( ) %>%
+  tab_header(
+    title = "Region Play Rate",
+    subtitle = "Relative Frequencies by number of times a Card within a Region is included in a Deck"
+  ) %>%
+  tab_spanner(
+    label = "Shard",
+    columns = c(americas, asia, europe)
+  ) %>%
+  fmt_percent(
+    columns = c(2:5),
+    decimals = 2
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = 1
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = c(2:5)
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      columns = 1,
+    )
+  ) %>%
+  cols_label(
+    region   = md("**Region**"),
+    freq     = md("**Freq**"),
+    americas = md("**America**"),
+    asia     = md("**Asia**"),
+    europe   = md("**Europe**")
+  ) %>%
+   tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+Region.Freq.byCards.tbl
+
+# Region.Freq.tbl <- gtsave(
+#     "images/reg_freq.png",
+# )
+```
+:::
+:::::
+<!-- Close Region 2 panelset -->
+:::
+
+# Champions Combinations
+
+```{r process-tableChampion}
+CC.tableByReg <- LoR.Melt.Matches.RMD %>%
+  tabyl(player,server) %>%
+  adorn_percentages("col")
+
+CC.table <- LoR.Melt.Matches.RMD %>%
+  tabyl(player) %>%
+  rename_all(~c("player","n","freq")) %>%
+  left_join(.,CC.tableByReg,by="player")
+```
+
+## Play Rates
+
+`r kableExtra::text_spec("Note:", color = "red")` I'm currently not sure if I shuld add the Gini Index for Champions too. There are currently too many cases with many decks that are bound so have near 0 play rate.
+
+::: l-body-outset
+
+::::: {.panelset}
+::: {.panel}
+### Plot {.panel-name}
+
+```{r plot-Champion-PR}
+nrowPlot <- 20
+
+ChampionCombo.plot <- CC.table %>%
+  arrange(desc(freq)) %>%
+  slice_head(.,n = 20) %>%
+  ggplot(aes(x = reorder(player, freq), y = freq))  +
+
+  geom_bar( stat = "identity",fill="steelblue" ) +
+  coord_flip() +
+  guides(fill = "none")  +
+  theme_bw() +
+  geom_text(aes(label=round(freq*100,2)),
+            # face = "bold",
+            hjust = -0.5, size = 4,
+            # vjust=-0.25
+            # position = position_dodge(width = 1)
+            position = position_dodge(0.9)
+            ) +
+  # scale_fill_manual("legend", values = list.levels$colorRegion.Balco) +
+  scale_y_continuous(limits = c(0, round(max(CC.table$freq+0.04 ),3) ),
+                     breaks = seq(0,0.20,0.02),
+                     expand = c(-0.001,0.02),
+                     labels = scales::percent_format(accuracy = 1) ) +
+
+  theme( plot.title = element_text(face = "bold", size = 12, hjust = 0.6),
+         axis.title.x = element_text(face = "bold"),
+         axis.title.y = element_text(face = "bold"),
+         legend.position = "none") +
+
+  labs(x = "Champions", y = "Play Rate",
+       caption = paste0("Relative frequencies of the top ",nrowPlot," combination of champions in a deck")
+       ) +
+  annotate(geom="text", x=3, y=0.08, col="black",label = paste("n =",nGames,"\n"," cumulative frequence \n ",
+                                                               paste0(CC.table %>% arrange(desc(freq)) %>% slice_head(.,n = 20) %>% select(freq) %>% sum() %>% round(.,4)*100 ,"%") )
+           )
+
+ChampionCombo.plot
+
+# mtcars %>%
+#   group_by(cyl) %>%
+#   summarize(wt = mean(wt), mpg = mean(mpg)) %>%
+#   ungroup() %>%
+#   mutate(wt = sprintf("%.2f", wt),
+#          mpg = sprintf("%.1f", mpg)) -> tb
+
+```
+:::
+
+::: {.panel}
+### Table {.panel-name}
+
+```{r table-Champion-PR}
+CC.table %>%
+  arrange(desc(freq)) %>%
+  # filter(nGames>100) %>%
+  select(player,freq,americas,asia,europe) %>%
+  datatable(., rownames = FALSE, colnames = c('Champions'='player','Play Rate'='freq','America'='americas','Asia'='asia','Europe'='europe')
+            # options = list(order = list(list(3, 'desc'))
+  ) %>%
+  formatStyle('Play Rate', fontWeight = 'bold') %>%
+  formatPercentage('Play Rate', 2) %>%
+  formatPercentage('America', 2)   %>%
+  formatPercentage('Asia', 2)      %>%
+  formatPercentage('Europe', 2)
+```
+:::
+:::::
+<!-- Close CC lay Rate panelset -->
+:::
+
+## Day by Day
+
+Highlisting the top10 most played decks (at the moment of the last game played).
+
+```{r champion-freq-by-date}
+m = 10
+
+Champion.deck.daily <- (LoR.Melt.Matches.RMD %>%
+  rename(.,"champions"="player") %>%
+  arrange(game_start_time_utc) %>%
+  select(game_start_time_utc,champions) %>%
+  mutate( num_cc = factor(champions) %>% as.numeric() ))[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ] %>%
+  select(!num_cc) %>%
+  mutate( champions = factor(champions) %>% fct_infreq() )
+
+fct_values <- LoR.Melt.Matches.RMD %>%
+  # mutate( top5 = fct_lump(champions, n = m, w = tot, ties.method = "max") ) %>%
+ mutate( top5 = fct_lump_n(player,n = m) %>% fct_infreq() ) %>%
+ pull(top5) %>% levels()
+```
+
+```{r plot-date-by-date}
+meta_evo <- ggplot(
+   # The ggplot object has associated the data for the highlighted countries
+  data = Champion.deck.daily %>% filter(champions %in% fct_values[-1]),
+  aes(game_start_time_utc, cumFreq, group = champions)
+  ) +
+  ## Lines for the non-highlighted countries
+  geom_line(
+    data = Champion.deck.daily %>% filter(champions %!in% fct_values[-1]),
+    color = "grey75",
+    size = .6,
+    alpha = .5
+  ) +
+  ## Lines for the highlighted countries.
+  # It's important to put them after the grey lines
+  # so the colored ones are on top
+  geom_line(
+    aes(color = champions),
+    size = .9
+  ) +
+  # geom_text(aes(label=champions,color = champions))
+  geom_text_repel(
+    data = Champion.deck.daily %>% filter(champions %in% fct_values[-1]) %>% group_by(champions) %>% slice_max(game_start_time_utc,n=1) %>% distinct(game_start_time_utc,champions,.keep_all = T),
+    aes(label=str_to_upper(champions),color = champions),
+    # aes(color = champions, label = champions),
+    family = "Lato",
+    fontface = "bold",
+    size = 3,
+    direction = "y",
+    xlim = c(as.POSIXct(max(Champion.deck.daily$game_start_time_utc) + hours(12)), NA),
+    force = 3,
+    hjust = 1,
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 15
+  ) +
+  scale_x_datetime(
+    # expand = c(0.02,0.01),
+    date_minor_breaks = "1 day",
+    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(24))
+    # limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC"))
+  )  +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0,0.20),
+    breaks = seq(0,0.20,0.02),
+    labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
+  ) +
+  scale_color_manual(
+    values = c(rcartocolor::carto_pal(n = 10, name = "Vivid")[1:10-1], "grey50")
+  ) +
+  labs(x = "Date",
+       y = "Percent",
+       title = "Evolution of Play Rate over time"
+       # caption = glue::glue("Data from Riot API • Ranked games from Master players • ... ")
+  ) +
+  # tab_footnote(
+  #   footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
+  #      ) + 
+  theme_bw() +
+  theme(
+    plot.title    = element_text(face = "bold", size = 15),
+    axis.title.x  = element_text(face = "bold", size = 12),
+    axis.title.y  = element_text(face = "bold", size = 12),
+    axis.text.x   = element_text(size = 8),
+    legend.position = "none"
+  )
+
+meta_evo
+
+```
+
+## Win Rates
+
+Tie games are excluded
+
+```{r get-muWR}
+MUtbl <- LoR.Melt.Matches.RMD %>%
+  
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome,server ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win") ) %>%
+  setDT()
+
+MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
+MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
+MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
+
+MUtbl <- MUtbl %>%
+  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
+```
+
+```{r process-winRate}
+WR.DT <- LoR.Melt.Matches.RMD %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome ) %>%
+  group_by(player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+            ) %>%
+  ungroup() %>%
+  mutate( playrate = nGames/sum(nGames) )
+
+WR.DT.Reg <- LoR.Melt.Matches.RMD %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome,server ) %>%
+  group_by(server,player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win"),
+            ) %>%
+  ungroup() %>%
+  group_by(server) %>%
+  mutate( sumGames = sum(nGames), playrate = nGames/sumGames, server = str_to_title(server) )
+```
+::: l-body-outset
+
+::::: {.panelset}
+::: {.panel}
+### Meta Decks {.panel-name}
+
+Win rates of the most played combination of champions. Play Rate \>= 1% in at least one of the servers.
+
+```{r print-tableWinRate}
+WR.DT.Reg %>%
+  arrange(desc(WR)) %>%
+  filter(playrate >= 0.01) %>%
+  relocate(player,WR,nWin,nGames,playrate,server) %>%
+  reactable(., groupBy = "player",
+            # searchable = TRUE,
+            bordered = TRUE,
+            # wrap = FALSE,
+            highlight = TRUE,
+            striped = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              # header = function(value) str_to_title(value),
+              #  cell = function(value) format(value, nsmall = 1),
+              align = "center",
+              minWidth = 70,
+              headerStyle = list(background = "steelblue",color="white")
+            ),
+            columns = list(
+              player = colDef(name = "Champions",minWidth = 150),
+              server = colDef(name = "Server", aggregate = "unique"),
+              nWin   = colDef(name = "#Win", aggregate = "sum"),
+              nGames = colDef(name = "#Games", aggregate = "sum"),
+              WR     = colDef(name = "WinRate", aggregate = JS(
+                "function(values, rows) {
+                    var totalWin = 0
+                    var totalGames = 0
+                    rows.forEach(function(row) {
+                    totalWin   += row['nWin']
+                    totalGames += row['nGames']
+                    })
+                  return totalWin / totalGames
+                    }"
+                ),format = colFormat(percent = TRUE,digits = 1),
+              ),
+              sumGames   = colDef(show=F),
+              playrate   = colDef(name = "Play Rate", aggregate = JS(
+                "function(values, rows) {
+                    var totalGames = 0
+                    var totalsumGames = 0
+                    rows.forEach(function(row) {
+                    totalGames   += row['nGames']
+                    totalsumGames += row['sumGames']
+                    })
+                  return totalGames / totalsumGames
+                    }"
+                ),format = colFormat(percent = TRUE,digits = 1))
+  )
+)
+```
+:::
+
+::: {.panel}
+### Underdog {.panel-name}
+
+Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^1]
+
+Since I added the server-specific values it would have been wrong to ignore this also in this 'Underdog' section. I decided to leave the rule untouched, without taking in account the different servers. While for the "Meta Decks" it was more a natural expansion, here the results can widely differ by small changed and as mentioned in the past I would like to leave the current rule as much as possible unless it's too broken. Of course one could complain as there decks whose results are mostly carried by a single server and in the other that decks is almost not even played. All true, but there are limitation like the facrs that the asian server is very low on number during all the season so even the condition of a mininum of 50 games with playrate $\in$ [0.1%,1%) is a lot screw the results. Also this section in not as the Meta Deck one where players are interested in seeing the performance of the most played decks but it's meant to be a "look around there may be some dark tech that's worth investing some time".
+
+A better solution would be 'expanding' this section or providing some tools to allows players to search the result. But there's a problem, not providing immediate readable results and leave the research to the user is a bad choice in a report from my point of view at least and for sections like this one in particular. It could be worth exploring as a standalone option like the recently uploaded page for the MU table ([MU-Table](https://llorr-stats.netlify.app/mu/))
+
+[^1]: Min number of games 50, during the times a meta/ladder just changed.
+
+```{r print-under-tableWinRate}
+WR.DT %>%
+  filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) %>%
+  slice_max(WR,n = 10) %>%
+  relocate(player,WR,nWin,nGames,playrate) %>%
+  arrange(desc(WR)) %>%
+  reactable(.,
+            # searchable = TRUE,
+            bordered = TRUE,
+            # wrap = FALSE,
+            highlight = TRUE,
+            striped = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              # header = function(value) str_to_title(value),
+              #  cell = function(value) format(value, nsmall = 1),
+              align = "center",
+              minWidth = 70,
+              headerStyle = list(background = "steelblue",color="white")
+            ),
+            columns = list(
+              player = colDef(name = "Champions",minWidth = 150),
+              nWin   = colDef(name = "#Win"),
+              nGames = colDef(name = "#Games"),
+              WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
+              playrate   = colDef(name = "Play Rate",format = colFormat(percent = TRUE,digits = 1))
+  )
+)
+```
+Looking at this week results it's clear most of these decks can be grouped as 'Plunder' decks. I'm working on it, but I'm still far from reaching a quality of the results that satisfy me.
+
+:::
+:::::
+<!-- Close Win Rate panelset -->
+:::
+
+# Match Ups
+
+```{r get-WR-Top10}
+Top10CC <- CC.table %>% arrange(desc(freq)) %>% slice_head(.,n = 10) %>% select(player) %>% pull() %>% sort()
+
+WRTop10 <- MUtbl[ player %in% Top10CC & opponent %in% Top10CC, ]
+WRTop10 <- setorderv(WRTop10, c("player","opponent"), c(1,1))
+```
+
+::: l-body-outset
+::::: {.panelset}
+::: {.panel}
+## Match-up Grid {.panel-name}
+
+Just a different way to print the table of the MU grid, more an experimentation
+
+```{r prepare-flex}
+require(flextable)
+require(officer)
+
+big_border   = fp_border(color="darkgray", width = 2)
+small_border = fp_border(color="gray", width = 1)
+
+dummy_fun <- function(x){
+  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
+}
+```
+
+```{r prepare-flex-grid}
+grid <- matrix(WRTop10$muWR, nrow = 10, ncol = 10, byrow = T)
+diag(grid) <- NA
+
+colnames(grid) <- Top10CC
+colourer <- col_numeric(
+  palette = c("#D73027", # red
+          # "#f9ccac", # red/orange
+          "white",
+          # "#e3eaa7", # green
+          "#1A9850" # darker green
+          ),
+  domain = c(0, 1))
+
+funs <- setNames(rep(list(dummy_fun), 10), Top10CC)
+```
+
+```{r print-flex}
+ft <- grid %>% 
+  as_tibble() %>%
+  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) %>%
+  add_column(.,Top10CC,.before = Top10CC[1]) %>%
+  rename("MatchUps"="Top10CC") %>%
+  flextable::flextable(.) %>% 
+  theme_vanilla( ) %>%
+  # theme_booktabs(bold_header = TRUE) %>% 
+  flextable::align(.,align = "center", part = "all") %>%
+  flextable::bg(.,
+    bg = colourer,
+    j = ~ . -MatchUps,
+    part = "body") %>% 
+  border_remove(x = .) %>%
+  border_outer(., part="all", border = big_border ) %>%
+  border_inner_h(., part="all", border = small_border ) %>%
+  border_inner_v(., part="all", border = small_border ) %>%
+  set_formatter(values = funs) %>%
+  fontsize(., size = 8, part = "header") %>%
+  fontsize(., j=1, size = 8) %>%
+  bg(., part = "header", bg = "white"  ) %>%
+  bg(., j = 1, bg = "white"  ) %>%
+  autofit() 
+
+ft
+```
+:::
+
+::: {.panel}
+## Match-up Grid v2 {.panel-name}
+
+The win rates on the grid are among the 10 most played champion combination.
+
+```{r tablesGrid}
+grid <- matrix(WRTop10$muWR, nrow = 10, ncol = 10, byrow = T)
+diag(grid) <- NA
+
+# unique(WRTop10$opponent) == sort(Top10CC)
+
+grid <- data.frame(grid)
+```
+
+```{r print-huxGrid, layout="l-body"}
+brks <- c(0.4, 0.5, 0.5000001,0.6)
+# clrs <- round(seq(255, 40, length.out = length(brks) + 1), 0) %>%
+#   {paste0("rgb(255,", ., ",", ., ")")}
+
+clrs = c( "#eca1a6", # red
+          "#f9ccac", # red/orange
+          "#ffe599", # orange (50)
+          "#e3eaa7", # green
+          "#b5e7a0" # darker green
+          )
+
+datatable(grid,
+           colnames = Top10CC,
+           rownames = Top10CC,
+           options = list(
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            dom = 't', ordering=F,
+            headerCallback = DT::JS("function(thead) {","  $(thead).css('font-size', '8pt');","}" )
+
+            )
+          ) %>%
+  formatStyle(names(grid), backgroundColor = styleInterval(brks,clrs )) %>%
+  formatPercentage(names(grid), 1) %>%
+  formatStyle(names(grid), fontWeight = 'bold') %>%
+  formatStyle(0, fontWeight = 'bold', fontSize = "8pt")
+```
+:::
+:::::
+<!-- Close MU panelset -->
+:::
+
+## Match-up Table
+
+Filtered cases with less than 100 games
+
+```{r print-tableGrid, layout="l-body-outset"}
+MUtbl %>%
+  filter(muGames>100) %>%
+  mutate( player = factor(player) ) %>%
+  mutate( opponent = factor(opponent) ) %>%
+  # arrange(desc(games)) %>%
+  select(player,opponent,muWR,muWin,muGames,CI) %>%
+  datatable(., rownames = FALSE, colnames = c('Player'='player','Opponent'='opponent','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames'),
+            options = list(search = list(regex = TRUE, caseInsensitive = FALSE)),
+            filter = list(position = 'top', clear = FALSE)
+  ) %>%
+  formatPercentage('Win Rate', 1)
+```
+
+
+
+# Deck Structure of the week {.tabset .tabset-fade .tabset-pills}
+
+I guess it's fine showing a meta deck once in a while, so of course the obvious choice is the rising star: Lulu/zed
+
+::::: {.panelset}
+::: {.panel}
+## Lulu / Zed (DE/IO)
+
+Let's start with Viego and the other star of this event: Akshan
+
+```{r deck-structure-prepare}
+brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
+clrs = colorRampPalette( c("white","steelblue") )(length(brks)+1)
+```
+
+```{r deck-structure}
+SubDeck_deck_code <- LoR.Melt.Matches.RMD %>%
+  filter( player == "Lulu / Zed (DE/IO)" ) %>%
+  pull(deck_code)
+  # tabyl(deck_code) %>%
+  # arrange(desc(n))
+
+get_deck_structure(SubDeck_deck_code) %>%
+    datatable(.,
+              colnames = c("Card","Play Rate","3","2","1"),
+              options = list(
+                columnDefs = list(list(className = 'dt-center', targets = "_all")),
+                # dom = 't',
+                headerCallback = DT::JS("function(thead) {","  $(thead).css('font-size', '8pt');","}" )
+              )) %>%
+    formatStyle(c("playrate","3","2","1"), backgroundColor = styleInterval(brks,clrs )) %>%
+    formatPercentage(c("playrate","3","2","1"), 1) %>%
+    formatStyle(1, fontWeight = 'bold', fontSize = "10pt") %>%
+    formatStyle(0, fontWeight = 'bold', fontSize = "10pt")
+```
+:::
+
+> How to read the table: <br> - Play rate: How often a card is included in this class of decks / the table is order by this column. <br> - 3/2/1 is the relative and absolute frequency of the number of copies in the decks that plays them <br> - Frequencies from 50% to 100% are colored from shades of green to white to identify more easily the highest values
+
+:::
+:::::
+<!-- Close Deck Structure panelset -->
+
+# LoR-Meta Index (LMI)
+
+> The LMI [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+
+[^2]: [LMI - Early Theory](https://llorr-stats.netlify.app/analysis/lmi/)
+
+```{r data-aggregation}
+DT.Aggreation <- WR.DT %>%
+  filter( nGames > 200 ) %>%
+  # filter( playrate > 0.01 ) %>%
+  mutate( freq_ind    = scale_quantile(playrate) ) %>%
+  mutate( wr_ind      = scale_quantile(WR) ) %>%
+  rowwise() %>%
+  mutate( hmeta_ind = harm.mean(c_across(ends_with("ind")) ) )
+```
+
+```{r ggplotly-LMI,echo=FALSE}
+textWRPR <- function(Deck,WR, playrate){
+  glue("Deck: {Deck}\nWin Rate: {scales::percent(WR,accuracy = 0.1)}\nPlay Rate: {scales::percent(playrate,accuracy = 0.1)}")
+}
+
+f <- list(
+  family = "Courier New, monospace",
+  size = 18,
+  color = "#7f7f7f"
+)
+
+fig <- DT.Aggreation %>%
+  select(player,WR,playrate,wr_ind,freq_ind,hmeta_ind) %>%
+  mutate_if(is.numeric, funs(round(., 4)) ) %>%
+  mutate( tooltip = textWRPR(player,WR,playrate) ) %>%
+  rename("Deck"="player","Win_Rate"="WR","Play_Rate"="playrate","WR Index"="wr_ind","Freq Index"="freq_ind","LMI"="hmeta_ind") %>%
+  plot_ly(
+    type = 'scatter',
+    mode = 'markers',
+    x = ~`WR Index`,
+    y = ~`Freq Index`,
+    marker = list(size = ~LMI*100, sizeref = 0.1, sizemode = 'area'),
+    color = ~LMI,
+    text = ~tooltip,
+    hovertemplate = paste(
+      "LMI:<b>%{marker.size:,}<br>",
+      "<b>%{text}</b><br><extra></extra>",sep = ""
+      # "%{yaxis.title.text}: %{y:$,.0f}<br>",
+      # "%{xaxis.title.text}: %{x:.0%}<br>",
+      # "Number Employed: %{marker.size:,}",
+      # "<extra></extra>"
+      )
+    ) %>% layout(xaxis = list(title = "WR Index",titlefont = f),
+                 yaxis = list(title = "Freq Index",titlefont = f),
+                 title = 'LoR-Meta Index (LMI)'
+                 ) %>% suppressWarnings()
+
+fig
+```
+
+
+# Cards Presence
+
+```{r process-UniqueCards}
+allCards            <- unlist(apply(Card.Subset, 1, unique),use.names = F)
+TableAllCards       <- table(allCards)
+RegionShortAllCards <- str_sub(names(TableAllCards),3,4)
+TableCardsDT        <- data.table(TableAllCards)
+setnames(TableCardsDT,old = "allCards",new = "card")
+
+TableCardsDT[ ,region    := str_sub(card,3,4) ]
+TableCardsDT[ ,regionID  := fct_recode(region,!!!recodeRegPosition) ]
+TableCardsDT[ ,nGamesReg := Region.Freq$n[as.numeric(as.character(regionID))] ]
+# Region.Freq contain the frequencies of appearence of each region in the decks
+TableCardsDT[ ,p.byReg   := round(N/nGamesReg,3) ]
+# Frequence of a card appearing in a deck within its own region
+
+TableCardsDT[ ,card    :=fct_recode(card,   !!!recodeCardsCode)]
+TableCardsDT[ ,region  :=fct_recode(region, !!!recodeRegShort)]
+```
+::::: {.panelset}
+::: {.panel}
+## Play Rate {.panel-name}
+
+It seems that not even Twin Disciple can beat Sharsight
+
+```{r print-CardsTable-1}
+MostPlayed <- TableCardsDT %>%
+  arrange(desc(p.byReg)) %>%
+  setNames(., c("Card","# Decks with that card ","Region","RegionID","Games of X Region","Play Rate")) %>%
+  select(c(1,3,6,2)) %>%
+  datatable(., rownames = FALSE) %>%
+  formatStyle('Card', fontWeight = 'bold') %>%
+  formatStyle('Play Rate', fontWeight = 'bold') %>%
+  formatStyle('Play Rate', fontWeight = 'bold') %>% formatStyle(
+    'Region',
+    target = 'row',
+    backgroundColor = styleEqual(list.levels$factions.clean, list.levels$colorRegion.Balco)
+  ) %>%
+  formatPercentage('Play Rate', 1)
+  # formatStyle('Card',  color = 'red', backgroundColor = 'orange', fontWeight = 'bold')
+
+MostPlayed
+```
+:::
+
+::: {.panel}
+## Top 3 Play Rates by Region {.panel-name}
+
+```{r print-CardsTable-3}
+TopPlayed.PbyReg <- TableCardsDT %>%
+  group_by(region) %>%
+  arrange(desc(p.byReg)) %>%
+  top_n(3) %>%
+  arrange(region) %>%
+  setNames(., c("Card","N","Region","RegionID","Games of X Region","Play Rate")) %>%
+  select(c(1,3,6,2,5)) %>%
+  datatable( ., rownames = FALSE, options = list(
+    searching = FALSE,
+    lengthChange = FALSE,
+    pageLength = 4*9,
+    info = FALSE)) %>%
+  formatStyle('Card', fontWeight = 'bold') %>%
+  formatStyle('Play Rate', fontWeight = 'bold') %>%
+  formatStyle('Play Rate', fontWeight = 'bold') %>% formatStyle(
+    'Region',
+    target = 'row',
+    backgroundColor = styleEqual(list.levels$factions.clean, list.levels$colorRegion.Balco)
+  ) %>%
+  formatPercentage('Play Rate', 1)
+
+TopPlayed.PbyReg
+```
+:::
+
+::: {.panel}
+## Forgotten Cards {.panel-name}
+
+Cards that couldn't find place even in a meme deck.
+
+```{r missingCards, results='asis'}
+missingCards <- unname(recodeCardsCode)[unname(recodeCardsCode) %!in% names(TableAllCards)]
+missingCards.DT <- data.table( Card = as.character(fct_recode(missingCards,!!!recodeCardsCode)),
+                               Code = missingCards,
+                               Region = str_sub(missingCards,3,4)
+                              )
+
+# missingCards.DT <- setorderv(missingCards.DT, c("Region","Card"), c(1,1))
+
+missColNames <- c("Region",list.levels$factions.clean[list.levels$regionShort %in% missingCards.DT$Region])
+
+missingTable <- t(missingCards.DT[,c(1,3)] %>%
+              group_by(Region) %>%
+              mutate(n = row_number()) %>%
+              spread(n, Card) %>%
+              mutate(across(everything(), .fns = ~replace_na(.,""))) %>%
+              mutate(Region = list.levels$factions.clean[list.levels$regionShort %in% Region]  )  
+              ) %>%
+              # setnames(.,list.levels$factions.clean) %>%
+  kable("html", escape = F ) %>%
+  # kable("html", escape = F, col.names = missColNames ) %>%
+  kable_styling(bootstrap_options = c("hover"))
+
+row.names(missingTable) <- NULL
+missingTable
+```
+:::
+:::::
+<!-- Close Card Presence panelset -->
+
+# Legal bla bla {.unnumbered}
+
+This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.

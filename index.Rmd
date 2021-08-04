@@ -13,18 +13,13 @@ site: distill::distill_website
 knitr::opts_chunk$set(
   echo = FALSE,
   dev.args = list(bg = 'transparent'),
-  # dev='svglite',
-  fig.align='center',
-  #out.width='75%', fig.asp=.75,
-  cache.rebuild = F,
-  cache = F
+  fig.align='center'
 )
-
-
-library(tidyverse)
 ```
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
+library(tidyverse)
+
 l = 1            # for l, sigma_f, sigma_n, see note at covariance function
 sigma_f = 1
 sigma_n = .15
@@ -137,7 +132,3 @@ ggplot(aes(x = x, y = value), data = gdat) +
   ) +
   theme_void()
 ```
-
----
-
-**2021-07-30**: Added the Match-Up table with data from the 2.12

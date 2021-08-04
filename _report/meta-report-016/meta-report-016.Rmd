@@ -22,7 +22,7 @@ params:
   prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
   start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
   end:   "2021-07-21 21:00:00" #UTC tz / 'current' week end
-  skip:  1888233  # Patch 2.11 - after removing a few games
+  skip:  1800000  # ~Patch 2.11
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +81,7 @@ file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
 LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
   mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
   pivot_longer(
-  cols = c("puuid_1","puuid_2","puuid_3","puuid_4"),
+  cols = contains("puuid"),
   names_to = "origin",
   values_to = "puuid"
 )
@@ -94,98 +94,87 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 # Data {.unnumbered}
 
 ```{r account-info}
-masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% count()/4
-masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% count()/4
-masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% count()/4
+masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
 
-namesList.EU.RMD     <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_EU.csv"))$name
-namesList.NA.RMD     <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_NA.csv"))$name
-namesList.ASIA.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_LADDER_ASIA.csv"))$name
+namesList.EU.RMD   <- lor_leaderboard("europe")$name
+namesList.NA.RMD   <- lor_leaderboard("americas")$name
+namesList.ASIA.RMD <- lor_leaderboard("asia")$name
 ```
 
 ```{r nGames-data}
 minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
 maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
+
 max_time <- LoR.Match.RMD %>%
   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
   slice_max(game_start_time_utc) %>% 
   pull(game_start_time_utc) 
-```
 
-```{r process-weeekly-data-info}
-nGames_live <- LoR.Match.RMD %>% 
-  slice(minrow_live:maxrow_live) %>%
-  mutate( game_type = case_when(
-    status==404   ~ "Friendly",
-    is.na(status) ~ "to Scrap",
-    TRUE ~ as.character(game_type)
-    )) %>%
-  mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) %>% fct_infreq() ) %>%
-  filter( status==404 | is.na(status) | (game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & str_detect(game_version, '2_12') ) ) %>% 
-  tabyl(game_type)
-
-nGames <- nGames_live[nGames_live$game_type=="Ranked","n"]
+nGames <- LoR.Match.RMD %>% 
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
+  tabyl(game_type) %>%
+  filter( game_type=="Ranked" ) %>%
+  pull(n)
 ```
 
 Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`**
 
 ```{r table-nGames-data, layout="l-body"}
-nGames_tbl <- nGames_live %>%
-  rename_all(
-      funs(
-        stringr::str_to_title(.) %>%
-        stringr::str_replace_all(., '\\.', '_')
-      )
+nGames_tbl <- LoR.Match.RMD %>%
+  #' Stay only 'among' the row with the games in the time-frame I want
+  ####################################################################
+  slice(minrow_live:maxrow_live) %>%
+  #' Extrapolate Friendly and 'to Scrap' matches
+  ##############################################
+  mutate( game_type = case_when(
+    status==404   ~ "Friendly",
+    is.na(status) ~ "to Scrap",
+    TRUE ~ as.character(game_type)
+    )) %>%
+  #' Give to the new game_types a game_start_time_utc among the timeframe on interest
+  #' so it can be used a filter without worrying about other parameter like status and so on
+  ##########################################################################################
+  mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% c("Friendly","to Scrap"),  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+  mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) %>% fct_infreq() ) %>%
+  select(Status=game_type,Server=server) %>%
+  #' Create tbl
+  #############
+  tbl_summary() %>%
+  modify_footnote(
+    update = stat_0 ~
+      md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
   ) %>%
-  rename( "Status"="Game_type" ) %>%
-  gt() %>%
+  # modify_header(label ~ "**Variable**") %>%
+  bold_labels() %>%
+  as_gt() %>%
   tab_header(
     title = "by the Numbers",
-    subtitle = "Patch 2.12 first week / Master players"
+    subtitle = "Patch 2.13 first week / Master players"
     # subtitle = glue::glue("Data for games in {params$start}")
   ) %>%
   tab_footnote(
     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
     locations = cells_title(groups = c("subtitle"))
-    )%>%
-  tab_footnote(
-    footnote = md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" )),
-    locations = cells_body(columns = Status,
-                           rows = c(3,4))
     ) %>%
-  fmt_percent(
-    columns = 3,
-    decimals = 2
-  ) %>%
   tab_footnote(
-    footnote = md(glue::glue("EU Master players in the ladder: {NROW(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
-                              NA Master players in the ladder: {NROW(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
-                              ASIA Master players in the ladder: {NROW(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
+    footnote = md(glue::glue("EU Master players in the ladder: {length(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
+                              NA Master players in the ladder: {length(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
+                              ASIA Master players in the ladder: {length(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
     locations = cells_title(groups = c("subtitle"))
   ) %>%
-  summary_rows(
-    columns = c(N),
-    fns = list(Total = ~sum(.)),
-    missing_text = "---",
-    formatter = fmt_markdown
-  ) %>%
-  summary_rows(
-    columns = c(Percent),
-    fns = list(Total = ~sum(.)),
-    missing_text = "Match Id recovered",
-    formatter = fmt_percent
-  ) %>%
-   tab_options(
+  tab_options(data_row.padding = px(1.2))
+  
+nGames_tbl %>%
+ tab_options(
     table.background.color = "transparent",
     table.font.color = "black",
     table.font.color.light = "black"
    )
 
-nGames_tbl
-
-# gtsave(nGames_tbl,
-#     "images/rep_data.png"
-# )
+# gtsave(nGames_tbl,"images/rep_data.png")
 ```
 
 ```{r prepare-data}
