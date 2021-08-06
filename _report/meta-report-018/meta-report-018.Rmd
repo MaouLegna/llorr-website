@@ -130,7 +130,8 @@ maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params
 max_time <- LoR.Match.RMD %>%
   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
   slice_max(game_start_time_utc) %>% 
-  pull(game_start_time_utc) 
+  pull(game_start_time_utc) %>%
+  format(.,format = "%Y-%m-%d %H:%M:%S")
 
 nGames <- LoR.Match.RMD %>% 
   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
@@ -140,6 +141,10 @@ nGames <- LoR.Match.RMD %>%
 ```
 
 Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`**
+
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")` [^1]
+
+[^1]: Reminding that while I may collect the 'list of all games-id' played in a certain timeframe I can only collect all their metadata several hours later. So after the first release the numbers may be updated later during the week, be it for the sake of updating or modifying some code.
 
 ```{r table-nGames-data, layout="l-body"}
 nGames_tbl <- LoR.Match.RMD %>%
@@ -921,13 +926,15 @@ WR.DT.Reg %>%
                 ),format = colFormat(percent = TRUE,digits = 1),
               ),
               regPlayrate   = colDef(name = "Play Rate",
-                # aggregate = JS("function(values, rows) {
-                # var total = 0;
-                # rows.forEach(function(row) {
-                #   total += row['playrate'];
-                # }
-                # return avg = total / rows.length;                               
-                # }"),
+                aggregate = JS("function(values, rows) {
+                var total = 0;
+                var n = 0;
+                rows.forEach(function(row) {
+                  total += row['playrate']
+                  n += 1
+                })
+                return total/n
+                }"),
                 format = colFormat(percent = TRUE,digits = 1)),
               sumGames   = colDef(show=F),
               playrate   = colDef(show=F)
@@ -939,13 +946,15 @@ WR.DT.Reg %>%
 ::: {.panel}
 ### Underdog {.panel-name}
 
-Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^1]
+Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^2]
 
-Since I added the server-specific values it would have been wrong to ignore this also in this 'Underdog' section. I decided to leave the rule untouched, without taking in account the different servers. While for the "Meta Decks" it was more a natural expansion, here the results can widely differ by small changed and as mentioned in the past I would like to leave the current rule as much as possible unless it's too broken. Of course one could complain as there decks whose results are mostly carried by a single server and in the other that decks is almost not even played. All true, but there are limitation like the facrs that the asian server is very low on number during all the season so even the condition of a mininum of 50 games with playrate $\in$ [0.1%,1%) is a lot screw the results. Also this section in not as the Meta Deck one where players are interested in seeing the performance of the most played decks but it's meant to be a "look around there may be some dark tech that's worth investing some time".
+Since I added the server-specific values it would have been wrong to ignore this also in this 'Underdog' section. I decided to leave the rule untouched, without taking in account the different servers. While for the "Meta Decks" it was more a natural expansion, here the results can widely differ by small changed and as mentioned in the past I would like to leave the current rule as much as possible unless it's too broken. Of course one could complain as there decks whose results are mostly carried by a single server and/or not even played in the others. 
+
+All true, but there are limitation like the facrs that the asian server is very low on number during all the season so even the condition of a mininum of 50 games with playrate $\in$ [0.1%,1%) is a lot screw the results. Also this section in not as the Meta Deck one where players are interested in seeing the performance of the most played decks but it's meant to be a "look around there may be some dark tech that's worth investing some time".
 
 A better solution would be 'expanding' this section or providing some tools to allows players to search the result. But there's a problem, not providing immediate readable results and leave the research to the user is a bad choice in a report from my point of view at least and for sections like this one in particular. It could be worth exploring as a standalone option like the recently uploaded page for the MU table ([MU-Table](https://llorr-stats.netlify.app/mu/))
 
-[^1]: Min number of games 50, during the times a meta/ladder just changed.
+[^2]: Min number of games 50, during the times a meta/ladder just changed.
 
 ```{r print-under-tableWinRate}
 WR.DT %>%
@@ -1166,9 +1175,9 @@ get_deck_structure(SubDeck_deck_code) %>%
 
 # LoR-Meta Index (LMI)
 
-> The LMI [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+> The LMI [^3] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
-[^2]: [LMI - Early Theory](https://llorr-stats.netlify.app/analysis/lmi/)
+[^3]: [LMI - Early Theory](https://llorr-stats.netlify.app/analysis/lmi/)
 
 ```{r data-aggregation}
 DT.Aggreation <- WR.DT %>%
