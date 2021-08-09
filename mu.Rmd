@@ -38,9 +38,23 @@ knitr::opts_chunk$set(
 options(digits.secs = 6)
 options(scipen=999)
 
-library(tidyverse)
-library(data.table)
-library(DT)
+#' R Option
+xaringanExtra::use_panelset()
+
+pacman::p_load(tidyverse,
+               data.table,
+               DT,
+               reactable,
+               crosstalk)
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
 ```
 
 ```{r load-data}
@@ -65,26 +79,100 @@ Since the values aren't too heavily affected by new data I won't update it too o
 
 While on the report I do some filtering removing cases with too few games, here I left EVERYTHING to allows people plays as much as they want with the table (as usual from Ranked games), so if you want to remove "the dirt" **remember to use the filter**.
 
----
+**Update**: added an "alternative" version to the same MU table. Should result a bit cleaner. Potentially I may turn it into the standard version once I know how to improve a few things like the slider-input bur for now I leave both options. Also the removed cases with less than 10 games (that alone is enough to reduce to 1/10th of the original rows). The "standard" one is still with everything.
 
-```{r print-tableGrid, layout="l-page", preview=TRUE}
-MUtbl.DT <- MUtbl %>% 
-  # filter(muGames>30) %>%
+::: l-screen
+
+::::: {.panelset}
+::: {.panel}
+
+### Standard - No filters {.panel-name}
+
+```{r DTtbl-version}
+MUtbl %>%
+  # filter(muGames>10) %>%
   mutate( direction = replace(direction, muWR==0.5, "TIE" ) ) %>%
   mutate( player = factor(player), opponent = factor(opponent), direction = factor(direction), okCI = factor(okCI) ) %>%
   select( -CI ) %>%
-  datatable(., rownames = FALSE, colnames = c('Player'='player','Opponent'='opponent','Regions'='factions','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames','LowerCI'='LCI','UpperCI'='UCI','Direction MU'='direction','Result Test'='okCI'),
-            # options = list(filter = 'top'),
+  datatable(., rownames = FALSE,
+            colnames = c('Player'='player','Opponent'='opponent','Regions'='factions','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames','LowerCI'='LCI','UpperCI'='UCI','Direction MU'='direction','Result Test'='okCI',"Play Rate"='playrate'),
+            options = list(
+              columnDefs = list(list(className = 'dt-center', targets = "_all"))
+            ),
             filter = list(position = 'top', clear = FALSE)
-  ) %>% 
+  ) %>%
   formatPercentage('Win Rate', 1) %>%
   formatPercentage('LowerCI', 1) %>%
-  formatPercentage('UpperCI', 1)
-
-MUtbl.DT
+  formatPercentage('UpperCI', 1) %>%
+  formatPercentage('Play Rate', 1)
 ```
+:::
 
----
+::: {.panel}
+### Alternative {.panel-name}
+
+```{r reactable-tbl}
+data <- SharedData$new(MUtbl %>% 
+                         filter(muGames>=10) %>%
+  mutate( direction = replace(direction, muWR==0.5, "TIE" ) ) %>%
+  mutate( player = factor(player), opponent = factor(opponent), direction = factor(direction), okCI = factor(okCI) ) %>%
+  select( -CI ))
+
+bscols(
+  widths = c(3, 9),
+  list(
+    filter_select("player", "Player", data, ~player),
+    filter_select("opponent", "Opponent", data, ~opponent),
+    filter_slider("muWin",   "#Win", data, ~muWin, width = "100%",step = 50,min = 0),
+    filter_slider("muGames", "#Games", data, ~muGames, width = "100%",step = 50,min = 0),
+    filter_slider("muWR", "WinRate", data, ~muWR, width = "100%",step=0.01,min = 0,max = 1),
+    filter_slider("LCI", "LowerCI", data, ~LCI, width = "100%",step=0.01,  min = 0,max = 1),
+    filter_slider("UCI", "UpperCI", data, ~UCI, width = "100%",step=0.01,  min = 0,max = 1),
+    filter_select("okCI", "Result Test", data, ~okCI)
+    
+    # filter_checkbox("type", "Type", data, ~Type),
+    # filter_slider("price", "Price", data, ~Price, width = "100%"),
+    # filter_select("mfr", "Manufacturer", data, ~Manufacturer)
+  ),
+  reactable(data,
+            bordered = TRUE,
+            highlight = TRUE,
+            striped = TRUE,
+            searchable = TRUE,
+            # filterable = TRUE,
+             defaultColDef = colDef(
+              # header = function(value) str_to_title(value),
+              #  cell = function(value) format(value, nsmall = 1),
+              align = "center",
+              minWidth = 120,
+              headerStyle = list(background = "steelblue",color="white")
+            ),
+            columns = list(
+              player   = colDef(name = "Player",minWidth = 120),
+              opponent = colDef(name = "Opponent"  ,minWidth = 120),
+              factions = colDef(name = "Regions"),
+              muWin    = colDef(name = "#Win"),
+              muGames  = colDef(name = "#Games"),
+              muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
+              LCI      = colDef(name = "LowerCI",format = colFormat(percent = TRUE,digits = 1)),
+              UCI      = colDef(name = "UpperCI",format = colFormat(percent = TRUE,digits = 1)),
+              direction= colDef(name = "Direction"),
+              okCI     = colDef(name = "Result Test"),
+              playrate = colDef(name = "playrate",format = colFormat(percent = TRUE,digits = 1))),
+            theme = reactableTheme(
+                borderColor = "#dfe2e5",
+                stripedColor = "#f6f8fa",
+                highlightColor = "#f0f5f9",
+                cellPadding = "8px 12px",
+                style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
+                searchInputStyle = list(width = "100%"))
+    )
+)
+```
+:::
+:::::
+
+:::
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
@@ -99,64 +187,68 @@ The format of the table is the usual way I display the match-ups data but I also
 I'm planning to improve and expand the options once I decide how to implement the ideas I have.
 
 ```{r}
-# bscols(
-#     widths = c(2, 9),
-#     list(
-#       # filter_checkbox("type", "Type", data, ~Type),
-#       filter_slider("nGames", "nGames", data, ~nGames, width = "100%")
-#       # filter_select("mfr", "Manufacturer", data, ~Manufacturer)
-#     ),
-# data %>%
-#   # arrange(desc(WR)) %>%
-#   # filter(playrate >= 0.01) %>%
-#   # relocate(player,WR,nWin,nGames,playrate,server) %>%
-#   reactable(., groupBy = "player",
-#             searchable = TRUE,
-#             bordered = TRUE,
-#             # wrap = FALSE,
-#             highlight = TRUE,
-#             # filterable = TRUE,
-#             defaultColDef = colDef(
-#               # header = function(value) str_to_title(value),
-#               #  cell = function(value) format(value, nsmall = 1),
-#               align = "center",
-#               minWidth = 70,
-#               headerStyle = list(background = "#f7f7f8")
-#             ),
-#             columns = list(
-#               player = colDef(name = "Champions",minWidth = 100),
-#               server = colDef(name = "Server", aggregate = "unique"),
-#               nWin   = colDef(name = "#Win", aggregate = "sum"),
-#               nGames = colDef(name = "#Games", aggregate = "sum"),
-#               WR     = colDef(name = "WinRate", aggregate = JS(
-#                 "function(values, rows) {
-#                     var totalWin = 0
-#                     var totalGames = 0
-#                     rows.forEach(function(row) {
-#                     totalWin   += row['nWin']
-#                     totalGames += row['nGames']
-#                     })
-#                   return totalWin / totalGames
-#                     }"
-#                 ),format = colFormat(percent = TRUE,digits = 1),
-#               ),
-#               sumGames   = colDef(show=F),
-#               playrate   = colDef(name = "Play Rate", aggregate = JS(
-#                 "function(values, rows) {
-#                     var totalGames = 0
-#                     var totalsumGames = 0
-#                     rows.forEach(function(row) {
-#                     totalGames   += row['nGames']
-#                     totalsumGames += row['sumGames']
-#                     })
-#                   return totalGames / totalsumGames
-#                     }"
-#                 ),format = colFormat(percent = TRUE,digits = 1))
-#     )
-#   )
+# library(reactable)
+# library(htmltools)
+# 
+# # not good practice since big dependency and all we want is slider
+# #   but for demonstration purposes do it this way
+# material_dep <- htmlDependency(
+#   name = "material-ui",
+#   version = "4.6.1",
+#   src = c(href = "https://unpkg.com/@material-ui/core/umd/"),
+#   script = "material-ui.production.min.js"
 # )
 # 
-# # cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
-# data <- SharedData$new(WR.DT)
+# rt <- reactable(
+#   iris,
+#   filterable = TRUE
+# )
+# 
+# rt$x$tag$attribs$columns[[2]]$filterMethod <- htmlwidgets::JS("filterRange")
+# rt$x$tag$attribs$columns[[2]]$Filter <- htmlwidgets::JS("inputFilter")
+# 
+# browsable(
+#   tagList(
+#     reactR::html_dependency_react(),
+#     reactR::html_dependency_reacttools(),
+#     htmlwidgets::getDependency("reactable","reactable"),
+#     material_dep,
+#     tags$style("
+# .rt-thead.-filters .rt-tr {align-items: flex-end; height: 60px;}
+# .rt-thead.-filters .rt-th {overflow: visible;}
+#     "),
+#     tags$script(HTML("
+# function filterRange(filter, rows) {
+#   return rows.filter(function(row) {
+#     // Don't filter on aggregated cells
+#     if (row._subRows) {
+#       return true
+#     }
+#     return row[filter.id] >= filter.value[0] && row[filter.id] <= filter.value[1];
+#   })
+# }
+# 
+# function inputFilter(filter) {
+#   var _onChange = filter.onChange;
+#   return React.createElement(
+#     'div',
+#     null,
+#     React.createElement(
+#       MaterialUI.Slider,
+#       {
+#         defaultValue: [0,5],
+#         min: 0,
+#         max: 5,
+#         step: 0.5,
+#         valueLabelDisplay: 'auto',
+#         onChange: function onChange(event, newValue) {return _onChange(newValue)}
+#       }
+#     )
+#   )
+# }
+#     ")),
+#     rt
+#   )
+# )
 ```
 

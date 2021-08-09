@@ -1,0 +1,337 @@
+---
+title: "THE SEASONAL REPORT IS VAST (n°1)"
+description: |
+  Second week of patch 2.13 / End of the Ruination event / Bandle City waiting room
+base_url: https://llorr-stats.netlify.app
+preview: "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03IO002T1-full.png"
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 08-07-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+draft: false
+# twitter:
+#   site: "@Maou_Legna"
+#   creator: "@Maou_Legna"
+params:
+  prev:  "2021-07-14 21:00:00" #UTC tz / 'previous' week start
+  end:   "2021-08-16 21:00:00" #UTC tz / 'current' week end
+  skip:  1750000  # ~ Patch 2.11
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=9,
+  fig.height=6,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
+)
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+#' Python
+# py_run_string("print('Hello World')")
+# lor_deckcodes <- import("lor_deckcodes")
+# py_module_available("lor_deckcodes")
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
+```
+
+```{r twitter-meta, echo = FALSE}
+# library(metathis)
+# meta() %>%
+#   meta_description(
+#     "Second week of patch 2.13 / End of the Ruination event / Bandle City waiting room"
+#   ) %>% 
+#   meta_viewport() %>% 
+#   meta_social(
+#     title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°19)",
+#     url = "https://llorr-stats.netlify.app/",
+#     # image = "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03IO002T1-full.png",
+#     # image_alt = "Akshan lv1",
+#     og_type = "website",
+#     og_author = "Legna",
+#     twitter_card_type = "summary",
+#     twitter_creator = "@Maou_Legna"
+#   )
+```
+
+
+```{r raw-data}
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
+  pivot_longer(
+  cols = contains("puuid"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+# Data {.unnumbered}
+
+```{r account-info}
+masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+
+namesList.EU.RMD   <- lor_leaderboard("europe")$name
+namesList.NA.RMD   <- lor_leaderboard("americas")$name
+namesList.ASIA.RMD <- lor_leaderboard("asia")$name
+```
+
+```{r nGames-data}
+# minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
+# maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
+# 
+# max_time <- LoR.Match.RMD %>%
+#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
+#   slice_max(game_start_time_utc) %>% 
+#   pull(game_start_time_utc) %>%
+#   format(.,format = "%Y-%m-%d %H:%M:%S")
+# 
+# nGames <- LoR.Match.RMD %>% 
+#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
+#   tabyl(game_type) %>%
+#   filter( game_type=="Ranked" ) %>%
+#   pull(n)
+```
+
+<!-- Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`** -->
+
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")` [^1]
+
+[^1]: Reminding that while I may collect the 'list of all games-id' played in a certain timeframe I can only collect all their metadata several hours later. So after the first release the numbers may be updated later during the week, be it for the sake of updating or modifying some code.
+
+```{r table-nGames-data, layout="l-body"}
+# nGames_tbl <- LoR.Match.RMD %>%
+#   #' Stay only 'among' the row with the games in the time-frame I want
+#   ####################################################################
+#   slice(minrow_live:maxrow_live) %>%
+#   #' Extrapolate Friendly and 'to Scrap' matches
+#   ##############################################
+#   mutate( game_type = case_when(
+#     status==404   ~ "Friendly",
+#     is.na(status) ~ "to Scrap",
+#     TRUE ~ as.character(game_type)
+#     )) %>%
+#   #' Give to the new game_types a game_start_time_utc among the timeframe on interest
+#   #' so it can be used a filter without worrying about other parameter like status and so on
+#   ##########################################################################################
+#   mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% c("Friendly","to Scrap"),  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) %>%
+#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+#   mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) %>% fct_infreq() ) %>%
+#   select(Status=game_type,Server=server) %>%
+#   #' Create tbl
+#   #############
+#   tbl_summary() %>%
+#   modify_footnote(
+#     update = stat_0 ~
+#       md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
+#   ) %>%
+#   # modify_header(label ~ "**Variable**") %>%
+#   bold_labels() %>%
+#   as_gt() %>%
+#   tab_header(
+#     title = "by the Numbers",
+#     subtitle = "Patch 2.13 first week / Master players"
+#     # subtitle = glue::glue("Data for games in {params$start}")
+#   ) %>%
+#   tab_footnote(
+#     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
+#     locations = cells_title(groups = c("subtitle"))
+#     ) %>%
+#   tab_footnote(
+#     footnote = md(glue::glue("EU Master players in the ladder: {length(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
+#                               NA Master players in the ladder: {length(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
+#                               ASIA Master players in the ladder: {length(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
+#     locations = cells_title(groups = c("subtitle"))
+#   ) %>%
+#   tab_options(data_row.padding = px(1.2))
+#   
+# nGames_tbl %>%
+#  tab_options(
+#     table.background.color = "transparent",
+#     table.font.color = "black",
+#     table.font.color.light = "black"
+#    )
+# 
+# # gtsave(nGames_tbl,"images/rep_data.png")
+```
+
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  # "StandardGauntletLobby"
+  filter(game_type %in% c("Ranked") ) %>%
+  # filter(game_mode %in% c("Bo3ChallengeLobby","LastCallQualifierGauntletLobby") ) %>%
+  # filter(game_start_time_utc >= as.POSIXct("2021-07-14 21:00:00", tz = "UTC")  ) %>%
+  filter(game_start_time_utc >= as.POSIXct("2021-06-30 21:00:00", tz = "UTC") & game_start_time_utc < as.POSIXct("2021-08-16 21:00:00", tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,game_mode,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","game_mode","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
+```
+
+```{r}
+LoR.Melt.Matches.RMD %>%
+  group_by(userID,opponentID,server) %>%
+  summarise( listDeck=list(sort(unique(player))),listCode=list(unique(deck_code)) ) %>%
+  ungroup() %>%
+  # slice_head(n = 5) %>%
+  # pluck("listCode") %>%
+  rowwise() %>%
+  mutate( l = length( listDeck ) ) %>%
+  filter( l == 4 )
+  map_dbl(.x=., ~length(.x)) %>%
+  tabyl()
+   # ungroup() %>%
+
+LoR.Melt.Matches.RMD %>%
+  tabyl(game_mode)
+    
+  
+LoR.Melt.Matches.RMD %>%
+  filter(userID == "Angeletronic BR1" & opponentID ==	"Amigo da Amizade Liar" ) %>%
+  arrange(game_start_time_utc)
+  
+
+LoR.Melt.Matches.RMD %>%
+  arrange(game_start_time_utc,match_key,variable) %>%
+  select(userID,opponentID,player,opponent)
+  group_by(userID,opponentID,server)
+
+  # tabyl(deck_id_1,game_mode)
+```
+
+```{r champion-freq-by-date}
+m = 29
+
+Champion.deck.daily <- (LoR.Melt.Matches.RMD %>%
+  rename(.,"champions"="player") %>%
+  arrange(game_start_time_utc) %>%
+  select(game_start_time_utc,champions) %>%
+  mutate( num_cc = factor(champions) %>% as.numeric() ))[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ] %>%
+  select(!num_cc) %>%
+  mutate( champions = factor(champions) %>% fct_infreq() )
+
+fct_values <- LoR.Melt.Matches.RMD %>%
+  # mutate( top5 = fct_lump(champions, n = m, w = tot, ties.method = "max") ) %>%
+ mutate( top5 = fct_lump_n(player,n = m) %>% fct_infreq() ) %>%
+ pull(top5) %>% levels()
+
+fct_values <- c(fct_values,"Soraka / Tahm Kench")
+```
+
+```{r}
+MUtbl <- LoR.Melt.Matches.RMD %>%
+  # filter( game_start_time_utc >= as.POSIXct("2021-07-14 21:00:00", tz = "UTC") ) %>%
+  # filter(game_version>"live_2_9" ) %>%
+  filter( game_outcome != "tie" ) %>%
+  select( player,opponent,game_outcome,server,game_version,factions ) %>%
+  # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win"),
+             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
+  as.data.table()
+
+
+
+
+
+MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
+MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
+MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
+
+MUtbl <- MUtbl %>%
+  mutate( CI := glue("({percent(LCI,accuracy = 0.1)}-{percent(UCI,accuracy = 0.1)})" ) )
+
+WR.DT <- LoR.Melt.Matches.RMD %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome ) %>%
+  group_by(player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+            ) %>%
+  ungroup() %>%
+  mutate( playrate = nGames/sum(nGames) )
+
+MUtbl <- left_join(MUtbl,WR.DT[,c("player","playrate")],by="player")
+
+# MU30tbl <- tibble(player   = rep(fct_values[-1],each = 30),
+#        opponent = rep(fct_values[-1],30) ) %>%
+#   left_join(.,MUtbl,by = c("player","opponent"))
+
+# skimr::skim(MU30tbl)
+
+# list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
+fwrite(MUtbl, file.path("C:","LlorR","data","clean",paste0("MUtbl_", format(Sys.time(), "%Y-%m-%dT%H%M"), ".csv")) )
+# fwrite(MU30tbl, file.path("C:","LlorR","data","clean",paste0("MU30tbl_", format(Sys.time(), "%Y-%m-%dT%H%M"), ".csv")) )
+```
+
+
+# Legal bla bla {.unnumbered}
+
+This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
