@@ -112,6 +112,9 @@ MUtbl %>%
 ### Alternative {.panel-name}
 
 ```{r reactable-tbl}
+require(reactable)
+require(htmltools)
+
 data <- SharedData$new(MUtbl %>% 
                          filter(muGames>=10) %>%
   mutate( direction = replace(direction, muWR==0.5, "TIE" ) ) %>%
@@ -187,9 +190,6 @@ The format of the table is the usual way I display the match-ups data but I also
 I'm planning to improve and expand the options once I decide how to implement the ideas I have.
 
 ```{r}
-# library(reactable)
-# library(htmltools)
-# 
 # # not good practice since big dependency and all we want is slider
 # #   but for demonstration purposes do it this way
 # material_dep <- htmlDependency(
