@@ -22,7 +22,7 @@ params:
   prev:  "2021-07-28 21:00:00" #UTC tz / 'previous' week start
   start: "2021-08-04 21:00:00" #UTC tz / 'current' week start
   end:   "2021-08-11 21:00:00" #UTC tz / 'current' week end
-  skip:  1950000  # ~ Patch 2.12
+  skip:  2000000  # ~ Patch 2.12
 ---
 
 ```{r setup, include=FALSE}
@@ -978,19 +978,26 @@ Looking at this week results it's clear most of these decks can be grouped as 'P
 
 # Match Ups
 
+`r kableExtra::text_spec("Note 1:", color = "red")` Since the MU table required a little more space and I wanted to give the same amoutnt for the table (for uniformity) I can add a few decks to the grid covering the top15 mostplayed archetypes
+
+`r kableExtra::text_spec("Note 2:", color = "red")` While these are indeed the Match-Ups win-rates that one can extract from last week games I need to point out that this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the MU-page where I use all games with the current sets of buffs and nerfs. While it's that there I don't account for optimization and difference in skills acquired during the weeks the overall number of games / sample size makes them a much safer source of information. While I'll continue to release the weekly data, pls refer to the [MU - page](https://llorr-stats.netlify.app/report/mu) for a better "meta-investigation".
+
 ```{r get-WR-Top10}
-Top10CC <- CC.table %>% arrange(desc(freq)) %>% slice_head(.,n = 10) %>% select(player) %>% pull() %>% sort()
+mu <- 15
+
+Top10CC <- CC.table %>% arrange(desc(freq)) %>% slice_head(.,n = mu) %>% select(player) %>% pull() %>% sort()
 
 WRTop10 <- MUtbl[ player %in% Top10CC & opponent %in% Top10CC, ]
 WRTop10 <- setorderv(WRTop10, c("player","opponent"), c(1,1))
 ```
 
-::: l-body-outset
+::: l-page
 ::::: {.panelset}
 ::: {.panel}
+
 ## Match-up Grid {.panel-name}
 
-The win rates on the grid are among the 10 most played champion combination.
+The win rates on the grid are among the `r mu` most played champion combination.
 
 ```{r prepare-flex}
 require(flextable)
@@ -1005,7 +1012,7 @@ dummy_fun <- function(x){
 ```
 
 ```{r prepare-flex-grid}
-grid <- matrix(WRTop10$muWR, nrow = 10, ncol = 10, byrow = T)
+grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
 
 colnames(grid) <- Top10CC
@@ -1018,7 +1025,7 @@ colourer <- col_numeric(
           ),
   domain = c(0, 1))
 
-funs <- setNames(rep(list(dummy_fun), 10), Top10CC)
+funs <- setNames(rep(list(dummy_fun), mu), Top10CC)
 ```
 
 ```{r print-flex}
@@ -1051,87 +1058,32 @@ ft
 :::
 
 ::: {.panel}
-## Match-up Grid v2 {.panel-name}
+## Match-up Table {.panel-name}
 
-Just the OG way I used to display the grid. Aside for the different color palette it doesn't bring more information compared to the other version that actually use more shades and which is also easier to the eyes. I'll probably remove this version the next week.
-
-```{r tablesGrid}
-grid <- matrix(WRTop10$muWR, nrow = 10, ncol = 10, byrow = T)
-diag(grid) <- NA
-
-# unique(WRTop10$opponent) == sort(Top10CC)
-
-grid <- data.frame(grid)
-```
-
-```{r print-huxGrid, layout="l-body"}
-brks <- c(0.4, 0.5, 0.5000001,0.6)
-# clrs <- round(seq(255, 40, length.out = length(brks) + 1), 0) %>%
-#   {paste0("rgb(255,", ., ",", ., ")")}
-
-clrs = c( "#eca1a6", # red
-          "#f9ccac", # red/orange
-          "#ffe599", # orange (50)
-          "#e3eaa7", # green
-          "#b5e7a0" # darker green
-          )
-
-datatable(grid,
-           colnames = Top10CC,
-           rownames = Top10CC,
-           options = list(
-            columnDefs = list(list(className = 'dt-center', targets = "_all")),
-            dom = 't', ordering=F,
-            headerCallback = DT::JS("function(thead) {","  $(thead).css('font-size', '8pt');","}" )
-
-            )
-          ) %>%
-  formatStyle(names(grid), backgroundColor = styleInterval(brks,clrs )) %>%
-  formatPercentage(names(grid), 1) %>%
-  formatStyle(names(grid), fontWeight = 'bold') %>%
-  formatStyle(0, fontWeight = 'bold', fontSize = "8pt")
-```
-:::
-
-:::::
-<!-- Close MU panelset -->
-:::
-
-## Match-up Table
-
-Filtered cases with less than 100 games
-
-```{r print-tableGrid}
-# MUtbl %>%
-#   filter(muGames>100) %>%
-#   mutate( player = factor(player) ) %>%
-#   mutate( opponent = factor(opponent) ) %>%
-#   # arrange(desc(games)) %>%
-#   select(player,opponent,muWR,muWin,muGames,CI) %>%
-#   datatable(., rownames = FALSE, colnames = c('Player'='player','Opponent'='opponent','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames'),
-#             options = list(search = list(regex = TRUE, caseInsensitive = FALSE)),
-#             filter = list(position = 'top', clear = FALSE)
-#   ) %>%
-#   formatPercentage('Win Rate', 1)
-```
-
-```{r reactable-tbl, layout="l-page"}
+```{r reactable-tbl}
 require(reactable)
 require(htmltools)
 require(crosstalk)
 
-data <- SharedData$new(MUtbl %>%
-                         filter(muGames>=100) %>%
-                         select(-LCI,-UCI,-okCI,-direction))
+#'Quick link for a MUtbl for testing
+#'##################################
+# file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
+# MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
+
+# The fs object will inject css into your page.
+# if (requireNamespace("crosstalk", quietly = TRUE)) {
+data <- crosstalk::SharedData$new(MUtbl %>%
+                       filter(muGames>=100) %>%
+                       select(-LCI,-UCI,-okCI,-direction))
 
 bscols(
   widths = c(3, 9),
   list(
-    filter_select("player", "Player", data, ~player),
-    filter_select("opponent", "Opponent", data, ~opponent),
-    filter_slider("muWin",   "#Win", data, ~muWin, width = "100%",step = 50,min = 0),
-    filter_slider("muGames", "#Games", data, ~muGames, width = "100%",step = 100,min = 0),
-    filter_slider("muWR", "WinRate", data, ~muWR, width = "100%",step=0.01,min = 0,max = 1)
+    crosstalk::filter_select("player", "Player", data, ~player),
+    crosstalk::filter_select("opponent", "Opponent", data, ~opponent),
+    crosstalk::filter_slider("muWin",   "#Win", data, ~muWin, width = "100%",step = 50,min = 0),
+    crosstalk::filter_slider("muGames", "#Games", data, ~muGames, width = "100%",step = 100,min = 0),
+    crosstalk::filter_slider("muWR", "WinRate", data, ~muWR, width = "100%",step=0.01,min = 0,max = 1)
   ),
   reactable(data,
             bordered = TRUE,
@@ -1140,8 +1092,8 @@ bscols(
             searchable = TRUE,
             # filterable = TRUE,
              defaultColDef = colDef(
-              # header = function(value) str_to_title(value),
-              #  cell = function(value) format(value, nsmall = 1),
+              style = list(fontWeight = 500, color = "black",
+                       fontFamily = "Work Sans, sans-serif", fontSize = "11px"),
               align = "center",
               minWidth = 120,
               headerStyle = list(background = "steelblue",color="white")
@@ -1149,10 +1101,10 @@ bscols(
             columns = list(
               player   = colDef(name = "Player",minWidth = 120),
               opponent = colDef(name = "Opponent"  ,minWidth = 120),
-              muWin    = colDef(name = "#Win"),
-              muGames  = colDef(name = "#Games"),
-              muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
-              CI       = colDef(name = "CI",minWidth = 120)
+              muWin    = colDef(name = "#Win", style = list( fontSize = "15px") ),
+              muGames  = colDef(name = "#Games", style = list( fontSize = "15px")),
+              muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "15px") ),
+              CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px"))
               ),
             theme = reactableTheme(
                 borderColor = "#dfe2e5",
@@ -1162,13 +1114,14 @@ bscols(
                 style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
                 searchInputStyle = list(width = "100%"))
     )
-)
+  )
 ```
-
+:::
+:::::
+<!-- Close MU panelset -->
+:::
 
 # Deck Structure of the week {.tabset .tabset-fade .tabset-pills}
-
-
 
 ```{r deck-structure-prepare}
 brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
@@ -1176,7 +1129,6 @@ clrs = colorRampPalette( c("white","steelblue") )(length(brks)+1)
 ```
 
 ::::: {.panelset}
-
 ::: {.panel}
 ## Maokai / Viego / ver.Ionia
 

@@ -67,6 +67,22 @@ file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), patte
 MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
 ```
 
+```{r get-WR-Top10}
+mu <- 20
+
+Top10CC <- MUtbl %>%
+  group_by(player) %>%
+  summarise(nGames = sum(muGames)) %>% 
+  arrange(desc(nGames)) %>% 
+  slice_head(.,n = mu) %>% 
+  select(player) %>% 
+  pull() %>% 
+  sort()
+
+WRTop10 <- MUtbl[ player %in% Top10CC & opponent %in% Top10CC, ]
+WRTop10 <- setorderv(WRTop10, c("player","opponent"), c(1,1))
+```
+
 # Match Up Table
 
 Number of **matches**: `r sum(MUtbl$muGames)/2` / **games** : `r sum(MUtbl$muGames)`
@@ -75,93 +91,76 @@ Last Update: `r Sys.time()`
 
 Since the values aren't too heavily affected by new data I won't update it too often. Will probably be each 2 days or so (more often at the start of a season). [^1]
 
-[^1]: since I had to implement a couple of corrections I can 'confirm' that updating the file is a bit heavy sometimes to my 'potato pc', even worse if it happens during the data collection. So I have to confirm I can't update it hourly/all days as I would ideally.
-
 While on the report I do some filtering removing cases with too few games, here I left EVERYTHING to allows people plays as much as they want with the table (as usual from Ranked games), so if you want to remove "the dirt" **remember to use the filter**.
 
-**Update**: added an "alternative" version to the same MU table. Should result a bit cleaner. Potentially I may turn it into the standard version once I know how to improve a few things like the slider-input bur for now I leave both options. Also the removed cases with less than 10 games (that alone is enough to reduce to 1/10th of the original rows). The "standard" one is still with everything.
+`r kableExtra::text_spec("UPDATE 1:", color = "red")` added an "alternative" version to the same MU table. Should result a bit cleaner. Potentially I may turn it into the standard version once I know how to improve a few things like the slider-input bur for now I leave both options. Also the removed cases with less than 10 games (that alone is enough to reduce to 1/10th of the original rows). The "standard" one is still with everything.
 
-::: l-screen
+`r kableExtra::text_spec("UPDATE 2:", color = "red")` while I may find the MU table vastly more useful I always forget about the "common user" who may find the grid easier. While I actually like the grid, a reason why I don't often try to improve it or make it more visible is that I force too much by myself the concept of avoiding forcing the meta and by showing only top played deck I feared this. But, I must admit this is being overcareful and ignoring the help I can provide. So I added the grid here too, expanded to 20 decks as I have the space.
 
+`r kableExtra::text_spec("UPDATE 3:", color = "red")` while I thought leaving all data would give more freedom to the user, again it's not really helpful if I force to filter all the dirt to almost all people just to let very few fully explore the data. Both tables are again filtered at 100 min games and so making each row at least worth considering. `r kableExtra::text_spec("I also just changed the priority of the table format to display", color = "red")` it seems that indeed the new one if easier to use and better to the eyes, again I left the older one available `r kableExtra::text_spec("just click on the second tab", color = "red")`
+
+
+::: l-page
 ::::: {.panelset}
-::: {.panel}
-
-### Standard - No filters {.panel-name}
-
-```{r DTtbl-version}
-MUtbl %>%
-  # filter(muGames>10) %>%
-  mutate( direction = replace(direction, muWR==0.5, "TIE" ) ) %>%
-  mutate( player = factor(player), opponent = factor(opponent), direction = factor(direction), okCI = factor(okCI) ) %>%
-  select( -CI ) %>%
-  datatable(., rownames = FALSE,
-            colnames = c('Player'='player','Opponent'='opponent','Regions'='factions','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames','LowerCI'='LCI','UpperCI'='UCI','Direction MU'='direction','Result Test'='okCI',"Play Rate"='playrate'),
-            options = list(
-              columnDefs = list(list(className = 'dt-center', targets = "_all"))
-            ),
-            filter = list(position = 'top', clear = FALSE)
-  ) %>%
-  formatPercentage('Win Rate', 1) %>%
-  formatPercentage('LowerCI', 1) %>%
-  formatPercentage('UpperCI', 1) %>%
-  formatPercentage('Play Rate', 1)
-```
-:::
 
 ::: {.panel}
-### Alternative {.panel-name}
+## Match-up Table {.panel-name}
 
 ```{r reactable-tbl}
 require(reactable)
 require(htmltools)
+require(crosstalk)
 
-data <- SharedData$new(MUtbl %>% 
-                         filter(muGames>=10) %>%
-  mutate( direction = replace(direction, muWR==0.5, "TIE" ) ) %>%
-  mutate( player = factor(player), opponent = factor(opponent), direction = factor(direction), okCI = factor(okCI) ) %>%
-  select( -CI ))
+#'Quick link for a MUtbl for testing
+#'##################################
+# file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
+# MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
+
+# The fs object will inject css into your page.
+# if (requireNamespace("crosstalk", quietly = TRUE)) {
+data <- crosstalk::SharedData$new(MUtbl %>%
+                       filter(muGames>=100) %>%
+                       select(-LCI,-UCI,-okCI))
 
 bscols(
-  widths = c(3, 9),
+  widths = c(2, 10),
   list(
-    filter_select("player", "Player", data, ~player),
-    filter_select("opponent", "Opponent", data, ~opponent),
-    filter_slider("muWin",   "#Win", data, ~muWin, width = "100%",step = 50,min = 0),
-    filter_slider("muGames", "#Games", data, ~muGames, width = "100%",step = 50,min = 0),
-    filter_slider("muWR", "WinRate", data, ~muWR, width = "100%",step=0.01,min = 0,max = 1),
-    filter_slider("LCI", "LowerCI", data, ~LCI, width = "100%",step=0.01,  min = 0,max = 1),
-    filter_slider("UCI", "UpperCI", data, ~UCI, width = "100%",step=0.01,  min = 0,max = 1),
-    filter_select("okCI", "Result Test", data, ~okCI)
-    
-    # filter_checkbox("type", "Type", data, ~Type),
-    # filter_slider("price", "Price", data, ~Price, width = "100%"),
-    # filter_select("mfr", "Manufacturer", data, ~Manufacturer)
+    crosstalk::filter_select("player", "Player", data, ~player),
+    crosstalk::filter_select("opponent", "Opponent", data, ~opponent),
+    crosstalk::filter_slider("muWin",   "#Win", data, ~muWin, width = "100%",step = 50,min = 0),
+    crosstalk::filter_slider("muGames", "#Games", data, ~muGames, width = "100%",step = 100,min = 0),
+    crosstalk::filter_slider("muWR", "WinRate", data, ~muWR, width = "100%",step=0.01,min = 0,max = 1),
+    crosstalk::filter_slider("playrate", "PlayRate", data, ~playrate, width = "100%",step=0.01,min = 0,max = round(max(MUtbl$playrate),4) ), 
+    crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
+    # crosstalk::filter_select("okCI", "Result-Test", data, ~okCI)
   ),
   reactable(data,
             bordered = TRUE,
             highlight = TRUE,
             striped = TRUE,
             searchable = TRUE,
+            compact = TRUE, # compact the table
+            fullWidth = FALSE, # don't fill the page
+            defaultPageSize = 20,
             # filterable = TRUE,
              defaultColDef = colDef(
-              # header = function(value) str_to_title(value),
-              #  cell = function(value) format(value, nsmall = 1),
+              style = list(fontFamily = "Roboto", fontSize = "11px"),
               align = "center",
-              minWidth = 120,
-              headerStyle = list(background = "steelblue",color="white")
+              # minWidth = 120,
+              headerStyle = list(background = "steelblue",color="white", fontSize = "14px")
             ),
             columns = list(
-              player   = colDef(name = "Player",minWidth = 120),
-              opponent = colDef(name = "Opponent"  ,minWidth = 120),
-              factions = colDef(name = "Regions"),
-              muWin    = colDef(name = "#Win"),
-              muGames  = colDef(name = "#Games"),
-              muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
-              LCI      = colDef(name = "LowerCI",format = colFormat(percent = TRUE,digits = 1)),
-              UCI      = colDef(name = "UpperCI",format = colFormat(percent = TRUE,digits = 1)),
-              direction= colDef(name = "Direction"),
-              okCI     = colDef(name = "Result Test"),
-              playrate = colDef(name = "playrate",format = colFormat(percent = TRUE,digits = 1))),
+              player   = colDef(name = "Player",minWidth = 120, style = list(fontSize = "11px", fontWeight = 600, color="black") ),
+              opponent = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = 600, color="black")),
+              muWin    = colDef(name = "#Win", style = list( fontSize = "15px") ),
+              muGames  = colDef(name = "#Games", style = list( fontSize = "15px")),
+              muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "15px") ),
+              CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
+              playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "15px") ),
+              factions = colDef(name = "Regions", style = list(fontSize = "11px", fontWeight = 600, color="black")),
+              direction = colDef(name = "MU-Direction")
+              # okCI     = colDef(name = "Result-Test")
+              ),
             theme = reactableTheme(
                 borderColor = "#dfe2e5",
                 stripedColor = "#f6f8fa",
@@ -170,85 +169,103 @@ bscols(
                 style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
                 searchInputStyle = list(width = "100%"))
     )
-)
+  )
 ```
 :::
-:::::
 
+::: {.panel}
+## Match-up Table (old format) {.panel-name}
+
+```{r}
+MUtbl %>%
+  filter(muGames>100) %>%
+  mutate( player = factor(player) ) %>%
+  mutate( opponent = factor(opponent) ) %>%
+  # arrange(desc(games)) %>%
+  select(player,opponent,muWR,muWin,muGames,CI) %>%
+  datatable(., rownames = FALSE, colnames = c('Player'='player','Opponent'='opponent','Win Rate'='muWR','#Wins'='muWin','#Games'='muGames'),
+            options = list(search = list(regex = TRUE, caseInsensitive = FALSE)),
+            filter = list(position = 'top', clear = FALSE)
+  ) %>%
+  formatPercentage('Win Rate', 1)
+```
+:::
+
+
+::: {.panel}
+
+## Match-up Grid {.panel-name}
+
+The win rates on the grid are among the `r mu` most played champion combination.
+
+```{r prepare-flex}
+require(flextable)
+require(officer)
+require(scales)
+
+big_border   = fp_border(color="darkgray", width = 2)
+small_border = fp_border(color="gray", width = 1)
+
+dummy_fun <- function(x){
+  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
+}
+```
+
+```{r prepare-flex-grid}
+grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
+diag(grid) <- NA
+
+colnames(grid) <- Top10CC
+colourer <- col_numeric(
+  palette = c("#D73027", # red
+          # "#f9ccac", # red/orange
+          "white",
+          # "#e3eaa7", # green
+          "#1A9850" # darker green
+          ),
+  domain = c(0, 1))
+
+funs <- setNames(rep(list(dummy_fun), mu), Top10CC)
+```
+
+```{r print-flex}
+ft <- grid %>% 
+  as_tibble() %>%
+  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) %>%
+  add_column(.,Top10CC,.before = Top10CC[1]) %>%
+  rename("MatchUps"="Top10CC") %>%
+  flextable::flextable(.) %>% 
+  theme_vanilla( ) %>%
+  # theme_booktabs(bold_header = TRUE) %>% 
+  flextable::align(.,align = "center", part = "all") %>%
+  flextable::bg(.,
+    bg = colourer,
+    j = ~ . -MatchUps,
+    part = "body") %>% 
+  border_remove(x = .) %>%
+  border_outer(., part="all", border = big_border ) %>%
+  border_inner_h(., part="all", border = small_border ) %>%
+  border_inner_v(., part="all", border = small_border ) %>%
+  set_formatter(values = funs) %>%
+  fontsize(., size = 8, part = "header") %>%
+  fontsize(., j=1, size = 8) %>%
+  bg(., part = "header", bg = "white"  ) %>%
+  bg(., j = 1, bg = "white"  ) %>%
+  autofit() 
+
+ft
+```
+:::
+
+
+:::::
+<!-- Close MU panelset -->
 :::
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
 * **Regions** - regions of the 'Player' deck. In case I may add an 'Oppo-Region' additional column.
 
-* **LowerCI / UpperCI** - are simply the lower and upper bound of the confidence interval, it can help in case one to restrict the result based on the "precision" of the win rate estimation (not the correct statistical definition but a 'semplification').
-
-* **Result Test** - if true it means that the unidirectional test for testing if the **direction** of the MU is correct has a p-value lower than 0.05 (it reject the hyphotesis of the win rate being a 0.5 giving support to the hypothesis that the direction of the MU is indeed correct. Again not the exact definmition. Use to filter the results that is safer to assume are correct regarding the **direction** of the MU.
-
-* **Direction MU** - simply if the MU is positive or negative for the 'Player' (or tie in case the win rate is exactly 0.5)
+* **MU Direction** - simply if the MU is positive or negative for the 'Player' (or tie in case the win rate is exactly 0.5)
 
 I'm planning to improve and expand the options once I decide how to implement the ideas I have.
-
-```{r}
-# # not good practice since big dependency and all we want is slider
-# #   but for demonstration purposes do it this way
-# material_dep <- htmlDependency(
-#   name = "material-ui",
-#   version = "4.6.1",
-#   src = c(href = "https://unpkg.com/@material-ui/core/umd/"),
-#   script = "material-ui.production.min.js"
-# )
-# 
-# rt <- reactable(
-#   iris,
-#   filterable = TRUE
-# )
-# 
-# rt$x$tag$attribs$columns[[2]]$filterMethod <- htmlwidgets::JS("filterRange")
-# rt$x$tag$attribs$columns[[2]]$Filter <- htmlwidgets::JS("inputFilter")
-# 
-# browsable(
-#   tagList(
-#     reactR::html_dependency_react(),
-#     reactR::html_dependency_reacttools(),
-#     htmlwidgets::getDependency("reactable","reactable"),
-#     material_dep,
-#     tags$style("
-# .rt-thead.-filters .rt-tr {align-items: flex-end; height: 60px;}
-# .rt-thead.-filters .rt-th {overflow: visible;}
-#     "),
-#     tags$script(HTML("
-# function filterRange(filter, rows) {
-#   return rows.filter(function(row) {
-#     // Don't filter on aggregated cells
-#     if (row._subRows) {
-#       return true
-#     }
-#     return row[filter.id] >= filter.value[0] && row[filter.id] <= filter.value[1];
-#   })
-# }
-# 
-# function inputFilter(filter) {
-#   var _onChange = filter.onChange;
-#   return React.createElement(
-#     'div',
-#     null,
-#     React.createElement(
-#       MaterialUI.Slider,
-#       {
-#         defaultValue: [0,5],
-#         min: 0,
-#         max: 5,
-#         step: 0.5,
-#         valueLabelDisplay: 'auto',
-#         onChange: function onChange(event, newValue) {return _onChange(newValue)}
-#       }
-#     )
-#   )
-# }
-#     ")),
-#     rt
-#   )
-# )
-```
-
