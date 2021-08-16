@@ -41,11 +41,7 @@ options(scipen=999)
 #' R Option
 xaringanExtra::use_panelset()
 
-pacman::p_load(tidyverse,
-               data.table,
-               DT,
-               reactable,
-               crosstalk)
+pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk)
 ```
 
 ```{r panelset-style}
@@ -58,13 +54,77 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
 ```
 
 ```{r load-data}
-# file.Match.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "LoR_Melt_MatchDT_", full.names = T) %>% max()
-# LoR.Melt.Matches.RMD <- fread(file.Match.DT, header = T, na.strings = c("", NA))
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = 1850000 )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' Metl tbl
+#'#########
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  )
+
+#' WR tbl
+#'#######
+WR.DT <- LoR.Melt.Matches.RMD %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome ) %>%
+  group_by(player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) %>%
+  ungroup() %>%
+  mutate( playrate = nGames/sum(nGames) )
+
+#' MU tbl the date is already filtered
+#'####################################
+MUtbl <- LoR.Melt.Matches.RMD %>%
+  # filter(game_version>"live_2_9" ) %>%
+  filter( game_outcome != "tie" ) %>%
+  select( player,opponent,game_outcome,server,game_version,factions ) %>%
+  # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win"),
+             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
+  ungroup() %>%
+  mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
+  chop(CI) %>%
+  unnest(CI) %>%
+  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
+  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
+  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) )
+
+MUtbl <- left_join(MUtbl,WR.DT[,c("player","playrate")],by="player")
 ```
 
 ```{r load-MU}
-file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
-MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
+# file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
+# MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
 ```
 
 ```{r get-WR-Top10}
@@ -79,19 +139,42 @@ Top10CC <- MUtbl %>%
   pull() %>% 
   sort()
 
-WRTop10 <- MUtbl[ player %in% Top10CC & opponent %in% Top10CC, ]
-WRTop10 <- setorderv(WRTop10, c("player","opponent"), c(1,1))
+WRTop10 <- MUtbl %>%
+  filter(player %in% Top10CC & opponent %in% Top10CC) %>%
+  arrange(player,opponent)
 ```
+
+```{r top30}
+m = 30
+fct_values <- LoR.Melt.Matches.RMD %>%
+  mutate( top5 = fct_lump_n(player,n = m) %>% fct_infreq() ) %>%
+  pull(top5) %>% levels()
+
+if ( any(fct_values=="Soraka / Tahm Kench") ) {
+  fct_values <- fct_values[-1]
+} else {
+  fct_values <- c(fct_values[c(-1,-30)],"Soraka / Tahm Kench")
+}
+
+MU30tbl <- tibble(player   = rep(fct_values,each = 30),
+                  opponent = rep(fct_values,30)
+) %>%
+  left_join(.,MUtbl,by = c("player","opponent"))
+
+# MU30tbl %>%
+#   distinct(opponent) %>%
+#   pull(opponent) %>%
+#   sort()
+
+fwrite(MU30tbl, file.path("C:","LlorR","scripts","shiny","Bo3-helper","MU30tbl.csv"))
+```
+
 
 # Match Up Table
 
 Number of **matches**: `r sum(MUtbl$muGames)/2` / **games** : `r sum(MUtbl$muGames)`
 
 Last Update: `r Sys.time()`
-
-Since the values aren't too heavily affected by new data I won't update it too often. Will probably be each 2 days or so (more often at the start of a season). [^1]
-
-While on the report I do some filtering removing cases with too few games, here I left EVERYTHING to allows people plays as much as they want with the table (as usual from Ranked games), so if you want to remove "the dirt" **remember to use the filter**.
 
 `r kableExtra::text_spec("UPDATE 1:", color = "red")` added an "alternative" version to the same MU table. Should result a bit cleaner. Potentially I may turn it into the standard version once I know how to improve a few things like the slider-input bur for now I leave both options. Also the removed cases with less than 10 games (that alone is enough to reduce to 1/10th of the original rows). The "standard" one is still with everything.
 
@@ -120,7 +203,7 @@ require(crosstalk)
 # if (requireNamespace("crosstalk", quietly = TRUE)) {
 data <- crosstalk::SharedData$new(MUtbl %>%
                        filter(muGames>=100) %>%
-                       select(-LCI,-UCI,-okCI))
+                       select(-lower,-upper,-okCI))
 
 bscols(
   widths = c(2, 10),

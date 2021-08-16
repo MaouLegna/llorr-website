@@ -1,12 +1,12 @@
 ---
 title: "THE SEASONAL REPORT IS VAST (n°1)"
 description: |
-  Second week of patch 2.13 / End of the Ruination event / Bandle City waiting room
+  Seasonal Tournament - Rise of the Underworld
 base_url: https://llorr-stats.netlify.app
-preview: "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03IO002T1-full.png"
+preview: "https://dd.b.pvp.net/latest/set3/en_us/img/cards/04SH055-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
-date: 08-07-2021
+date: 08-13-2021
 output:
  distill::distill_article:
     toc: true
@@ -15,13 +15,8 @@ output:
     self_contained: false
 citation: false
 draft: false
-# twitter:
-#   site: "@Maou_Legna"
-#   creator: "@Maou_Legna"
 params:
-  prev:  "2021-07-14 21:00:00" #UTC tz / 'previous' week start
-  end:   "2021-08-16 21:00:00" #UTC tz / 'current' week end
-  skip:  1750000  # ~ Patch 2.11
+  skip:  2000000  #
 ---
 
 ```{r setup, include=FALSE}
@@ -67,25 +62,23 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
 ```
 
 ```{r twitter-meta, echo = FALSE}
-# library(metathis)
-# meta() %>%
-#   meta_description(
-#     "Second week of patch 2.13 / End of the Ruination event / Bandle City waiting room"
-#   ) %>% 
-#   meta_viewport() %>% 
-#   meta_social(
-#     title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°19)",
-#     url = "https://llorr-stats.netlify.app/",
-#     # image = "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03IO002T1-full.png",
-#     # image_alt = "Akshan lv1",
-#     og_type = "website",
-#     og_author = "Legna",
-#     twitter_card_type = "summary",
-#     twitter_creator = "@Maou_Legna"
-#   )
+library(metathis)
+meta() %>%
+  meta_description(
+    "Seasonal Tournament - Rise of the Underworld"
+  ) %>%
+  meta_viewport() %>%
+  meta_social(
+    title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°19)",
+    url = "https://llorr-stats.netlify.app/",
+    image = "https://dd.b.pvp.net/latest/set3/en_us/img/cards/04SH055-full.png",
+    image_alt = "Ruin Runner",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
 ```
-
-
 ```{r raw-data}
 #' load gameDT
 #'############
@@ -93,6 +86,8 @@ file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
 header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
 LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+LoR.Match.RMD <- LoR.Match.RMD[ game_mode == 'SeasonalTournamentLobby' ][ game_start_time_utc < as.POSIXct("2021-08-17 21:00:00", tz = "UTC"), ]
 
 #' load Account
 #'#############
@@ -113,102 +108,45 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 # Data {.unnumbered}
 
 ```{r account-info}
-masterEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
-masterNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
-masterASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & master=="master") %>% distinct(gameName,tagLine) %>% count() %>% pull()
-
-namesList.EU.RMD   <- lor_leaderboard("europe")$name
-namesList.NA.RMD   <- lor_leaderboard("americas")$name
-namesList.ASIA.RMD <- lor_leaderboard("asia")$name
+seasonalEU   <- LoR.Account.RMD %>% filter(activeShard=="europe"   & seasonal=="seasonal") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+seasonalNA   <- LoR.Account.RMD %>% filter(activeShard=="americas" & seasonal=="seasonal") %>% distinct(gameName,tagLine) %>% count() %>% pull()
+seasonalASIA <- LoR.Account.RMD %>% filter(activeShard=="asia"     & seasonal=="seasonal") %>% distinct(gameName,tagLine) %>% count() %>% pull()
 ```
 
-```{r nGames-data}
-# minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
-# maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
-# 
-# max_time <- LoR.Match.RMD %>%
-#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
-#   slice_max(game_start_time_utc) %>% 
-#   pull(game_start_time_utc) %>%
-#   format(.,format = "%Y-%m-%d %H:%M:%S")
-# 
-# nGames <- LoR.Match.RMD %>% 
-#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") %>%
-#   tabyl(game_type) %>%
-#   filter( game_type=="Ranked" ) %>%
-#   pull(n)
-```
-
-<!-- Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`** -->
-
-Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")` [^1]
-
-[^1]: Reminding that while I may collect the 'list of all games-id' played in a certain timeframe I can only collect all their metadata several hours later. So after the first release the numbers may be updated later during the week, be it for the sake of updating or modifying some code.
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
 ```{r table-nGames-data, layout="l-body"}
 # nGames_tbl <- LoR.Match.RMD %>%
-#   #' Stay only 'among' the row with the games in the time-frame I want
-#   ####################################################################
-#   slice(minrow_live:maxrow_live) %>%
-#   #' Extrapolate Friendly and 'to Scrap' matches
-#   ##############################################
-#   mutate( game_type = case_when(
-#     status==404   ~ "Friendly",
-#     is.na(status) ~ "to Scrap",
-#     TRUE ~ as.character(game_type)
-#     )) %>%
-#   #' Give to the new game_types a game_start_time_utc among the timeframe on interest
-#   #' so it can be used a filter without worrying about other parameter like status and so on
-#   ##########################################################################################
-#   mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% c("Friendly","to Scrap"),  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) %>%
-#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
-#   mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) %>% fct_infreq() ) %>%
-#   select(Status=game_type,Server=server) %>%
+#   select(Server=server) %>%
 #   #' Create tbl
 #   #############
 #   tbl_summary() %>%
-#   modify_footnote(
-#     update = stat_0 ~
-#       md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
-#   ) %>%
 #   # modify_header(label ~ "**Variable**") %>%
 #   bold_labels() %>%
 #   as_gt() %>%
 #   tab_header(
 #     title = "by the Numbers",
-#     subtitle = "Patch 2.13 first week / Master players"
-#     # subtitle = glue::glue("Data for games in {params$start}")
+#     subtitle = "Rise of the Underworld - Open rounds"
 #   ) %>%
 #   tab_footnote(
-#     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
-#     locations = cells_title(groups = c("subtitle"))
-#     ) %>%
-#   tab_footnote(
-#     footnote = md(glue::glue("EU Master players in the ladder: {length(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
-#                               NA Master players in the ladder: {length(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
-#                               ASIA Master players in the ladder: {length(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
+#     footnote = md(glue::glue("EU Seasonal players: {seasonalEU}/1024 \n
+#                               NA Seasonal players: {seasonalNA}/1024 \n
+#                               ASIA Seasonal players: {seasonalASIA}/1024(?)" )),
 #     locations = cells_title(groups = c("subtitle"))
 #   ) %>%
 #   tab_options(data_row.padding = px(1.2))
-#   
+# 
 # nGames_tbl %>%
 #  tab_options(
 #     table.background.color = "transparent",
 #     table.font.color = "black",
 #     table.font.color.light = "black"
 #    )
-# 
-# # gtsave(nGames_tbl,"images/rep_data.png")
+# gtsave(nGames_tbl,"images/seasonal.png")
 ```
 
 ```{r prepare-data}
-LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
-  #' Base filters
-  # "StandardGauntletLobby"
-  filter(game_type %in% c("Ranked") ) %>%
-  # filter(game_mode %in% c("Bo3ChallengeLobby","LastCallQualifierGauntletLobby") ) %>%
-  # filter(game_start_time_utc >= as.POSIXct("2021-07-14 21:00:00", tz = "UTC")  ) %>%
-  filter(game_start_time_utc >= as.POSIXct("2021-06-30 21:00:00", tz = "UTC") & game_start_time_utc < as.POSIXct("2021-08-16 21:00:00", tz = "UTC") ) %>%
+LoR.Melt.Seasonal <- LoR.Match.RMD %>%
   #' 'process' data
   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
@@ -226,111 +164,657 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
     ,end = -3)
   ) %>%
   #' finish 'process' data
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","gameName","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","gameName","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
   select(-ends_with("puuid"),-refID)
 ```
 
-```{r}
-LoR.Melt.Matches.RMD %>%
-  group_by(userID,opponentID,server) %>%
-  summarise( listDeck=list(sort(unique(player))),listCode=list(unique(deck_code)) ) %>%
-  ungroup() %>%
-  # slice_head(n = 5) %>%
-  # pluck("listCode") %>%
-  rowwise() %>%
-  mutate( l = length( listDeck ) ) %>%
-  filter( l == 4 )
-  map_dbl(.x=., ~length(.x)) %>%
-  tabyl()
-   # ungroup() %>%
-
-LoR.Melt.Matches.RMD %>%
-  tabyl(game_mode)
+```{r create-gt-summary}
+gtSeasonal <- tibble( server = c("asia","europe","americas"),
+        players = c(glue::glue("{seasonalASIA}/(?)"),glue::glue("{seasonalEU}/1024"),glue::glue("{seasonalNA}/1024"))
+        # maxn = c( (seasonalASIA*9*3/2),(1024*9*3/2),1024*9*3/2 ) 
+        ) %>%
+  left_join(.,LoR.Melt.Seasonal %>%
+              group_by(server) %>%
+              summarize( n = n() ), by = "server" ) %>%
+  mutate( server = str_to_title(server) ) %>%
+  # relocate(.,maxn,.after = n) %>%
+  gt::gt(.) %>%
+  cols_label(
+    server   = md("**Server**"),
+    players  = md("**Players**"),
+    # maxn = md("**max Games**"),
+    n = md("**Games**")
     
-  
-LoR.Melt.Matches.RMD %>%
-  filter(userID == "Angeletronic BR1" & opponentID ==	"Amigo da Amizade Liar" ) %>%
-  arrange(game_start_time_utc)
-  
+  ) %>%
+  # fmt_number(
+  #   columns = maxn,
+  #   decimals = 0
+  # ) %>%
+  gt::tab_header(.,
+    title = "Seasonal Open Rounds - by the Numbers",
+    subtitle = "Coverage reached regarding the Rise of the Underworld Open Rounds Matches"
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = vars(server)
+  ) %>%
+  # tab_footnote(
+  #   footnote = md(glue::glue("The max number of games is a theorical value that will never happens, it's based on all players playing all 9 round always with 3 games. The value from the Asian Shard is based on the assumption I did indeed recovered all players")),
+  #   locations = cells_body(columns = maxn)
+  # ) %>% 
+  ##########################
+  ### This section changed
+  ##########################
+  # We use tab_style() to change style of cells
+  # cell_borders() provides the formatting
+  # locations tells it where
+  # add a border to left of the Total column
+  tab_style(
+    style = list(
+      cell_borders(
+        sides = "right",
+        color = "black",
+        weight = px(3)
+      )
+    ),
+    locations = list(
+      cells_body(
+        columns = vars(server)
+      )
+    )
+  ) %>%
+  # We use tab_style() to change style of cells
+  # cell_borders() provides the formatting
+  # locations tells it where
+  # Add black borders to the bottom of all the column labels
+  tab_style( style = list( cell_borders( sides = "bottom", color = "black", weight = px(3) ) ), locations = list( cells_column_labels( columns = gt::everything() ) ) ) %>%
+  # Adjust numeric font
+  tab_style(
+    style = list(
+      cell_text(
+        font = "Fira Mono",
+        align = "center"
+      )
+    ),
+    locations = list(
+      cells_body(columns = vars(players, n))
+    )
+  ) %>%
+  # Style header font
+  tab_style(
+    style = list(
+      cell_text(font = "Karla", weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(gt::everything())
+    )
+  ) %>%
+  # Adjust font of Player Column
+  tab_style(
+    style = list(
+      cell_text(font = "Karla")
+    ),
+    location = list(
+      cells_body(columns = vars(players))
+    )
+  ) %>%
+  # Adjust title font
+  tab_style(
+    style = list(
+      cell_text(
+        font = "Fira Mono",
+        align = "left"
+      )
+    ),
+    locations = list(
+      cells_title(groups = "title")
+    )
+  ) %>%
+  # Adjust sub-title font
+  tab_style(
+    style = list(
+      cell_text(
+        font = "Fira Mono",
+        align = "left"
+      )
+    ),
+    locations = list(
+      cells_title(groups = "subtitle")
+    )
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = c(2:3)
+  ) %>%
+  tab_source_note(
+    source_note = md(glue::glue("games extracted with Riot API, last update on {Sys.time()}"))
+  )
 
-LoR.Melt.Matches.RMD %>%
-  arrange(game_start_time_utc,match_key,variable) %>%
-  select(userID,opponentID,player,opponent)
-  group_by(userID,opponentID,server)
-
-  # tabyl(deck_id_1,game_mode)
+gtSeasonal
 ```
 
-```{r champion-freq-by-date}
-m = 29
 
-Champion.deck.daily <- (LoR.Melt.Matches.RMD %>%
-  rename(.,"champions"="player") %>%
-  arrange(game_start_time_utc) %>%
-  select(game_start_time_utc,champions) %>%
-  mutate( num_cc = factor(champions) %>% as.numeric() ))[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ] %>%
-  select(!num_cc) %>%
-  mutate( champions = factor(champions) %>% fct_infreq() )
-
-fct_values <- LoR.Melt.Matches.RMD %>%
-  # mutate( top5 = fct_lump(champions, n = m, w = tot, ties.method = "max") ) %>%
- mutate( top5 = fct_lump_n(player,n = m) %>% fct_infreq() ) %>%
- pull(top5) %>% levels()
-
-fct_values <- c(fct_values,"Soraka / Tahm Kench")
+```{r save-gt-summary}
+# gtsave(gtSeasonal,"images/seasonal.png")
 ```
+
+```{r create-lineUp-list}
+LineUp.DT <- left_join(LoR.Melt.Seasonal ,LoR.Account.RMD ,by=c("userID"="RiotID")) %>% 
+  select(userID,server,player,deck_code) %>% 
+  # distinct() %>% 
+  group_by(userID,server) %>%
+  summarise( listDeck=list(sort(unique(player))),listCode=list(unique(deck_code)) )
+# LineUp.DT %>% rowwise() %>% unnest(listDeck) %>% group_by(userID) %>% count() %>% tabyl(n)
+```
+
+```{r create-LineUp-DT, echo=FALSE}
+Seasonal.LineUp.DT <- 
+cbind(setDT(LineUp.DT)[,.(userID,server)], 
+      do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$listDeck[x]) ) ) #Seasonal.LineUp.DT 
+      ) %>%
+  mutate( LU := glue("{deck_1} - {deck_2} - {deck_3}" ) )
+
+```
+
+```{r create-TimeBlcok}
+timeBlock.1.start <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5)
+timeBlock.2.start <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5)
+timeBlock.3.start <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5)
+timeBlock.4.start <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5)
+timeBlock.5.start <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5)
+# 30 min break
+timeBlock.6.start <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5)
+timeBlock.7.start <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5)
+timeBlock.8.start <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5)
+timeBlock.9.start <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5)
+
+timeBlock.1.end <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.2.end <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.3.end <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.4.end <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.5.end <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5) + lubridate::minutes(60)
+# 30 min break
+timeBlock.6.end <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.7.end <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.8.end <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.9.end <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
+```
+
+```{r compute-games-asia}
+Game.Result.ASIA <- LoR.Melt.Seasonal %>%
+  filter( server=="asia" ) %>%
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by(  userID,opponentID,server ) %>%
+  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
+  group_by(  userID,opponentID,server,timeBlock ) %>%
+  arrange( timeBlock ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
+  arrange( userID, timeBlock ) %>%
+  # Identify the round with the official schedule
+  mutate( round = case_when(
+    # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
+    # JST = UTC - 9hrs
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"Japan"),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan"),"UTC") ~ 5, # 16:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan"),"UTC") ~ 9, # 21:00
+    )
+  ) %>%
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) %>%
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
+  group_by(userID) %>%
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) %>%
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) %>%
+  left_join(
+  tibble( userID = rep( LineUp.DT %>% filter(server=="asia") %>% pull(userID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="asia") %>% NROW())  ),
+          server = "asia"),
+  ., by = c("userID","round","server")) %>%
+  relocate(round, .after = server) %>%
+  left_join(.,LineUp.DT,by=c("server","userID"))
+  
+Game.Result.ASIA$ban <- lapply( 1:NROW(Game.Result.ASIA), function(x) (setdiff( Game.Result.ASIA$listDeck[x] %>% unlist(),Game.Result.ASIA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+
+```{r compute-games-europe}
+Game.Result.EU <- LoR.Melt.Seasonal %>%
+  filter( server=="europe" ) %>%
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by(  userID,opponentID,server ) %>%
+  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
+  group_by(  userID,opponentID,server,timeBlock ) %>%
+  arrange( timeBlock ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
+  arrange( userID, timeBlock ) %>%
+  # Identify the round with the official schedule
+  mutate( round = case_when(
+    # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
+    # JST = UTC - 9hrs
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"CET"),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"CET"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"CET"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"CET"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"CET"),"UTC") ~ 5, # 16:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"CET"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"CET"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"CET"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"CET"),"UTC") ~ 9, # 21:00
+    )
+  ) %>%
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) %>%
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
+  group_by(userID) %>%
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) %>%
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) %>%
+  left_join(
+  tibble( userID = rep( LineUp.DT %>% filter(server=="europe") %>% pull(userID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="europe") %>% NROW())  ),
+          server = "europe"),
+  ., by = c("userID","round","server")) %>%
+  relocate(round, .after = server) %>%
+  left_join(.,LineUp.DT,by=c("server","userID"))
+
+Game.Result.EU$ban <- lapply( 1:NROW(Game.Result.EU), function(x) (setdiff( Game.Result.EU$listDeck[x] %>% unlist(),Game.Result.EU$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+
+```{r compute-games-americas}
+# with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC")
+Game.Result.NA <- LoR.Melt.Seasonal %>%
+  filter( server=="americas" ) %>%
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by(  userID,opponentID,server ) %>%
+  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
+  group_by(  userID,opponentID,server,timeBlock ) %>%
+  arrange( timeBlock ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
+  arrange( userID, timeBlock ) %>%
+  # Identify the round with the official schedule
+  mutate( round = case_when(
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"US/Central"),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"US/Central"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"US/Central"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"US/Central"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"US/Central"),"UTC") ~ 5, # 16:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"US/Central"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"US/Central"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"US/Central"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"US/Central"),"UTC") ~ 9, # 21:00
+    )
+  ) %>%
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) %>%
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
+  group_by(userID) %>%
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) %>%
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) %>%
+  left_join(
+  tibble( userID = rep( LineUp.DT %>% filter(server=="americas") %>% pull(userID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="americas") %>% NROW()) ),
+          server = "americas" ),
+  ., by = c("userID","round","server")) %>%
+  relocate(round, .after = server) %>%
+  left_join(.,LineUp.DT,by=c("server","userID"))
+
+Game.Result.NA$ban <- lapply( 1:NROW(Game.Result.NA), function(x) (setdiff( Game.Result.NA$listDeck[x] %>% unlist(),Game.Result.NA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+::: l-body-outset
+::::: {.panelset}
+
+```{r compute-missing-match-games}
+missingGames <- rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) %>%
+  filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) %>% # | is.na(result)
+  # group_by(server) %>%
+  tabyl(round,server) %>%
+  pivot_longer(.,cols = americas:europe,
+                names_to = "server"
+               ) %>%
+  mutate(round = factor(round))
+```
+
+::: {.panel}
+### Missing Games {.panel-name}
+
+The following data is related to the the number of games missing to recreate a match.So when I could only collect either a win or a loss or both a win and a loss but not the remaining game. **It is not** the total number of missing games as it doesn't account for the cases where I lack all games but that value can't be known as it's impossible to know whenever the round was played or not.
+
+```{r plot-missing-match-games, fig.cap="Uncomplete Matches Distribution", fig.subcap="Absolute frequencies"}
+# require(ggthemes)
+missingGames %>%
+  ggplot(aes(round,value,fill=server)) +
+    geom_bar(position="dodge",stat = "identity") +
+    labs(x = "Round",
+         y = "#Games",
+         title = "Incomplete Matched Distribution by Round",
+         subtitle = "number of games missing for the complete information of a match by server",
+         caption = glue::glue("Rise of the Underworld Open Rounds\nThe number refer to the number of games missing to recreate a match.\nSo when I could only collect either a win or a loss or both a win and a loss but not the remaining game") ) +
+  ggthemes::theme_fivethirtyeight()
+```
+:::
+
+::: {.panel}
+### Missing Games {.panel-name}
 
 ```{r}
-MUtbl <- LoR.Melt.Matches.RMD %>%
-  # filter( game_start_time_utc >= as.POSIXct("2021-07-14 21:00:00", tz = "UTC") ) %>%
-  # filter(game_version>"live_2_9" ) %>%
-  filter( game_outcome != "tie" ) %>%
-  select( player,opponent,game_outcome,server,game_version,factions ) %>%
-  # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
-  group_by(player,opponent) %>%
-  summarise( muWin   = sum(game_outcome=="win"),
-             muGames = n(),
-             muWR=mean(game_outcome=="win"),
-             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
-  as.data.table()
+ rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) %>%
+  filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) %>%
+  select(round,server) %>%
+  gtsummary::tbl_summary(.,by = "server")
+```
+:::
+:::::
+:::
+
+# Top Player?
+
+```{r}
+rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) %>%
+  
+  select(gameName,userID,cumMatchWin,server) %>%
+  arrange(desc(cumMatchWin)) %>%
+  distinct() 
 
 
-
-
-
-MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
-MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
-MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
-
-MUtbl <- MUtbl %>%
-  mutate( CI := glue("({percent(LCI,accuracy = 0.1)}-{percent(UCI,accuracy = 0.1)})" ) )
-
-WR.DT <- LoR.Melt.Matches.RMD %>%
-  filter(game_outcome!="tie") %>%
-  select( player,opponent,game_outcome ) %>%
-  group_by(player) %>%
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win")
-            ) %>%
-  ungroup() %>%
-  mutate( playrate = nGames/sum(nGames) )
-
-MUtbl <- left_join(MUtbl,WR.DT[,c("player","playrate")],by="player")
-
-# MU30tbl <- tibble(player   = rep(fct_values[-1],each = 30),
-#        opponent = rep(fct_values[-1],30) ) %>%
-#   left_join(.,MUtbl,by = c("player","opponent"))
-
-# skimr::skim(MU30tbl)
-
-# list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
-fwrite(MUtbl, file.path("C:","LlorR","data","clean",paste0("MUtbl_", format(Sys.time(), "%Y-%m-%dT%H%M"), ".csv")) )
-# fwrite(MU30tbl, file.path("C:","LlorR","data","clean",paste0("MU30tbl_", format(Sys.time(), "%Y-%m-%dT%H%M"), ".csv")) )
 ```
 
+```{r compute-top}
+ft <- left_join(
+  rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA),
+  LoR.Account.RMD[,c("gameName","RiotID")],
+  by=c("userID"="RiotID")
+  ) %>%
+  select(gameName,userID,cumMatchWin,server) %>%
+  filter( cumMatchWin %in% c(7:9) ) %>%
+  filter( !(cumMatchWin == 7 & server!="asia") ) %>%
+  # filter( server != "asia" ) %>%
+  arrange(server,desc(cumMatchWin)) %>%
+  distinct(gameName,.keep_all = T) %>%
+  left_join(.,Seasonal.LineUp.DT%>%select(-LU),by=c("userID","server") ) %>%
+  left_join(.,LineUp.DT %>%
+              filter( userID %in% ft$userID ) %>%
+              select(userID,listCode,listDeck) %>%
+              unnest() %>%
+              # mutate( deck = glue::glue("Deck: {listDeck} - DeckCode: {listCode}") ) %>%
+              select(userID,listDeck,listCode) %>%
+              add_column(name = rep(c("deck_1","deck_2","deck_3"),53) ) %>%
+              pivot_wider(names_from = name, values_fill = NA) %>%
+              rename_all(~c("Player","Archetype","DeckCode") ),
+            by = c("userID"="Player") )
+
+ft <- ft %>%
+  select(-userID,-deck_1,-deck_2,-deck_3) %>%
+  rename_all(~c("Name","Total Match Win","Server","Archetype","DeckCode")) 
+
+
+flextable::save_as_image(ft %>% 
+                           filter(Server=="asia") %>%
+                           flextable::flextable(), "top32_asia.png")
+
+flextable::save_as_image(ft %>% 
+                           filter(Server=="europe") %>%
+                           flextable::flextable(), "top32_EU.png")
+
+flextable::save_as_image(ft %>% 
+                           filter(Server=="americas") %>%
+                           flextable::flextable(), "top32_NA.png")
+
+  # flextable::flextable()
+```
+```{r}
+left_join(
+   rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA),
+   LoR.Account.RMD[,c("gameName","RiotID")],
+   by=c("userID"="RiotID")
+   ) %>%
+   select(gameName,cumMatchWin,server) %>%
+   filter( cumMatchWin %in% c(7:9) ) %>%
+   filter( !(cumMatchWin == 7 & server!="asia") ) %>%
+   # filter( server != "asia" ) %>%
+   arrange(server,desc(cumMatchWin)) %>%
+   distinct(gameName,.keep_all = T) %>%
+   pivot_wider(names_from = server, values_from = c("gameName","cumMatchWin"), values_fill = NA )
+```
+
+
+
+# Line Ups
+
+Let's start with the easy stuff: by looking at the most played LineUps.
+
+Sadly the tournament setting is showing the limitation of my approach to define archetypes by looking at champion + regions because during the open rounds, compared to the ladder, we can see an increase of "tech" cards in the form of champions like Jarvan IV in dragon decks.
+
+```{r table-deck, echo=FALSE}
+left_join(
+Seasonal.LineUp.DT  %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>%
+  tabyl(.,show_na = F) %>% 
+  arrange(desc(n))  %>% 
+  mutate(percent = 3*percent ) %>%
+  rename( 'Deck'=1 ) %>%
+  as_tibble(),
+Seasonal.LineUp.DT  %>%
+  filter(!is.na(deck_3)) %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>%
+  tabyl(.,show_na = F) %>% 
+  arrange(desc(n))  %>% 
+  mutate(percent = 3*percent ) %>%
+  rename( 'Deck'=1,"n_full"="n","percent_full"="percent" ) %>%
+  as_tibble(),
+by="Deck"
+) %>%
+  reactable(.,searchable = T,
+              highlight = TRUE,
+              defaultPageSize = 10,
+              defaultColDef = colDef(
+                # header = function(value) gsub(".", " ", value, fixed = TRUE),
+                # cell = function(value) format(value, nsmall = 1),
+                align = "center",
+                footerStyle = list(fontWeight = "bold"),
+                headerStyle = list(background = "#f7f7f8")
+              ),
+              columns = list(
+                Deck = colDef(style = list(fontWeight = "bold")  ),
+                n = colDef(footer = function(values) sprintf("%.0f", sum(values)))
+              )
+            )
+```
+
+But what about the complete lineUps? 
+
+```{r table-LineUps}
+Seasonal.LineUp.DT  %>%
+  # filter(server=="europe") %>%
+  filter( !is.na(deck_3) ) %>%
+  pull(LU) %>%
+  # group_by(LU) %>% summarise(N=n())
+  tabyl(.,show_na = F) %>% 
+  arrange(desc(n))  %>% 
+  # adorn_pct_formatting() %>% 
+  rename('LU'=1) %>%
+  left_join(.,
+            Seasonal.LineUp.DT %>%
+            select(contains("deck"),LU) %>%
+            filter(!is.na(deck_3)),
+            by="LU"
+            ) %>%
+  distinct() %>%
+  select(n,percent,deck_1,deck_2,deck_3,LU ) %>%
+  reactable(. , searchable = TRUE,
+                defaultPageSize = 10,
+                highlight = TRUE,
+            defaultColDef = colDef(
+                align = "center",
+                footerStyle = list(fontWeight = "bold"),
+                headerStyle = list(background = "#f7f7f8"),
+              ),
+            columns = list(
+              n = colDef(name="N", footer = function(values) sprintf("%.0f", sum(values))),
+              percent = colDef(name="Percent", format = colFormat(percent = TRUE, digits = 2), footer = function(values) sprintf("%.2f", sum(values))  ),
+              deck_1 = colDef(name = "Deck 1", style = list(fontWeight = 600, color = "red"  ) ),
+              deck_2 = colDef(name = "Deck 2", style = list(fontWeight = 600, color = "green") ),
+              deck_3 = colDef(name = "Deck 3", style = list(fontWeight = 600, color = "blue" ) )
+              )
+          )
+```
+
+```{r region-grid}
+#' Experimento then change into champions grid
+faction.Name <- c("Bilgewater","Demacia","Freljord","Ionia","MtTargon","Noxus","Piltover","ShadowIsles","Shurima")
+
+LoR.Melt.Seasonal |>
+  select(factions) |>
+  mutate(factions = str_replace_all(factions,"faction_","")) |>
+  mutate(factions = str_replace_all(factions,"_Name","")) |>
+  separate(factions,into = c("faction_1","faction_2"),sep = ",") %>%
+  mutate(across(contains("faction"),~factor(.,levels = faction.Name ))) |>
+  rowwise() |>
+  mutate(faction_2 = replace_na(faction_2, faction_1)) |>
+  ungroup() |>
+  # mutate( faction_2 = replace(faction_2, is.na(faction_2), faction_1 )) |>
+  count(faction_1,faction_2) %>%
+  ggplot(aes(faction_1, faction_2, fill=n)) + 
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  geom_text(aes(label=n)) + 
+  theme_void(base_size = 9) +
+  labs(x = "", y = "") + 
+  scale_x_discrete(expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0)) + 
+  theme(legend.position = "none",
+        axis.text.x = element_text(size = 9 * 0.8,angle = 0, hjust = 0, colour = "grey50"),
+        axis.text.y = element_text(size = 9 * 0.8,angle = 0, hjust = 0, colour = "grey50"),
+        axis.ticks = element_blank()
+        )
+
+
+```
+
+
+---
+
+# Bans
+
+We saw the line ups brought, but what was actually used? This is sadly not only tricky to compute but also impossible in some case where a player used only one of his/her deck.
+
+What follows is a table containing the ban rates for each deck computeted in two different ways: 
+
+- **Mean Ban Rate by Line Up**: mean value of the ban rate for each deck among all Line Ups that contains it.
+
+> Example: 100 LineUps, 99 with Azir/Irelia with 100% ban rate and 1 with 0% ban rate -> Mean Ban Rate by Line Up = (100x99+0x1)/100 = 99%
+
+- **Ban Rate**: ratio of number of ban of a deck among all bans acrooss line ups that contains such deck.
+
+> Example: 100 LineUps, 99 with Azir/Irelia with 1 games and Azir / Irelia banned in each istance (100% ban rate) and 1 line up with 0 ban but 100 games (0% ban rate) -> Ban Rate = (1x99+0)/199 = ~49.7%
+
+
+```{r table-ban}
+deckForBan <- Seasonal.LineUp.DT %>%
+  filter(!is.na(deck_3) ) %>%
+  # filter(!is.na(deck_3) & server!="asia") %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>% unique() %>% sort()
+              
+########
+
+ban.tbl.All <- Seasonal.LineUp.DT %>%
+  filter(!is.na(deck_3) ) %>%
+  # filter(!is.na(deck_3) & server!="asia") %>%
+  select(LU,contains("deck")) %>%
+  melt(id.vars="LU") %>%
+  arrange(LU) %>%
+  select(!variable) %>%
+  rename("ban"="value")
+
+ban.tbl <- rbind(Game.Result.EU,Game.Result.NA) %>%
+  # filter(server!="asia") %>%
+  left_join(.,Seasonal.LineUp.DT %>%
+              filter(!is.na(deck_3)) %>%
+              select(!server),by=c("userID") ) %>%
+  group_by( LU ) %>%
+  count(ban) %>%
+  filter( !is.na(ban) ) %>%
+  group_by(LU) %>%
+  mutate( freqBan = n/sum(n) )
+
+ban.DT <- data.table( deck = deckForBan,
+                      n.ban = numeric(),
+                      max.ban = numeric()
+                      )
+
+for (i in 1:length(deckForBan) ) {
+  # cat(i, " ")
+  whichLU <- Seasonal.LineUp.DT %>%
+    filter(!is.na(deck_3) ) %>%
+    # filter(!is.na(deck_3) & server!="asia") %>%
+    filter( deck_1 == deckForBan[i] | deck_2 == deckForBan[i] | deck_3 == deckForBan[i]  ) %>%
+    pull(LU)
+  
+  ban.DT[i,n.ban := (ban.tbl %>%
+    filter( LU %in% whichLU ) %>%
+    filter( ban == deckForBan[i] ) %>%
+    pull(n) %>% sum()) ]
+    
+  ban.DT[i,max.ban := ban.tbl %>%
+    filter( LU %in% whichLU ) %>%
+    pull(n) %>% sum() ]
+}
+
+ban.tbl <- left_join(ban.tbl.All,ban.tbl,by=c("LU","ban"))[is.na(n),c("n","freqBan"):=list(0,0)]
+ban.tbl <- ban.tbl %>%
+  group_by(ban) %>%
+  summarise( meanBan_byLU = mean(freqBan) )
+
+ban.DT[ , meanBan := n.ban/max.ban ]
+ban.DT <- left_join(ban.DT,ban.tbl,by=c("deck"="ban"))
+ban.DT[ is.na(meanBan_byLU), meanBan_byLU:=0 ]
+```
+
+
+```{r print-table-ban, echo=FALSE}
+ban.DT %>%
+  select(deck,n.ban,contains("meanBan")) %>%
+  reactable(., searchable = TRUE,
+               defaultPageSize = 10,
+               highlight = TRUE,
+            defaultColDef = colDef(
+                align = "center",
+                headerStyle = list(background = "#f7f7f8")
+                # colFormat(percent = TRUE, digits = 2)
+              ),
+            columns = list(
+                deck = colDef(name="Deck", align = "left" ),
+                n.ban = colDef(name="#Bans" ),
+                meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) ),
+                meanBan_byLU = colDef(name="Mean Ban Rate by Line Up", format = colFormat(percent = TRUE, digits = 2) )
+              )
+            
+            )
+```
+# LMI - Tournament Edition
+
+
+---
 
 # Legal bla bla {.unnumbered}
 
