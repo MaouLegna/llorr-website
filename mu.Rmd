@@ -84,7 +84,13 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   value.name = str_sub(
     names(select(.,ends_with("_1")))
     ,end = -3)
-  )
+  ) 
+# %>%
+#   #' finish 'process' data
+#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+#   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+#   select(-ends_with("puuid"),-refID,-contains("puuid"))
 
 #' WR tbl
 #'#######
