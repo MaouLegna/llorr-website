@@ -1,0 +1,423 @@
+---
+title: "Match Ups Data (Patch 2.12/2.13)"
+author: "by Legna"
+output:
+  flexdashboard::flex_dashboard:
+    navbar:
+      - { icon: "fa-home", href: "https://llorr-stats.netlify.app", align: right }
+    # theme: paper
+    # favicon: img/ios7-location-outline.png
+    # orientation: columns
+    # vertical_layout: fill
+    orientation: row
+# date: "`r Sys.Date()`"
+params:
+  start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
+  skip:  1888233  # Patch 2.11 - after removing a few games
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  dev.args = list(bg = 'transparent'),
+  # dev='svglite',
+  fig.align='center',
+  #out.width='75%', fig.asp=.75,
+  cache.rebuild = F,
+  cache = F
+)
+
+# source(file.path("C:","LlorR","scripts","lor_main.R" ))
+options(digits.secs = 6)
+options(scipen=999)
+
+#' R Option
+pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
+               flextable,officer,scales,htmltools,
+               downloadthis)
+```
+
+
+```{r flex-setup}
+options(reactable.theme = reactableTheme(
+  color = "grey25",
+  backgroundColor = NULL,
+  borderColor = "#dfe2e5",
+  borderWidth = NULL,
+  stripedColor = "#f6f8fa",
+  highlightColor = "#f0f5f9", 
+  cellPadding = "8px 13px", # dimensione del contenuto(?)
+  style = list( fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Roboto, sans-serif" ), # font delle varie componenti
+  tableStyle = NULL,
+  headerStyle = list(background = "steelblue",color="white" ), # ,fontFamily = "Work Sans, sans-serif, fontSize = "14px""
+  groupHeaderStyle = NULL,
+  tableBodyStyle = NULL,
+  rowGroupStyle = NULL,
+  rowStyle = NULL,
+  rowStripedStyle = NULL,
+  rowHighlightStyle = NULL,
+  rowSelectedStyle = NULL,
+  cellStyle = NULL,
+  footerStyle = NULL,
+  inputStyle = NULL,
+  filterInputStyle = NULL,
+  searchInputStyle = list(width = "100%"), # opzioni barra search
+  selectStyle = NULL,
+  paginationStyle = NULL,
+  pageButtonStyle = NULL,
+  pageButtonHoverStyle = NULL,
+  pageButtonActiveStyle = NULL,
+  pageButtonCurrentStyle = NULL
+))
+```
+
+```{r load-data}
+#' load DeckDT
+#'############
+# LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+# 
+# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+# 
+# #' Metl tbl
+# #'#########
+# LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+#   #' Base filters
+#   filter( game_type=="Ranked" ) %>%
+#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") ) %>%
+#   #' 'process' data
+#   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+#   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+#   mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+#   select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+#           ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+#   #' melt data
+#   melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+#     str_sub(
+#       names(select(.,ends_with("_1")))
+#       ,end = -3)
+#   ),
+#   value.name = str_sub(
+#     names(select(.,ends_with("_1")))
+#     ,end = -3)
+#   )
+# # %>%
+# #   #' finish 'process' data
+# #   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+# #   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+# #   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+# #   select(-ends_with("puuid"),-refID,-contains("puuid"))
+# 
+# #' WR tbl
+# #'#######
+# WR.DT <- LoR.Melt.Matches.RMD %>%
+#   filter(game_outcome!="tie") %>%
+#   select( player,opponent,game_outcome ) %>%
+#   group_by(player) %>%
+#   summarise( nWin   = sum(game_outcome=="win"),
+#              nGames = n(),
+#              WR=mean(game_outcome=="win")
+#   ) %>%
+#   ungroup() %>%
+#   mutate( playrate = nGames/sum(nGames) )
+# 
+# #' MU tbl the date is already filtered
+# #'####################################
+# MUtbl <- LoR.Melt.Matches.RMD %>%
+#   # filter(game_version>"live_2_9" ) %>%
+#   filter( game_outcome != "tie" ) %>%
+#   select( player,opponent,game_outcome,server,game_version,factions ) %>%
+#   # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
+#   group_by(player,opponent) %>%
+#   summarise( muWin   = sum(game_outcome=="win"),
+#              muGames = n(),
+#              muWR=mean(game_outcome=="win"),
+#              factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
+#   ungroup() %>%
+#   mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
+#   chop(CI) %>%
+#   unnest(CI) %>%
+#   mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
+#   mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
+#   mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) %>%
+#   # removing ~extra variables
+#   select(-lower,-upper) %>%
+#   left_join(.,WR.DT[,c("player","playrate")],by="player")
+# 
+# MUtbl <- MUtbl %>%
+#   # use only the "necessary"
+#   filter(muGames >= 100)
+
+MUtbl <- data.table::fread(file.path("C:","LlorR","data","clean","MU30tbl.csv"), header = T, na.strings = c("", NA))
+
+data <- SharedData$new(MUtbl)
+```
+
+Table {data-icon="fa-table"}
+===
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+### Filters
+
+```{r filters}
+crosstalk::filter_select("player", "Player", data, ~player)
+crosstalk::filter_select("opponent", "Opponent", data, ~opponent)
+
+crosstalk::filter_slider("muWin",   "#Win",  data, ~muWin,   step = 50 ,min = 0)
+crosstalk::filter_slider("muGames", "#Games",data, ~muGames, step = 100,min = 0)
+
+crosstalk::filter_slider("muWR", "WinRate", data, ~muWR,step=0.01,min = 0,max = 1)
+crosstalk::filter_slider("playrate", "PlayRate", data, ~playrate,step=0.01,min = 0,max = round(max(MUtbl$playrate),4) )
+
+crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
+
+# bscols(
+#   crosstalk::filter_select("player", "Player", data, ~player),
+#   crosstalk::filter_select("opponent", "Opponent", data, ~opponent)
+# )
+```
+
+Row {data-heigth=750}
+-----------------------------------------------------------------------
+
+### MU table
+
+```{r print-react-MU}
+# require(htmltools)
+
+# Render a bar chart with positive and negative values
+bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
+  
+  base_chart <- div(style = list(flex = "1 1"))
+  # pos_chart <- div(style = list(flex = "1 1"))
+  width <- paste0((value / max_value) * 100, "%")
+
+  if (value >= 0.5) {
+    bar <- div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
+    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- tagAppendChild(base_chart, chart)
+    div(style = list(display = "flex"), base_chart)
+  } else {
+    bar <- div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
+    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- tagAppendChild(base_chart, chart)
+    div(style = list(display = "flex"), base_chart)
+  }
+}
+
+data %>%
+reactable(.,
+          bordered = TRUE,
+            highlight = TRUE,
+            striped = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table height
+            fullWidth = T, # don't fill the page
+            defaultPageSize = 20,
+            wrap = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              style = list(fontFamily = "Roboto", fontSize = "13px"), align = "center"
+              # minWidth = 120,
+            ),
+            columns = list(
+              player   = colDef(name = "Player",minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black") ),
+              opponent = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black")),
+              
+              muWin    = colDef(name = "#Win" ), # , style = list( fontSize = "13px")
+              muGames  = colDef(name = "#Games"),
+              
+              # muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
+              
+              muWR  = colDef(
+                name = "Win Rate",
+                defaultSortOrder = "desc",
+                cell = function(value) {
+                  label <- paste0(round(value * 100,1), "%")
+                  bar_chart_pos_neg(label, value)
+                  },
+                align = "center",
+                minWidth = 200
+                ),
+              
+              playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
+              
+              factions = colDef(name = "Regions"),
+              
+              CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
+              LCI       = colDef(show=F), # lower
+              UCI       = colDef(show=F), # lower
+              direction = colDef(show=F),
+              okCI      = colDef(show=F)
+              )
+    )
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Number of Games
+
+```{r value-nGames}
+nGames = sum(MUtbl$muGames)
+# nGames
+
+flexdashboard::valueBox(nGames,
+         icon = "fa-table",
+         color = "#FA7404")
+```
+
+### Last Update
+
+```{r value-Games}
+flexdashboard::valueBox(Sys.Date(),
+         icon = "fa-clock",
+         color = "lightgreen")
+```
+
+Grid {data-icon="fa-file-image"}
+=====
+
+```{r get-WR-Top}
+mu <- 20
+
+TopCC <- MUtbl %>%
+  group_by(player) %>%
+  summarise(nGames = sum(muGames)) %>% 
+  arrange(desc(nGames)) %>% 
+  slice_head(.,n = mu) %>% 
+  select(player) %>% 
+  pull() %>% 
+  sort()
+
+WRTop10 <- MUtbl %>%
+  filter(player %in% TopCC & opponent %in% TopCC) %>%
+  arrange(player,opponent)
+```
+
+<!-- The win rates on the grid are among the `r mu` most played champion combination. -->
+
+```{r prepare-flex}
+big_border   = fp_border(color="darkgray", width = 2)
+small_border = fp_border(color="gray", width = 1)
+
+dummy_fun <- function(x){
+  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
+}
+```
+
+```{r prepare-flex-grid}
+grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
+diag(grid) <- NA
+
+colnames(grid) <- TopCC
+colourer <- col_numeric(
+  palette = c("#D73027", # red
+          # "#f9ccac", # red/orange
+          "white",
+          # "#e3eaa7", # green
+          "#1A9850" # darker green
+          ),
+  domain = c(0, 1))
+
+funs <- setNames(rep(list(dummy_fun), mu), TopCC)
+```
+
+```{r create-flex}
+ft <- grid %>% 
+  as_tibble() %>%
+  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) %>%
+  add_column(.,TopCC,.before = TopCC[1]) %>%
+  rename("MatchUps"="TopCC") %>%
+  flextable::flextable(.) %>% 
+  theme_vanilla( ) %>%
+  # theme_booktabs(bold_header = TRUE) %>% 
+  flextable::align(.,align = "center", part = "all") %>%
+  flextable::bg(.,
+    bg = colourer,
+    j = ~ . -MatchUps,
+    part = "body") %>% 
+  border_remove(x = .) %>%
+  border_outer(., part="all", border = big_border ) %>%
+  border_inner_h(., part="all", border = small_border ) %>%
+  border_inner_v(., part="all", border = small_border ) %>%
+  set_formatter(values = funs) %>%
+  fontsize(., size = 8, part = "header") %>%
+  fontsize(., j=1, size = 8) %>%
+  bg(., part = "header", bg = "white"  ) %>%
+  bg(., j = 1, bg = "white"  ) %>%
+  width(., width = 1.5)
+
+# autofit()
+```
+
+```{r print-flex, echo=FALSE, message=FALSE, warning=FALSE}
+save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
+ft
+```
+
+Downloads and Informations {data-orientation=columns data-icon="fa-info-circle"}
+===================================== 
+
+Download {data-width=200}
+-----------------------------------------------------------------------
+
+### Match Ups Data
+
+```{r}
+MUtbl %>%
+  select(player,opponent,muWin,muGames,muWR) %>%
+  download_this(.,
+              button_label = "Download MU data as .csv",
+              output_name = "mutable",
+              button_type = "success",
+              has_icon = TRUE,
+              icon = "fa fa-save"
+              )
+```
+
+### Match Ups Grid
+
+```{r}
+download_file(
+  path = file.path("images/mugrid.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+Column {data-width=800}
+-----------------------------------------------------------------------
+
+### How to use
+
+#### Filters
+
+The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
+
+* **Player** - archetype of the player
+
+* **Opponent** - archetype of the opponent
+
+* **#Win** - min number of wins for a match-up
+
+* **#Games** - min number of games for a match-up
+
+* **Regions** - regions of the 'Player' deck.
+
+* **MU-Direction** - simply if the MU is positive (win rate > 50%) or negative (win rate < 50%) for the 'Player'
+
+<!-- ### General update -->
+
+<!-- Last Update: `r Sys.time()` -->

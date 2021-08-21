@@ -20,14 +20,16 @@ navbar:
     - text: "MetaReport"  
       href: report.html
     - text: "MatchUps"  
-      href: mu.html  
-    - text: "Blog"
+    #   href: tool/mu.html
+    # - text: "MatchUps-Test"  
+      href: https://llorr-stats.netlify.app/static/mu.html
+    - text: "Other"
       menu:
         - text: "Analysis"
           href: analysis.html
         - text: "---"
-        - text: "Other"
-          href: blog.html
+        - text: "Tools"
+          href: tool.html
     - text: "About"
       href: about.html
     - icon: fab fa-github-alt fa-1x
@@ -38,4 +40,7 @@ navbar:
       href: https://twitter.com/Maou_Legna
     - icon: fab fa-r-project
       href: https://rpubs.com/Legna
+    - image: https://www.buymeacoffee.com/assets/img/bmc-meta-new/new/favicon.png
+    # - image: https://www.buymeacoffee.com/assets/img/logo.png
+      href: https://www.buymeacoffee.com/MaouLegna
 output: distill::distill_article
