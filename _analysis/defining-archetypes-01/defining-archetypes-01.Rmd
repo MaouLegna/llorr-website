@@ -19,9 +19,9 @@ twitter:
   site: "@Maou_Legna"
   creator: "@Maou_Legna"
 params:
-  prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
+  # prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
   start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
-  end:   "2021-08-04 21:00:00" #UTC tz / 'current' week end
+  end:   "2021-08-25 21:00:00" #UTC tz / 'current' week end
   skip:  1850000  # Patch 2.11 - after removing a few games  
 ---
 
@@ -33,43 +33,38 @@ knitr::opts_chunk$set(
   error = FALSE,
   message = FALSE,
   comment = NA,
-  # lang='markdown',
   R.options = list(width = 140,
-                   digits.secs=6,
-                   scipen=999),
-  # dev.args = list(bg = 'transparent'),
-  # dev = 'svglite',
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
   fig.align = 'center',
-  out.width = '50%',
-  fig.asp = .75,
-  cache = FALSE, 
-  cache.rebuild = FALSE,
-  # root.dir = file.path("C:","LlorR"),
+  fig.width=9,
+  fig.height=6,
   engine.path = list(
-    python = 'C:/anaconda/'
-  )
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
 )
 
 #' R Option
-options(digits.secs = 6)
-options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-library(tidyverse); library(kableExtra)
 
-#' panelset
 # require(Hmisc)    # provides knitrSet and other functions
 xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(
-  active_foreground = "#0051BA",
-  hover_foreground = "#d22"
-  # font_family = "Amiri"
-)
-
 #' Python
-# use_python("C:/anaconda/")
 # py_run_string("print('Hello World')")
 # lor_deckcodes <- import("lor_deckcodes")
 # py_module_available("lor_deckcodes")
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
 ```
 
 # Introduction
@@ -131,6 +126,7 @@ namesList.EU.RMD     <- length(lor_leaderboard("europe")$name)
 namesList.NA.RMD     <- length(lor_leaderboard("americas")$name)
 namesList.ASIA.RMD   <- length(lor_leaderboard("asia")$name)
 ```
+
 ```{r prepare-data}
 LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   #' Base filters
@@ -173,12 +169,14 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
 ```{r ASZ}
 #' Akshan / Sivir / Zed abs freq
 ################################
-ASZ <- LoR.Melt.Matches.RMD %>%
-  filter( champions == "Akshan / Sivir / Zed" ) %>%
-  NROW()
+ASZ.DT <- LoR.Melt.Matches.RMD %>%
+  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
+  filter( champions == "Akshan / Sivir / Zed" )
 ```
 
-Let's start by informing how the amount of 'Akshan/Sivir/Zed' amoutnto `r ASZ`.
+Because there was the raise of the Demacian deck with Akshan / Sivir, these decks are removed.
+
+Let's start by informing how the amount of 'Akshan/Sivir/Zed' amoutnto `r NROW(ASZ.DT)`.
 
 Now, hoe big is this number? Let's see the distribution of the number of champions in decks and the number inside Sivir/Zed and Sivir/Akshan decks
 
@@ -187,6 +185,7 @@ require(gtsummary)
 require(gt)
 
 tbl1 <- LoR.Melt.Matches.RMD %>%
+  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
   mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Zed"))  ,"Sivir/Zed","no Sivir/Zed") ) %>%
   select(nChamp,SZ) %>%
   gtsummary::tbl_summary(., by = SZ, label = nChamp ~ "#Champion") %>%
@@ -195,6 +194,7 @@ tbl1 <- LoR.Melt.Matches.RMD %>%
   # gt::tab_source_note(gt::md(glue::glue("Ranked games from {params$start} to {params$end}")))
 
 tbl2 <- LoR.Melt.Matches.RMD %>%
+  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
   mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Akshan"))  ,"Sivir/Akshan","no Sivir/Akshan") ) %>%
   select(nChamp,SZ) %>%
   gtsummary::tbl_summary(., by = SZ, label = nChamp ~ "#Champion")
@@ -208,6 +208,8 @@ tbl <- tbl_merge(
   )
   # modify_spanning_header(stat_0_1 ~ NA)
 
+# tbl
+
 tbl %>%
   as_gt() %>%
   tab_options(
@@ -215,7 +217,6 @@ tbl %>%
     table.font.color = "black",
     table.font.color.light = "black"
   )
-
 ```
 
 ```{r}
@@ -259,16 +260,16 @@ SA3 <- LoR.Melt.Matches.RMD %>%
 
 # sprintf(paste0("",round(tblData[4,"percent"]*100,2),"%%"))
 ```
-The overall prevalence of '3 champions deck' while it may looks higher than common believes (`r nChamp3.percent`) the value is mostly carried by the Akshan/Sivir/Zed which amoutn to  decks as they are about half the cases of 3 champs decks `r round(ASZ/nChamp3,3)`%
+The overall prevalence of '3 champions deck' while it may looks higher than common believes (`r nChamp3.percent`) the value is mostly carried by the Akshan/Sivir/Zed which amoutn to  decks as they are about half the cases of 3 champs decks `r round(NROW(ASZ.DT)/nChamp3,3)`%
 
-Also worth noticing is how among the Sivir/Zed and Sivir/Akshan decks the '3 champ' option is choosen also about half of the times and the other half is indeed mostly Akshan/Sivir/Zed decks `r round(ASZ/SZ3,3)`% when we consider Sivir/Zed decks and `r round(ASZ/SA3,3)`% when we consider Sivir/Akshan decks.
+Also worth noticing is how among the Sivir/Zed and Sivir/Akshan decks the '3 champ' option is choosen also about half of the times and the other half is indeed mostly Akshan/Sivir/Zed decks `r round(NROW(ASZ.DT)/SZ3,3)`% when we consider Sivir/Zed decks and `r round(NROW(ASZ.DT)/SA3,3)`% when we consider Sivir/Akshan decks.
 
 # Methods
 
 While the comparisons can all be done at the same time, it's wiser to go step by step.
 
 ```{r}
-library(DiagrammeR)
+require(DiagrammeR)
 
 grViz("
       digraph TB {
@@ -286,7 +287,7 @@ grViz("
       }
       
       # add node statements
-      a -> {b,c} [color = green, label = 'subset']
+      a -> {b,c} [color = green, label = 'subset of ASZ']
       b -> a [color = red]
       c -> a [color = red]
       
@@ -300,7 +301,9 @@ grViz("
       
       ")
 ```
-* The first step would be finding whenever Sivir/Zed (SZ) and Sivir/Akshan (SA) decks are a specific case of Akshan/Sivir/Zed (ASZ) decks.
+* The first step would be finding whenever Sivir/Zed (SZ) and Sivir/Akshan (SA) decks are a specific case of Akshan/Sivir/Zed (ASZ) decks. ( green arrow )
+
+* The following and final step would then be accerting the similarity/equality of Sivir/Akshan with Sivir/Zed ( black arrow )
 
 ```{r}
 SZgt <- LoR.Melt.Matches.RMD %>%
@@ -332,9 +335,35 @@ SZgt %>%
     table.font.color = "black",
     table.font.color.light = "black"
   )
-  
+
+# SZgt
 ```
+
 Not surprisingly Akshan is pretty much the "third champion" almost all of the times.
+
+```{r}
+ASds <- LoR.Melt.Matches.RMD %>%
+  filter( player == "Akshan / Sivir (IO/SH)" ) %>%
+  pull(deck_code) %>%
+  get_deck_structure() %>%
+  select(contains("Card."))
+
+
+
+SZds <- LoR.Melt.Matches.RMD %>%
+  filter( player == "Sivir / Zed" ) %>%
+  pull(deck_code) %>%
+  get_deck_structure()
+
+ASZds <- LoR.Melt.Matches.RMD %>%
+  filter( player == "Akshan / Sivir / Zed" ) %>%
+  pull(deck_code) %>%
+  get_deck_structure()
+
+
+setdiff(SZds$name,ASds$name)
+```
+
 
 ---
 

@@ -77,83 +77,86 @@ options(reactable.theme = reactableTheme(
 ```{r load-data}
 #' load DeckDT
 #'############
-# LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
-# 
-# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
-# 
-# #' Metl tbl
-# #'#########
-# LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
-#   #' Base filters
-#   filter( game_type=="Ranked" ) %>%
-#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") ) %>%
-#   #' 'process' data
-#   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-#   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
-#   mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
-#   select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-#           ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
-#   #' melt data
-#   melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-#     str_sub(
-#       names(select(.,ends_with("_1")))
-#       ,end = -3)
-#   ),
-#   value.name = str_sub(
-#     names(select(.,ends_with("_1")))
-#     ,end = -3)
-#   )
-# # %>%
-# #   #' finish 'process' data
-# #   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-# #   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-# #   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
-# #   select(-ends_with("puuid"),-refID,-contains("puuid"))
-# 
-# #' WR tbl
-# #'#######
-# WR.DT <- LoR.Melt.Matches.RMD %>%
-#   filter(game_outcome!="tie") %>%
-#   select( player,opponent,game_outcome ) %>%
-#   group_by(player) %>%
-#   summarise( nWin   = sum(game_outcome=="win"),
-#              nGames = n(),
-#              WR=mean(game_outcome=="win")
-#   ) %>%
-#   ungroup() %>%
-#   mutate( playrate = nGames/sum(nGames) )
-# 
-# #' MU tbl the date is already filtered
-# #'####################################
-# MUtbl <- LoR.Melt.Matches.RMD %>%
-#   # filter(game_version>"live_2_9" ) %>%
-#   filter( game_outcome != "tie" ) %>%
-#   select( player,opponent,game_outcome,server,game_version,factions ) %>%
-#   # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
-#   group_by(player,opponent) %>%
-#   summarise( muWin   = sum(game_outcome=="win"),
-#              muGames = n(),
-#              muWR=mean(game_outcome=="win"),
-#              factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
-#   ungroup() %>%
-#   mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
-#   chop(CI) %>%
-#   unnest(CI) %>%
-#   mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
-#   mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
-#   mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) %>%
-#   # removing ~extra variables
-#   select(-lower,-upper) %>%
-#   left_join(.,WR.DT[,c("player","playrate")],by="player")
-# 
-# MUtbl <- MUtbl %>%
-#   # use only the "necessary"
-#   filter(muGames >= 100)
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
-MUtbl <- data.table::fread(file.path("C:","LlorR","data","clean","MU30tbl.csv"), header = T, na.strings = c("", NA))
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' Metl tbl
+#'#########
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  )
+# %>%
+#   #' finish 'process' data
+#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+#   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+#   select(-ends_with("puuid"),-refID,-contains("puuid"))
+
+#' WR tbl
+#'#######
+WR.DT <- LoR.Melt.Matches.RMD %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome ) %>%
+  group_by(player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) %>%
+  ungroup() %>%
+  mutate( playrate = nGames/sum(nGames) )
+
+#' MU tbl the date is already filtered
+#'####################################
+MUtbl <- LoR.Melt.Matches.RMD %>%
+  # filter(game_version>"live_2_9" ) %>%
+  filter( game_outcome != "tie" ) %>%
+  select( player,opponent,game_outcome,server,game_version,factions ) %>%
+  # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win"),
+             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
+  ungroup() %>%
+  mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
+  chop(CI) %>%
+  unnest(CI) %>%
+  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
+  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
+  mutate( direction = replace(direction,direction==0.50,"TIE") ) %>%
+  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) %>%
+  # removing ~extra variables
+  select(-lower,-upper) %>%
+  left_join(.,WR.DT[,c("player","playrate")],by="player")
+
+MUtbl.tot <- sum(MUtbl$muGames)
+
+MUtbl <- MUtbl %>%
+  # use only the "necessary"
+  filter(muGames >= 100)
+
+# MUtbl <- data.table::fread(file.path("C:","LlorR","data","clean","MU30tbl.csv"), header = T, na.strings = c("", NA))
 
 data <- SharedData$new(MUtbl)
 ```
@@ -263,15 +266,16 @@ reactable(.,
 Row
 -----------------------------------------------------------------------
 
-### Number of Games
+### Number of Games (min 100 games)
 
 ```{r value-nGames}
 nGames = sum(MUtbl$muGames)
 # nGames
 
-flexdashboard::valueBox(nGames,
-         icon = "fa-table",
-         color = "#FA7404")
+flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
+                        caption = glue::glue("out of a total of {MUtbl.tot} - min 100 games"),
+                        icon = "fa-table",
+                        color = "#FA7404")
 ```
 
 ### Last Update
@@ -416,7 +420,11 @@ The format of the table is the usual way I display the match-ups data but I also
 
 * **Regions** - regions of the 'Player' deck.
 
-* **MU-Direction** - simply if the MU is positive (win rate > 50%) or negative (win rate < 50%) for the 'Player'
+* **MU-Direction** - simply if the MU is positive (win rate > 50%) or negative (win rate < 50%) for the 'Player' or tie (win rate = 50%)
+
+#### General info
+
+When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
 
 <!-- ### General update -->
 
