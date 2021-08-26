@@ -230,34 +230,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   select(-ends_with("puuid"),-refID)
 ```
 
-```{r prepare-old-data}
-LoR.Old.Matches.RMD <- LoR.Match.RMD %>%
-  #' Base filters
-  filter( game_type=="Ranked" ) %>%
-  filter( game_start_time_utc >= as.POSIXct(params$prev, tz = "UTC") & game_start_time_utc < as.POSIXct(params$start, tz = "UTC") ) %>%
-  #' 'process' data
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
-  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
-  #' melt data
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-    str_sub(
-      names(select(.,ends_with("_1")))
-      ,end = -3)
-  ),
-  value.name = str_sub(
-    names(select(.,ends_with("_1")))
-    ,end = -3)
-  ) %>%
-  #' finish 'process' data
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
-  select(-ends_with("puuid"),-refID)
-```
-
 # Regions
 
 ## Play Rate
@@ -283,25 +255,6 @@ Region.Freq.Server <- LoR.Melt.Matches.RMD %>%
 Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
 ```
 
-```{r process-tableFreq-old}
-# Old.Region.Freq <- LoR.Old.Matches.RMD %>%
-#   select(factions) %>%
-#   separate_rows(factions,sep=",") %>%
-#   tabyl(factions,show_na=F) %>%
-#   tibble() %>%
-#   rename_all(~c("region","n","freq")) %>%
-#   mutate(region = fct_recode(region,!!!recodeRegLevels)) %>%
-#   add_column(., icon = list.levels$iconRegion)
-# 
-# Old.Region.Freq.Server <- LoR.Old.Matches.RMD %>%
-#   select(server,factions) %>%
-#   separate_rows(factions,sep=",") %>%
-#   tabyl(factions,server, show_na = F) %>%
-#   adorn_percentages("col") %>%
-#   mutate(region = fct_recode(factions,!!!recodeRegLevels),.keep = "unused")
-# 
-# Old.Region.Freq <- full_join(Old.Region.Freq,Old.Region.Freq.Server,by="region")
-```
 ::::: {.panelset}
 ::: {.panel}
 

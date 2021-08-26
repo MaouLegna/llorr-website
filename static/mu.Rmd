@@ -13,7 +13,8 @@ output:
 # date: "`r Sys.Date()`"
 params:
   start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
-  skip:  1888233  # Patch 2.11 - after removing a few games
+  end:   "2021-08-25 21:00:00" #UTC tz / 'current' week end
+  skip:  1850000  # Patch 2.11 - after removing a few games
 ---
 
 ```{r setup, include=FALSE}
@@ -89,7 +90,7 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   #' Base filters
   filter( game_type=="Ranked" ) %>%
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") ) %>%
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
   #' 'process' data
   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
   left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
