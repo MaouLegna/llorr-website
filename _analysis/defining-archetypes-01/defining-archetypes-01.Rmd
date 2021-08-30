@@ -1,5 +1,5 @@
 ---
-title: "DEFINING ARCHETYPES #1: LOOKING AT THE DIFFERENCES IN AKSHAN / SIVIR DECKS WITH TWO OR MORE DIFFERENT CHAMPIONS"
+title: "DEFINING ARCHETYPES #1: LOOKING AT THE SIMILARITY OF AKSHAN/SIVIR/ZED DECKS WITH SIMILAR ARCHETYPES"
 description: |
   First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra
 base_url: https://llorr-stats.netlify.app
@@ -71,11 +71,11 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
 
 This series of article/analysis are meant to rappresent my journey in how to define archetypes.
 
-Archetypes in Legends of Runeterra are *currently* defined by me by the combinations of champions and regions. While a lazy method it's(was?) a first approximation that worked decently aside for some exception while always knowing the disadvantage that the number of possible classes will is probably too high compared to the number of available games (at least at Master). On the other side of the spectrum the most restricting classification would with a dichotomical variables, something like using the **Super Archetypes** from viciousSyndicate (vS): *initiative* and *resource* decks [^1. Every other archetype classification is in immediatiate and it's a vast ocean of possibilities with no 'correct' solution.
+Archetypes in Legends of Runeterra are *currently* defined by me by the combinations of champions and regions. While a lazy method it's(was?) a first approximation that worked decently aside for some exception while always knowing the disadvantage that the number of possible classes will is probably too high compared to the number of available games (at least at Master). On the other side of the spectrum the most restricting classification would with a categorical (maybe even just dichotomical) variable, something like using the **Super Archetypes** from viciousSyndicate (vS): *Initiative* and *Resource* decks [^1]. Every other archetype classification is in immediatiate and it's a vast ocean of possibilities with no 'correct' solution.
 
 [^1]: their definition, example and so on will be a topic for the future.
 
-As everything needs to be done step by step, what is the most evident problem in the current archetype definition:
+As everything needs to be done step by step, I'll start with what was pointed to me a few weeks ago:
 
 ```{r tweet1}
 require(tweetrmd)
@@ -83,13 +83,15 @@ tweet_screenshot(tweet_url("drlor4", "1420488109603442688"),
                  maxwidth = 400)
 ```
 
-The answer would be: lack of aggregation for decks which share a similar deck but differs only in the champions used sometimes by even just one card.
-
 Ever since Dragons decks turned into legit meta options (also 'Overwhelm' decks with "Renekton / Sejuani / Sivir") deck with 3 champions (often in a ratio 3-2-1) have become more widely used and they are their *acceptance* as legfit option increased without being considered some wacky tech. Of course I'm just talking about *acceptance*, I'm not talking about performances or if they are indeed the better option, again this could be a topic for the future and not regarding the archetypes definitions.
 
-So, returning to the tweet, in the current patch at the moment I'm writing this (2.13) a clear case of three champions being played togheter are: Akshan / Sivir / Zed. While I will at least give the number for the overall frequencies by which "n champion" decks are played I'll here mostly focus on these 3.
+So, returning to the tweet, in the previous patch at the moment I'm writing this (2.14) a clear case of three champions being played togheter are: Akshan/Sivir/Zed (ASZ).
 
-**Note**: I'm aware that the aggregation problem is not limited to cases with three champions but even with 2 (see Viego) but one must proceed with baby steps and tackling the 'three champ' problem is probably more important.
+The question is simple: is my current aggregation too lacking? There are archetypes that may indeed looks similar to other just by intuition but it's not a "proper approach", but are they? Is Sivir/Zed just a special (SZ) case of ASZ that lacks Akshan?
+
+This article will try to respond to such question.
+
+**Note**: I'm aware that the aggregation problem is not limited to cases with three champions but even with 2, see Viego with different regions, or what actually matters are even just a couple of cards in the deck like "Feel the Rush" or "ARAM (Howling Abyss)" but as mentioned, one must proceed with baby steps and tackling and example of the 'three champ' problem is probably the easiest example.
 
 # Data
 
@@ -166,26 +168,34 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   select(-ends_with("puuid"),-refID)
 ```
 
+The sample is made of `r NROW(LoR.Melt.Matches.RMD)` Ranked games from `r params$start` to `r params$end`, so covering the patch 2.13 after the start of the Ruination Event so that there wouldn't be any change i the card pool in the timeframe analyzed.
+
 ```{r ASZ}
 #' Akshan / Sivir / Zed abs freq
 ################################
+nGames <- LoR.Melt.Matches.RMD %>%
+  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
+  NROW()
+
 ASZ.DT <- LoR.Melt.Matches.RMD %>%
   filter( player != "Akshan / Sivir (DE/SH)" ) %>%
   filter( champions == "Akshan / Sivir / Zed" )
+
+LoR.Melt.Matches.RMD %<>%
+  filter( player != "Akshan / Sivir (DE/SH)" )
 ```
 
-Because there was the raise of the Demacian deck with Akshan / Sivir, these decks are removed.
+Because there was the raise of the Demacian deck with Akshan/Sivir, these decks are removed as they could create a few problem in the following steps. The sample is reduced to `r nGames` games
 
-Let's start by informing how the amount of 'Akshan/Sivir/Zed' amoutnto `r NROW(ASZ.DT)`.
+Let's now add some information about the presence of ASZ decks and the variant with just Zed (SZ) or just Akshan (AZ).
 
-Now, hoe big is this number? Let's see the distribution of the number of champions in decks and the number inside Sivir/Zed and Sivir/Akshan decks
+First of all, the amount of 'Akshan/Sivir/Zed' decks in the sample amounts to `r NROW(ASZ.DT)`
 
 ```{r table-nChamp}
 require(gtsummary)
 require(gt)
 
 tbl1 <- LoR.Melt.Matches.RMD %>%
-  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
   mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Zed"))  ,"Sivir/Zed","no Sivir/Zed") ) %>%
   select(nChamp,SZ) %>%
   gtsummary::tbl_summary(., by = SZ, label = nChamp ~ "#Champion") %>%
@@ -194,7 +204,6 @@ tbl1 <- LoR.Melt.Matches.RMD %>%
   # gt::tab_source_note(gt::md(glue::glue("Ranked games from {params$start} to {params$end}")))
 
 tbl2 <- LoR.Melt.Matches.RMD %>%
-  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
   mutate( SZ = ifelse( (str_detect(champions,"Sivir") & str_detect(champions,"Akshan"))  ,"Sivir/Akshan","no Sivir/Akshan") ) %>%
   select(nChamp,SZ) %>%
   gtsummary::tbl_summary(., by = SZ, label = nChamp ~ "#Champion")
@@ -207,8 +216,6 @@ tbl <- tbl_merge(
     tab_spanner = c("**Zed**", "**Akshan**")
   )
   # modify_spanning_header(stat_0_1 ~ NA)
-
-# tbl
 
 tbl %>%
   as_gt() %>%
@@ -260,13 +267,58 @@ SA3 <- LoR.Melt.Matches.RMD %>%
 
 # sprintf(paste0("",round(tblData[4,"percent"]*100,2),"%%"))
 ```
-The overall prevalence of '3 champions deck' while it may looks higher than common believes (`r nChamp3.percent`) the value is mostly carried by the Akshan/Sivir/Zed which amoutn to  decks as they are about half the cases of 3 champs decks `r round(NROW(ASZ.DT)/nChamp3,3)`%
 
-Also worth noticing is how among the Sivir/Zed and Sivir/Akshan decks the '3 champ' option is choosen also about half of the times and the other half is indeed mostly Akshan/Sivir/Zed decks `r round(NROW(ASZ.DT)/SZ3,3)`% when we consider Sivir/Zed decks and `r round(NROW(ASZ.DT)/SA3,3)`% when we consider Sivir/Akshan decks.
+```{r}
+tbl
+```
+
+`r kableExtra::text_spec("Note :", color = "red")` The percetages are column-wise
+
+The overall prevalence of '3 champions deck' while it may looks higher than common believes (`r nChamp3.percent`) the value is mostly carried by the Akshan/Sivir/Zed which amoutn to almost half the cases of 3 champs decks `r round(NROW(ASZ.DT)/nChamp3,3)*100`%
+
+More specificaly, those `r NROW(ASZ.DT)` ASZ decks are the main subset of both SZ decks when using 3-champions (`r round(NROW(ASZ.DT)/SZ3,3)*100`% of the cases) and for AZ decks too (`r round(NROW(ASZ.DT)/SA3,3)*100`% of the cases). In other words, it seems the ASZ are indeed almost always the case of the 3-champion option when going from two to three champions starting from SZ or AS.
+
+```{r print-gt-SZ-three-champ}
+SZgt <- LoR.Melt.Matches.RMD %>%
+  filter(nChamp %in% 3 ) %>%
+  filter( str_detect(champions,"Sivir") & str_detect(champions,"Zed") ) %>%
+  select(champions) %>%
+  separate_rows(champions,sep = " / ") %>%
+  janitor::tabyl(champions) %>%
+  arrange(desc(n)) %>%
+  mutate( percent = percent*3 ) %>%
+  filter( champions %!in% c("Sivir","Zed") ) %>%
+  select(-n) %>%
+  gt() %>%
+  tab_header(
+    title = "Champions Frequencies",
+    subtitle = "Prevalance of the 'third' champion in Sivir/Zed with 3 Champions"
+  ) %>%
+  fmt_percent(
+    columns = percent,
+    decimals = 3
+  ) %>%
+  cols_label(
+    champions = md(str_to_title("**champions**")),
+    percent = md(str_to_title("**percent**"))
+  ) 
+
+SZgt %>%
+  tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+  )
+
+SZgt
+```
+Lastly, just to give a bit of additional info, the previous tables shows the relative frequencies of the third champion of choice in decks with three champions with Sivir and Zed
 
 # Methods
 
-While the comparisons can all be done at the same time, it's wiser to go step by step.
+This section illustrate the conceptual framework I'll (would) use to tackle the question for this article.
+
+While the question is about the similarity between ASZ and SZ decks what I'll try to look at are the following relationships:
 
 ```{r}
 require(DiagrammeR)
@@ -303,67 +355,152 @@ grViz("
 ```
 * The first step would be finding whenever Sivir/Zed (SZ) and Sivir/Akshan (SA) decks are a specific case of Akshan/Sivir/Zed (ASZ) decks. ( green arrow )
 
-* The following and final step would then be accerting the similarity/equality of Sivir/Akshan with Sivir/Zed ( black arrow )
+* If true, and only then, the following and final step would then be accerting the similarity/equality of Sivir/Akshan with Sivir/Zed ( black arrow )
 
-```{r}
-SZgt <- LoR.Melt.Matches.RMD %>%
-  filter(nChamp %in% 3 ) %>%
-  filter( str_detect(champions,"Sivir") & str_detect(champions,"Zed") ) %>%
-  select(champions) %>%
-  separate_rows(champions,sep = " / ") %>%
-  janitor::tabyl(champions) %>%
-  arrange(desc(n)) %>%
-  mutate( percent = percent*3 ) %>%
-  gt() %>%
-  tab_header(
-    title = "Champions Frequencies",
-    subtitle = "Prevalance of champions in Sivir/Zed with 3 Champions"
-  ) %>%
-  cols_label(
-    champions = md(str_to_title("**champions**")),
-    n = md(str_to_title("**n**")),
-    percent = md(str_to_title("**percent**"))
-  ) %>%
-  fmt_percent(
-    columns = c(3),
-    decimals = 2
-  ) 
+```{r veen}
+# install.packages("venneuler")     # Install & load venneuler package
+require("venneuler")
 
-SZgt %>%
-  tab_options(
-    table.background.color = "transparent",
-    table.font.color = "black",
-    table.font.color.light = "black"
-  )
-
-# SZgt
+plot(venneuler(c(AkshanSivir = 20,          # Draw pairwise venn diagram
+                 SivirZed = 20,
+                 "AkshanSivir&SivirZed" = 5)))
 ```
+Or to make it simpler:
 
-Not surprisingly Akshan is pretty much the "third champion" almost all of the times.
+* The first step is seeking if there is indeed an intersection between AkshanSivir and SivirZed
 
-```{r}
-ASds <- LoR.Melt.Matches.RMD %>%
+* If there is indeed an intersection how relevant it is. Is it big enough so that the two archetypes should be aggregated ?
+
+
+```{r archetype-decklist}
+AS <- LoR.Melt.Matches.RMD %>%
   filter( player == "Akshan / Sivir (IO/SH)" ) %>%
-  pull(deck_code) %>%
-  get_deck_structure() %>%
-  select(contains("Card."))
+  pull(deck_code)
 
-
-
-SZds <- LoR.Melt.Matches.RMD %>%
+SZ <- LoR.Melt.Matches.RMD %>%
   filter( player == "Sivir / Zed" ) %>%
-  pull(deck_code) %>%
-  get_deck_structure()
+  pull(deck_code)
 
-ASZds <- LoR.Melt.Matches.RMD %>%
+ASZ <- LoR.Melt.Matches.RMD %>%
   filter( player == "Akshan / Sivir / Zed" ) %>%
+  pull(deck_code)
+
+# set.seed(123)
+# rASZ <- LoR.Melt.Matches.RMD %>%
+#   filter( player == "Akshan / Sivir / Zed" ) %>%
+#   slice_sample(n = 10) %>%
+#   pull(deck_code)
+```
+
+```{r define-functions}
+# ak_into_zed <- function(deck_code){
+#   # If Akshan Sivir is the indeed a special case of Akshan Sivir Zed, than removing all decks for Akshan / Sivir should give similar distributions
+#   # getCardCode("Akshan") # 04SH130 <- 3
+#   # getCardCode("Sivir")  # 04SH020 <- 3
+#   # getCardCode("Zed")    # 01IO009 <- 0
+#   
+#   # deck_code <- "CMCACAICBQAQEAQFAEBQEGIGAQDRIJRWG5OWOAYBAMBAUAIEA6BACAYBAILCKMICAECAPCQBAIAQECI2"
+#   
+#   deck_code %>%
+#   # "CMCACAICBQAQEAQFAEBQEGIGAQDRIJRWG5OWOAYBAMBAUAIEA6BACAYBAILCKMICAECAPCQBAIAQECI2" %>%
+#     lordecks::get_decklist_from_code() |>
+#     dplyr::filter( cardcode != "01IO009" ) |>
+#     dplyr::mutate( count = replace(count, cardcode %in% c("04SH020","04SH030"), 3) ) |>
+#     lordecks::get_code_from_decklist_df()
+# }
+
+rm_asz <- function(deck_code) {
+  deck_code %>%
+  # "CMCACAICBQAQEAQFAEBQEGIGAQDRIJRWG5OWOAYBAMBAUAIEA6BACAYBAILCKMICAECAPCQBAIAQECI2" %>%
+    lordecks::get_decklist_from_code() |>
+    dplyr::filter( cardcode %!in% c("01IO009","04SH120","04SH130") ) |>
+    lordecks::get_code_from_decklist_df()
+}
+```
+
+How to approach this problem? There are several options, both that I may can think and that I cannot currently imagine. Since this is the foundation of the tools I want to use in the future for defining archetypes it will use clustering methods. By using clustering a distance is necessary and a distance is indeed the tool I'll mainly use for the analysis.
+
+
+
+```{r define-functions}
+ASZ.rm.codes <- ASZ %>%
+  tabyl() %>%
+  arrange(desc(n)) %>%
+  mutate( cumFreq = cumsum(percent) ) %>%
+  filter( cumFreq <= 0.50 ) %>%
+  rename("deck_code"=1) %>%
   pull(deck_code) %>%
-  get_deck_structure()
+  map_chr(.x = ., ~rm_asz(.x))
 
+SZ.rm.codes <- SZ %>%
+  tabyl() %>%
+  arrange(desc(n)) %>%
+  mutate( cumFreq = cumsum(percent) ) %>%
+  filter( cumFreq <= 0.50 ) %>%
+  rename("deck_code"=1) %>%
+  pull(deck_code) %>%
+  map_chr(.x = ., ~rm_asz(.x))
 
-setdiff(SZds$name,ASds$name)
+  # slice_tail(n=10)
+```
+
+```{r create-matrix}
+# LoR.Deck.RMD <- paste(paste0("Card","."), str_pad(01:40, 2, pad = "0"),sep="") %>% purrr::map_dfc(setNames, object = list(numeric()))
+# Subset <- LoR.Deck %>% slice_head(n=1) %>% select(starts_with("Card"))
+# DeckRow <- Subset[1,]  %>% unlist(.,use.names = F) %>% table()  
+
+deck.matrix <- LoR.Card$cardCode %>% purrr::map_dfc(setNames, object = list(numeric()))
+codes <- c(ASZ.rm.codes,SZ.rm.codes)
+
+for (i in 1:length(codes)) {
+  # decklist <- codes[1] %>% get_decklist_from_code()
+  decklist <- codes[i] %>% get_decklist_from_code()
+  deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
+}
+
+deck.matrix <- deck.matrix %>% 
+  mutate( across(everything(), ~replace_na(.x, 0))  )
+```
+
+```{r}
+DSim <- eisen_cos.sim(deck.matrix)
+
+sub.DSim.1 <- as.matrix(DSim)[1:length(ASZ.rm.codes),1:length(ASZ.rm.codes)]
+sub.DSim.2 <- as.matrix(DSim)[(length(ASZ.rm.codes)+1):NROW(DSim),(length(ASZ.rm.codes)+1):NROW(DSim)]
+sub.DSim.X <- as.matrix(DSim)[1:length(ASZ.rm.codes),(length(ASZ.rm.codes)+1):NROW(DSim)]
+
+DSim.tbl <- rbind(
+  tibble( value = sub.DSim.1[upper.tri(sub.DSim.1)],
+          group = "ASZ" ),
+  tibble( value = sub.DSim.2[upper.tri(sub.DSim.2)],
+          group = "SZ" ),
+  tibble( value = sub.DSim.X %>% as.vector(),
+          group = "Cross" )
+)
+
+DSim.tbl |>
+  ggplot(aes(x = value, fill=group)) +
+  geom_density() +
+  theme(legend.position = "bottom") +
+  xlim(c(0,1)) +
+DSim.tbl |>
+  ggplot(aes(x = value, fill=group)) +
+  geom_boxplot() +
+  theme(legend.position = "none")
+  xlim(c(0,1))
+  
+  
+
+   
 ```
 
 
----
+```{r}
+DSim.tbl %>%
+  group_by(group) %>%
+  summarise(across(.fns = list(mean = mean, sd = sd, skew = skew), .names = "{col}_{fn}"))
 
+DSim.tbl %>%
+  ggplot(aes(value, group = group, color = group)) +
+  stat_ecdf()
+```
