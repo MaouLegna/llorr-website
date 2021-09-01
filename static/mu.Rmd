@@ -275,7 +275,7 @@ nGames = MUtbl %>%
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        caption = glue::glue("out of a total of {MUtbl.tot} - min 100 games"),
+                        caption = glue::glue("out of a total of {MUtbl.tot} - min 10 games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```

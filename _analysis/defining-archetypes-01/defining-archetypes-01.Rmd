@@ -6,7 +6,7 @@ base_url: https://llorr-stats.netlify.app
 preview: "images/preview-mastery.png"
 author:
   - name: Valentino (Legna) Vazzoler
-date: 08-01-2021
+date: 09-01-2021
 output:
  distill::distill_article:
     toc: true
@@ -83,15 +83,17 @@ tweet_screenshot(tweet_url("drlor4", "1420488109603442688"),
                  maxwidth = 400)
 ```
 
-Ever since Dragons decks turned into legit meta options (also 'Overwhelm' decks with "Renekton / Sejuani / Sivir") deck with 3 champions (often in a ratio 3-2-1) have become more widely used and they are their *acceptance* as legfit option increased without being considered some wacky tech. Of course I'm just talking about *acceptance*, I'm not talking about performances or if they are indeed the better option, again this could be a topic for the future and not regarding the archetypes definitions.
+Ever since Dragons decks turned into legit meta options (also 'Overwhelm' decks with "Renekton / Sejuani / Sivir") deck with 3 champions, have become more widely used and they are their *acceptance* as legit option has increased no more being a bad choice by default.
 
-So, returning to the tweet, in the previous patch at the moment I'm writing this (2.14) a clear case of three champions being played togheter are: Akshan/Sivir/Zed (ASZ).
+Of course I'm just talking about *acceptance*, I'm not talking about performances, if they are indeed the better option, again this could be a topic for the future and not regarding the archetypes definitions.
 
-The question is simple: is my current aggregation too lacking? There are archetypes that may indeed looks similar to other just by intuition but it's not a "proper approach", but are they? Is Sivir/Zed just a special (SZ) case of ASZ that lacks Akshan?
+So, returning to the tweet, in the patch 2.12/2.13 there was a clear case of three champions being played togheter: Akshan/Sivir/Zed (ASZ).
+
+What I aim to answer is: is my current aggregation too strict? Is Sivir/Zed or Akshan/Sivir the same deck as ASZ, only lacks a champion? While by intuition they may looks similar it's not a proper answer
 
 This article will try to respond to such question.
 
-**Note**: I'm aware that the aggregation problem is not limited to cases with three champions but even with 2, see Viego with different regions, or what actually matters are even just a couple of cards in the deck like "Feel the Rush" or "ARAM (Howling Abyss)" but as mentioned, one must proceed with baby steps and tackling and example of the 'three champ' problem is probably the easiest example.
+**Note**: I'm aware that the aggregation problem is not limited to cases with three champions, some cases may even be related to a single card like "Feel the Rush" or "ARAM (Howling Abyss)" but as mentioned, one must proceed with baby steps and this is probably a good starting point.
 
 # Data
 
@@ -100,7 +102,7 @@ This article will try to respond to such question.
 #'############
 file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
 header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = 1850000 ) # ~2.11/2.12
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip ) # ~2.11/2.12
 colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 
 #' load Account

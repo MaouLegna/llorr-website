@@ -1,9 +1,9 @@
 ---
 title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°21)"
 description: |
-  Patch 2.14 - Week 1 - Start of the BandleCity madness
+  Patch 2.14 - Week 1 - Rise of the Sion supremacy
 base_url: https://llorr-stats.netlify.app
-preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BW005-full.png"
+preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05NX001T3-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
 # date: 09-01-2021
@@ -71,14 +71,14 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
 library(metathis)
 meta() %>%
   meta_description(
-    "Patch 2.14 - Week 1 - Start of the BandleCity madness"
+    "Patch 2.14 - Week 1 - Rise of the Sion supremacy"
   ) %>% 
   meta_viewport() %>% 
   meta_social(
     title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°21)",
     url = "https://llorr-stats.netlify.app/",
-    image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BW005-full.png",
-    image_alt = "Nami lv1",
+    image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05NX001T3-full.png",
+    image_alt = "Sion lv2",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",
@@ -173,7 +173,9 @@ nGames <- LoR.Match.RMD %>%
   pull(n)
 ```
 
-Number of (Ranked) games analyzed: **`r nGames %>% format(.,scientific = F)`**
+`r kableExtra::text_spec("Note:", color = "red")` As the current sample size is terrible to estimate WR of MU, the MU section is not present in this report. The data is being updated in the MU dedicated page but there the data will continue to be updated being an a better picture overall.
+
+Number of (Ranked) matches analyzed **`r nGames %>% format(.,scientific = F)`** or **`r (nGames*2) %>% format(.,scientific = F)`** games.
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")` [^1]
 
@@ -771,8 +773,8 @@ meta_evo <- ggplot(
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0,0.20),
-    breaks = seq(0,0.20,0.02),
+    limits = c(0,0.25),
+    breaks = seq(0,0.25,0.02),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   ) +
   scale_color_manual(
@@ -963,151 +965,6 @@ Looking at this week results it's clear most of these decks can be grouped as 'P
 <!-- Close Win Rate panelset -->
 :::
 
-# Match Ups
-
-`r kableExtra::text_spec("Note :", color = "red")` While these are indeed the Match-Ups win-rates that one can extract from last week games I need to point out that this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the MU-page where I use all games with the current sets of buffs and nerfs. While it's that there I don't account for optimization and difference in skills acquired during the weeks the overall number of games / sample size makes them a much safer source of information. While I'll continue to release the weekly data, pls refer to the [MU - page](https://llorr-stats.netlify.app/report/mu) for a better "meta-investigation".
-
-```{r get-WR-Top10}
-mu <- 15
-
-Top10CC <- CC.table %>% arrange(desc(freq)) %>% slice_head(.,n = mu) %>% select(player) %>% pull() %>% sort()
-
-WRTop10 <- MUtbl[ player %in% Top10CC & opponent %in% Top10CC, ]
-WRTop10 <- setorderv(WRTop10, c("player","opponent"), c(1,1))
-```
-
-::: l-page
-::::: {.panelset}
-::: {.panel}
-
-## Match-up Grid {.panel-name}
-
-The win rates on the grid are among the `r mu` most played champion combination.
-
-```{r prepare-flex}
-require(flextable)
-require(officer)
-
-big_border   = fp_border(color="darkgray", width = 2)
-small_border = fp_border(color="gray", width = 1)
-
-dummy_fun <- function(x){
-  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
-}
-```
-
-```{r prepare-flex-grid}
-grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
-diag(grid) <- NA
-
-colnames(grid) <- Top10CC
-colourer <- col_numeric(
-  palette = c("#D73027", # red
-          # "#f9ccac", # red/orange
-          "white",
-          # "#e3eaa7", # green
-          "#1A9850" # darker green
-          ),
-  domain = c(0, 1))
-
-funs <- setNames(rep(list(dummy_fun), mu), Top10CC)
-```
-
-```{r print-flex}
-ft <- grid %>% 
-  as_tibble() %>%
-  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) %>%
-  add_column(.,Top10CC,.before = Top10CC[1]) %>%
-  rename("MatchUps"="Top10CC") %>%
-  flextable::flextable(.) %>% 
-  theme_vanilla( ) %>%
-  # theme_booktabs(bold_header = TRUE) %>% 
-  flextable::align(.,align = "center", part = "all") %>%
-  flextable::bg(.,
-    bg = colourer,
-    j = ~ . -MatchUps,
-    part = "body") %>% 
-  border_remove(x = .) %>%
-  border_outer(., part="all", border = big_border ) %>%
-  border_inner_h(., part="all", border = small_border ) %>%
-  border_inner_v(., part="all", border = small_border ) %>%
-  set_formatter(values = funs) %>%
-  fontsize(., size = 8, part = "header") %>%
-  fontsize(., j=1, size = 8) %>%
-  bg(., part = "header", bg = "white"  ) %>%
-  bg(., j = 1, bg = "white"  ) %>%
-  autofit() 
-
-ft
-```
-:::
-
-::: {.panel}
-## Match-up Table {.panel-name}
-
-Min 10 games for each MU
-
-```{r reactable-tbl}
-require(reactable)
-require(htmltools)
-require(crosstalk)
-
-#'Quick link for a MUtbl for testing
-#'##################################
-# file.MU.DT   <- list.files(path = file.path("C:","LlorR","data","clean" ), pattern = "MUtbl_", full.names = T) %>% max()
-# MUtbl <- fread(file.MU.DT, header = T, na.strings = c("", NA))
-
-# The fs object will inject css into your page.
-# if (requireNamespace("crosstalk", quietly = TRUE)) {
-data <- crosstalk::SharedData$new(MUtbl %>%
-                       filter(muGames>=10) %>%
-                       select(-LCI,-UCI,-okCI,-direction))
-
-bscols(
-  widths = c(3, 9),
-  list(
-    crosstalk::filter_select("player", "Player", data, ~player),
-    crosstalk::filter_select("opponent", "Opponent", data, ~opponent),
-    crosstalk::filter_slider("muWin",   "#Win", data, ~muWin, width = "100%",step = 50,min = 0),
-    crosstalk::filter_slider("muGames", "#Games", data, ~muGames, width = "100%",step = 100,min = 0),
-    crosstalk::filter_slider("muWR", "WinRate", data, ~muWR, width = "100%",step=0.01,min = 0,max = 1)
-  ),
-  reactable(data,
-            bordered = TRUE,
-            highlight = TRUE,
-            striped = TRUE,
-            searchable = TRUE,
-            # filterable = TRUE,
-             defaultColDef = colDef(
-              style = list(fontWeight = 500, color = "black",
-                       fontFamily = "Work Sans, sans-serif", fontSize = "11px"),
-              align = "center",
-              minWidth = 120
-              # headerStyle = list(background = "steelblue",color="white")
-            ),
-            columns = list(
-              player   = colDef(name = "Player",minWidth = 120),
-              opponent = colDef(name = "Opponent"  ,minWidth = 120),
-              muWin    = colDef(name = "#Win", style = list( fontSize = "15px") ),
-              muGames  = colDef(name = "#Games", style = list( fontSize = "15px")),
-              muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "15px") ),
-              CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px"))
-              )
-            # theme = reactableTheme(
-            #     borderColor = "#dfe2e5",
-            #     stripedColor = "#f6f8fa",
-            #     highlightColor = "#f0f5f9",
-            #     cellPadding = "8px 12px",
-            #     style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
-            #     searchInputStyle = list(width = "100%"))
-    )
-  )
-```
-:::
-:::::
-<!-- Close MU panelset -->
-:::
-
 # Deck Structure of the week {.tabset .tabset-fade .tabset-pills}
 
 ```{r deck-structure-prepare}
@@ -1121,7 +978,7 @@ make_color_pal <- function(colors, bias = 1) {
   function(x) rgb(get_color(x), maxColorValue = 255)
 }
 
-good_color <- make_color_pal(c("white", "white", "steelblue"))
+good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ```
 
 ::::: {.panelset}
@@ -1133,8 +990,9 @@ SubDeck_deck_code <- LoR.Melt.Matches.RMD %>%
   filter( player == "Draven / Sion (NX/PZ)" ) %>%
   pull(deck_code)
 
-get_deck_structure(SubDeck_deck_code) %>%
-  # str()
+data <- get_deck_structure(SubDeck_deck_code)
+
+data %>%
   reactable(.,
             bordered = TRUE,
             highlight = TRUE,
@@ -1155,6 +1013,7 @@ get_deck_structure(SubDeck_deck_code) %>%
               # format = colFormat(digits = 1),
               # fontSize = "15px",
               headerStyle = list(background = "whitesmoke",color="black", align = "center"),
+              
               align = "center",
               minWidth = 120
               ) ,
@@ -1164,9 +1023,12 @@ get_deck_structure(SubDeck_deck_code) %>%
               `3`      = colDef(name = "3",format = colFormat(percent = TRUE,digits = 1) ),
               `2`      = colDef(name = "2",format = colFormat(percent = TRUE,digits = 1) ),
               `1`      = colDef(name = "1",format = colFormat(percent = TRUE,digits = 1) )
-              # .rownames = colDef(name = "n", sortable = TRUE, align = "left")
+              ),
+            columnGroups = list(
+              colGroup(name = glue::glue("Draven Sion (PZ)"), columns = c("name"), headerStyle = list(background = "whitesmoke",color="black", align = "center") ),
+              colGroup(name = glue::glue("Playrate (N: {length(SubDeck_deck_code)})"), columns = c("playrate","3","2","1"),headerStyle = list(background = "whitesmoke",color="black", align = "center"))
+              )
             )
-  )
 ```
 :::
 
@@ -1183,7 +1045,7 @@ get_deck_structure(SubDeck_deck_code) %>%
 
 ```{r data-aggregation}
 DT.Aggreation <- WR.DT %>%
-  filter( nGames > 200 ) %>%
+  filter( nGames > 100 ) %>%
   # filter( playrate > 0.01 ) %>%
   mutate( freq_ind    = scale_quantile(playrate) ) %>%
   mutate( wr_ind      = scale_quantile(WR) ) %>%
