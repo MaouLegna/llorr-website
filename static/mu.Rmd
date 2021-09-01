@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (Patch 2.12/2.13)"
+title: "Match Ups Data (Patch 2.14)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -12,9 +12,11 @@ output:
     orientation: row
 # date: "`r Sys.Date()`"
 params:
-  start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
-  end:   "2021-08-25 21:00:00" #UTC tz / 'current' week end
-  skip:  1850000  # Patch 2.11 - after removing a few games
+  # start: "2021-07-14 21:00:00" #UTC tz / 'previous' patch start
+  # end:   "2021-08-25 21:00:00" #UTC tz / 'previous' patch end
+  start: "2021-08-25 21:00:00" #UTC tz / 'current' patch start
+  end:   "2021-09-14 21:00:00" #UTC tz / 'current' patch end
+  skip:  2800000  # Patch 2.14
 ---
 
 ```{r setup, include=FALSE}
@@ -40,7 +42,6 @@ pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
                flextable,officer,scales,htmltools,
                downloadthis)
 ```
-
 
 ```{r flex-setup}
 options(reactable.theme = reactableTheme(
@@ -84,7 +85,9 @@ file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
 header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
 LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+```
 
+```{r process-data}
 #' Metl tbl
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
@@ -130,7 +133,6 @@ WR.DT <- LoR.Melt.Matches.RMD %>%
 #' MU tbl the date is already filtered
 #'####################################
 MUtbl <- LoR.Melt.Matches.RMD %>%
-  # filter(game_version>"live_2_9" ) %>%
   filter( game_outcome != "tie" ) %>%
   select( player,opponent,game_outcome,server,game_version,factions ) %>%
   # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
@@ -150,23 +152,22 @@ MUtbl <- LoR.Melt.Matches.RMD %>%
   # removing ~extra variables
   select(-lower,-upper) %>%
   left_join(.,WR.DT[,c("player","playrate")],by="player")
+```
+
+# Table {data-icon="fa-table"}
+
+```{r}
+nfilter <- 10
 
 MUtbl.tot <- sum(MUtbl$muGames)
 
-MUtbl <- MUtbl %>%
-  # use only the "necessary"
-  filter(muGames >= 100)
-
-# MUtbl <- data.table::fread(file.path("C:","LlorR","data","clean","MU30tbl.csv"), header = T, na.strings = c("", NA))
-
-data <- SharedData$new(MUtbl)
+data <- SharedData$new(MUtbl %>%
+   filter(muGames >= nfilter)
+)
 ```
 
-Table {data-icon="fa-table"}
-===
 
-Inputs {.sidebar}
------------------------------------------------------------------------
+## Inputs {.sidebar}
 
 ### Filters
 
@@ -188,8 +189,7 @@ crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
 # )
 ```
 
-Row {data-heigth=750}
------------------------------------------------------------------------
+## Row {data-heigth="750"}
 
 ### MU table
 
@@ -264,14 +264,15 @@ reactable(.,
     )
 ```
 
-Row
------------------------------------------------------------------------
+## Row
 
-### Number of Games (min 100 games)
+### Number of Games (min 10 games for each MU)
 
 ```{r value-nGames}
-nGames = sum(MUtbl$muGames)
-# nGames
+nGames = MUtbl %>% 
+  filter( muGames > nfilter ) %>%
+  summarise(n = sum(muGames)) %>%
+  pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
                         caption = glue::glue("out of a total of {MUtbl.tot} - min 100 games"),
@@ -287,8 +288,7 @@ flexdashboard::valueBox(Sys.Date(),
          color = "lightgreen")
 ```
 
-Grid {data-icon="fa-file-image"}
-=====
+# Grid {data-icon="fa-file-image"}
 
 ```{r get-WR-Top}
 mu <- 20
@@ -302,9 +302,12 @@ TopCC <- MUtbl %>%
   pull() %>% 
   sort()
 
-WRTop10 <- MUtbl %>%
-  filter(player %in% TopCC & opponent %in% TopCC) %>%
-  arrange(player,opponent)
+
+WRTopCC <- tibble::tibble( 
+  player = rep(TopCC,each=mu),
+  opponent = rep(TopCC,mu)
+  ) %>%
+  left_join(MUtbl, by = c("player","opponent"))
 ```
 
 <!-- The win rates on the grid are among the `r mu` most played champion combination. -->
@@ -319,7 +322,7 @@ dummy_fun <- function(x){
 ```
 
 ```{r prepare-flex-grid}
-grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
+grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
 
 colnames(grid) <- TopCC
@@ -354,8 +357,9 @@ ft <- grid %>%
   border_inner_h(., part="all", border = small_border ) %>%
   border_inner_v(., part="all", border = small_border ) %>%
   set_formatter(values = funs) %>%
-  fontsize(., size = 8, part = "header") %>%
-  fontsize(., j=1, size = 8) %>%
+  fontsize(., size = 7.5, part = "header") %>%
+  fontsize(., j=1, size = 7.5) %>%
+  bold(., j=1, bold = TRUE) %>%
   bg(., part = "header", bg = "white"  ) %>%
   bg(., j = 1, bg = "white"  ) %>%
   width(., width = 1.5)
@@ -363,24 +367,44 @@ ft <- grid %>%
 # autofit()
 ```
 
-```{r print-flex, echo=FALSE, message=FALSE, warning=FALSE}
+```{r print-flex}
 save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
 ft
 ```
 
-Downloads and Informations {data-orientation=columns data-icon="fa-info-circle"}
-===================================== 
+# Grid 2.12/2.13 {data-icon="fa-file-image"}
 
-Download {data-width=200}
------------------------------------------------------------------------
+![](images/mugrid_patch_2_12to13.png)
+
+# Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
+
+## Download {data-width="200"}
 
 ### Match Ups Data
 
 ```{r}
 MUtbl %>%
+  filter( muGames > 10 ) %>%
   select(player,opponent,muWin,muGames,muWR) %>%
   download_this(.,
               button_label = "Download MU data as .csv",
+              output_name = "mutable",
+              button_type = "success",
+              has_icon = TRUE,
+              icon = "fa fa-save"
+              )
+```
+
+### Match Ups Data (2.12/2.13)
+
+```{r}
+# MUtbl %>%
+#   filter( muGames > 10 ) %>%
+#   fwrite( "data/mutbl_patch_2_12to13.csv" )
+fread("data/mutbl_patch_2_12to13.csv") %>%
+  select(player,opponent,muWin,muGames,muWR) %>%
+  download_this(.,
+              button_label = "Download MU data (2.12/2.13) as .csv",
               output_name = "mutable",
               button_type = "success",
               has_icon = TRUE,
@@ -402,8 +426,21 @@ download_file(
 )
 ```
 
-Column {data-width=800}
------------------------------------------------------------------------
+### Match Ups Grid (2.12/2.13)
+
+```{r}
+download_file(
+  path = file.path("images/mugrid_patch_2_12to13.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid (2.12/2.13) as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+## Column {data-width="800"}
 
 ### How to use
 
@@ -411,23 +448,25 @@ Column {data-width=800}
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
-* **Player** - archetype of the player
+-   **Player** - archetype of the player
 
-* **Opponent** - archetype of the opponent
+-   **Opponent** - archetype of the opponent
 
-* **#Win** - min number of wins for a match-up
+-   **\#Win** - min number of wins for a match-up
 
-* **#Games** - min number of games for a match-up
+-   **\#Games** - min number of games for a match-up
 
-* **Regions** - regions of the 'Player' deck.
+-   **Regions** - regions of the 'Player' deck.
 
-* **MU-Direction** - simply if the MU is positive (win rate > 50%) or negative (win rate < 50%) for the 'Player' or tie (win rate = 50%)
+-   **MU-Direction** - simply if the MU is positive (win rate \> 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%)
 
 #### General info
 
 When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
 
-`r kableExtra::text_spec("IMPORTANT :", color = "red")` there is global problem regarding the Riot-API (also affecting LoL) where it's not possible to collect most (almost all) recent games. In the case of all Masters players there is just no new games that's updated after a certain threshold. While I can currently search at random for some games just to have some current-patch values, it wouldn't a representation of the Master ladder which is my core popular. Heck, I wouldn't even be able to tell what I'm actually analyzing and this would be wrong on so many levels.
+`r kableExtra::text_spec("UPDATE:", color = "red")` the API problem has been fixed so I can return to collect the games. Since it would be a shame to trow away all the old data since I have only few games with the old patch I added the grid for the previous cycle of buff/nerfs as it can still provide informations for MU that didn't change from the release of BandleCity (looking at you Soraka).
+
+While I could add the table too it would probably clog the page too much and distract from the current data. But as an alternative I added the change to download the old-patch data if one really needs them.
 
 <!-- ### General update -->
 

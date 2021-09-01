@@ -71,7 +71,7 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
 
 This series of article/analysis are meant to rappresent my journey in how to define archetypes.
 
-Archetypes in Legends of Runeterra are *currently* defined by me by the combinations of champions and regions. While a lazy method it's(was?) a first approximation that worked decently aside for some exception while always knowing the disadvantage that the number of possible classes will is probably too high compared to the number of available games (at least at Master). On the other side of the spectrum the most restricting classification would with a categorical (maybe even just dichotomical) variable, something like using the **Super Archetypes** from viciousSyndicate (vS): *Initiative* and *Resource* decks [^1]. Every other archetype classification is in immediatiate and it's a vast ocean of possibilities with no 'correct' solution.
+Archetypes in Legends of Runeterra are *currently* defined by me by the combinations of champions and regions. While it's a lazy method, it's (was?) a first approximation that worked decently aside for some exception. A limitation I always knew is that the number of possible archetypes increase too rapidaly with the release of new cards and will probably get too high compared to the number of available games (at least at Master) sooner or later. On the other side of the spectrum the most restricting classification would with a categorical (maybe even just dichotomical) variable, something like using the **Super Archetypes** from viciousSyndicate (vS): *Initiative* and *Resource* decks [^1]. Every other archetype classification is in immediatiate and it's a vast ocean of possibilities with no 'correct' solution.
 
 [^1]: their definition, example and so on will be a topic for the future.
 
@@ -358,12 +358,15 @@ grViz("
 * If true, and only then, the following and final step would then be accerting the similarity/equality of Sivir/Akshan with Sivir/Zed ( black arrow )
 
 ```{r veen}
-# install.packages("venneuler")     # Install & load venneuler package
-require("venneuler")
+require(eulerr)
 
-plot(venneuler(c(AkshanSivir = 20,          # Draw pairwise venn diagram
-                 SivirZed = 20,
-                 "AkshanSivir&SivirZed" = 5)))
+tbl<-tibble(
+    AkshanSiviZed=rep(1, 5),
+    AkshanSivir=c(1,1,0,0,0)
+)
+tbl
+
+plot(euler(tbl))
 ```
 Or to make it simpler:
 
@@ -421,8 +424,7 @@ rm_asz <- function(deck_code) {
 How to approach this problem? There are several options, both that I may can think and that I cannot currently imagine. Since this is the foundation of the tools I want to use in the future for defining archetypes it will use clustering methods. By using clustering a distance is necessary and a distance is indeed the tool I'll mainly use for the analysis.
 
 
-
-```{r define-functions}
+```{r modify-deckcode}
 ASZ.rm.codes <- ASZ %>%
   tabyl() %>%
   arrange(desc(n)) %>%
@@ -461,6 +463,30 @@ for (i in 1:length(codes)) {
 deck.matrix <- deck.matrix %>% 
   mutate( across(everything(), ~replace_na(.x, 0))  )
 ```
+```{r}
+# require(igraph)
+# 
+# # Create Igraph object
+# graph <- graph_from_adjacency_matrix(deck.matrix, mode="undirected")
+# 
+# # Make a tidygraph object from it. Igraph methods can still be called on it.
+# tbl_graph <- as_tbl_graph(graph)
+# 
+# hub_id <- which.max(degree(graph))
+# 
+# # Add spacial positions, hub distance and degree information to the nodes.
+# tbl_graph <- tbl_graph %>%
+#   activate(nodes) %>%
+#   mutate(
+#     x = x,
+#     y = y,
+#     hub_dist = replace_na(bfs_dist(root = hub_id), Inf),
+#     degree = degree(graph),
+#     friends_of_friends = replace_na(local_ave_degree(), 0),
+#     cluster = as.factor(group_infomap())
+#   )
+```
+
 
 ```{r}
 DSim <- eisen_cos.sim(deck.matrix)
@@ -488,19 +514,15 @@ DSim.tbl |>
   geom_boxplot() +
   theme(legend.position = "none")
   xlim(c(0,1))
-  
-  
-
-   
 ```
 
 
 ```{r}
-DSim.tbl %>%
-  group_by(group) %>%
-  summarise(across(.fns = list(mean = mean, sd = sd, skew = skew), .names = "{col}_{fn}"))
-
-DSim.tbl %>%
-  ggplot(aes(value, group = group, color = group)) +
-  stat_ecdf()
+# DSim.tbl %>%
+#   group_by(group) %>%
+#   summarise(across(.fns = list(mean = mean, sd = sd, skew = skew), .names = "{col}_{fn}"))
+# 
+# DSim.tbl %>%
+#   ggplot(aes(value, group = group, color = group)) +
+#   stat_ecdf()
 ```
