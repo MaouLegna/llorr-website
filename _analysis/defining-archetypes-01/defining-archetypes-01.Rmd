@@ -170,21 +170,20 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   select(-ends_with("puuid"),-refID)
 ```
 
-The sample is made of `r NROW(LoR.Melt.Matches.RMD)` Ranked games from `r params$start` to `r params$end`, so covering the patch 2.13 after the start of the Ruination Event so that there wouldn't be any change i the card pool in the timeframe analyzed.
+The sample is made of `r NROW(LoR.Melt.Matches.RMD)` Ranked games from `r params$start` to `r params$end`, so covering the patch 2.13 after the start of the Ruination Event so that there aren't any changes in the card pool in the timeframe analyzed by amount of cards or balance changes.
 
 ```{r ASZ}
 #' Akshan / Sivir / Zed abs freq
 ################################
-nGames <- LoR.Melt.Matches.RMD %>%
-  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
-  NROW()
-
-ASZ.DT <- LoR.Melt.Matches.RMD %>%
-  filter( player != "Akshan / Sivir (DE/SH)" ) %>%
+ASZ.DT <- LoR.Melt.Matches.RMD |>
+  filter( player != "Akshan / Sivir (DE/SH)" ) |>
   filter( champions == "Akshan / Sivir / Zed" )
 
 LoR.Melt.Matches.RMD %<>%
   filter( player != "Akshan / Sivir (DE/SH)" )
+
+nGames <- LoR.Melt.Matches.RMD |>
+  NROW()
 ```
 
 Because there was the raise of the Demacian deck with Akshan/Sivir, these decks are removed as they could create a few problem in the following steps. The sample is reduced to `r nGames` games
@@ -228,7 +227,8 @@ tbl %>%
   )
 ```
 
-```{r}
+```{r champ-data}
+#' nchamp freq
 tblData <- LoR.Melt.Matches.RMD %>%
   tabyl(nChamp)
 
@@ -243,7 +243,6 @@ nChamp3 <- tblData %>%
   filter(nChamp == 3) %>%
   pull(n)
   
-
 #' freq of decks with 3 champs among decks with Sivir Zed
 ##########################################################
 SZ3.percent <- LoR.Melt.Matches.RMD %>%
@@ -276,101 +275,74 @@ tbl
 
 `r kableExtra::text_spec("Note :", color = "red")` The percetages are column-wise
 
-The overall prevalence of '3 champions deck' while it may looks higher than common believes (`r nChamp3.percent`) the value is mostly carried by the Akshan/Sivir/Zed which amoutn to almost half the cases of 3 champs decks `r round(NROW(ASZ.DT)/nChamp3,3)*100`%
+The overall prevalence of '3 champions deck' is around `r nChamp3.percent`. This value is mostly carried by the ASZ decks which amoutn to almost half the cases of 3 champs decks `r round(NROW(ASZ.DT)/nChamp3,3)*100`%
 
-More specificaly, those `r NROW(ASZ.DT)` ASZ decks are the main subset of both SZ decks when using 3-champions (`r round(NROW(ASZ.DT)/SZ3,3)*100`% of the cases) and for AZ decks too (`r round(NROW(ASZ.DT)/SA3,3)*100`% of the cases). In other words, it seems the ASZ are indeed almost always the case of the 3-champion option when going from two to three champions starting from SZ or AS.
+More specificaly, those `r NROW(ASZ.DT)` ASZ decks are the main subset of both SZ decks when using 3-champions (`r round(NROW(ASZ.DT)/SZ3,3)*100`% of the cases) and for AZ decks too (`r round(NROW(ASZ.DT)/SA3,3)*100`% of the cases). In other words, when a third champion is added to SZ or AZ decks the result is almost always an ASZ, meaning ASZ seems a common ground to both these two archetypes. But are ASZ just a common ground or the general cases are already almost equal (AZ and SZ).
 
 ```{r print-gt-SZ-three-champ}
-SZgt <- LoR.Melt.Matches.RMD %>%
-  filter(nChamp %in% 3 ) %>%
-  filter( str_detect(champions,"Sivir") & str_detect(champions,"Zed") ) %>%
-  select(champions) %>%
-  separate_rows(champions,sep = " / ") %>%
-  janitor::tabyl(champions) %>%
-  arrange(desc(n)) %>%
-  mutate( percent = percent*3 ) %>%
-  filter( champions %!in% c("Sivir","Zed") ) %>%
-  select(-n) %>%
-  gt() %>%
-  tab_header(
-    title = "Champions Frequencies",
-    subtitle = "Prevalance of the 'third' champion in Sivir/Zed with 3 Champions"
-  ) %>%
-  fmt_percent(
-    columns = percent,
-    decimals = 3
-  ) %>%
-  cols_label(
-    champions = md(str_to_title("**champions**")),
-    percent = md(str_to_title("**percent**"))
-  ) 
-
-SZgt %>%
-  tab_options(
-    table.background.color = "transparent",
-    table.font.color = "black",
-    table.font.color.light = "black"
-  )
-
-SZgt
+# SZgt <- LoR.Melt.Matches.RMD %>%
+#   filter(nChamp %in% 3 ) %>%
+#   filter( str_detect(champions,"Sivir") & str_detect(champions,"Zed") ) %>%
+#   select(champions) %>%
+#   separate_rows(champions,sep = " / ") %>%
+#   janitor::tabyl(champions) %>%
+#   arrange(desc(n)) %>%
+#   mutate( percent = percent*3 ) %>%
+#   filter( champions %!in% c("Sivir","Zed") ) %>%
+#   select(-n) %>%
+#   gt() %>%
+#   tab_header(
+#     title = "Champions Frequencies",
+#     subtitle = "Prevalance of the 'third' champion in Sivir/Zed with 3 Champions"
+#   ) %>%
+#   fmt_percent(
+#     columns = percent,
+#     decimals = 3
+#   ) %>%
+#   cols_label(
+#     champions = md(str_to_title("**champions**")),
+#     percent = md(str_to_title("**percent**"))
+#   ) 
+# 
+# SZgt %>%
+#   tab_options(
+#     table.background.color = "transparent",
+#     table.font.color = "black",
+#     table.font.color.light = "black"
+#   )
+# 
+# SZgt
 ```
-Lastly, just to give a bit of additional info, the previous tables shows the relative frequencies of the third champion of choice in decks with three champions with Sivir and Zed
-
 # Methods
 
-This section illustrate the conceptual framework I'll (would) use to tackle the question for this article.
+This section illustrate the mathematical/statistical theory and application I'll use to tackle the question the article's question.
 
-While the question is about the similarity between ASZ and SZ decks what I'll try to look at are the following relationships:
+But before that, what are the steps I want to follows?
 
-```{r}
-require(DiagrammeR)
-
-grViz("
-      digraph TB {
-
-      # node definitions with substituted label text
-      node [fontname = Arial, shape = oval, color = Gold, style = filled, fontcolor = Black]
-      a [label = '@@1']
-      
-      node [fontname = Arial] // sets as circles
-      b [label = '@@2']
-      c [label = '@@3']
-      
-      subgraph {
-        rank = same; b; c;
-      }
-      
-      # add node statements
-      a -> {b,c} [color = green, label = 'subset of ASZ']
-      b -> a [color = red]
-      c -> a [color = red]
-      
-      b->c 
-      c->b 
-      
-      }
-      [1]: 'Akshan/Sivir/Zed'
-      [2]: 'Sivir/Akshan'
-      [3]: 'Sivir/Zed'
-      
-      ")
-```
-* The first step would be finding whenever Sivir/Zed (SZ) and Sivir/Akshan (SA) decks are a specific case of Akshan/Sivir/Zed (ASZ) decks. ( green arrow )
-
-* If true, and only then, the following and final step would then be accerting the similarity/equality of Sivir/Akshan with Sivir/Zed ( black arrow )
-
-```{r veen}
+```{r venn-AS}
 require(eulerr)
 
 tbl<-tibble(
-    AkshanSiviZed=rep(1, 5),
-    AkshanSivir=c(1,1,0,0,0)
+    AkshanSiviZed=rep(1, 10),
+    AkshanSivir=c(1,1,1,1,1,0,0,0,0,0)
 )
-tbl
+# tbl
 
 plot(euler(tbl))
 ```
-Or to make it simpler:
+
+```{r venn-SZ}
+tbl<-tibble(
+    AkshanSiviZed=rep(1, 10),
+    AkshanSivir=c(1,1,1,1,1,0,0,0,0,0)
+)
+# tbl
+
+plot(euler(tbl))
+```
+
+As mentioned I first need to see if the hyphothesis in rappresented in the veen diagrams
+
 
 * The first step is seeking if there is indeed an intersection between AkshanSivir and SivirZed
 
