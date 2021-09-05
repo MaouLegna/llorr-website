@@ -109,7 +109,8 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   value.name = str_sub(
     names(select(.,ends_with("_1")))
     ,end = -3)
-  )
+  ) %>%
+  filter( !(game_start_time_utc < as.POSIXct("2021-09-01 21:00:00", tz = "UTC") & ( str_detect(factions,"Shurima") | str_detect(factions,"Ionia") ))  )
 # %>%
 #   #' finish 'process' data
 #   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
@@ -275,7 +276,7 @@ nGames = MUtbl %>%
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        caption = glue::glue("out of a total of {MUtbl.tot} - min 100 games"),
+                        caption = glue::glue("out of a total of {MUtbl.tot} - min 10 games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
