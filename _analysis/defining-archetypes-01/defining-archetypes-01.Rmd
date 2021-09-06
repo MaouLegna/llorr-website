@@ -3,7 +3,7 @@ title: "DEFINING ARCHETYPES #1: LOOKING AT THE SIMILARITY OF AKSHAN/SIVIR/ZED DE
 description: |
   First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra
 base_url: https://llorr-stats.netlify.app
-preview: "images/01-ASZAS.png"
+preview:
 author:
   - name: Valentino (Legna) Vazzoler
 date: 09-06-2021
@@ -113,7 +113,7 @@ meta() %>%
   meta_social(
     title = "DEFINING ARCHETYPES #1: LOOKING AT THE SIMILARITY OF AKSHAN/SIVIR/ZED DECKS WITH SIMILAR ARCHETYPES",
     url = "https://llorr-stats.netlify.app/",
-    image = "./images/archetypes/01-ASZSZ.png",
+    image = "images/archetypes/A01-ASZSZ.png",
     image_alt = "ASZSZ",
     og_type = "website",
     og_author = "Legna",
@@ -140,10 +140,11 @@ Archetypes in Legends of Runeterra are *currently* defined by me by the combinat
 
 As everything needs to be done step by step, I'll start with what was pointed to me a few weeks ago:
 
-```{r tweet1, preview=FALSE}
-require(tweetrmd)
-tweet_screenshot(tweet_url("drlor4", "1420488109603442688"),
-                 maxwidth = 400)
+```{r tweet1}
+# require(tweetrmd)
+# tweetrmd::tweet_screenshot(tweetrmd::tweet_url("drlor4", "1420488109603442688"),maxwidth = 400, file="./images/archetypes/tweet1-1.png")
+# include_graphics("images/archetypes/tweet1-1.png")
+tweetrmd::include_tweet("https://twitter.com/drlor4/status/1420488109603442688",plain = TRUE)
 ```
 
 Around the times Dragons and Overwhelm (SH/FR) decks turned into legit meta options, decks with 3 champions have become more widely used and they are their *acceptance* as legit option has increased, no more being just a bad choice by default.
@@ -774,7 +775,7 @@ DSim.tbl_1 |>
                   subtitle = 'ASZ vs AS decks',caption = 'cosine distances between the deckcodes that accounts for at least 50% of the games played') +
   plot_layout(guides = 'auto', ncol = 2,widths = c(6, 4))
 
-ggsave("./images/archetypes/01-ASZAS.png")
+ggsave("./images/archetypes/A01-ASZAS.png")
 ```
 ```{r ASZ-SZ}
 deck.matrix <- LoR.Card$cardCode %>% purrr::map_dfc(setNames, object = list(numeric()))
@@ -817,7 +818,7 @@ DSim.tbl_2 |>
   flextable::set_caption(., "Summary statistic ASZvsSZ decks", autonum = officer::run_autonum(seq_id = "tab", bkm = "ASZvsSZ"))
 ```
 
-```{r plot-ASZ-SZ, fig.cap="distribution of cosine distances for ASZ vs SZ decks"}
+```{r plot-ASZ-SZ, fig.cap="distribution of cosine distances for ASZ vs SZ decks", preview=TRUE}
 DSim.tbl_2 |>
   ggplot(aes(x = value, fill=group)) +
   geom_density() +
@@ -845,7 +846,7 @@ DSim.tbl_2 |>
                   subtitle = 'ASZ vs SZ decks',caption = 'cosine distances between the deckcodes that accounts for at least 50% of the games played') +
   plot_layout(guides = 'auto', ncol = 2,widths = c(6, 4))
 
-ggsave("./images/archetypes/01-ASZSZ.png")
+ggsave("./images/archetypes/A01-ASZSZ.png")
 ```
 And lastly we show the result of the ANOVA applied first for AZ decks
 
