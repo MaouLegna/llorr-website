@@ -3,10 +3,10 @@ title: "DEFINING ARCHETYPES #1: LOOKING AT THE SIMILARITY OF AKSHAN/SIVIR/ZED DE
 description: |
   First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra
 base_url: https://llorr-stats.netlify.app
-preview: "images/preview-mastery.png"
+preview: "images/01-ASZAS.png"
 author:
   - name: Valentino (Legna) Vazzoler
-date: 09-01-2021
+date: 09-06-2021
 output:
  distill::distill_article:
     toc: true
@@ -14,7 +14,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 twitter:
   site: "@Maou_Legna"
   creator: "@Maou_Legna"
@@ -58,6 +58,71 @@ xaringanExtra::use_panelset()
 # py_module_available("lor_deckcodes")
 ```
 
+```{r}
+theme_Publication <- function(base_size=14, base_family="helvetica") {
+      library(grid)
+      library(ggthemes)
+      (theme_foundation(base_size=base_size, base_family=base_family)
+       + theme(plot.title = element_text(face = "bold",
+                                         size = rel(1.2), hjust = 0.5),
+               text = element_text(),
+               panel.background = element_rect(colour = NA),
+               plot.background = element_rect(colour = NA),
+               panel.border = element_rect(colour = NA),
+               axis.title = element_text(face = "bold",size = rel(1)),
+               axis.title.y = element_text(angle=90,vjust =2),
+               axis.title.x = element_text(vjust = -0.2),
+               axis.text = element_text(), 
+               axis.line = element_line(colour="black"),
+               axis.ticks = element_line(),
+               panel.grid.major = element_line(colour="#f0f0f0"),
+               panel.grid.minor = element_blank(),
+               legend.key = element_rect(colour = NA),
+               legend.position = "bottom",
+               legend.direction = "horizontal",
+               legend.key.size= unit(0.2, "cm"),
+               legend.margin = unit(0, "cm"),
+               legend.title = element_text(face="italic"),
+               plot.margin=unit(c(10,5,5,5),"mm"),
+               strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+               strip.text = element_text(face="bold")
+          ))
+      
+}
+
+scale_fill_Publication <- function(...){
+      library(scales)
+      discrete_scale("fill","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
+
+}
+
+scale_colour_Publication <- function(...){
+      library(scales)
+      discrete_scale("colour","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
+
+}
+```
+
+```{r twitter-meta, echo = FALSE}
+library(metathis)
+meta() %>%
+  meta_description(
+    "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
+  ) %>% 
+  meta_viewport() %>% 
+  meta_social(
+    title = "DEFINING ARCHETYPES #1: LOOKING AT THE SIMILARITY OF AKSHAN/SIVIR/ZED DECKS WITH SIMILAR ARCHETYPES",
+    url = "https://llorr-stats.netlify.app/",
+    image = "./images/archetypes/01-ASZSZ.png",
+    image_alt = "ASZSZ",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
+
+
 ```{r panelset-style}
 xaringanExtra::style_panelset_tabs(font_family = "Roboto",
                                    active_foreground = "white",
@@ -73,11 +138,9 @@ This series of article/analysis are meant to rappresent my journey in how to def
 
 Archetypes in Legends of Runeterra are *currently* defined by me by the combinations of champions and regions. While it's a lazy method, it's (was?) a first approximation that worked decently aside for some exception. A limitation I always knew is that the number of possible archetypes increase too rapidaly with the release of new cards and will probably get too high compared to the number of available games (at least at Master) sooner or later. On the other side of the spectrum the most restricting classification would with a categorical (maybe even just dichotomical) variable, something like using the **Super Archetypes** from viciousSyndicate (vS): *Initiative* and *Resource* decks [^1]. Every other archetype classification is in immediatiate and it's a vast ocean of possibilities with no 'correct' solution.
 
-[^1]: their definition, example and so on will be a topic for the future.
-
 As everything needs to be done step by step, I'll start with what was pointed to me a few weeks ago:
 
-```{r tweet1}
+```{r tweet1, preview=FALSE}
 require(tweetrmd)
 tweet_screenshot(tweet_url("drlor4", "1420488109603442688"),
                  maxwidth = 400)
@@ -88,6 +151,8 @@ Around the times Dragons and Overwhelm (SH/FR) decks turned into legit meta opti
 During the times of that tweet, in the patch 2.12/2.13 there was an higly performing deck with three champions: Akshan/Sivir/Zed (ASZ).
 
 What I aim to answer is related so the suggestion in the tweet : is my current aggregation too strict? Is Sivir/Zed or Akshan/Sivir the same deck as ASZ, only lacking a champion? While by intuition they may looks similar, it's not a proper answer which I tried to respond with this article. [^2]
+
+[^1]: their definition, example and so on will be a topic for the future.
 
 [^2]: I'm aware that the aggregation problem is not limited to cases with three champions, some cases may even be related to a single card like "Feel the Rush" or "ARAM (Howling Abyss)" but as mentioned, one must proceed with baby steps and this is probably a good starting point.
 
@@ -169,8 +234,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
 The sample is made of `r NROW(LoR.Melt.Matches.RMD)` Ranked games from `r params$start` to `r params$end`, so covering the patch 2.12/2.13 after the start of the Ruination Event so that there aren't any changes in the card pool in the timeframe analyzed by amount of cards or balance changes.
 
 Because there was the raise of the Demacian deck with Akshan/Sivir, these decks are removed as they could create a few problem in the following steps. In addition I only consider decks with 6 copies of champions (the max value). This is done to remove the outliers in deck creation and making the sample more homogeneous for a step that will follow.[^3]
-
-[^3]: all deck with no Champion or mono Champion are excluded by default because of this.
 
 ```{r ASZ}
 #' Akshan / Sivir / Zed abs freq
@@ -275,6 +338,8 @@ tbl
 The overall prevalence of '3 champions deck' is around `r nChamp3.percent`. This value is mostly carried by the ASZ decks with `r NROW(ASZ.DT)` games which amoutn to almost half the cases of 3 champs decks `r round(NROW(ASZ.DT)/nChamp3,3)*100`%
 
 More specificaly, those `r NROW(ASZ.DT)` ASZ decks are the main subset of both SZ decks when using 3-champions (`r round(NROW(ASZ.DT)/SZ3,3)*100`% of the cases) and for AZ decks too (`r round(NROW(ASZ.DT)/SA3,3)*100`% of the cases). In other words, when a third champion is added to SZ or AZ decks the result is almost always an ASZ, meaning ASZ seems a common ground to both these two archetypes. But are ASZ just a common ground or the general cases are already almost equal (AZ and SZ).
+
+[^3]: all deck with no Champion or mono Champion are excluded by default because of this.
 
 # Methods
 
@@ -411,21 +476,19 @@ The only differences are the champions and their amount.
 
 Overall there's a similarity of 8 (out of 10) or a distance of 2 (out of 10).
 
-It can proven that this is indeed what it's called a *distance* or *metric* as it has all the necessary properties: 
+It can proven that this is indeed what it's called a *distance* or *metric* as it has all the necessary properties:
 
-* Not-negative codomain, so $[0,Inf)$[^4]. This is true as it's definite in $[0,40]_\mathbb{N}$
+-   Not-negative codomain, so $[0,Inf)$[^4]. This is true as it's definite in $[0,40]_\mathbb{N}$
 
-[^4]: Not actually a properties but a requirement in its definition
+<!-- -->
 
-* $d(x,y) = d(y,x)$ (Simmetry)
+-   $d(x,y) = d(y,x)$ (Simmetry)
 
-* $d(x,x)=0$
+-   $d(x,x)=0$
 
-* $d(x,y)\leq d(x,z)+d(z,y)$	(The Triangle inequality)
+-   $d(x,y)\leq d(x,z)+d(z,y)$ (The Triangle inequality)
 
 <a href="https://twitter.com/drisoth/">Drisoth</a> already showed that it can be used with success in hierarchical clustering (DBSCAN in his case)[^5] to good success.
-
-[^5]: <a href="https://twitter.com/Drisoth/status/1397716499104681984?s=20">Archetypes - Cluster</a>
 
 While a proper metric, there is a problem with this measure that makes us prefer another one. The following example explain the problem with the "counting of cards difference", it could be said that the metric lack subtlety as it doesn't reward decks having a similar distribution of cards' copies as can be seen in the following example:
 
@@ -448,25 +511,27 @@ The *cosine similarity* is defined as:
 
 <!-- @ref(eq:cosine) -->
 
+```{=tex}
 \begin{equation}
 
 \cos(A,B) = \frac{A \cdot B}{||A||_2||B||_2} (\#eq:cosine)
 
 \end{equation}
-
+```
 which can be written as
 
 <!-- @ref(eq:cosinesum) -->
 
+```{=tex}
 \begin{equation}
 
 \cos(A,B) = \frac{\sum{A_iB_i}}{ \sqrt{\sum{A^2_i}} \sqrt{\sum{B^2_i}}} (\#eq:cosinesum)
 
 \end{equation}
-
+```
 The measure runs from 0 (orthogonal vectors or maximum dissimilarity) to 1 (parallel vectors or maximum similarity) so with max and min at the opposite cases of what we want as it is indeed a measure of similarity and not dissimilarity. The *cosine distance* is simply defined as 1 - cosine similarity.
 
-The previous example that would always have same distance 0.2 
+The previous example that would always have same distance 0.2
 
 $$
 \begin{bmatrix}
@@ -545,62 +610,103 @@ For example between an AS and SZ deck the min card-difference would be a single 
 
 In order not to have to account the difference in champions and the number of their copies we will evalutate the difference among all non-champion cards. If the distance is zero or near it, it would mean that aside for the champions of choice the decks are similar giving support to the hypthesis of being part of the same "archetype". Or, to put it differently, we modify out data so that when comparing different deck from different archetypes the possible values for the cosine distance remain in $[0,1]$ helping the comparison in the following steps, without for example having to rescale the values. Because of the choice of removing the champions there's the suggestion of also filtering all cases with less than 6 champions cards. While it's possible to compute the cosine distance with deck of a different number of cards computable for this problem we consider more appropriate working with decks with the same number of cards.
 
+[^4]: Not actually a properties but a requirement in its definition
+
+[^5]: <a href="https://twitter.com/Drisoth/status/1397716499104681984?s=20">Archetypes - Cluster</a>
+
+## Decklist Distance Matrix
+
+We described how to compare single decks but we want to answer a question related to archetypes. To do as such, let's say we want to start with the comparison with AS and ASZ, from the decklist/deckcode of these decks we create the distance matrix among decks.
+
+$A={\begin{pmatrix}A_{{11}}&A_{{12}}\\A_{{21}}&A_{{22}}\end{pmatrix}}$
+
+Where A is a $(n+m)×(n+m)$ simmetric block matrix where
+
+* n is the number of deckcodes/decklist from $Archetype_1$
+
+* m is the number of deckcodes/decklist from $Archetype_2$
+
+* $A_{{11}}$ is the $n×n$ distance matrix relative to deck of $Archetype_1$
+
+* $A_{{22}}$ is the $n×n$ distance matrix relative to deck of $Archetype_2$
+
+* $A_{{12}}=A_{{21}}^T$ is the $n×m$ matrix containing the distances between $Archetype_1$ vs $Archetype_2$
+
+What we propose is to compare the values between $A_{{11}}$, $A_{{22}}$ [^6] and $A_{{12}}$ with the hyphotesis that if the archetypes are indeed similar/equal the distances should have the same mean (and variance) which is equivalent to apply and ANOVA test.
+
+[^6]: As $A_{{11}}$ and $A_{{22}}$ are simmetric matrix relative to the same Archetype's decks we'll only use the values from the upper triangular matrix without diagonal.
+
 # Analysis
 
-```{r archetype-decklist}
-AS <- LoR.Melt.Matches.RMD |>
+```{r n-unique-decks}
+nAS <- LoR.Melt.Matches.RMD |>
   filter( player == "Akshan / Sivir (IO/SH)" ) |>
-  pull(deck_code)
+  distinct(deck_code) |>
+  NROW()
 
-SZ <- LoR.Melt.Matches.RMD |>
+nSZ <- LoR.Melt.Matches.RMD |>
   filter( player == "Sivir / Zed" ) |>
-  pull(deck_code)
+  distinct(deck_code) |>
+  NROW()
 
-ASZ <- LoR.Melt.Matches.RMD |>
+nASZ <- LoR.Melt.Matches.RMD |>
   filter( player == "Akshan / Sivir / Zed" ) |>
-  pull(deck_code)
+  distinct(deck_code) |>
+  NROW()
 ```
 
 ```{r define-functions}
-rm_asz <- function(deck_code) {
-  deck_code %>%
-  # "CMCACAICBQAQEAQFAEBQEGIGAQDRIJRWG5OWOAYBAMBAUAIEA6BACAYBAILCKMICAECAPCQBAIAQECI2" %>%
-    lordecks::get_decklist_from_code() |>
-    dplyr::filter( cardcode %!in% c("01IO009","04SH120","04SH130") ) |>
-    lordecks::get_code_from_decklist_df()
-}
+# Don't need I just need to set the values of the card column to 0
+#
+# rm_asz <- function(deck_code) {
+#   deck_code %>%
+#   # "CMCACAICBQAQEAQFAEBQEGIGAQDRIJRWG5OWOAYBAMBAUAIEA6BACAYBAILCKMICAECAPCQBAIAQECI2" %>%
+#     lordecks::get_decklist_from_code() |>
+#     dplyr::filter( cardcode %!in% c("01IO009","04SH120","04SH130") ) |>
+#     lordecks::get_code_from_decklist_df()
+# }
 ```
-
 
 ```{r modify-deckcode}
-ASZ.rm.codes <- ASZ %>%
-  tabyl() %>%
-  arrange(desc(n)) %>%
-  mutate( cumFreq = cumsum(percent) ) %>%
-  filter( cumFreq <= 0.50 ) %>%
-  rename("deck_code"=1) %>%
-  pull(deck_code) %>%
-  map_chr(.x = ., ~rm_asz(.x))
+AS.half <- LoR.Melt.Matches.RMD |>
+  filter( player == "Akshan / Sivir (IO/SH)" ) |>
+  tabyl(deck_code) |>
+  arrange(desc(n)) |>
+  mutate( cumFreq = cumsum(percent) ) |>
+  filter( cumFreq <= 0.50 ) |>
+  # count() # 60
+  pull(deck_code)
 
-SZ.rm.codes <- SZ %>%
-  tabyl() %>%
-  arrange(desc(n)) %>%
-  mutate( cumFreq = cumsum(percent) ) %>%
-  filter( cumFreq <= 0.50 ) %>%
-  rename("deck_code"=1) %>%
-  pull(deck_code) %>%
-  map_chr(.x = ., ~rm_asz(.x))
+SZ.half <- LoR.Melt.Matches.RMD |>
+  filter( player == "Sivir / Zed" ) |>
+  tabyl(deck_code) |>
+  arrange(desc(n)) |>
+  mutate( cumFreq = cumsum(percent) ) |>
+  filter( cumFreq <= 0.50 ) |>
+  # count() # 49
+  pull(deck_code)
 
-  # slice_tail(n=10)
+ASZ.half <- LoR.Melt.Matches.RMD |>
+  filter( player == "Akshan / Sivir / Zed" ) |>
+  tabyl(deck_code) |>
+  arrange(desc(n)) |>
+  mutate( cumFreq = cumsum(percent) ) |>
+  filter( cumFreq <= 0.50 ) |>
+  # count() # 10
+  pull(deck_code)
 ```
 
-```{r create-matrix}
-# LoR.Deck.RMD <- paste(paste0("Card","."), str_pad(01:40, 2, pad = "0"),sep="") %>% purrr::map_dfc(setNames, object = list(numeric()))
-# Subset <- LoR.Deck %>% slice_head(n=1) %>% select(starts_with("Card"))
-# DeckRow <- Subset[1,]  %>% unlist(.,use.names = F) %>% table()  
+Not all deckcodes have been used to create the submatrices of the block matrix. The number of *unique deckcodes* for each archetypes was considered too big, relative to the number of games [^7], and as each deck have the same weight there could be risk of not properly rapresenting the distances distribution by using all deckcodes. Only the most frequent deck codes that account for at least 50% of the games have been used `r length(AS.half)` decks for AS, `r length(SZ.half)` decks for SZ, `r length(ASZ.half)` decks for ASZ.
 
+[^7]: `r nAS` decks for AS, `r nSZ` decks for SZ, `r nASZ` decks for ASZ
+
+Two distance matrix have been created for AZ decks vs ASZ decks and SZ decks vs ASZ decks.
+
+Results are provided in Tab:\@ref(tab:ASZvsAS) and Fig:\@ref(fig:plot-ASZ-AS) for the ASZ vs AS decks while for ASZ vs SZ decks in Tab:\@ref(tab:ASZvsSZ) and Fig:\@ref(fig:plot-ASZ-SZ)
+
+```{r ASZ-AS}
 deck.matrix <- LoR.Card$cardCode %>% purrr::map_dfc(setNames, object = list(numeric()))
-codes <- c(ASZ.rm.codes,SZ.rm.codes)
+codes <- c(ASZ.half,AS.half)
 
 for (i in 1:length(codes)) {
   # decklist <- codes[1] %>% get_decklist_from_code()
@@ -608,51 +714,220 @@ for (i in 1:length(codes)) {
   deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
 }
 
-deck.matrix <- deck.matrix %>% 
-  mutate( across(everything(), ~replace_na(.x, 0))  )
+deck.matrix <- deck.matrix |>
+  mutate( across(everything(), ~replace_na(.x, 0))  ) |>
+  mutate( across(c("01IO009","04SH120","04SH130"), ~0)  )
+
+DSim.AS.ASZ <- eisen_cos.sim(deck.matrix)
+
+sub.DSim.1 <- as.matrix(DSim.AS.ASZ)[1:length(ASZ.half),1:length(ASZ.half)]
+sub.DSim.2 <- as.matrix(DSim.AS.ASZ)[(length(ASZ.half)+1):NROW(DSim),(length(ASZ.half)+1):NROW(DSim)]
+sub.DSim.X <- as.matrix(DSim.AS.ASZ)[1:length(ASZ.half),(length(ASZ.half)+1):NROW(DSim)]
+
+DSim.tbl_1 <- rbind(
+  tibble( value = sub.DSim.1[upper.tri(sub.DSim.1)],
+          group = "ASZ" ),
+  tibble( value = sub.DSim.2[upper.tri(sub.DSim.2)],
+          group = "AS" ),
+  tibble( value = sub.DSim.X %>% as.vector(),
+          group = "ASZvsAS" )
+)
 ```
 
-```{r}
-DSim <- eisen_cos.sim(deck.matrix)
+```{r summary-ASZ-AS}
+# require(flextable)
+# library(officer)
+DSim.tbl_1 |>
+  group_by(group) |>
+  summarise(across(.fns = list(mean = mean, sd = sd, skew = psych::skew), .names = "{fn}")) |>
+  rename_all(~str_to_title(.)) |>
+  mutate( across(where(is.numeric), ~round(.,3) ) ) |>
+  # summarise(across(.fns = list(mean = mean, sd = sd, skew = psych::skew), .names = "{col}_{fn}")) |>
+  flextable::flextable() %>%
+  flextable::set_caption(., "Summary statistic ASZvsAS decks", autonum = officer::run_autonum(seq_id = "tab", bkm = "ASZvsAS"))
+```
 
-sub.DSim.1 <- as.matrix(DSim)[1:length(ASZ.rm.codes),1:length(ASZ.rm.codes)]
-sub.DSim.2 <- as.matrix(DSim)[(length(ASZ.rm.codes)+1):NROW(DSim),(length(ASZ.rm.codes)+1):NROW(DSim)]
-sub.DSim.X <- as.matrix(DSim)[1:length(ASZ.rm.codes),(length(ASZ.rm.codes)+1):NROW(DSim)]
+```{r plot-ASZ-AS, fig.cap="distribution of cosine distances for ASZ vs AS decks"}
+DSim.tbl_1 |>
+  ggplot(aes(x = value, fill=group)) +
+  geom_density() +
+  theme(legend.position = "bottom") +
+  xlim(c(0,0.5)) +
+  # envalysis::theme_publish()
+  ggsci::scale_fill_npg() +
+  # ggsci::scale_fill_jama() +
+  # scale_fill_Publication() +
+  theme_Publication() +
+  labs(x = "Distance") +
 
-DSim.tbl <- rbind(
+DSim.tbl_1 |>
+  # mutate( group = factor(group) ) |>
+  ggplot(aes(x = group, y = value, fill=group)) +
+  geom_boxplot() +
+  ylim(c(0,0.5)) +
+  theme(legend.position = "none") +
+  coord_flip() +
+  ggsci::scale_fill_npg() +
+  theme_Publication() +
+  labs(y = "Distance", x = "") +
+  plot_annotation(title = 'Distances distribution',
+                  subtitle = 'ASZ vs AS decks',caption = 'cosine distances between the deckcodes that accounts for at least 50% of the games played') +
+  plot_layout(guides = 'auto', ncol = 2,widths = c(6, 4))
+
+ggsave("./images/archetypes/01-ASZAS.png")
+```
+```{r ASZ-SZ}
+deck.matrix <- LoR.Card$cardCode %>% purrr::map_dfc(setNames, object = list(numeric()))
+codes <- c(ASZ.half,SZ.half)
+
+for (i in 1:length(codes)) {
+  # decklist <- codes[1] %>% get_decklist_from_code()
+  decklist <- codes[i] %>% get_decklist_from_code()
+  deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
+}
+
+deck.matrix <- deck.matrix |>
+  mutate( across(everything(), ~replace_na(.x, 0))  ) |>
+  mutate( across(c("01IO009","04SH120","04SH130"), ~0)  )
+
+DSim.SZ.ASZ <- eisen_cos.sim(deck.matrix)
+
+sub.DSim.1 <- as.matrix(DSim.SZ.ASZ)[1:length(ASZ.half),1:length(ASZ.half)]
+sub.DSim.2 <- as.matrix(DSim.SZ.ASZ)[(length(ASZ.half)+1):NROW(DSim),(length(ASZ.half)+1):NROW(DSim)]
+sub.DSim.X <- as.matrix(DSim.SZ.ASZ)[1:length(ASZ.half),(length(ASZ.half)+1):NROW(DSim)]
+
+DSim.tbl_2 <- rbind(
   tibble( value = sub.DSim.1[upper.tri(sub.DSim.1)],
           group = "ASZ" ),
   tibble( value = sub.DSim.2[upper.tri(sub.DSim.2)],
           group = "SZ" ),
   tibble( value = sub.DSim.X %>% as.vector(),
-          group = "Cross" )
+          group = "ASZvsSZ" )
 )
+```
 
-DSim.tbl |>
+```{r summary-ASZ-SZ}
+DSim.tbl_2 |>
+  group_by(group) |>
+  summarise(across(.fns = list(mean = mean, sd = sd, skew = psych::skew), .names = "{fn}")) |>
+  rename_all(~str_to_title(.)) |>
+  mutate( across(where(is.numeric), ~round(.,3) ) ) |>
+  # summarise(across(.fns = list(mean = mean, sd = sd, skew = psych::skew), .names = "{col}_{fn}")) |>
+  flextable::flextable() %>%
+  flextable::set_caption(., "Summary statistic ASZvsSZ decks", autonum = officer::run_autonum(seq_id = "tab", bkm = "ASZvsSZ"))
+```
+
+```{r plot-ASZ-SZ, fig.cap="distribution of cosine distances for ASZ vs SZ decks"}
+DSim.tbl_2 |>
   ggplot(aes(x = value, fill=group)) +
   geom_density() +
   theme(legend.position = "bottom") +
-  xlim(c(0,1)) +
-DSim.tbl |>
-  ggplot(aes(x = value, fill=group)) +
+  xlim(c(0,0.5)) +
+  # envalysis::theme_publish()
+  ggsci::scale_fill_npg() +
+  # ggsci::scale_fill_jama() +
+  # scale_fill_Publication() +
+  theme_Publication() +
+  labs(x = "Distance") +
+  
+DSim.tbl_2 |>
+  # mutate( group = factor(group) ) |>
+  ggplot(aes(x = group, y = value, fill=group)) +
   geom_boxplot() +
-  theme(legend.position = "none")
-  xlim(c(0,1))
+  ylim(c(0,0.5)) +
+  theme(legend.position = "none") +
+  coord_flip() +
+  ggsci::scale_fill_npg() +
+  theme_Publication() +
+  labs(y = "Distance", x = "") +   
+  # guide_area() + 
+  plot_annotation(title = 'Distances distribution',
+                  subtitle = 'ASZ vs SZ decks',caption = 'cosine distances between the deckcodes that accounts for at least 50% of the games played') +
+  plot_layout(guides = 'auto', ncol = 2,widths = c(6, 4))
+
+ggsave("./images/archetypes/01-ASZSZ.png")
+```
+And lastly we show the result of the ANOVA applied first for AZ decks
+
+```{r ANOVA}
+# AS_aov <- aov(value ~ group, data = DSim.tbl_1)
+# look at effects and interactions
+print(summary(aov(value ~ group, data = DSim.tbl_1)))
+# this extracts ANOVA output into a nice tidy dataframe
+# tidy_AS_aov <- tidy(AS_aov)
+```
+Here we don't reject $H_0$ as the p-values (the values the $Pr(>F)$ columns ) is above 0.05 giving support to the hyphotesis that ASZ is just a special case of AS and they can be aggregated.
+
+In th case with SZ decks the ANOVA test gives:
+
+```{r print ANOVA}
+print(summary(aov(value ~ group, data = DSim.tbl_2)))
+```
+Meaning we reject the null hyphotesis $H_0$ that the distances are from the same population and their distribution is the same. But while this is true, we can also see that the value is near 0.5 meaning it would be wiser to check Tukey post-hoc tests.
+
+```{r tukey}
+tukey.test <- TukeyHSD(
+  aov(value ~ group, data = DSim.tbl_2)
+) 
+
+tukey.test
+```
+```{r print-tukey, fig.cap="Tukey Post-Hoc test"}
+# Plot pairwise TukeyHSD comparisons and color by significance level
+ggplot(tidy(tukey.test), aes(colour=cut(adj.p.value, c(0, 0.01, 0.05, 1), 
+                           label=c("p<0.01","p<0.05","Non-Sig")))) +
+  geom_hline(yintercept=0, lty="11", colour="grey30") +
+  geom_errorbar(aes(contrast, ymin=conf.low, ymax=conf.high), width=0.2) +
+  geom_point(aes(contrast, estimate)) +
+  ggsci::scale_color_npg() +
+  theme_Publication() +
+  labs(title = "95% family-wise confidence level",
+       x="Contrast",
+       y="Differences in mean levels of group",
+       colour="")
 ```
 
+We can see that the rejection for the ANOVA test can be explained by the resulting differences for SZ and ASZ decks. But simply looking at the threshold of 0.05 would ignore how this is a very borderline result. So, while rules *are not* meant to be broken (when doing analysis) this is a rare case where we don't blindy follows the raw numbers, meaning we accept the hyphotesis that SZ and ASZ too are from the same population / or the same Archetype.
 
-```{r}
-# DSim.tbl %>%
-#   group_by(group) %>%
-#   summarise(across(.fns = list(mean = mean, sd = sd, skew = skew), .names = "{col}_{fn}"))
+```{r pair-wise}
+# attach(DSim.tbl_2)
+# print(pairwise.t.test(value, group, p.adj = "bonf",))
+# detach()
 # 
-# DSim.tbl %>%
-#   ggplot(aes(value, group = group, color = group)) +
-#   stat_ecdf()
+# attach(DSim.tbl_2)
+# print(pairwise.t.test(value, group, p.adj = "holm",))
+# detach()
 ```
+```{r ecdf, fig.cap="ecdf of cosine distances between the deckcodes that accounts for at least 50% of the games played", fig.width=8}
+# DSim.tbl_1 |>
+# ggplot(aes(value, group = group, color = group)) +
+#   stat_ecdf() +
+#   ggsci::scale_fill_npg() +
+#   theme_Publication() + 
+#   ggtitle('ASZ vs AS') + 
+#   labs( x = "x", y = "Cumulative probability" ) +
+# 
+# DSim.tbl_2 |>
+# ggplot(aes(value, group = group, color = group)) +
+#   stat_ecdf() +
+#   ggsci::scale_fill_npg() +
+#   theme_Publication() + 
+#   ggtitle('ASZ vs SZ') + 
+#   labs( x = "x", y = "Cumulative probability" ) +
+#   
+# plot_annotation(title = 'Comparison of Empirical Cumulative Distribution Functions',
+#                 caption = 'ecdf of cosine distances between the deckcodes that accounts for at least 50% of the games played') +
+#   plot_layout(guides = 'auto', ncol = 2)
+```
+
+
 
 # Conclusion
 
-While I presented a method for comparing archetypes this is just one method among a myriad of alternatives. What I would like to try is trying to solve the problem by applying graph theory.
+The analysis gives support to the hyphotesis of aggregating the archetypes defined as ASZ, SZ and AS as Dr.LoR suggested. [^8]
 
-When looking at an archetype it's in fact possible to see it as a newtork between nodes as the cards and the edges the information related to how often some cards are played toghether. The advantage would be having to compare a single item for each archetype, the archetype-graph but with the disadvantage of working with a more complex structure which is the reason it's not applied in this paper.
+[^8]: any change will probably occour on the first report after the release of this article.
+
+Further testing should check is the sample and condition we choose are too strict or too lenient.
+
+The next article in this series will introduce the application of hierarchical clustering methods to the archetypes problem both replicating Drisoth methodology and possible alternatives.

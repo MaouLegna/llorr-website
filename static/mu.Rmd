@@ -173,8 +173,8 @@ data <- SharedData$new(MUtbl %>%
 ### Filters
 
 ```{r filters}
-crosstalk::filter_select("player", "Player", data, ~player)
-crosstalk::filter_select("opponent", "Opponent", data, ~opponent)
+crosstalk::filter_select("player", "Player's Deck", data, ~player)
+crosstalk::filter_select("opponent", "Opponent's Deck", data, ~opponent)
 
 crosstalk::filter_slider("muWin",   "#Win",  data, ~muWin,   step = 50 ,min = 0)
 crosstalk::filter_slider("muGames", "#Games",data, ~muGames, step = 100,min = 0)
