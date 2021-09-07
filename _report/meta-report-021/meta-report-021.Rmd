@@ -212,7 +212,7 @@ nGames_tbl <- LoR.Match.RMD %>%
   as_gt() %>%
   tab_header(
     title = "by the Numbers",
-    subtitle = "Patch 2.13 first week / Master players"
+    subtitle = "Patch 2.14 first week / Master players"
     # subtitle = glue::glue("Data for games in {params$start}")
   ) %>%
   tab_footnote(

@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (Patch 2.14)"
+title: "Match Ups Data (Patch 2.14 - post patch)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
   cache = F
 )
 
-# source(file.path("C:","LlorR","scripts","lor_main.R" ))
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
 options(digits.secs = 6)
 options(scipen=999)
 
@@ -90,13 +90,14 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 ```{r process-data}
 #' Metl tbl
 #'#########
-LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   #' Base filters
-  filter( game_type=="Ranked" ) %>%
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc > as.POSIXct("2021-09-01 21:00:00", tz = "UTC") ) |>
+  # filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
   #' 'process' data
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  left_join(LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
   mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
   select( match_key,server,game_start_time_utc,game_version,total_turn_count,
           ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
@@ -109,8 +110,7 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   value.name = str_sub(
     names(select(.,ends_with("_1")))
     ,end = -3)
-  ) %>%
-  filter( !(game_start_time_utc < as.POSIXct("2021-09-01 21:00:00", tz = "UTC") & ( str_detect(factions,"Shurima") | str_detect(factions,"Ionia") ))  )
+  )
 # %>%
 #   #' finish 'process' data
 #   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
@@ -153,6 +153,24 @@ MUtbl <- LoR.Melt.Matches.RMD %>%
   # removing ~extra variables
   select(-lower,-upper) %>%
   left_join(.,WR.DT[,c("player","playrate")],by="player")
+
+# MUtbl |>
+#   filter( player %in% c("Ezreal / Karma","Miss Fortune / Poppy (BW/DE)") & opponent %in% c("Ezreal / Karma","Miss Fortune / Poppy (BW/DE)")  )
+```
+
+```{r}
+# archetypes <- LoR.Melt.Matches.RMD |>
+#   tabyl(player) |>
+#   filter(percent > 0.001) |>
+#   arrange(desc(n)) |>
+#   pull(player)
+# 
+# 
+# LoR.Melt.Matches.RMD |>
+#   filter( player == archetypes[1] ) |>
+#   # filter( player == "Maokai / Nautilus" ) |>
+#   pull(deck_code) %>%
+#   get_deck_structure_2(.,minN = 5)
 ```
 
 # Table {data-icon="fa-table"}
@@ -166,7 +184,6 @@ data <- SharedData$new(MUtbl %>%
    filter(muGames >= nfilter)
 )
 ```
-
 
 ## Inputs {.sidebar}
 
@@ -294,14 +311,13 @@ flexdashboard::valueBox(Sys.Date(),
 ```{r get-WR-Top}
 mu <- 20
 
-TopCC <- MUtbl %>%
-  group_by(player) %>%
-  summarise(nGames = sum(muGames)) %>% 
-  arrange(desc(nGames)) %>% 
-  slice_head(.,n = mu) %>% 
-  select(player) %>% 
-  pull() %>% 
-  sort()
+TopCC <- MUtbl |>
+  group_by(player) |>
+  summarise(nGames = sum(muGames)) |> 
+  arrange(desc(nGames)) |>
+  slice_head(n = mu) |> 
+  select(player) |>
+  pull() # |> sort()
 
 
 WRTopCC <- tibble::tibble( 
@@ -358,19 +374,24 @@ ft <- grid %>%
   border_inner_h(., part="all", border = small_border ) %>%
   border_inner_v(., part="all", border = small_border ) %>%
   set_formatter(values = funs) %>%
-  fontsize(., size = 7.5, part = "header") %>%
-  fontsize(., j=1, size = 7.5) %>%
-  bold(., j=1, bold = TRUE) %>%
+  fontsize(., size = 8, part = "header") %>%
+  fontsize(., j=1, size = 8) %>%
   bg(., part = "header", bg = "white"  ) %>%
   bg(., j = 1, bg = "white"  ) %>%
-  width(., width = 1.5)
-
-# autofit()
+  autofit() 
+  # bold(., j=1, bold = TRUE) %>%
+  # width(., width = 1.5)
 ```
 
 ```{r print-flex}
 save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
 ft
+```
+
+<!-- ![](images/mugrid.png) -->
+
+```{r}
+# knitr::include_graphics(path = "./images/mugrid.png")
 ```
 
 # Grid 2.12/2.13 {data-icon="fa-file-image"}

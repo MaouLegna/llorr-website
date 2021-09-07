@@ -15,21 +15,23 @@ navbar:
   search: true
   source_url: true
   right:
-    - text: "Home"
-      href: index.html
+    # - text: "Home"
+    #   href: index.html
     - text: "MetaReport"  
       href: report.html
     - text: "MatchUps"  
-    #   href: tool/mu.html
-    # - text: "MatchUps-Test"  
       href: https://llorr-stats.netlify.app/static/mu.html
-    - text: "Other"
-      menu:
-        - text: "Analysis"
-          href: analysis.html
-        - text: "---"
-        - text: "Tools"
-          href: tool.html
+    - text: "Analysis"
+      href: analysis.html
+    - text: "Resources"
+      href: tool.html
+    # - text: "Other"
+    #   menu:
+    #     - text: "Analysis"
+    #       href: analysis.html
+    #     - text: "---"
+    #     - text: "Tools"
+    #       href: tool.html
     - text: "About"
       href: about.html
     - icon: fab fa-github-alt fa-1x

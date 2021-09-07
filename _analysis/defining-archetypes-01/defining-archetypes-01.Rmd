@@ -331,7 +331,7 @@ SA3 <- LoR.Melt.Matches.RMD %>%
 ```
 
 ```{r print-table-nChamp}
-tbl
+# tbl
 ```
 
 `r kableExtra::text_spec("Note :", color = "red")` The percetages are column-wise

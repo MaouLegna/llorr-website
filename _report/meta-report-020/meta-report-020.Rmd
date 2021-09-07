@@ -86,6 +86,39 @@ meta() %>%
   )
 ```
 
+```{r react-setup}
+options(reactable.theme = reactableTheme(
+  color = "grey25",
+  backgroundColor = NULL,
+  borderColor = "#dfe2e5",
+  borderWidth = NULL,
+  stripedColor = "#f6f8fa",
+  highlightColor = "#f0f5f9", 
+  cellPadding = "8px 13px", # dimensione del contenuto(?)
+  style = list( fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Roboto, sans-serif" ), # font delle varie componenti
+  tableStyle = NULL,
+  headerStyle = list(background = "steelblue",color="white" ), # ,fontFamily = "Work Sans, sans-serif, fontSize = "14px""
+  groupHeaderStyle = NULL,
+  tableBodyStyle = NULL,
+  rowGroupStyle = NULL,
+  rowStyle = NULL,
+  rowStripedStyle = NULL,
+  rowHighlightStyle = NULL,
+  rowSelectedStyle = NULL,
+  cellStyle = NULL,
+  footerStyle = NULL,
+  inputStyle = NULL,
+  filterInputStyle = NULL,
+  searchInputStyle = list(width = "100%"), # opzioni barra search
+  selectStyle = NULL,
+  paginationStyle = NULL,
+  pageButtonStyle = NULL,
+  pageButtonHoverStyle = NULL,
+  pageButtonActiveStyle = NULL,
+  pageButtonCurrentStyle = NULL
+))
+```
+
 
 ```{r raw-data}
 #' load gameDT
@@ -1069,6 +1102,8 @@ bscols(
 :::::
 <!-- Close MU panelset -->
 :::
+
+
 
 # Deck Structure of the week {.tabset .tabset-fade .tabset-pills}
 

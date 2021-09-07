@@ -21,90 +21,40 @@ twitter:
 ---
 
 ```{r}
-library(tidyverse)
-library(fields)
-library(ggraph)
-library(tidygraph)
-library(igraph)
-library(Matrix)
-
-# Create a vector with plane dimensions. The random nodes will be placed on the plane.
-plane <- c(1000, 1000)
-
-poisson_para <- .5 * 10^(-3) # Poisson intensity parameter
-beta <- .5 * 10^3
-gamma <- .4
-
-# Number of nodes is Poisson(gamma)*AREA - distributed
-n_nodes <- rpois(1, poisson_para * plane[1] * plane[2])
-weights <- runif(n_nodes) # Uniformly distributed weights
-
-# The Poisson process locally yields node positions that are completely random.
-x = plane[1] * runif(n_nodes)
-y = plane[2] * runif(n_nodes)
-
-phi <- function(z) { # Connection function
-  pmin(z^(-1.8), 1)
-} 
+library(plotly)
+mtcars %>%
+  highlight_key(~cyl) %>%
+  plot_ly(
+    x = ~wt, y = ~mpg, text = ~cyl, mode = "markers+text", 
+    textposition = "top", hoverinfo = "x+y"
+  ) %>%
+  plotly::highlight(on = "plotly_hover", off = "plotly_doubleclick")
 ```
 
 ```{r}
-# Distance matrix needed as input
-dist_matrix <-rdist(tibble(x,y))
+# load the `txhousing` dataset
+data(txhousing, package = "ggplot2")
 
-weight_matrix <- outer(weights, weights, FUN="*") # Weight matrix
+# declare `city` as the SQL 'query by' column
+tx <- highlight_key(txhousing, ~city)
 
-con_matrix_prob <- phi(1/beta * weight_matrix^gamma*dist_matrix^2)# Evaluation
+# initiate a plotly object
+base <- plot_ly(tx, color = I("black")) %>% 
+  group_by(city)
 
-con_matrix <- Matrix(rbernoulli(1,con_matrix_prob), sparse=TRUE) # Sampling
-con_matrix <- con_matrix * upper.tri(con_matrix) # Transform to symmetric matrix
-adjacency_matrix <- con_matrix + t(con_matrix)
-```
-
-
-```{r}
-# Create Igraph object
-graph <- graph_from_adjacency_matrix(adjacency_matrix, mode="undirected")
-
-# Make a tidygraph object from it. Igraph methods can still be called on it.
-tbl_graph <- as_tbl_graph(graph)
-
-hub_id <- which.max(degree(graph))
-
-# Add spacial positions, hub distance and degree information to the nodes.
-tbl_graph <- tbl_graph %>%
-  activate(nodes) %>%
-  mutate(
-    x = x,
-    y = y,
-    hub_dist = replace_na(bfs_dist(root = hub_id), Inf),
-    degree = degree(graph),
-    friends_of_friends = replace_na(local_ave_degree(), 0),
-    cluster = as.factor(group_infomap())
-  )
-```
-
-```{r}
-# Add coord_fixed() for fixed axis ratio!
-basic <- tbl_graph %>%
-  ggraph(layout = tibble(V(.)$x, V(.)$y)) +
-  geom_edge_link(width = .1) +
-  geom_node_point(aes(size = degree, color = degree)) +
-  scale_color_gradient(low = "dodgerblue2", high = "firebrick4") +
-  coord_fixed() +
-  guides(size = FALSE)
-
-basic
+# create a time series of median house price
+base %>%
+  group_by(city) %>%
+  add_lines(x = ~date, y = ~median)
 ```
 ```{r}
-cluster <- tbl_graph %>%
-  ggraph(layout = tibble(V(.)$x, V(.)$y)) +
-  geom_edge_link(width = .1) +
-  geom_node_point(aes(size = degree, color = cluster)) +
-  coord_fixed() +
-  theme(legend.position = "none")
-
-cluster
+highlight(
+  time_series, 
+  on = "plotly_click", 
+  selectize = TRUE, 
+  dynamic = TRUE, 
+  persistent = TRUE
+)
 ```
 
 
