@@ -1,9 +1,9 @@
 ---
 title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°22)"
 description: |
-  Patch 2.14 - Week 2 - Requiem to Akshan/Sivir
+  Patch 2.14 - Week 2 - Requiem for Akshan/Sivir
 base_url: https://llorr-stats.netlify.app
-preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05NX001T3-full.png"
+preview: "http://dd.b.pvp.net/2_15_0/set5/en_us/img/cards/05BC041-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
 # date: 09-01-2021
@@ -71,14 +71,14 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
 library(metathis)
 meta() %>%
   meta_description(
-    "Patch 2.14 - Week 2 - Requiem to Akshan/Sivir"
+    "Patch 2.14 - Week 2 - Requiem for Akshan/Sivir"
   ) %>% 
   meta_viewport() %>% 
   meta_social(
     title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°22)",
     url = "https://llorr-stats.netlify.app/",
-    image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05NX001T3-full.png",
-    image_alt = " ",
+    image = "http://dd.b.pvp.net/2_15_0/set5/en_us/img/cards/05BC041-full.png",
+    image_alt = "Poppy lv1",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",
