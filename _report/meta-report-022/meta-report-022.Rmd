@@ -423,6 +423,9 @@ Region.Freq.tbl
 :::
 
 ## Play Rate by number of Cards
+
+`r kableExtra::text_spec("Note :", color = "red")` currently all dual region cards have only their main region as possible value assigned. It'll be fixed in time for the next report but currently it makes so that BandleCity playrate is overestimated. The same problem also apply to the card's inclusion rates, with Lulu being the most notable case affected by this.
+
 ::: l-body-outset
 
 ```{r process-tableFreq_byCard}
@@ -530,6 +533,7 @@ RegionByCards <- Regions.Freq.byCards %>%
 
 RegionByCards
 ```
+
 :::
 
 ::: {.panel}
@@ -1120,15 +1124,16 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 
 ::::: {.panelset}
 ::: {.panel}
-## Nami / Zoe
+## Lulu / Poppy (BC/DE)
 
 ```{r}
-deck.of.week <- "Nami / Zoe"
+# deck.of.week <- "Nami / Zoe"
 deck.of.week <- "Lulu / Poppy (BC/DE)"
 
 SubDeck_deck_code <- LoR.Melt.Matches.RMD |>
   filter( player == deck.of.week ) |>
-  tabyl(deck_code) |> arrange(desc(n))
+  tabyl(deck_code) |> 
+  # arrange(desc(n)) |>
   pull(deck_code)
 
 data <- get_deck_structure_2(SubDeck_deck_code)

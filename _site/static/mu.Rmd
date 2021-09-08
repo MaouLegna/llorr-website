@@ -5,8 +5,6 @@ output:
   flexdashboard::flex_dashboard:
     navbar:
       - { icon: "fa-home", href: "https://llorr-stats.netlify.app", align: right }
-    # theme: paper
-    # favicon: img/ios7-location-outline.png
     # orientation: columns
     # vertical_layout: fill
     orientation: row
@@ -153,9 +151,6 @@ MUtbl <- LoR.Melt.Matches.RMD %>%
   # removing ~extra variables
   select(-lower,-upper) %>%
   left_join(.,WR.DT[,c("player","playrate")],by="player")
-
-# MUtbl |>
-#   filter( player %in% c("Ezreal / Karma","Miss Fortune / Poppy (BW/DE)") & opponent %in% c("Ezreal / Karma","Miss Fortune / Poppy (BW/DE)")  )
 ```
 
 ```{r}

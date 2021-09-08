@@ -1,0 +1,57 @@
+---
+title: "Resources"
+description: |
+  Link to the tools I made
+---
+
+```{r, echo=FALSE,warning=FALSE}
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(reactable)
+})
+data_in <- tibble::tribble(
+  ~Project, ~url, ~Description,
+  "MatchUps", "https://llorr-stats.netlify.app/static/mu.html", "Match Ups data that cover the same (current) cycle of buff/nerfs.",
+  "Bo3-Helper", "https://legnavv.shinyapps.io/Bo3-helper/", "Helper for Bo3. Using mostly the most played archetypes (still for 2.12/2.13).",
+  "Meta Stats", "https://llorr-stats.netlify.app/static/meta.html", "Dashboard with Meta Stats for the current patch and recent days.",
+  
+) 
+data_in %>%
+  reactable::reactable(
+    # searchable = TRUE,
+    pagination = FALSE,
+    columns = list(
+      Project = colDef(
+        minWidth = 150,
+        cell = function(value, index) {
+          url_in <- data_in$url[index]
+          htmltools::a(href = url_in, value)
+        }
+      ),
+      url = colDef(show = FALSE),
+      # Type = colDef(minWidth = 115),
+      Description = colDef(minWidth = 250)
+    ),
+    theme = reactableTheme(
+      backgroundColor = "whitesmoke",
+      borderColor = "#dfe2e5",
+      stripedColor = "#f6f8fa",
+      highlightColor = "#f0f5f9",
+      cellPadding = "8px 12px",
+      style = list(fontFamily = "-apple-system, Lato, sans-serif"),
+    )
+  )
+```
+Credits to <a href="https://themockup.blog/resources.html">Tom Mock</a> for showing how to fully bring out the distill package potential.
+
+Regarding the Bo3-Helper, as it requires a server to work and the one I'm using have limited of available hrs it may not be always up. To solve this I would need to pay for a server and yeah it may be a problem... in case if I have enough support...I can invest on it. There's a buymeacofee (~patreon) link in the menu if one wants to help me.
+
+```{r,echo=FALSE, eval=FALSE}
+
+### [`MatchUps`](https://llorr-stats.netlify.app/static/mu.html)
+Match Ups data that cover the same (current) cycle of buff/nerfs.
+### [`Bo3-Helper`](https://legnavv.shinyapps.io/Bo3-helper/)
+Helper for Bo3. Using mostly the most played archetypes (still for 2.12/2.13).
+### [`Meta Stats`](https://llorr-stats.netlify.app/static/meta.html)
+Dashboard with Meta Stats for the current patch and recent days.
+```
