@@ -12,8 +12,8 @@ suppressPackageStartupMessages({
 data_in <- tibble::tribble(
   ~Project, ~url, ~Description,
   "MatchUps", "https://llorr-stats.netlify.app/static/mu.html", "Match Ups data that cover the same (current) cycle of buff/nerfs.",
-  "Bo3-Helper", "https://legnavv.shinyapps.io/Bo3-helper/", "Helper for Bo3. Using mostly the most played archetypes (still for 2.12/2.13).",
-  "Meta Stats", "https://llorr-stats.netlify.app/static/meta.html", "Dashboard with Meta Stats for the current patch and recent days.",
+  "Bo3-Helper", "https://legnavv.shinyapps.io/Bo3-helper/", "Helper for Bo3. Using mostly the most played archetypes (still for 2.12/2.13)."
+  # "Meta Stats", "https://llorr-stats.netlify.app/static/meta.html", "Dashboard with Meta Stats for the current patch and recent days.",
   
 ) 
 data_in %>%
