@@ -1,7 +1,7 @@
 name: "llorr-website"
 title: "LLoRR Stats"
 theme: llorr_theme.css
-base_url: https://llorr-stats.netlify.app
+base_url: https://www.llorr-stats.com
 google_analytics: "UA-204289277-1"
 description: |
   "Statistics, Data, Legends of Runeterra"
@@ -20,7 +20,7 @@ navbar:
     - text: "MetaReport"  
       href: report.html
     - text: "MatchUps"  
-      href: https://llorr-stats.netlify.app/static/mu.html
+      href: https://www.llorr-stats.com/static/mu.html
     - text: "Analysis"
       href: analysis.html
     - text: "Resources"

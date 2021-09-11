@@ -4,7 +4,7 @@ author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
     navbar:
-      - { icon: "fa-home", href: "https://llorr-stats.netlify.app", align: right }
+      - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     # orientation: columns
     # vertical_layout: fill
     orientation: row
@@ -12,8 +12,9 @@ output:
 params:
   # start: "2021-07-14 21:00:00" #UTC tz / 'previous' patch start
   # end:   "2021-08-25 21:00:00" #UTC tz / 'previous' patch end
-  start: "2021-08-25 21:00:00" #UTC tz / 'current' patch start
-  end:   "2021-09-14 21:00:00" #UTC tz / 'current' patch end
+  # start: "2021-08-25 21:00:00" #UTC tz / 'current' patch start
+  start: "2021-09-01 21:00:00" #UTC tz / 'current' patch start
+  end:   "2021-09-30 21:00:00" #UTC tz / 'current' patch end
   skip:  2800000  # Patch 2.14
 ---
 
@@ -91,7 +92,7 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   #' Base filters
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct("2021-09-01 21:00:00", tz = "UTC") ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
   # filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
   #' 'process' data
   left_join(LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
@@ -295,7 +296,8 @@ flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
 
 ### Last Update
 
-```{r value-Games}
+
+```{r value-update}
 flexdashboard::valueBox(Sys.Date(),
          icon = "fa-clock",
          color = "lightgreen")
@@ -465,9 +467,9 @@ download_file(
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
--   **Player** - archetype of the player
+-   **Player's Deck** - deck's archetype of the player
 
--   **Opponent** - archetype of the opponent
+-   **Opponent's Deck** - deck's archetype of the opponent
 
 -   **\#Win** - min number of wins for a match-up
 
@@ -480,11 +482,3 @@ The format of the table is the usual way I display the match-ups data but I also
 #### General info
 
 When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
-
-`r kableExtra::text_spec("UPDATE:", color = "red")` the API problem has been fixed so I can return to collect the games. Since it would be a shame to trow away all the old data since I have only few games with the old patch I added the grid for the previous cycle of buff/nerfs as it can still provide informations for MU that didn't change from the release of BandleCity (looking at you Soraka).
-
-While I could add the table too it would probably clog the page too much and distract from the current data. But as an alternative I added the change to download the old-patch data if one really needs them.
-
-<!-- ### General update -->
-
-<!-- Last Update: `r Sys.time()` -->

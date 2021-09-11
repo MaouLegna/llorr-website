@@ -1,19 +1,21 @@
 ---
 title: "Meta & Decks (Patch 2.14 - post patch)"
 author: "by Legna"
+base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     navbar:
-      - { icon: "fa-home", href: "https://llorr-stats.netlify.app", align: right }
+      - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     # orientation: columns
     # vertical_layout: fill
     orientation: row
+    vertical_layout: fill
 # date: "`r Sys.Date()`"
 params:
   # start: "2021-07-14 21:00:00" #UTC tz / 'previous' patch start
   # end:   "2021-08-25 21:00:00" #UTC tz / 'previous' patch end
-  start: "2021-08-25 21:00:00" #UTC tz / 'current' patch start
-  end:   "2021-09-14 21:00:00" #UTC tz / 'current' patch end
+  start: "2021-09-01 21:00:00" #UTC tz / 'current' patch start
+  end:   "2021-09-30 21:00:00" #UTC tz / 'current' patch end
   skip:  2800000  # Patch 2.14
 ---
 
@@ -42,15 +44,95 @@ pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
 ```
 
 ```{r load-data}
-#' load DeckDT
+#' load gameDT
 #'############
-LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
-
 file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
 header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
 LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
+  pivot_longer(
+  cols = contains("puuid"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
+
+```{r functions}
+get_deck_structure_2_meta <- function(DT = LoR.Melt.Matches.RMD, archetype, minN = 1, minP = 0, print = F ) {
+  
+  if (print==T) {
+    message(glue::glue("Min number of games {minN}"))
+    message(glue::glue("Min freq of games {minP}"))
+  }
+  
+  # archetype = "Akshan / Sivir / Zed" # fct_meta[1]
+  # deck_code <- SubDeck_deck_code
+  # minN = 5
+  # minP = 0
+  
+  #' freq Table of deckcodes for an archetype
+  codeTbl <- LoR.Melt.Matches.RMD |>
+    filter( player == archetype ) |> 
+    tabyl(deck_code) |>
+    arrange(desc(n)) |>
+    filter( n >= minN & percent >= minP )
+  
+  #' Number of games of an archetype / after the filters
+  nGames <- codeTbl |>
+    summarise( n = sum(n) ) |>
+    pull()
+  
+  copies.cards <- codeTbl |>
+    as_tibble() |>
+    #' the first column of tabyl takes the value of the "tabled" variable
+    #' from the table it takes the deckcode, create the get_decklist_from_code as table and repeat the result n times as in the tbl
+    summarise( map2_df( .x = deck_code, .y = n , ~rep(list(lordecks::get_decklist_from_code(.x)),.y) %>% rbindlist()) ) |>
+    select(count,cardcode) |>
+    rename_all(~c("copies","cardCode"))
+  
+  include.rate <- copies.cards |> 
+    #' Divide copies from CardCode 
+    group_by(cardCode) |>
+    summarise( playrate = n() ) |>
+    mutate( playrate = playrate/nGames ) |>
+    select(playrate)
+  
+  copies.cards %>% 
+    rename_all(~str_to_title(.)) |>
+    mutate( Copies = factor(Copies, levels = c(1,2,3)) ) |> 
+    #' To the 'Nx3' table of cards and copies
+    tabyl(Cardcode,Copies) |>
+    adorn_percentages("row") |>
+    add_column(include.rate) |>
+    left_join(LoR.Set[,c("name","cardCode","rarity")],by=c("Cardcode"="cardCode")) |>
+    arrange(desc(playrate),desc(`3`),desc(`2`),desc(`1`),desc(rarity)) |>
+    # adorn_pct_formatting(digits = 1) |>
+    select(-rarity,-Cardcode) |>
+    relocate(5,4,3,2,1) |>
+    add_column(archetype = archetype)
+}
+```
+
+```{r deck-structure-prepare}
+# deck_color_generator <- scales::col_numeric(c("white", "white","green"), domain = NULL)
+make_color_pal <- function(colors, bias = 1) {
+  get_color <- colorRamp(colors, bias = bias)
+  function(x) rgb(get_color(x), maxColorValue = 255)
+}
+
+good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
+```
+
 
 ```{r process-data}
 #' Metl tbl
@@ -58,14 +140,14 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   #' Base filters
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct("2021-09-01 21:00:00", tz = "UTC") ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
   # filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
   #' 'process' data
   left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
   mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
   select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) |>
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
   #' melt data
   melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
     str_sub(
@@ -75,262 +157,477 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   value.name = str_sub(
     names(select(.,ends_with("_1")))
     ,end = -3)
-  )
-# |>
-#   #' finish 'process' data
-#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] |> setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) |>
-#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] |> setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) |>
-#   left_join(.,LoR.Deck |> select(!archetype),by=c("deck_code","factions")) |>
-#   select(-ends_with("puuid"),-refID,-contains("puuid"))
+  ) %>%
+  #' finish 'process' data
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  select(-ends_with("puuid"),-refID)
 ```
 
-# Table {data-icon="fa-chart-line"}
+```{r decks}
+n = 20 # if I want to select a fixed number of decks
+p = 0.01 # if I want to use the standard meta deck threshold
+
+# fct_meta <- LoR.Melt.Matches.RMD |>
+#  mutate( topN = fct_lump(player, prop = p) |> fct_infreq() ) |>
+#  pull(topN) |> levels()
+
+WR.DT <- LoR.Melt.Matches.RMD |>
+  filter(game_outcome!="tie") |>
+  # select( player,opponent,game_outcome ) |>
+  group_by(player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+            ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) )
+
+fct_meta <- WR.DT |>
+  filter(playrate > p) |>
+  arrange(desc(nGames)) |>
+  pull(player)
+
+fct_underdog <- WR.DT |>
+  filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
+  arrange(desc(n)) |>
+  pull(player)
+```
+
+```{r shared-data}
+Champion.deck.daily.byserver <- (LoR.Melt.Matches.RMD |>
+  rename("Archetype"="player") |>
+  arrange(game_start_time_utc) |>
+  group_by(server) |>
+  select(game_start_time_utc,Archetype,server) |>
+  mutate( num_cc = factor(Archetype) |> as.numeric() ) |>
+    ungroup() |> as.data.table())[ , playRate := (cumsum(num_cc)/num_cc)/.I , by=Archetype ] |>
+  select(!num_cc) |>
+  mutate( Archetype = factor(Archetype) |> fct_infreq() )
+
+keyDeckDaily <- Champion.deck.daily.byserver |>
+  filter( Archetype %in% fct_meta &
+            game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
+  mutate( server = str_to_title(server), playRate = round(playRate,3) ) |>
+  highlight_key(~Archetype)
+```
+
+# MetaDeck-Structure {data-icon="fa-table"}
+
+```{r process-winRate}
+WR.DT <- LoR.Melt.Matches.RMD |>
+  filter(game_outcome!="tie") |>
+  select( player,opponent,game_outcome ) |>
+  group_by(player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+            ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) )
+
+# options(scipen = 999)
+
+WR.DT.Reg <- LoR.Melt.Matches.RMD |>
+  filter(game_outcome!="tie") |>
+  select( player,opponent,game_outcome,server ) |>
+  group_by(server,player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win"),
+            ) |>
+  ungroup() |>
+  group_by(server) |>
+  mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) |>
+  left_join(WR.DT[,c("player","playrate")],by="player") 
+```
+
+## Row
+
+### MetaDecks WinRates
+
+```{r print-tableWinRate}
+WR.DT.Reg %>%
+  arrange(desc(playrate)) %>%
+  filter(playrate >= 0.01) %>%
+  # slice_max(player,n = 10, with_ties = T) %>%
+  arrange(desc(playrate)) %>%
+  relocate(player,WR,nWin,nGames,regPlayrate,server) %>%
+  reactable(., groupBy = "player",
+            # searchable = TRUE,
+            bordered = TRUE,
+            # wrap = FALSE,
+            highlight = TRUE,
+            striped = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              # header = function(value) str_to_title(value),
+              #  cell = function(value) format(value, nsmall = 1),
+              align = "center",
+              minWidth = 70
+              # headerStyle = list(background = "steelblue",color="white")
+            ),
+            columns = list(
+              player = colDef(name = "Champions",minWidth = 150),
+              server = colDef(name = "Server", aggregate = "unique"),
+              nWin   = colDef(name = "#Win", aggregate = "sum"),
+              nGames = colDef(name = "#Games", aggregate = "sum"),
+              WR     = colDef(name = "WinRate", aggregate = JS(
+                "function(values, rows) {
+                    var totalWin = 0
+                    var totalGames = 0
+                    rows.forEach(function(row) {
+                    totalWin   += row['nWin']
+                    totalGames += row['nGames']
+                    })
+                  return totalWin / totalGames
+                    }"
+                ),format = colFormat(percent = TRUE,digits = 1),
+              ),
+              regPlayrate   = colDef(name = "Play Rate",
+                aggregate = JS("function(values, rows) {
+                var total = 0;
+                var n = 0;
+                rows.forEach(function(row) {
+                  total += row['playrate']
+                  n += 1
+                })
+                return total/n
+                }"),
+                format = colFormat(percent = TRUE,digits = 1)),
+              sumGames   = colDef(show=F),
+              playrate   = colDef(show=F)
+  )
+)
+```
+
+### UnderdogDecks WinRates
+
+```{r print-under-tableWinRate}
+WR.DT %>%
+  filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) %>%
+  # slice_max(WR,n = 10) %>%
+  relocate(player,WR,nWin,nGames,playrate) %>%
+  arrange(desc(WR)) %>%
+  reactable(.,
+            # searchable = TRUE,
+            bordered = TRUE,
+            # wrap = FALSE,
+            highlight = TRUE,
+            striped = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              # header = function(value) str_to_title(value),
+              #  cell = function(value) format(value, nsmall = 1),
+              align = "center",
+              minWidth = 70,
+              headerStyle = list(background = "steelblue",color="white")
+            ),
+            columns = list(
+              player = colDef(name = "Champions",minWidth = 150),
+              nWin   = colDef(name = "#Win"),
+              nGames = colDef(name = "#Games"),
+              WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
+              playrate   = colDef(name = "Play Rate",format = colFormat(percent = TRUE,digits = 1))
+  )
+)
+```
+
+## Row {data-heigth="150"}
+
+### Number of Games
+
+```{r value-games}
+flexdashboard::valueBox(glue::glue("{NROW(LoR.Melt.Matches.RMD)} Games"),
+                        caption = glue::glue("Number of Ranked Games"),
+                        icon = "fa-table",
+                        color = "#a88b32")
+```
+
+### Number of Meta Decks
+
+```{r value-meta}
+flexdashboard::valueBox(glue::glue("{length(fct_meta)} Meta Decks"),
+                        caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        icon = "fa-trophy",
+                        color = "#65c0a9")
+```
+
+### Number of Underdog Decks
+
+```{r value-underdog}
+flexdashboard::valueBox(glue::glue("{length(fct_underdog)} Underdog Decks"),
+                        caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        # caption = glue::glue("Decks with a PlayRate in [0.1%,1%) \n positive WinRate"),
+                        icon = "fa-dog",
+                        color = "#ff7f24")
+```
+
+### Last Update
+
+```{r value-update}
+flexdashboard::valueBox(Sys.Date(),
+                        caption = glue::glue("Last Update"),
+                        icon = "fa-clock",
+                        color = "lightgreen")
+```
+
+# MetaDeck-Structure {data-icon="fa-align-left"}
 
 ## Inputs {.sidebar}
 
 ### Filters
 
-```{r filters}
-# bscols(
-#   crosstalk::filter_select("player", "Player", data, ~player),
-#   crosstalk::filter_select("opponent", "Opponent", data, ~opponent)
-# )
+```{r filters-deck-structure}
+deckStrctures_meta     <- map_df(.x = c(fct_meta), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD,archetype =.x,minN = 5) ) |>
+  as_tibble() |>
+  add_column(popularity = "Meta")
+
+# deckStrctures_meta <- deckStrctures_meta |>
+#   as_tibble() |>
+#   add_column(popularity = "Meta")
+
+deckStrctures_underdog <- map_df(.x = c(fct_underdog), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD,archetype =.x,minN = 5) ) |>
+  as_tibble() |>
+  add_column(popularity = "Underdog")
+# deckStrctures_underdog <- deckStrctures_underdog |>
+#   as_tibble() |>
+#   add_column(popularity = "Underdog")
+
+shared_data <- SharedData$new(rbind(deckStrctures_meta,deckStrctures_underdog))
+filter_select(id = "popularity", label = "Meta/Underdog", sharedData = shared_data, group = ~popularity)
+filter_select(id = "archetype", label = "Archetype", sharedData = shared_data, group = ~archetype)
+```
+## Row {data-heigth="850"}
+
+### Decks-Structures
+
+```{r print-react-structure}
+good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
+
+shared_data %>%
+  reactable(., groupBy = c("popularity", "archetype"),
+            bordered = TRUE,
+            highlight = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table height
+            fullWidth = T, # don't fill the page
+            defaultPageSize = 20,
+            wrap = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              style = function(value) {
+                if (!is.numeric(value)) return()
+                # normalized <- (value - min(nottem)) / (max(nottem) - min(nottem))
+                # good_color(0.8)
+                color <- good_color(value)
+                list(background = color,fontFamily = "Roboto", fontSize = "14px")
+                },
+              # format = colFormat(digits = 1),
+              # fontSize = "15px",
+              
+              # headerStyle = list(background = "whitesmoke",color="black", align = "center"),
+              
+              align = "center",
+              minWidth = 120
+              ) ,
+            columns = list(
+              popularity = colDef(name = "Meta/Underdog",minWidth = 150),
+              archetype = colDef(name = "Archetype",minWidth = 150),
+              name     = colDef(name = "Card",minWidth = 120, style = list( fontWeight = "bold", fontFamily = "Roboto", fontSize = "13px" ), align = "center" ),
+              playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
+              `3`      = colDef(name = "3",format = colFormat(percent = TRUE,digits = 1) ),
+              `2`      = colDef(name = "2",format = colFormat(percent = TRUE,digits = 1) ),
+              `1`      = colDef(name = "1",format = colFormat(percent = TRUE,digits = 1) )
+              ),
+             rowStyle = JS("function(rowInfo) {
+                           if (rowInfo.level > 0) {
+                           return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
+                           } else {
+                           return { borderLeft: '2px solid transparent' }
+                           }
+                           }"),
+            defaultExpanded = T
+            # columnGroups = list(
+            #   colGroup(name = glue::glue("{deck.of.week}"), columns = c("name"), headerStyle = list(background = "whitesmoke",color="black", align = "center") ),
+            #   colGroup(name = glue::glue("Playrate (N: {length(SubDeck_deck_code)})"), columns = c("playrate","3","2","1"),headerStyle = list(background = "whitesmoke",color="black", align = "center"))
+            #   )
+            )
+
+# return { background: '#eee', borderLeft: '2px solid #ffa62d' }
+```
+# Deck-Codes {data-icon="fa-code"}
+
+```{r create-deck-code-tbl}
+# https://lor.runeterra.ar/decks/code/CECQCAIDCQAQGBASAECAIEADAUBQCCINAQAQIJRHFU2AIAIBAMXACAIEAEAQGBALAECQGBACAEAQGOABAMBQ6
+deckCodeTbl  <- LoR.Melt.Matches.RMD |>
+  filter( player %in% c(fct_meta,fct_underdog) ) |>
+  mutate( player = factor(player, ordered = TRUE, 
+                                levels = c(fct_meta,fct_underdog) ),
+          server = str_to_title(server) ) |>
+  group_by(server,player,deck_code ) |>
+  summarise( n = n() ) |>
+  slice_max(n, n = 5) |>
+  ungroup()
 ```
 
-## Row {data-heigth="750"}
+## Inputs {.sidebar}
 
-### Meta Evolution table
+### Filters
 
-```{r}
-m = 10
-
-Champion.deck.daily <- (LoR.Melt.Matches.RMD |>
-  rename("champions"="player") |>
-  arrange(game_start_time_utc) |>
-  select(game_start_time_utc,champions) |>
-  mutate( num_cc = factor(champions) |> as.numeric() ))[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ] |>
-  select(!num_cc) |>
-  mutate( champions = factor(champions) |> fct_infreq() )
-
-Champion.deck.daily.byserver <- (LoR.Melt.Matches.RMD |>
-  rename("champions"="player") |>
-  arrange(game_start_time_utc) |>
-  group_by(server) |>
-  select(game_start_time_utc,champions,server) |>
-  mutate( num_cc = factor(champions) |> as.numeric() ) |>
-    ungroup() |> as.data.table())[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ] |>
-  select(!num_cc) |>
-  mutate( champions = factor(champions) |> fct_infreq() )
-
-fct_values <- LoR.Melt.Matches.RMD |>
- mutate( top5 = fct_lump_n(player,n = m) |> fct_infreq() ) |>
- pull(top5) |> levels()
-```
-
-
-```{r print-react-MU}
-
+```{r filter-deck-code-tbl}
+shared_code <- SharedData$new(deckCodeTbl)
+filter_select(id = "server", label = "Server", sharedData = shared_code, group = ~server)
+filter_select(id = "player", label = "Archetype", sharedData = shared_code, group = ~player)
 ```
 
 ## Row
+### Decks Code
 
-### Number of Games (min 10 games for each MU)
-
-```{r value-nGames}
-nGames = MUtbl |> 
-  filter( muGames > nfilter ) |>
-  summarise(n = sum(muGames)) |>
-  pull()
-
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        # caption = glue::glue(""),
-                        icon = "fa-table",
-                        color = "#FA7404")
+```{r print-deck-code-tbl}
+shared_code %>%
+  reactable(.,
+            groupBy = c("player","server"),
+            bordered = TRUE,
+            highlight = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table height
+            fullWidth = T, # don't fill the page
+            defaultPageSize = 20,
+            wrap = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              style = list(background = color,fontFamily = "Roboto", fontSize = "14px"),
+              align = "center",
+              minWidth = 120
+              ) ,
+            columns = list(
+              deck_code = colDef(name = "DeckCode", cell = function(value, index) {
+                # Render as a link
+                url <- sprintf("https://lor.runeterra.ar/decks/code/%s", value)
+                # url <- sprintf("https://lor.runeterra.ar/decks/code/%s",deckCodeTbl[index, "deck_code"], value)
+                htmltools::tags$a(href = url, target = "_blank", as.character(value))
+                }),
+              server = colDef(name = "Server",minWidth = 150),
+              player = colDef(name = "Archetype",minWidth = 150),
+              n     = colDef(name = "Games" )
+              ),
+             rowStyle = JS("function(rowInfo) {
+                           if (rowInfo.level > 0) {
+                           return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
+                           } else {
+                           return { borderLeft: '2px solid transparent' }
+                           }
+                           }"),
+            defaultExpanded = T
+            )
 ```
 
-### Last Update
+# Meta-Evolution {data-icon="fa-chart-line"}
 
-```{r value-Games}
-flexdashboard::valueBox(Sys.Date(),
-         icon = "fa-clock",
-         color = "lightgreen")
+## Inputs {.sidebar}
+
+### Filters
+
+```{r filters-meta-evo}
+crosstalk::filter_select("Archetype", "Deck's Archetype", keyDeckDaily, ~Archetype)
 ```
 
-# Grid {data-icon="fa-file-image"}
+By clicking on the plot (both the ones on the left or the one on the right) you can highlight a deck in all regions, hover over them and it will display their values. By double clicking on the plots restore it to default.
 
-```{r get-WR-Top}
-mu <- 20
+`r kableExtra::text_spec("WARNING:", color = "red")`: While it's possible to filter the data for specific decks, once the selection from the box is done, currently it's not possible to restore the highlights as default, it's necessary to update the page.
 
-TopCC <- MUtbl |>
-  group_by(player) |>
-  summarise(nGames = sum(muGames)) |> 
-  arrange(desc(nGames)) |>
-  slice_head(n = mu) |> 
-  select(player) |>
-  pull() # |> sort()
+## Row
+### Meta Decks PlayRate over time
 
+```{r create-plot-meta-evo}
+#' Get last value for PR
+maxFreq <- Champion.deck.daily.byserver |>
+  filter( Archetype %in% fct_meta &
+            game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
+  summarise( maxfreq = max(playRate) ) |>
+  signif.ceiling(1) |> pull()
 
-WRTopCC <- tibble::tibble( 
-  player = rep(TopCC,each=mu),
-  opponent = rep(TopCC,mu)
-  ) |>
-  left_join(MUtbl, by = c("player","opponent"))
+#' Grouped line plots for PR over time
+meta_evo <- keyDeckDaily %>% {
+   ggplot(., aes(game_start_time_utc, playRate, group = Archetype,color = Archetype)) +
+      geom_line() +
+      # geom_text(aes(label=Archetype,color = Archetype))
+      # geom_line(aes(linetype = server)) +
+      facet_wrap(~server, ncol = 2) +
+      # ylim(0,maxFreq ) +
+      scale_colour_viridis_d(option = "turbo") +
+      # scale_colour_brewer(palette = "Set1",) +
+      theme_Publication() +
+      theme(legend.position = "none") +
+      # plot_layout(guides = "collect") +
+      scale_y_continuous(limits = c(0, maxFreq),
+                     breaks = seq(0,maxFreq,0.05),
+                     # expand = c(-0.001,0.02),
+                     labels = scales::percent_format(accuracy = 1),
+                     position = "right") +
+      labs(x= "",y = "")
+    # expand_limits(y = 0)
+   } %>%
+  ggplotly(tooltip=c("group","playRate"),hovertemplate = paste("%{xaxis.title.text}: %{playRate:.0%}<br>") )
+
+#' Dot Plot of PR
+dot_plot <- keyDeckDaily |>
+  # plot_ly(color = I("black") ) |>
+  plot_ly( ) |>
+  group_by(Archetype) |>
+  summarise(playRate = last(playRate)) |>
+  # plot_ly(color = I("gray25")) %>%
+  # group_by(Archetype) |>
+  add_markers(
+    x = ~round(playRate,3),
+    y = ~forcats::fct_reorder(Archetype, playRate),
+    hoverinfo = "x+y"
+  ) %>%
+  layout(
+    xaxis = list(title = "Play Rate", tickfont = list(size = 10) ),
+    yaxis = list(title = "Archetype", tickfont = list(size = 10), side = "right")
+  )
+
+# dot_plot
+```
+```{r print-plot-meta-evo}
+subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
+  layout(showlegend = FALSE) |>
+  plotly::highlight(on = "plotly_click", off = "plotly_doubleclick")
 ```
 
-<!-- The win rates on the grid are among the `r mu` most played champion combination. -->
+# Informations {data-orientation="columns" data-icon="fa-info-circle"}
 
-```{r prepare-flex}
-big_border   = fp_border(color="darkgray", width = 2)
-small_border = fp_border(color="gray", width = 1)
+## Column
+<!-- ## Column {data-width="800"} -->
 
-dummy_fun <- function(x){
-  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
-}
-```
+### How to read/use
 
-```{r prepare-flex-grid}
-grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
-diag(grid) <- NA
+#### Deck-Structure
 
-colnames(grid) <- TopCC
-colourer <- col_numeric(
-  palette = c("#D73027", # red
-          # "#f9ccac", # red/orange
-          "white",
-          # "#e3eaa7", # green
-          "#1A9850" # darker green
-          ),
-  domain = c(0, 1))
+* The filter Meta/Underdog allows to restrict to decks that I define as 'MetaDeck' or 'UnderdogDeck'. Meta decks are in my case defined as decks with at least 1% PlayRate. Underdog decks are in my case defined as decks with at least 0.1% but no more than 1% PlayRate and a mean WR more or equal to 50%.
 
-funs <- setNames(rep(list(dummy_fun), mu), TopCC)
-```
+* The filter Archetypes allows to restrict to specific/s deck archetypes.
 
-```{r create-flex}
-ft <- grid |> 
-  as_tibble() |>
-  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
-  add_column(.,TopCC,.before = TopCC[1]) |>
-  rename("MatchUps"="TopCC") |>
-  flextable::flextable(.) |> 
-  theme_vanilla( ) |>
-  # theme_booktabs(bold_header = TRUE) |> 
-  flextable::align(.,align = "center", part = "all") |>
-  flextable::bg(.,
-    bg = colourer,
-    j = ~ . -MatchUps,
-    part = "body") |> 
-  border_remove(x = .) |>
-  border_outer(., part="all", border = big_border ) |>
-  border_inner_h(., part="all", border = small_border ) |>
-  border_inner_v(., part="all", border = small_border ) |>
-  set_formatter(values = funs) |>
-  fontsize(., size = 8, part = "header") |>
-  fontsize(., j=1, size = 8) |>
-  bg(., part = "header", bg = "white"  ) |>
-  bg(., j = 1, bg = "white"  ) |>
-  autofit() 
-  # bold(., j=1, bold = TRUE) |>
-  # width(., width = 1.5)
-```
+* The order of the archetypes is by decreasing values PlayRate from the most popular to the least popular.
 
-```{r print-flex}
-save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
-ft
-```
+#### Deck-Codes
 
-<!-- ![](images/mugrid.png) -->
+* Currently showing only the top5 most played deckcodes for each archetype. Planning to add the top5 most played deckcodes for each archetype by the player with the highest amount of games with it. Both case (top5 and top5 by a player) for each server.
 
-```{r}
-# knitr::include_graphics(path = "./images/mugrid.png")
-```
+#### Meta-Evolution
 
-# Grid 2.12/2.13 {data-icon="fa-file-image"}
+* The graph in the Meta-Evolution section displays the PlayRate over time of what I define as 'MetaDeck'. Meta decks are in my case defined as decks with at least 1% PlayRate.
 
-![](images/mugrid_patch_2_12to13.png)
+* The PlayRate is base around ALL games considered.
 
-# Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
+<!-- * `r kableExtra::text_spec("NOTE:", color = "red")`: it is possible I'll also display the playrates when those are computed as a single value by each day -->
 
-## Download {data-width="200"}
+* By clicking on the plot (both the ones on the left or the one on the right) you can highlight a deck in all regions, hover over them and it will display their values. By double clicking on the plots restore it to default.
 
-### Match Ups Data
-
-```{r}
-MUtbl |>
-  filter( muGames > 10 ) |>
-  select(player,opponent,muWin,muGames,muWR) |>
-  download_this(.,
-              button_label = "Download MU data as .csv",
-              output_name = "mutable",
-              button_type = "success",
-              has_icon = TRUE,
-              icon = "fa fa-save"
-              )
-```
-
-### Match Ups Data (2.12/2.13)
-
-```{r}
-# MUtbl |>
-#   filter( muGames > 10 ) |>
-#   fwrite( "data/mutbl_patch_2_12to13.csv" )
-fread("data/mutbl_patch_2_12to13.csv") |>
-  select(player,opponent,muWin,muGames,muWR) |>
-  download_this(.,
-              button_label = "Download MU data (2.12/2.13) as .csv",
-              output_name = "mutable",
-              button_type = "success",
-              has_icon = TRUE,
-              icon = "fa fa-save"
-              )
-```
-
-### Match Ups Grid
-
-```{r}
-download_file(
-  path = file.path("images/mugrid.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download MU grid as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
-
-### Match Ups Grid (2.12/2.13)
-
-```{r}
-download_file(
-  path = file.path("images/mugrid_patch_2_12to13.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download MU grid (2.12/2.13) as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
-
-## Column {data-width="800"}
-
-### How to use
-
-#### Filters
-
-The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
-
--   **Player** - archetype of the player
-
--   **Opponent** - archetype of the opponent
-
--   **\#Win** - min number of wins for a match-up
-
--   **\#Games** - min number of games for a match-up
-
--   **Regions** - regions of the 'Player' deck.
-
--   **MU-Direction** - simply if the MU is positive (win rate \> 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%)
+* `r kableExtra::text_spec("WARNING:", color = "red")`: While it's possible to filter the data for specific decks, once the selection from the box is done, currently it's not possible to restore the highlights as default, it's necessary to update the page.
 
 #### General info
 
@@ -339,7 +636,3 @@ When I refer to games it's always refering a single player. So, if I have the in
 `r kableExtra::text_spec("UPDATE:", color = "red")` the API problem has been fixed so I can return to collect the games. Since it would be a shame to trow away all the old data since I have only few games with the old patch I added the grid for the previous cycle of buff/nerfs as it can still provide informations for MU that didn't change from the release of BandleCity (looking at you Soraka).
 
 While I could add the table too it would probably clog the page too much and distract from the current data. But as an alternative I added the change to download the old-patch data if one really needs them.
-
-<!-- ### General update -->
-
-<!-- Last Update: `r Sys.time()` -->
