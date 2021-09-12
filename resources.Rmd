@@ -5,15 +5,18 @@ description: |
 ---
 
 ```{r, echo=FALSE,warning=FALSE}
+# base_url <- "https://llorr-stats.netlify.app"
+base_url <- "https://www.llorr-stats.com"
+
 suppressPackageStartupMessages({
   library(dplyr)
   library(reactable)
 })
 data_in <- tibble::tribble(
   ~Project, ~url, ~Description,
-  "MatchUps", "https://llorr-stats.netlify.app/static/mu.html", "Match Ups data that cover the same (current) cycle of buff/nerfs.",
+  "MatchUps", glue::glue("{base_url}/static/mu.html"), "Match Ups data that cover the same (current) cycle of buff/nerfs.",
   "Bo3-Helper", "https://legnavv.shinyapps.io/Bo3-helper/", "Helper for Bo3. Using mostly the most played archetypes (still for 2.12/2.13).",
-  "Decks Codes/Structures", "https://llorr-stats.netlify.app/static/meta.html", "Dashboard with Meta or Underdog Decks' Structures and Information of some deckcodes information"
+  "Decks Codes/Structures", glue::glue("{base_url}/static/meta.html"), "Dashboard with Meta or Underdog Decks' Structures and Information of some deckcodes information"
 ) 
 data_in %>%
   reactable::reactable(
