@@ -2,7 +2,7 @@
 title: "THE SEASONAL REPORT IS VAST (n°1)"
 description: |
   Seasonal Tournament - Rise of the Underworld
-base_url: https://llorr-stats.netlify.app
+base_url: https://www.llorr-stats.com
 preview: "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH055-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
@@ -801,7 +801,7 @@ top32tbl.CC <- top32tbl %>%
 ::: {.panel}
 ### ASIA {.panel-name}
 
-```{r plot-top32-ASIA}
+```{r create-top32-ASIA}
 require(grid)
 require(cowplot)
 #' flextable for the champions which were used a single time
@@ -851,101 +851,103 @@ ggtop32.ASIA <- top32tbl.CC  %>%
          axis.text.y   = element_text(size = 8),
          legend.position = "none"
          )
+```
 
+
+```{r plot-top32-ASIA}
 #' unite the plot and table
 cowplot::plot_grid(ggtop32.ASIA, ggplot() + 
                      theme_void() + 
                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-
 ```
 :::
 
 ::: {.panel}
 ### ASIA top32 {.panel-name}
 
-```{r top32-full}
-top32tbl.ASIA.full <- left_join(
-  Game.Result.ASIA,LoR.Account.RMD[,c("gameName","RiotID")],
-  by=c("userID"="RiotID")
-  ) %>%
-  distinct() %>%
-  filter( gameName %in% c("4LW","A Z","Aikado","BBG","Briguy","BruisedByGod",
-                          "CameronHanzo","DustyBunz","Faurreira","Glop","Henneky",
-                          "Idontca1","Kevor24","Lazyguga","Lipe","LuserBeam",
-                          "MajiinBae","mati24mayo","MaykaS","Metal","Mr eMOEtional",
-                          "nalkpas","NoTapper","Oneiric","Raspyn","Roxas",
-                          "STAN","Tatsu","TomasZamo2000","Trivo","Vivo",
-                          "xGoldenRulex","Zorig Dungu") ) %>%
-  arrange(gameName) %>%
-  filter( userID != "BBG 5007" )
-  
-# count the number of times a champion is present in a deck
-# grouped by region
-#'#########
-top32tbl.ASIA.full.CC <- top32tbl.ASIA.full %>%
-  distinct(userID,.keep_all = T) %>%
-  pivot_longer(.,cols = contains("code_"),values_to = "deck_code") %>%
-  select(server,deck_code) %>%
-  mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) %>%
-  separate_rows(CC,sep = " / ") %>%
-  group_by(server) %>%
-  count(CC) %>%
-  ungroup()
-
-# top32tbl.ASIA.full %>%
-#   select(userID,deck_1,code_1,deck_2,code_2,deck_3,code_3) %>%
-#   distinct() %>% fwrite(.,"Top32NA_full.csv")
-
-ft.top32tbl.CC.ASIA.full <- top32tbl.ASIA.full.CC %>%
-  filter(server == "asia")  %>%
-  filter(n == 1) %>%
-  select(-server) %>%
-  rename_all(~c("Champion","N")) %>%
-  flextable::flextable() %>%
-  flextable::as_raster()
-
-#' base plot
-ggtop32.ASIA.full <- top32tbl.ASIA.full.CC  %>%
-  filter(server=="asia") %>%
-  filter(n > 1) %>%
-  left_join(.,LoR.Set%>%select(name,region),by=c("CC"="name")) %>%
-  mutate(img = map_chr(.x = CC, ~getCardCode(.x) )) %>%
-  mutate(img = map_chr(.x = img, ~card_url_path_full(.x) )) %>%
-  ggplot(aes(reorder(CC, n),n,fill=region)) +
-  geom_bar(position="dodge",stat = "identity", color = "black") +
-  scale_y_continuous(sec.axis = sec_axis(~(./32*100), name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = CC, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
-  coord_flip() +
-  scale_fill_manual("legend", values = c("Bilgewater" = "#d2894e",
-                                       "Demacia"    = "#e8debf",
-                                       "Freljord"   = "#baebf8" ,
-                                       "Ionia"      = "#e0afbf",
-                                       "Targon"     = "#a29cee",
-                                       "Noxus"      = "#ce6e6c",
-                                       "Piltover & Zaun" = "#f6b983",
-                                       "Shadow Isles" = "#369b7d",
-                                       "Shurima"    = "#f2e858",
-                                       "BandleCity" = "#d6df5d") ) +
-  labs( x = "Champion",
-        y = "#Decks",
-        title = "Champions' Play Rate - ASIA",
-        subtitle = "Champions presence based by the number of decks that included them/playrate. Champions that appeared thrice or less ",
-        caption = glue::glue("number of players: 32" )) +
-  theme_bw() +
-  theme( plot.title    = element_text(face = "bold", size = 15),
-         plot.subtitle = element_text(size = 12),
-         axis.title.x  = element_text(face = "bold", size = 12),
-         axis.title.y  = element_text(face = "bold", size = 12),
-         axis.text.x   = element_text(face = "bold", size = 10),
-         axis.text.y   = element_text(size = 8),
-         legend.position = "none"
-         )
-
+```{r top32-ASIA-full}
+# top32tbl.ASIA.full <- left_join(
+#   Game.Result.ASIA,LoR.Account.RMD[,c("gameName","RiotID")],
+#   by=c("userID"="RiotID")
+#   ) %>%
+#   distinct() %>%
+#   filter( gameName %in% c("4LW","A Z","Aikado","BBG","Briguy","BruisedByGod",
+#                           "CameronHanzo","DustyBunz","Faurreira","Glop","Henneky",
+#                           "Idontca1","Kevor24","Lazyguga","Lipe","LuserBeam",
+#                           "MajiinBae","mati24mayo","MaykaS","Metal","Mr eMOEtional",
+#                           "nalkpas","NoTapper","Oneiric","Raspyn","Roxas",
+#                           "STAN","Tatsu","TomasZamo2000","Trivo","Vivo",
+#                           "xGoldenRulex","Zorig Dungu") ) %>%
+#   arrange(gameName) %>%
+#   filter( userID != "BBG 5007" )
+#   
+# # count the number of times a champion is present in a deck
+# # grouped by region
+# #'#########
+# top32tbl.ASIA.full.CC <- top32tbl.ASIA.full %>%
+#   distinct(userID,.keep_all = T) %>%
+#   pivot_longer(.,cols = contains("code_"),values_to = "deck_code") %>%
+#   select(server,deck_code) %>%
+#   mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) %>%
+#   separate_rows(CC,sep = " / ") %>%
+#   group_by(server) %>%
+#   count(CC) %>%
+#   ungroup()
+# 
+# # top32tbl.ASIA.full %>%
+# #   select(userID,deck_1,code_1,deck_2,code_2,deck_3,code_3) %>%
+# #   distinct() %>% fwrite(.,"Top32NA_full.csv")
+# 
+# ft.top32tbl.CC.ASIA.full <- top32tbl.ASIA.full.CC %>%
+#   filter(server == "asia")  %>%
+#   filter(n == 1) %>%
+#   select(-server) %>%
+#   rename_all(~c("Champion","N")) %>%
+#   flextable::flextable() %>%
+#   flextable::as_raster()
+# 
+# #' base plot
+# ggtop32.ASIA.full <- top32tbl.ASIA.full.CC  %>%
+#   filter(server=="asia") %>%
+#   filter(n > 1) %>%
+#   left_join(.,LoR.Set%>%select(name,region),by=c("CC"="name")) %>%
+#   mutate(img = map_chr(.x = CC, ~getCardCode(.x) )) %>%
+#   mutate(img = map_chr(.x = img, ~card_url_path_full(.x) )) %>%
+#   ggplot(aes(reorder(CC, n),n,fill=region)) +
+#   geom_bar(position="dodge",stat = "identity", color = "black") +
+#   scale_y_continuous(sec.axis = sec_axis(~(./32*100), name = "PlayRate (%)",breaks = seq(0,100,20))) +
+#   ggimage::geom_image(aes(x = CC, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
+#   coord_flip() +
+#   scale_fill_manual("legend", values = c("Bilgewater" = "#d2894e",
+#                                        "Demacia"    = "#e8debf",
+#                                        "Freljord"   = "#baebf8" ,
+#                                        "Ionia"      = "#e0afbf",
+#                                        "Targon"     = "#a29cee",
+#                                        "Noxus"      = "#ce6e6c",
+#                                        "Piltover & Zaun" = "#f6b983",
+#                                        "Shadow Isles" = "#369b7d",
+#                                        "Shurima"    = "#f2e858",
+#                                        "BandleCity" = "#d6df5d") ) +
+#   labs( x = "Champion",
+#         y = "#Decks",
+#         title = "Champions' Play Rate - ASIA",
+#         subtitle = "Champions presence based by the number of decks that included them/playrate. Champions that appeared thrice or less ",
+#         caption = glue::glue("number of players: 32" )) +
+#   theme_bw() +
+#   theme( plot.title    = element_text(face = "bold", size = 15),
+#          plot.subtitle = element_text(size = 12),
+#          axis.title.x  = element_text(face = "bold", size = 12),
+#          axis.title.y  = element_text(face = "bold", size = 12),
+#          axis.text.x   = element_text(face = "bold", size = 10),
+#          axis.text.y   = element_text(size = 8),
+#          legend.position = "none"
+#          )
+# 
 #' unite the plot and table
-cowplot::plot_grid(ggtop32.ASIA.full, ggplot() + 
-                     theme_void() + 
-                     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA.full), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-
+# cowplot::plot_grid(ggtop32.ASIA.full, ggplot() + 
+#                      theme_void() + 
+#                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA.full), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
+# 
 # ggsave("images/top32NACC.png")
 ```
 :::
@@ -1012,92 +1014,92 @@ cowplot::plot_grid(ggtop32.EU, ggplot() +
 ::: {.panel}
 ### EU top32 {.panel-name}
 
-```{r top32-full}
-top32tbl.EU.full <- left_join(
-  Game.Result.EU,LoR.Account.RMD[,c("gameName","RiotID")],
-  by=c("userID"="RiotID")
-  ) %>%
-  distinct() %>%
-  filter( gameName %in% c("4LW","A Z","Aikado","BBG","Briguy","BruisedByGod",
-                          "CameronHanzo","DustyBunz","Faurreira","Glop","Henneky",
-                          "Idontca1","Kevor24","Lazyguga","Lipe","LuserBeam",
-                          "MajiinBae","mati24mayo","MaykaS","Metal","Mr eMOEtional",
-                          "nalkpas","NoTapper","Oneiric","Raspyn","Roxas",
-                          "STAN","Tatsu","TomasZamo2000","Trivo","Vivo",
-                          "xGoldenRulex","Zorig Dungu") ) %>%
-  arrange(gameName) %>%
-  filter( userID != "BBG 5007" )
-  
-# Game.Result.EU %>%
-#   filter( str_detect(userID,"BBG") )
-
-# count the number of times a champion is present in a deck
-# grouped by region
-#'#########
-top32tbl.EU.full.CC <- top32tbl.EU.full %>%
-  distinct(userID,.keep_all = T) %>%
-  pivot_longer(.,cols = contains("code_"),values_to = "deck_code") %>%
-  select(server,deck_code) %>%
-  mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) %>%
-  separate_rows(CC,sep = " / ") %>%
-  group_by(server) %>%
-  count(CC) %>%
-  ungroup()
-
-# top32tbl.EU.full %>%
-#   select(userID,deck_1,code_1,deck_2,code_2,deck_3,code_3) %>%
-#   distinct() %>% fwrite(.,"Top32NA_full.csv")
-
-ft.top32tbl.CC.EU.full <- top32tbl.EU.full.CC %>%
-  filter(server == "europe")  %>%
-  filter(n == 1) %>%
-  select(-server) %>%
-  rename_all(~c("Champion","N")) %>%
-  flextable::flextable() %>%
-  flextable::as_raster()
-
-#' base plot
-ggtop32.EU.full <- top32tbl.EU.full.CC  %>%
-  filter(server=="europe") %>%
-  filter(n > 1) %>%
-  left_join(.,LoR.Set%>%select(name,region),by=c("CC"="name")) %>%
-  mutate(img = map_chr(.x = CC, ~getCardCode(.x) )) %>%
-  mutate(img = map_chr(.x = img, ~card_url_path_full(.x) )) %>%
-  ggplot(aes(reorder(CC, n),n,fill=region)) +
-  geom_bar(position="dodge",stat = "identity", color = "black") +
-  scale_y_continuous(sec.axis = sec_axis(~(./32*100), name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = CC, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
-  coord_flip() +
-  scale_fill_manual("legend", values = c("Bilgewater" = "#d2894e",
-                                       "Demacia"    = "#e8debf",
-                                       "Freljord"   = "#baebf8" ,
-                                       "Ionia"      = "#e0afbf",
-                                       "Targon"     = "#a29cee",
-                                       "Noxus"      = "#ce6e6c",
-                                       "Piltover & Zaun" = "#f6b983",
-                                       "Shadow Isles" = "#369b7d",
-                                       "Shurima"    = "#f2e858",
-                                       "BandleCity" = "#d6df5d") ) +
-  labs( x = "Champion",
-        y = "#Decks",
-        title = "Champions' Play Rate - EU",
-        subtitle = "Champions presence based by the number of decks that included them / playrate",
-        caption = glue::glue("number of players: 32" )) +
-  theme_bw() +
-  theme( plot.title    = element_text(face = "bold", size = 15),
-         plot.subtitle = element_text(size = 12),
-         axis.title.x  = element_text(face = "bold", size = 12),
-         axis.title.y  = element_text(face = "bold", size = 12),
-         axis.text.x   = element_text(face = "bold", size = 10),
-         axis.text.y   = element_text(size = 8),
-         legend.position = "none"
-         )
-
-#' unite the plot and table
-cowplot::plot_grid(ggtop32.EU.full, ggplot() + 
-                     theme_void() + 
-                     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU.full), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-
+```{r top32-EU-full}
+# top32tbl.EU.full <- left_join(
+#   Game.Result.EU,LoR.Account.RMD[,c("gameName","RiotID")],
+#   by=c("userID"="RiotID")
+#   ) %>%
+#   distinct() %>%
+#   filter( gameName %in% c("4LW","A Z","Aikado","BBG","Briguy","BruisedByGod",
+#                           "CameronHanzo","DustyBunz","Faurreira","Glop","Henneky",
+#                           "Idontca1","Kevor24","Lazyguga","Lipe","LuserBeam",
+#                           "MajiinBae","mati24mayo","MaykaS","Metal","Mr eMOEtional",
+#                           "nalkpas","NoTapper","Oneiric","Raspyn","Roxas",
+#                           "STAN","Tatsu","TomasZamo2000","Trivo","Vivo",
+#                           "xGoldenRulex","Zorig Dungu") ) %>%
+#   arrange(gameName) %>%
+#   filter( userID != "BBG 5007" )
+#   
+# # Game.Result.EU %>%
+# #   filter( str_detect(userID,"BBG") )
+# 
+# # count the number of times a champion is present in a deck
+# # grouped by region
+# #'#########
+# top32tbl.EU.full.CC <- top32tbl.EU.full %>%
+#   distinct(userID,.keep_all = T) %>%
+#   pivot_longer(.,cols = contains("code_"),values_to = "deck_code") %>%
+#   select(server,deck_code) %>%
+#   mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) %>%
+#   separate_rows(CC,sep = " / ") %>%
+#   group_by(server) %>%
+#   count(CC) %>%
+#   ungroup()
+# 
+# # top32tbl.EU.full %>%
+# #   select(userID,deck_1,code_1,deck_2,code_2,deck_3,code_3) %>%
+# #   distinct() %>% fwrite(.,"Top32NA_full.csv")
+# 
+# ft.top32tbl.CC.EU.full <- top32tbl.EU.full.CC %>%
+#   filter(server == "europe")  %>%
+#   filter(n == 1) %>%
+#   select(-server) %>%
+#   rename_all(~c("Champion","N")) %>%
+#   flextable::flextable() %>%
+#   flextable::as_raster()
+# 
+# #' base plot
+# ggtop32.EU.full <- top32tbl.EU.full.CC  %>%
+#   filter(server=="europe") %>%
+#   filter(n > 1) %>%
+#   left_join(.,LoR.Set%>%select(name,region),by=c("CC"="name")) %>%
+#   mutate(img = map_chr(.x = CC, ~getCardCode(.x) )) %>%
+#   mutate(img = map_chr(.x = img, ~card_url_path_full(.x) )) %>%
+#   ggplot(aes(reorder(CC, n),n,fill=region)) +
+#   geom_bar(position="dodge",stat = "identity", color = "black") +
+#   scale_y_continuous(sec.axis = sec_axis(~(./32*100), name = "PlayRate (%)",breaks = seq(0,100,20))) +
+#   ggimage::geom_image(aes(x = CC, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
+#   coord_flip() +
+#   scale_fill_manual("legend", values = c("Bilgewater" = "#d2894e",
+#                                        "Demacia"    = "#e8debf",
+#                                        "Freljord"   = "#baebf8" ,
+#                                        "Ionia"      = "#e0afbf",
+#                                        "Targon"     = "#a29cee",
+#                                        "Noxus"      = "#ce6e6c",
+#                                        "Piltover & Zaun" = "#f6b983",
+#                                        "Shadow Isles" = "#369b7d",
+#                                        "Shurima"    = "#f2e858",
+#                                        "BandleCity" = "#d6df5d") ) +
+#   labs( x = "Champion",
+#         y = "#Decks",
+#         title = "Champions' Play Rate - EU",
+#         subtitle = "Champions presence based by the number of decks that included them / playrate",
+#         caption = glue::glue("number of players: 32" )) +
+#   theme_bw() +
+#   theme( plot.title    = element_text(face = "bold", size = 15),
+#          plot.subtitle = element_text(size = 12),
+#          axis.title.x  = element_text(face = "bold", size = 12),
+#          axis.title.y  = element_text(face = "bold", size = 12),
+#          axis.text.x   = element_text(face = "bold", size = 10),
+#          axis.text.y   = element_text(size = 8),
+#          legend.position = "none"
+#          )
+# 
+# #' unite the plot and table
+# cowplot::plot_grid(ggtop32.EU.full, ggplot() + 
+#                      theme_void() + 
+#                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU.full), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
+# 
 # ggsave("images/topEUNACC.png")
 ```
 :::
@@ -1165,10 +1167,6 @@ cowplot::plot_grid(ggtop32.NA, ggplot() +
 ### NA top32 {.panel-name}
 
 ```{r top32-full}
-
-top32tbl.NA.full %>%
-  filter( str_detect(LU,"Vi") )
-
 top32tbl.NA.full <- left_join(
   Game.Result.NA,LoR.Account.RMD[,c("gameName","RiotID")],
   by=c("userID"="RiotID")
@@ -1181,15 +1179,18 @@ top32tbl.NA.full <- left_join(
           ) %>%
   arrange(gameName) %>%
   filter( userID != "BBG 5007" )
+
+# LoR.Account.RMD |>
+#   filter( gameName %in% c("4LW","A Z","Aikado","Briguy","BBG","CameronHanzo","DustyBunz","Faurreira", # "BruisedByGod doesn't appear by this nick"
+#                           "Glop","Henneky","Idontca1","Kevor24","Lazyguga","Lipe","LuserBeam","MajiinBae",
+#                           "mati24mayo","MaykaS","Metal","Mr eMOEtional","nalkpas","NoTapper","Oneiric","Raspyn",
+#                           "Roxas","STAN","Tatsu","TomasZamo2000","Trivo","Vivo","xGoldenRulex","Zorig Dungu")
+#           ) %>%
+#   select(refID,RiotID,master,seasonal) |>
+#   filter(seasonal == "seasonal") |>
+#   distinct() |>
+#   arrange(RiotID) |> fwrite(file = file.path("C:","LlorR","data","clean","Seasonal_2_14_Top32NA.csv"))
   
-# LoR.Melt.Seasonal %>%
-#   filter( deck_code == "CECACAQEBAAQIBAHAIAQIGZUAUAQKAI5EEUDKBABAICAMAIDAUBAEAIED4TQEAIFB4MQCAIBAUJQ" )
-
-# lordecks::get_decklist_from_code("CECACAQEBAAQIBAHAIAQIGZUAUAQKAI5EEUDKBABAICAMAIDAUBAEAIED4TQEAIFB4MQCAIBAUJQ")
-
-# Game.Result.NA %>%
-#   filter( str_detect(userID,"BBG") )
-
 # count the number of times a champion is present in a deck
 # grouped by region
 #'#########
