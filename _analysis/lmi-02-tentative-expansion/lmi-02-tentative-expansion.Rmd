@@ -1,8 +1,8 @@
 ---
 title: "EXPANDING THE LOR-META-INDEX - Bo3 DATA"
 description: |
-  Adding a Ban Index to the LMI by using data from Bo3 Matches and showcasing some of the complexity of costructing a Composite Indicator
-base_url: https://www.llorr-stats.com
+  The LMI is limited in its current setting as it uses only playrates and winrates. By using Bo3 data we propose a way to expand the LMI with a ban-index
+base_url: http://www.llorr-stats.com
 preview:
 author:
   - name: Valentino (Legna) Vazzoler
@@ -62,11 +62,11 @@ xaringanExtra::use_panelset()
 # library(metathis)
 metathis::meta() |>
   metathis::meta_description(
-    "Adding a Ban Index to the LMI by using data from Bo3 Matches and showcasing some of the complexity of costructing a Composite Indicator"
+    "The LMI is limited in its current setting as it uses only playrates and winrates. By using Bo3 data we propose a way to expand the LMI with a ban-index"
   ) |> 
   metathis::meta_viewport() |> 
   metathis::meta_social(
-    title = "EXPANDING THE LOR-META-INDEX - Bo3 DATA",
+    title = "EXPANDING THE LOR-META-INDEX (LMI) - Bo3 DATA",
     url = "https://www.llorr-stats.com",
     image = "images/LMIv2",
     image_alt = "LMIv2",
@@ -86,9 +86,29 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
                                    )
 ```
 
-# Introduction
+```{r create-TimeBlcok}
+timeBlock.1.start <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5)
+timeBlock.2.start <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5)
+timeBlock.3.start <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5)
+timeBlock.4.start <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5)
+timeBlock.5.start <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5)
+# 30 min break
+timeBlock.6.start <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5)
+timeBlock.7.start <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5)
+timeBlock.8.start <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5)
+timeBlock.9.start <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5)
 
-# Data
+timeBlock.1.end <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.2.end <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.3.end <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.4.end <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.5.end <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5) + lubridate::minutes(60)
+# 30 min break
+timeBlock.6.end <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.7.end <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.8.end <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.9.end <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
+```
 
 ```{r raw-data}
 #' load gameDT
@@ -115,16 +135,16 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 ```
 
 ```{r prepare-data}
-LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+LoR.Melt.Seasonal <- LoR.Match.RMD |>
   #' Base filters
   ###############
   filter( game_mode == 'SeasonalTournamentLobby' ) |>
   filter( game_start_time_utc < as.POSIXct("2021-08-17 21:00:00", tz = "UTC") ) |>
   #' 'process' data
   #################
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
-  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
   select( match_key,server,game_start_time_utc,game_version,total_turn_count,
           ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
   #' melt data
@@ -137,22 +157,398 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   value.name = str_sub(
     names(select(.,ends_with("_1")))
     ,end = -3)
-  ) %>%
+  ) |>
   #' finish 'process' data
   ########################
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
-  #' nChamp
-  #########
-  rowwise() %>%
-  mutate(champions = extract_champions(c_across(contains("Champion")) ) ) %>%
-  ungroup() %>%
-  mutate( nChamp = str_count(champions,pattern = "/")+1) %>%
-  mutate( nChamp = replace(nChamp, str_detect(player,"Championless"),0) ) %>%
+  left_join(LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) |>
+  left_join(LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) |>
+  left_join(LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) |>
   select(-ends_with("puuid"),-refID)
 ```
+
+```{r create-lineUp-DT}
+LineUp.DT <- left_join(LoR.Melt.Seasonal ,LoR.Account.RMD ,by=c("userID"="RiotID")) %>% 
+  select(userID,server,player,deck_code) %>%
+  group_by(userID,server) %>%
+  distinct(player,deck_code) %>%
+  # arrange(userID) %>%
+  # filter(str_detect(userID,"Oneiric")) %>%
+  summarise( listDeck=list(player),listCode=list(deck_code) )
+
+LineUp.DT <- LineUp.DT %>%
+  cbind(.,map_df(.x = LineUp.DT$listCode, .f = ~assignLineUp(.x) )) %>%
+  # cbind(.,do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$listDeck[x]) ) ) ) %>%
+  # cbind(.,do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$listCode[x]) ) ) ) %>%
+  rename("code_1"="deck_1","code_2"="deck_2","code_3"="deck_3" ) %>%
+  left_join( .,LoR.Deck %>% select(deck_code,deck_1=archetype),by=c("code_1"="deck_code") ) %>%
+  left_join( .,LoR.Deck %>% select(deck_code,deck_2=archetype),by=c("code_2"="deck_code") ) %>%
+  left_join( .,LoR.Deck %>% select(deck_code,deck_3=archetype),by=c("code_3"="deck_code") ) %>%
+  # LineUp.DT %>%
+  dplyr::mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  ) %>%
+  ungroup()
+
+# LineUp.DT
+```
+```{r compute-games-asia}
+Game.Result.ASIA <- LoR.Melt.Seasonal %>%
+  filter( server=="asia" ) %>%
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by(  userID,opponentID,server ) %>%
+  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
+  group_by(  userID,opponentID,server,timeBlock ) %>%
+  arrange( timeBlock ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
+  arrange( userID, timeBlock ) %>%
+  # Identify the round with the official schedule
+  mutate( round = case_when(
+    # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
+    # JST = UTC - 9hrs
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"Japan"),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan"),"UTC") ~ 5, # 16:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan"),"UTC") ~ 9, # 21:00
+    )
+  ) %>%
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) %>%
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
+  group_by(userID) %>%
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) %>%
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) %>%
+  left_join(
+  tibble( userID = rep( LineUp.DT %>% filter(server=="asia") %>% pull(userID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="asia") %>% NROW())  ),
+          server = "asia"),
+  ., by = c("userID","round","server")) %>%
+  relocate(round, .after = server) %>%
+  left_join(.,LineUp.DT,by=c("server","userID"))
+  
+Game.Result.ASIA$ban <- lapply( 1:NROW(Game.Result.ASIA), function(x) (setdiff( Game.Result.ASIA$listDeck[x] %>% unlist(),Game.Result.ASIA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+
+```{r compute-games-europe}
+Game.Result.EU <- LoR.Melt.Seasonal %>%
+  filter( server=="europe" ) %>%
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by(  userID,opponentID,server ) %>%
+  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
+  group_by(  userID,opponentID,server,timeBlock ) %>%
+  arrange( timeBlock ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
+  arrange( userID, timeBlock ) %>%
+  # Identify the round with the official schedule
+  mutate( round = case_when(
+    # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
+    # JST = UTC - 9hrs
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"CET"),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"CET"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"CET"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"CET"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"CET"),"UTC") ~ 5, # 16:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"CET"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"CET"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"CET"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"CET"),"UTC") ~ 9, # 21:00
+    )
+  ) %>%
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) %>%
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
+  group_by(userID) %>%
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) %>%
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) %>%
+  left_join(
+  tibble( userID = rep( LineUp.DT %>% filter(server=="europe") %>% pull(userID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="europe") %>% NROW())  ),
+          server = "europe"),
+  ., by = c("userID","round","server")) %>%
+  relocate(round, .after = server) %>%
+  left_join(.,LineUp.DT,by=c("server","userID"))
+
+Game.Result.EU$ban <- lapply( 1:NROW(Game.Result.EU), function(x) (setdiff( Game.Result.EU$listDeck[x] %>% unlist(),Game.Result.EU$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+
+```{r compute-games-americas}
+# with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC")
+Game.Result.NA <- LoR.Melt.Seasonal %>%
+  filter( server=="americas" ) %>%
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by(  userID,opponentID,server ) %>%
+  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
+  group_by(  userID,opponentID,server,timeBlock ) %>%
+  arrange( timeBlock ) %>%
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
+  arrange( userID, timeBlock ) %>%
+  # Identify the round with the official schedule
+  mutate( round = case_when(
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"US/Central"),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"US/Central"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"US/Central"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"US/Central"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"US/Central"),"UTC") ~ 5, # 16:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"US/Central"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"US/Central"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"US/Central"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"US/Central"),"UTC") ~ 9, # 21:00
+    )
+  ) %>%
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) %>%
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
+  group_by(userID) %>%
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) %>%
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) %>%
+  left_join(
+  tibble( userID = rep( LineUp.DT %>% filter(server=="americas") %>% pull(userID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="americas") %>% NROW()) ),
+          server = "americas" ),
+  ., by = c("userID","round","server")) %>%
+  relocate(round, .after = server) %>%
+  left_join(.,LineUp.DT,by=c("server","userID"))
+
+Game.Result.NA$ban <- lapply( 1:NROW(Game.Result.NA), function(x) (setdiff( Game.Result.NA$listDeck[x] %>% unlist(),Game.Result.NA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+```{r table-ban}
+deckForBan <- LineUp.DT %>%
+  filter(!is.na(deck_3) ) %>%
+  # filter(!is.na(deck_3) & server!="asia") %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>% unique() %>% sort()
+              
+########
+
+ban.tbl.All <- LineUp.DT %>%
+  filter(!is.na(deck_3) ) %>%
+  select(LU,contains("deck_")) %>%
+  pivot_longer(.,cols = contains("deck_"),values_to = "ban") %>%
+  # melt(id.vars="LU",value.name = "ban") %>% arrange(LU) %>%
+  select(-name)
+
+ban.tbl <- rbind(Game.Result.EU,Game.Result.NA) %>%
+  # filter(server!="asia") %>%
+  # left_join(.,Seasonal.LineUp.DT %>%
+  #             filter(!is.na(deck_3)) %>%
+  #             select(!server),by=c("userID") ) %>%
+  group_by( LU ) %>%
+  count(ban) %>%
+  filter( !is.na(ban) ) %>%
+  group_by(LU) %>%
+  mutate( freqBan = n/sum(n) )
+
+ban.DT <- tibble(
+  deck = deckForBan,
+  n.ban = as.numeric(NA),
+  max.ban = as.numeric(NA)
+  ) %>% as.data.table()
+
+for (i in 1:length(deckForBan) ) {
+  # cat(i, " ")
+  # i = 1
+  whichLU <- LineUp.DT %>%
+    filter(!is.na(deck_3) ) %>%
+    # filter(!is.na(deck_3) & server!="asia") %>%
+    filter( deck_1 == deckForBan[i] | deck_2 == deckForBan[i] | deck_3 == deckForBan[i]  ) %>%
+    pull(LU)
+  
+  ban.DT[i,n.ban := (ban.tbl %>%
+    filter( LU %in% whichLU ) %>%
+    filter( ban == deckForBan[i] ) %>%
+    pull(n) %>% sum()) ]
+    
+  ban.DT[i,max.ban := ban.tbl %>%
+    filter( LU %in% whichLU ) %>%
+    pull(n) %>% sum() ]
+}
+
+ban.tbl <- left_join(ban.tbl.All,ban.tbl,by=c("LU","ban")) %>%
+  mutate(across(everything(), ~replace_na(.x, 0)) ) %>%
+  group_by(ban) %>%
+  summarise( meanBan_byLU = mean(freqBan) ) # <- valore a cui devo fare attenzione in quanto ho cancellato prima
+
+ban.DT <- ban.DT %>%
+  mutate( meanBan = n.ban/max.ban ) %>%
+  left_join(.,ban.tbl,by=c("deck"="ban")) %>%
+  mutate(across(everything(), ~replace_na(.x, 0)) )
+
+# head(ban.DT%>%arrange(desc(n.ban)))
+```
+
+```{r compute-win-rate}
+WR.DT <- LoR.Melt.Seasonal %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome ) %>%
+  group_by(player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) %>%
+  ungroup() %>%
+  mutate( playrate = nGames/sum(nGames) ) %>%
+  #'add ban
+  left_join(.,ban.DT,by=c("player"="deck")) %>%
+  #' remove the decks with no ban information so take all complete cases
+  filter(complete.cases(.))
+
+# WR.DT
+```
+
+```{r print-table-ban, echo=FALSE}
+WR.DT %>%
+  filter(nGames > 10) %>%
+  select(deck=player,WR,n.ban,contains("meanBan")) %>%
+  arrange(desc(n.ban)) %>%
+  reactable(.,
+            # wrap = FALSE,
+            bordered = TRUE,
+            highlight = TRUE,
+            striped = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table
+            # fullWidth = FALSE, # don't fill the page
+            defaultPageSize = 10,
+            defaultColDef = colDef(
+               style = list(fontWeight = 500, color = "black",
+                       fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
+               # header = function(value) str_to_title(value),
+               #  cell = function(value) format(value, nsmall = 1),
+               align = "center",
+               headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+            ),
+            theme = reactableTheme(
+                borderColor = "#dfe2e5",
+                stripedColor = "#f6f8fa",
+                highlightColor = "#f0f5f9",
+                # cellPadding = "8px 12px",
+                style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
+                searchInputStyle = list(width = "100%")),
+            columns = list(
+                deck = colDef(name="Deck", align = "left" ),
+                WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
+                n.ban = colDef(name="#Bans" ),
+                meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) ),
+                meanBan_byLU = colDef(name="Mean Ban Rate by Line Up", format = colFormat(percent = TRUE, digits = 2) )
+              )
+            
+            )
+```
+
+
+
+# LMI - Tournament Edition
 
 When I wrote the basic theory about the index I mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
 
 Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
+
+`r kableExtra::text_spec("TLDR:", color = "red")` Added the ban rate, will write an update on the theory
+
+`r kableExtra::text_spec("Note:", color = "red")` This section use only decks with full knowledge of the Line-Ups. Other decks are excluded
+
+> The LMI [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+
+```{r data-aggregation}
+DT.Aggreation <- WR.DT %>%
+  filter( nGames > 200 ) %>%
+  # filter( playrate > 0.01 ) %>%
+  mutate( freq_ind    = scale_quantile(playrate) ) %>%
+  mutate( ban_ind     = scale_quantile(meanBan) ) %>%
+  mutate( wr_dim      = scale_quantile(WR) ) %>%
+  
+  rowwise() %>%
+  #' pick ban
+  mutate( pb_dim    = map2_dbl(.x = freq_ind, .y = ban_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5))) ) %>%
+  ungroup() %>%
+  mutate( pb_dim    = scale_quantile(pb_dim) ) %>%
+  rowwise() %>%
+  mutate( hmeta_ind = harm.mean(c_across(ends_with("_dim")) ) ) %>%
+  ungroup()
+
+# DT.Aggreation
+```
+
+```{r ggplotly-LMI}
+textWRPR <- function(Deck,WR, playrate,ban){
+  glue("Deck: {Deck}\nWin Rate: {scales::percent(WR,accuracy = 0.1)}\nPlay Rate: {scales::percent(playrate,accuracy = 0.1)}\nmean Ban Rate: {scales::percent(ban,accuracy = 0.1)}")
+}
+
+f <- list(
+  family = "Courier New, monospace",
+  size = 18,
+  color = "#7f7f7f"
+)
+
+fig <- DT.Aggreation %>%
+  select(player,WR,playrate,meanBan,wr_dim,pb_dim,hmeta_ind) %>%
+  mutate_if(is.numeric, funs(round(., 4)) ) %>%
+  mutate( tooltip = textWRPR(Deck = player,WR = WR,playrate = playrate,ban = meanBan) ) %>%
+  rename("Deck"="player","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","WR dim"="wr_dim","Freq dim"="pb_dim","LMI"="hmeta_ind") %>%
+  plot_ly(
+    type = 'scatter',
+    mode = 'markers',
+    x = ~`WR dim`,
+    y = ~`Freq dim`,
+    marker = list(size = ~LMI*100, sizeref = 0.1, sizemode = 'area'),
+    color = ~LMI,
+    text = ~tooltip,
+    hovertemplate = paste(
+      "LMI:<b>%{marker.size:,}<br>",
+      "<b>%{text}</b><br><extra></extra>",sep = ""
+      # "%{yaxis.title.text}: %{y:$,.0f}<br>",
+      # "%{xaxis.title.text}: %{x:.0%}<br>",
+      # "Number Employed: %{marker.size:,}",
+      # "<extra></extra>"
+      )
+    ) %>% layout(xaxis = list(title = "WR dim",titlefont = f),
+                 yaxis = list(title = "Freq dim",titlefont = f),
+                 title = 'LoR-Meta Index (LMI)'
+                 ) %>% suppressWarnings()
+
+fig
+```
+
+# Introduction
+
+When we wrote the basic theory about the index [^1] it was mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
+
+Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
+
+[^1]: [LMI - early concept](https://www.llorr-stats.com/analysis/lmi/)
+
+# Data
+
+# Bans (and WinRates)
+
+`r kableExtra::text_spec("Note:", color = "red")` This section use only decks with full knowledge of the Line-Ups. Other decks are excluded
+
+We saw the line ups brought, but what was actually used? This is sadly not only tricky to compute but also impossible in some case where a player used only one of his/her deck.
+
+What follows is a table containing the ban rates for each deck computeted in two different ways:
+
+-   **Mean Ban Rate by Line Up**: mean value of the ban rate for each deck among all Line Ups that contains it.
+
+> Example: 100 LineUps, 99 with Azir/Irelia with 100% ban rate and 1 with 0% ban rate -\> Mean Ban Rate by Line Up = (100x99+0x1)/100 = 99%
+
+-   **Ban Rate**: ratio of number of ban of a deck among all bans acrooss line ups that contains such deck.
+
+> Example: 100 LineUps, 99 with Azir/Irelia with 1 games and Azir / Irelia banned in each istance (100% ban rate) and 1 line up with 0 ban but 100 games (0% ban rate) -\> Ban Rate = (1x99+0)/199 = \~49.7%
+
+# Legal bla bla {.unnumbered}
+
+This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.

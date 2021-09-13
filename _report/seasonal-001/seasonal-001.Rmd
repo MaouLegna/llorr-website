@@ -337,7 +337,7 @@ gtSeasonal %>%
 # gtsave(gtSeasonal,"images/seasonal.png")
 ```
 
-```{r create-lineUp-list}
+```{r create-lineUp-DT}
 LineUp.DT <- left_join(LoR.Melt.Seasonal ,LoR.Account.RMD ,by=c("userID"="RiotID")) %>% 
   select(userID,server,player,deck_code) %>%
   group_by(userID,server) %>%
