@@ -110,12 +110,13 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
     names(select(.,ends_with("_1")))
     ,end = -3)
   )
-# %>%
-#   #' finish 'process' data
-#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-#   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-#   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
-#   select(-ends_with("puuid"),-refID,-contains("puuid"))
+  # ) %>%
+  #' finish 'process' data
+  # left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  # left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
+  # left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
+  # # select(-ends_with("puuid"),-refID,-contains("puuid"))
+  # select(-ends_with("puuid"),-contains("puuid"))
 
 #' WR tbl
 #'#######
@@ -152,21 +153,6 @@ MUtbl <- LoR.Melt.Matches.RMD %>%
   # removing ~extra variables
   select(-lower,-upper) %>%
   left_join(.,WR.DT[,c("player","playrate")],by="player")
-```
-
-```{r}
-# archetypes <- LoR.Melt.Matches.RMD |>
-#   tabyl(player) |>
-#   filter(percent > 0.001) |>
-#   arrange(desc(n)) |>
-#   pull(player)
-# 
-# 
-# LoR.Melt.Matches.RMD |>
-#   filter( player == archetypes[1] ) |>
-#   # filter( player == "Maokai / Nautilus" ) |>
-#   pull(deck_code) %>%
-#   get_deck_structure_2(.,minN = 5)
 ```
 
 # Table {data-icon="fa-table"}

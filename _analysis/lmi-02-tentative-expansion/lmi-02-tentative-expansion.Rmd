@@ -449,6 +449,19 @@ WR.DT %>%
             )
 ```
 
+```{r}
+DT <- data.table(participant_1 = c("a","A","b","c"),
+           participant_2 = c("b","D","a","d"),
+           origin = c(1,2,1,1))
+
+namesDT <- data.table( puuid_1 = c("a","b","c","d"),
+            puuid_2 = c("A","B","C","D"))
+
+
+left_join(DT,namesDT,by=c("participant_1"="puuid_1")) %>%
+  # mutate(c1 = replace(c1, origin==1, v2) )
+  mutate(participant_1 = ifelse(origin == 1, puuid_2, participant_1))
+```
 
 
 # LMI - Tournament Edition
@@ -521,6 +534,8 @@ fig <- DT.Aggreation %>%
                  ) %>% suppressWarnings()
 
 fig
+
+LoR.
 ```
 
 # Introduction

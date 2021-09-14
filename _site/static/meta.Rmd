@@ -260,6 +260,7 @@ WR.DT.Reg %>%
             # wrap = FALSE,
             highlight = TRUE,
             striped = TRUE,
+            pagination = FALSE,
             # filterable = TRUE,
             defaultColDef = colDef(
               # header = function(value) str_to_title(value),
@@ -316,6 +317,7 @@ WR.DT %>%
             # wrap = FALSE,
             highlight = TRUE,
             striped = TRUE,
+            pagination = FALSE,
             # filterable = TRUE,
             defaultColDef = colDef(
               # header = function(value) str_to_title(value),
@@ -413,7 +415,7 @@ shared_data %>%
             searchable = TRUE,
             compact = TRUE, # compact the table height
             fullWidth = T, # don't fill the page
-            defaultPageSize = 20,
+            pagination = FALSE,
             wrap = TRUE,
             # filterable = TRUE,
             defaultColDef = colDef(
@@ -494,7 +496,8 @@ shared_code %>%
             searchable = TRUE,
             compact = TRUE, # compact the table height
             fullWidth = T, # don't fill the page
-            defaultPageSize = 20,
+            # defaultPageSize = 20,
+            pagination = FALSE,
             wrap = TRUE,
             # filterable = TRUE,
             defaultColDef = colDef(
