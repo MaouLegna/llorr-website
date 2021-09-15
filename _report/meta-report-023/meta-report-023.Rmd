@@ -198,7 +198,7 @@ In addition a quick fix to account for the Rubin-baits decks hase been applied a
 * RubinBait - Draven / Sion
 
 ```{r table-nGames-data, layout="l-body"}
-nGames_tbl <- LoR.Match.RMD %>%
+tbl1 <- LoR.Match.RMD %>%
   #' Stay only 'among' the row with the games in the time-frame I want
   ####################################################################
   slice(minrow_live:maxrow_live) %>%
@@ -218,9 +218,21 @@ nGames_tbl <- LoR.Match.RMD %>%
   select(Status=game_type,Server=server) %>%
   #' Create tbl
   #############
-  tbl_summary() %>%
+  tbl_summary()
+
+
+tbl2 <- LoR.Match.RMD |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+  filter( game_type == "Ranked" ) |>
+  select(Server=server) |>
+  tbl_summary()
+  
+nGames_tbl <- tbl_merge( 
+    tbls = list(tbl1, tbl2),
+    tab_spanner = c("**All Games**", "**Ranked**")
+  ) %>%
   modify_footnote(
-    update = stat_0 ~
+    update = stat_0_1 ~
       md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
   ) %>%
   # modify_header(label ~ "**Variable**") %>%
@@ -312,8 +324,19 @@ RubinBait_deckCode_2 <- LoR.Deck %>%
 
 LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_2, player:="RubinBait - Draven / Ezreal" ]
  
+RubinBait_deckCode_3 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Caitlyn / Draven") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_3, player:="RubinBait - Caitlyn / Draven" ]
+
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Ezreal")
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Sion")
+# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Caitlyn / Draven")
 ```
 
 
@@ -885,6 +908,13 @@ WR.DT <- LoR.Melt.Matches.RMD %>%
   ungroup() %>%
   mutate( playrate = nGames/sum(nGames) )
 
+# LoR.Melt.Matches.RMD |>
+#   filter(str_detect(userID,"RubinZoo")) |>
+#   tabyl(player)
+
+# WR.DT |>
+#   filter(str_detect(player,"Rubin"))
+
 options(scipen = 999)
 
 WR.DT.Reg <- LoR.Melt.Matches.RMD %>%
@@ -1015,7 +1045,7 @@ WR.DT %>%
 
 # Match Ups
 
-`r kableExtra::text_spec("Note :", color = "red")` While these are indeed the Match-Ups win-rates that one can extract from last week games I need to point out that this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the MU-page where I use all games with the current sets of buffs and nerfs. While it's that there I don't account for optimization and difference in skills acquired during the weeks the overall number of games / sample size makes them a much safer source of information. While I'll continue to release the weekly data, pls refer to the [MU - page](https://llorr-stats.netlify.app/report/mu) for a better "meta-investigation".
+`r kableExtra::text_spec("Note :", color = "red")` While these are indeed the Match-Ups win-rates that one can extract from last week games I need to point out that this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the MU-page where I use all games with the current sets of buffs and nerfs. While it's that there I don't account for optimization and difference in skills acquired during the weeks the overall number of games / sample size makes them a much safer source of information. While I'll continue to release the weekly data, pls refer to the [MU - page](https://www.llorr-stats.com/static/mu.html) for a better "meta-investigation".
 
 ```{r get-WR-Top10}
 mu <- 15
