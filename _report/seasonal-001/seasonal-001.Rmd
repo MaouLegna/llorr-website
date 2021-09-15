@@ -1474,7 +1474,7 @@ ban.tbl.All <- LineUp.DT %>%
   # melt(id.vars="LU",value.name = "ban") %>% arrange(LU) %>%
   select(-name)
 
-ban.tbl <- rbind(Game.Result.EU,Game.Result.NA) %>%
+ban.tbl <- rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) %>%
   # filter(server!="asia") %>%
   # left_join(.,Seasonal.LineUp.DT %>%
   #             filter(!is.na(deck_3)) %>%
@@ -1487,9 +1487,15 @@ ban.tbl <- rbind(Game.Result.EU,Game.Result.NA) %>%
 
 ban.DT <- tibble(
   deck = deckForBan,
-  n.ban = as.numeric(NA),
+  # n.ban = as.numeric(NA),
   max.ban = as.numeric(NA)
-  ) %>% as.data.table()
+  ) %>% 
+  as.data.table() |>
+  left_join(rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) |>
+              tabyl(ban) |>
+              select(deck = ban,n.ban=n) |>
+              tibble(),
+            by = "deck")
 
 for (i in 1:length(deckForBan) ) {
   # cat(i, " ")

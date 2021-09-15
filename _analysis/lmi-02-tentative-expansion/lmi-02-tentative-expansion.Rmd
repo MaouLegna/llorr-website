@@ -1,5 +1,5 @@
 ---
-title: "EXPANDING THE LOR-META-INDEX - Bo3 DATA"
+title: "ADDING A BAN-INDEX TO THE BASE LOR-META-INDEX"
 description: |
   The LMI is limited in its current setting as it uses only playrates and winrates. By using Bo3 data we propose a way to expand the LMI with a ban-index
 base_url: http://www.llorr-stats.com
@@ -66,7 +66,7 @@ metathis::meta() |>
   ) |> 
   metathis::meta_viewport() |> 
   metathis::meta_social(
-    title = "EXPANDING THE LOR-META-INDEX (LMI) - Bo3 DATA",
+    title = "ADDING A BAN-INDEX TO THE BASE LOR-META-INDEX",
     url = "https://www.llorr-stats.com",
     image = "images/LMIv2",
     image_alt = "LMIv2",
@@ -334,60 +334,36 @@ deckForBan <- LineUp.DT %>%
               
 ########
 
-ban.tbl.All <- LineUp.DT %>%
-  filter(!is.na(deck_3) ) %>%
-  select(LU,contains("deck_")) %>%
-  pivot_longer(.,cols = contains("deck_"),values_to = "ban") %>%
-  # melt(id.vars="LU",value.name = "ban") %>% arrange(LU) %>%
-  select(-name)
-
 ban.tbl <- rbind(Game.Result.EU,Game.Result.NA) %>%
-  # filter(server!="asia") %>%
-  # left_join(.,Seasonal.LineUp.DT %>%
-  #             filter(!is.na(deck_3)) %>%
-  #             select(!server),by=c("userID") ) %>%
   group_by( LU ) %>%
   count(ban) %>%
-  filter( !is.na(ban) ) %>%
-  group_by(LU) %>%
-  mutate( freqBan = n/sum(n) )
+  filter( !is.na(ban) )
 
-ban.DT <- tibble(
-  deck = deckForBan,
-  n.ban = as.numeric(NA),
-  max.ban = as.numeric(NA)
-  ) %>% as.data.table()
+ban.DT <- tibble( deck = deckForBan ) |>
+    left_join(rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) |>
+                tabyl(ban) |>
+                select(deck = ban,nBan=n) |>
+                tibble()
+              ,by = "deck")
 
-for (i in 1:length(deckForBan) ) {
-  # cat(i, " ")
-  # i = 1
+setDT(ban.DT)
+for (i in 1:NROW(ban.DT) ) {
+  deck <- pull(ban.DT[i,"deck"])
+  
   whichLU <- LineUp.DT %>%
     filter(!is.na(deck_3) ) %>%
-    # filter(!is.na(deck_3) & server!="asia") %>%
-    filter( deck_1 == deckForBan[i] | deck_2 == deckForBan[i] | deck_3 == deckForBan[i]  ) %>%
+    filter( deck_1 == deck | deck_2 == deck | deck_3 == deck ) %>%
     pull(LU)
   
-  ban.DT[i,n.ban := (ban.tbl %>%
-    filter( LU %in% whichLU ) %>%
-    filter( ban == deckForBan[i] ) %>%
-    pull(n) %>% sum()) ]
-    
-  ban.DT[i,max.ban := ban.tbl %>%
-    filter( LU %in% whichLU ) %>%
-    pull(n) %>% sum() ]
+  ban.DT[i,maxBan := rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) |>
+    filter( LU %in% whichLU ) |>
+    filter( !is.na(ban) ) |>
+    NROW() ]
 }
 
-ban.tbl <- left_join(ban.tbl.All,ban.tbl,by=c("LU","ban")) %>%
-  mutate(across(everything(), ~replace_na(.x, 0)) ) %>%
-  group_by(ban) %>%
-  summarise( meanBan_byLU = mean(freqBan) ) # <- valore a cui devo fare attenzione in quanto ho cancellato prima
-
-ban.DT <- ban.DT %>%
-  mutate( meanBan = n.ban/max.ban ) %>%
-  left_join(.,ban.tbl,by=c("deck"="ban")) %>%
+ban.DT <- ban.DT |>
+  mutate( meanBan = nBan/maxBan ) |>
   mutate(across(everything(), ~replace_na(.x, 0)) )
-
-# head(ban.DT%>%arrange(desc(n.ban)))
 ```
 
 ```{r compute-win-rate}
@@ -408,6 +384,50 @@ WR.DT <- LoR.Melt.Seasonal %>%
 
 # WR.DT
 ```
+
+# Introduction
+
+When we wrote the basic theory about the index [^1] it was mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
+
+Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
+
+[^1]: [LMI - early concept](https://www.llorr-stats.com/analysis/lmi/)
+
+# Data
+
+```{r create-gt-summary}
+gtSeasonal <- LoR.Melt.Seasonal |>
+  select(server) |>
+  gtsummary::tbl_summary() |>
+  gtsummary::as_gt() |>
+  gt::tab_header(
+    title = "Bo3 Data",
+    subtitle = "Matches by Server"
+  ) |>
+  tab_source_note(
+    source_note = md(glue::glue("Bo3 Data from Seasonal Open Rounds - Rise of the Underworld Open Rounds Matches - games extracted with Riot API"))
+  )
+
+gtSeasonal |>
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+gtSeasonal
+```
+
+# Methods
+
+## A Better Introduction to Composite Indicator
+
+
+## The LMI and Ban-Rates.
+
+### Bans (and WinRates)
+
+-   **Ban Rate**: ratio between the number of bans and the number of matches of a deck
 
 ```{r print-table-ban, echo=FALSE}
 WR.DT %>%
@@ -449,32 +469,17 @@ WR.DT %>%
             )
 ```
 
-```{r}
-DT <- data.table(participant_1 = c("a","A","b","c"),
-           participant_2 = c("b","D","a","d"),
-           origin = c(1,2,1,1))
-
-namesDT <- data.table( puuid_1 = c("a","b","c","d"),
-            puuid_2 = c("A","B","C","D"))
+## Adding the Ban-Index (possible options)
 
 
-left_join(DT,namesDT,by=c("participant_1"="puuid_1")) %>%
-  # mutate(c1 = replace(c1, origin==1, v2) )
-  mutate(participant_1 = ifelse(origin == 1, puuid_2, participant_1))
-```
 
+# Results
 
 # LMI - Tournament Edition
 
 When I wrote the basic theory about the index I mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
 
 Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
-
-`r kableExtra::text_spec("TLDR:", color = "red")` Added the ban rate, will write an update on the theory
-
-`r kableExtra::text_spec("Note:", color = "red")` This section use only decks with full knowledge of the Line-Ups. Other decks are excluded
-
-> The LMI [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
 ```{r data-aggregation}
 DT.Aggreation <- WR.DT %>%
@@ -534,36 +539,26 @@ fig <- DT.Aggreation %>%
                  ) %>% suppressWarnings()
 
 fig
-
-LoR.
 ```
 
-# Introduction
+# Conclusions
 
-When we wrote the basic theory about the index [^1] it was mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
 
-Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
-
-[^1]: [LMI - early concept](https://www.llorr-stats.com/analysis/lmi/)
-
-# Data
-
-# Bans (and WinRates)
-
-`r kableExtra::text_spec("Note:", color = "red")` This section use only decks with full knowledge of the Line-Ups. Other decks are excluded
-
-We saw the line ups brought, but what was actually used? This is sadly not only tricky to compute but also impossible in some case where a player used only one of his/her deck.
-
-What follows is a table containing the ban rates for each deck computeted in two different ways:
-
--   **Mean Ban Rate by Line Up**: mean value of the ban rate for each deck among all Line Ups that contains it.
-
-> Example: 100 LineUps, 99 with Azir/Irelia with 100% ban rate and 1 with 0% ban rate -\> Mean Ban Rate by Line Up = (100x99+0x1)/100 = 99%
-
--   **Ban Rate**: ratio of number of ban of a deck among all bans acrooss line ups that contains such deck.
-
-> Example: 100 LineUps, 99 with Azir/Irelia with 1 games and Azir / Irelia banned in each istance (100% ban rate) and 1 line up with 0 ban but 100 games (0% ban rate) -\> Ban Rate = (1x99+0)/199 = \~49.7%
-
+.
 # Legal bla bla {.unnumbered}
 
 This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+
+```{r}
+DT <- data.table(participant_1 = c("a","A","b","c"),
+           participant_2 = c("b","D","a","d"),
+           origin = c(1,2,1,1))
+
+namesDT <- data.table( puuid_1 = c("a","b","c","d"),
+            puuid_2 = c("A","B","C","D"))
+
+
+left_join(DT,namesDT,by=c("participant_1"="puuid_1")) %>%
+  # mutate(c1 = replace(c1, origin==1, v2) )
+  mutate(participant_1 = ifelse(origin == 1, puuid_2, participant_1))
+```

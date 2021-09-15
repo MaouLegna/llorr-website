@@ -173,8 +173,6 @@ nGames <- LoR.Match.RMD %>%
   pull(n)
 ```
 
-`r kableExtra::text_spec("Note:", color = "red")` As the current sample size is terrible to estimate WR of MU, the MU section is not present in this report. The data is being updated in the MU dedicated page but there the data will continue to be updated being an a better picture overall.
-
 Number of (Ranked) matches analyzed **`r nGames %>% format(.,scientific = F)`** or **`r (nGames*2) %>% format(.,scientific = F)`** games.
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")` [^1]
