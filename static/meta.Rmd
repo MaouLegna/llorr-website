@@ -252,6 +252,20 @@ Champion.deck.daily.byserver <- (LoR.Melt.Matches.RMD |>
   select(!num_cc) |>
   mutate( Archetype = factor(Archetype) |> fct_infreq() )
 
+#' Get last value for PR
+maxFreq <- Champion.deck.daily.byserver |>
+  filter( Archetype %in% fct_meta &
+            game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
+  summarise( maxfreq = max(playRate) ) |>
+  signif.ceiling(1) |> pull()
+
+# options(digits.secs = 0)
+Champion.deck.daily.byserver <- Champion.deck.daily.byserver |>
+  mutate( game_start_time_utc = floor_date(game_start_time_utc, unit = "hours") ) |>
+  group_by(game_start_time_utc,Archetype) |>
+  slice_head(n=1) |>
+  ungroup()
+
 keyDeckDaily <- Champion.deck.daily.byserver |>
   filter( Archetype %in% fct_meta &
             game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
@@ -591,13 +605,6 @@ By clicking on the plot (both the ones on the left or the one on the right) you 
 ### Meta Decks PlayRate over time
 
 ```{r create-plot-meta-evo}
-#' Get last value for PR
-maxFreq <- Champion.deck.daily.byserver |>
-  filter( Archetype %in% fct_meta &
-            game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
-  summarise( maxfreq = max(playRate) ) |>
-  signif.ceiling(1) |> pull()
-
 #' Grouped line plots for PR over time
 meta_evo <- keyDeckDaily %>% {
    ggplot(., aes(game_start_time_utc, playRate, group = Archetype,color = Archetype)) +
@@ -641,6 +648,7 @@ dot_plot <- keyDeckDaily |>
 
 # dot_plot
 ```
+
 ```{r print-plot-meta-evo}
 subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
   layout(showlegend = FALSE) |>
