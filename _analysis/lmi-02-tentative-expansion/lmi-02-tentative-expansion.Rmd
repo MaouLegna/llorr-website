@@ -431,9 +431,9 @@ gtSeasonal
 
 ```{r print-table-ban, echo=FALSE}
 WR.DT %>%
-  filter(nGames > 10) %>%
-  select(deck=player,WR,n.ban,contains("meanBan")) %>%
-  arrange(desc(n.ban)) %>%
+  filter(nGames > 100) %>%
+  select(player,playrate,WR,contains("meanBan")) %>%
+  arrange(desc(meanBan)) %>%
   reactable(.,
             # wrap = FALSE,
             bordered = TRUE,
@@ -459,18 +459,68 @@ WR.DT %>%
                 style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
                 searchInputStyle = list(width = "100%")),
             columns = list(
-                deck = colDef(name="Deck", align = "left" ),
+                player = colDef(name="Deck", align = "left" ),
+                playrate = colDef(name="PlayRate", format = colFormat(percent = TRUE, digits = 2)),
                 WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
-                n.ban = colDef(name="#Bans" ),
-                meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) ),
-                meanBan_byLU = colDef(name="Mean Ban Rate by Line Up", format = colFormat(percent = TRUE, digits = 2) )
+                meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) )
               )
-            
             )
 ```
 
 ## Adding the Ban-Index (possible options)
 
+```{r}
+WR.DT |>
+  filter(nGames > 100) |>
+  select(playrate,WR,meanBan) |>
+  corrr::correlate() |>
+  corrr::focus(playrate:meanBan, mirror = TRUE) |>
+  corrr::network_plot()
+
+WR.DT |>
+  filter(nGames > 100) |>
+  select(playrate,WR,meanBan) |>
+  corrr::correlate() |>
+  corrr::rearrange(method = "MDS", absolute = FALSE) |>
+  corrr::shave() |>
+  corrr::rplot(shape = 15, colors = c("red", "green"))
+
+# install.packages("GGally")
+require(GGally)
+require(ggasym)
+
+correlation_matrix <- WR.DT |> 
+  filter(nGames > 100) |>
+  select(playrate,WR,meanBan) |>
+  cor()
+
+library(ggplot2)
+library(reshape2)
+WR.DT |> 
+  filter(nGames > 100) |>
+  select(playrate,WR,meanBan) |>
+  cor() |>
+  round(digits = 2) |>
+  melt() |>
+  ggplot(aes(Var1, Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low="blue", mid="white", high="red") +
+  coord_equal()
+
+
+library(GGally)
+# ggcorr(correlation_matrix,nbreaks = 5, palette = "RdYlBu", geom = "tile") # non corretto
+
+library(corrplot)
+library(RColorBrewer)
+corrplot(correlation_matrix, method = "square", type = "upper", tl.col = "black", order = "hclust", col = brewer.pal(n = 5, name = "RdYlBu"))
+correlation_matrix |>
+  round(digits = 2) |>
+  ggcorrplot(type = "upper", hc.order = TRUE, lab =TRUE)
+
+library(ggcorrplot)
+ggcorrplot(correlation_matrix, type = "upper", hc.order = TRUE, colors = brewer.pal(n = 3, name = "RdYlBu"))
+```
 
 
 # Results
@@ -483,7 +533,7 @@ Short explanation: Since now we have 3 variables there two options to consider, 
 
 ```{r data-aggregation}
 DT.Aggreation <- WR.DT %>%
-  filter( nGames > 200 ) %>%
+  filter( nGames > 100 ) %>%
   # filter( playrate > 0.01 ) %>%
   mutate( freq_ind    = scale_quantile(playrate) ) %>%
   mutate( ban_ind     = scale_quantile(meanBan) ) %>%

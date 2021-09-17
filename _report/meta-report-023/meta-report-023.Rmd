@@ -1044,7 +1044,7 @@ WR.DT %>%
 
 # Match Ups
 
-`r kableExtra::text_spec("Note :", color = "red")` While these are indeed the Match-Ups win-rates that one can extract from last week games I need to point out that this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the MU-page where I use all games with the current sets of buffs and nerfs. While it's that there I don't account for optimization and difference in skills acquired during the weeks the overall number of games / sample size makes them a much safer source of information. While I'll continue to release the weekly data, pls refer to the [MU - page](https://www.llorr-stats.com/static/mu.html) for a better "meta-investigation".
+`r kableExtra::text_spec("Note :", color = "red")` Regarding MU, this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the dedicated MU-page where I use all "Ranked" games with the current sets of buffs and nerfs. While one may object I don't account for optimizations and differences in skills acquired during the weeks, the overall number of games / sample size makes them a better source of information. So, in case, pls refer to the [MU - page](https://www.llorr-stats.com/static/mu.html) for a better "meta-investigation".
 
 ```{r get-WR-Top10}
 mu <- 15
