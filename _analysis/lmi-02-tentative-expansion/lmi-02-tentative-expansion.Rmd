@@ -1,5 +1,5 @@
 ---
-title: "ADDING A BAN-INDEX TO THE BASE LOR-META-INDEX"
+title: "LoR Meta Index (LMI) expansion by using Bo3 data"
 description: |
   The LMI is limited in its current setting as it uses only playrates and winrates. By using Bo3 data we propose a way to expand the LMI with a ban-index
 base_url: http://www.llorr-stats.com
@@ -20,7 +20,7 @@ twitter:
   creator: "@Maou_Legna"
 params:
   # prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
-  start: "2021-07-14 21:00:00" #UTC tz / 'current' week start
+  start: "2021-07-07 21:00:00" #UTC tz / 'current' week start
   end:   "2021-08-25 21:00:00" #UTC tz / 'current' week end
   skip:  1850000  # Patch 2.11 - after removing a few games  
 ---
@@ -66,7 +66,7 @@ metathis::meta() |>
   ) |> 
   metathis::meta_viewport() |> 
   metathis::meta_social(
-    title = "ADDING A BAN-INDEX TO THE BASE LOR-META-INDEX",
+    title = "LoR Meta Index (LMI) expansion by using Bo3 data",
     url = "https://www.llorr-stats.com",
     image = "images/LMIv2",
     image_alt = "LMIv2",
@@ -133,6 +133,41 @@ LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
+```{r Ladder Win Rates}
+WR.DT.Ladder <- LoR.Match.RMD |>
+  #' Base filters
+  ###############
+  filter( game_type == 'Ranked' ) |>
+  filter( game_start_time_utc >= as.POSIXct("2021-07-07 21:00:00", tz = "UTC") & game_start_time_utc < as.POSIXct("2021-07-14 21:00:00", tz = "UTC")  ) |>
+  #' 'process' data
+  #################
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
+  select( match_key,starts_with("player"),starts_with("opponent"),starts_with("game_outcome"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
+  # get_dupes(match_key)
+  #' melt data
+  ############
+  melt(id.vars=c("match_key"), measure.vars=patterns( str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) |>
+  # LoR.Melt.Matches.RMD |> 
+  filter(game_outcome!="tie") |>
+  select( player,opponent,game_outcome ) |>
+  group_by(player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) )
+```
+
 
 ```{r prepare-data}
 LoR.Melt.Seasonal <- LoR.Match.RMD |>
@@ -387,11 +422,19 @@ WR.DT <- LoR.Melt.Seasonal %>%
 
 # Introduction
 
-When we wrote the basic theory about the index [^1] it was mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
+Composite Indicator (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis(FA) they are not entirely data driven and they are compiled in other to communicate a concept. Mostly used in social or policy evoluation, they allows for a  single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
 
-Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
+In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index was that it is 'limited' as it use only two variables, playrates and winrates of a deck which would have been expanded once we could find additional (and appropriate) variables to add to it. A natural candidate as a third variable is the banrate of a deck (in a contest of BoX matches)
+
+An experiment to add a third variable was done earlier this year, for 'Rise of the Underworld - Seasonal Tournament' report[^2].
+
+The inclusion of such variable, was done without checking all the proper steps so that we wouldn't compromise the quality of the CI. In this article we introduce better the concept and framework of a CI, how to add the the information of the ban rates and their results.
+
+Following the necessary steps, the proposed variation of the LMI contradicts the expected theoretical-framework while confirming the past approach.
 
 [^1]: [LMI - early concept](https://www.llorr-stats.com/analysis/lmi/)
+
+[^2]: [LMI with Ban Rate - from Seasonal Rerport](https://www.llorr-stats.com/report/seasonal-001/#lmi---tournament-edition)
 
 # Data
 
@@ -415,17 +458,144 @@ gtSeasonal |>
     table.font.color.light = "black"
    )
 
-gtSeasonal
+# gtSeasonal
 ```
+
+All games from this analysis are from the 'Rise of the Underworld - Seasonal Tournament - Open Rounds'. This section of the tournament is organized in a series of nine Bo3 Matches with open lists and a ban phase before the start of the games. The smaller amount of games from the asian shard/server is allegedly because of the fewer players taking part of it[^3]
+
+Not all information about the tournament can be derived from the API. There is direct data about the chosen ban deck or the entire line-up brought by a player at this have to be extracted by aggregating the metadata of games from a single match and the matches with other matches.
+
+[^3]: No official data are known at the moment of the writing. Supposition made from a series of points like the fewer amoutn of Master rank players when the cutoff takes place.
 
 # Methods
 
-## A Better Introduction to Composite Indicator
+## Composite Indicators - A Better Introduction
 
+The LMI is a composite indicator (CI) and in a previous article we introduced the tool we gave a brief explanation about how to create them. Here, we want to give a better and more complete overview of the tool.
 
-## The LMI and Ban-Rates.
+> For a manual on CI, a commonly referred guide is from the Joint Research Centre (JRC) of the European Commission: [Handbook on Constructing Composite Indicators - METHODOLOGY AND USER GUIDE](https://www.oecd.org/sdd/42495745.pdf)
 
-### Bans (and WinRates)
+* 1. Theoretical Framework
+
+> * Provide the basis for the selection and combination of variables into a meaningfu composite indicator under a fitness-for-porpuse principle (involment of experts and stakeholders is envisaged at this step)
+
+* 2. Data selection
+
+> Should be based on the analytical soundness, measurability, coverage and relevance of the indicators to the phenomenon being measured and relationship to each other. The use of proxy variables should be considered when data are scarce (involvement of experts and stakeholders is envisaged at this step)
+
+* 3. Imputation of missing data
+
+> Is needed in order to provide a complete dataset (e.g by means or multiple imputation).
+
+* 4. Multivariate analysis
+
+> Should be used to study the overall structure of the dataset, assess its suitability, and guide subsequent methodological choices (e.g. weighting aggregation).
+
+* 5. Normalization
+
+> Should be carried out to render the variables comparable
+
+* 6. Weighting and aggregation
+
+> Should be done along the lines of the underying theoretical framework
+
+* 7. Uncertainty and sensitivity analysis
+
+> Should be undertaken to assess the robustness of the composite indicator in terms of e.g. the mechanism for indulging or excluding an indicator, the normalization scheme, the imputation of missing data, the choice, the choice of weights, the aggregation method
+
+* 8. Back to the data
+
+> Is needed to reveal the main drivers for an overall good or bad performance. Trasparency is promordial to good analysis
+
+* 9. Links to other indicators
+
+> Should be made to correlate the composite indicator (or its dimension) with existing (simple or composite) indicators as well as to identify linkages through regressions.
+
+* 10. Visulization of the results
+
+> Should receive proper attention, given that the visualization can influence (or help to enhance interpretability)
+
+### Of Bans WinRates and P&B
+
+As the number of variables increase from the two of the base-LMI to three we now have more options as to combine the variables. Normally, this doesn't mean that each possible choice should be evaluated, the definition we want to communicate should guide our choices and so the characteristics of our variables, e.g. we don't add a variable of Life expectancy in a subdimension or 'Infrastructure quality'
+
+```{r example-LMI-framework-1, fig.cap="(1/3) Possible theoretical framework for the LMI - All the variables are part of their own subdimension" }
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  I1 [label = 'LMI']
+  IS10 [label = 'Strengh \n subdimension']
+  IS11 [label = 'WinRate Index']
+  
+  IP10 [label = 'Popularity \n subdimension']
+  IP11 [label = 'PlayRate Index']
+  
+  IB10 [label = 'Fear/Annoyance(?) \n subdimension']
+  IB11 [label = 'BanRate Index']
+  
+  # edge definitions with the node IDs
+  I1 -> {IS10,IP10,IB10} [dir=back]
+  IS10 -> {IS11} [dir=back]
+  IP10 -> {IP11} [dir=back]
+  IB10 -> {IB11} [dir=back]
+  }",
+  height = 300)
+```
+
+```{r example-LMI-framework-2, fig.cap="(2/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, banrate and winrate are both used to measure the 'strenght' of a deck" }
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  I1 [label = 'LMI']
+  IS10 [label = 'Strengh \n subdimension']
+  IS11 [label = 'WinRate Index']
+  IS12 [label = 'BanRate Index']
+  
+  IP10 [label = 'Popularity \n subdimension']
+  
+  IP11 [label = 'PlayRate Index']
+  
+  
+  # edge definitions with the node IDs
+  I1 -> {IS10,IP10} [dir=back]
+  IS10 -> {IS11,IS12} [dir=back]
+  IP10 -> {IP11} [dir=back]
+  }",
+  height = 300)
+```
+
+```{r example-LMI-framework-3, fig.cap="(3/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, banrate and playrate are both used to measure the 'presence' of a deck" }
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  I1 [label = 'LMI']
+  IS10 [label = 'Strengh \n subdimension']
+  IS11 [label = 'WinRate Index']
+  
+  IP10 [label = 'Popularity \n Pick&Ban \n subdimension']
+  
+  IP11 [label = 'PlayRate Index']
+  IP12 [label = 'BanRate Index']
+  
+  
+  # edge definitions with the node IDs
+  I1 -> {IS10,IP10} [dir=back]
+  IS10 -> IS11 [dir=back]
+  IP10 -> {IP11,IP12} [dir=back]
+  }",
+  height = 300)
+```
+
+## The LMI and its process.
+
+The LMI concept was inspirated by the meta score on vS
+
+It used only two variables
+
+As it was only two variables there are no different way to aggregate the variables
 
 -   **Ban Rate**: ratio between the number of bans and the number of matches of a deck
 
@@ -467,59 +637,133 @@ WR.DT %>%
             )
 ```
 
-## Adding the Ban-Index (possible options)
+```{r}
+# WR.DT |>
+#   filter(nGames > 100) |>
+#   select(playrate,WR,meanBan) |>
+#   corrr::correlate() |>
+#   corrr::focus(playrate:meanBan, mirror = TRUE) |>
+#   corrr::network_plot()
+# 
+# WR.DT |>
+#   filter(nGames > 100) |>
+#   select(playrate,WR,meanBan) |>
+#   corrr::correlate() |>
+#   corrr::rearrange(method = "MDS", absolute = FALSE) |>
+#   corrr::shave() |>
+#   corrr::rplot(shape = 15, colors = c("red", "green"))
+# 
+# # install.packages("GGally")
+# require(GGally)
+# require(ggasym)
+# 
+# correlation_matrix <- WR.DT |> 
+#   filter(nGames > 100) |>
+#   select(playrate,WR,meanBan) |>
+#   cor()
+# 
+# library(ggplot2)
+# library(reshape2)
+# WR.DT |> 
+#   filter(nGames > 100) |>
+#   select(playrate,WR,meanBan) |>
+#   cor() |>
+#   round(digits = 2) |>
+#   melt() |>
+#   ggplot(aes(Var1, Var2, fill = value)) +
+#   geom_tile() +
+#   scale_fill_gradient2(low="blue", mid="white", high="red") +
+#   coord_equal()
+# 
+# 
+# library(GGally)
+# # ggcorr(correlation_matrix,nbreaks = 5, palette = "RdYlBu", geom = "tile") # non corretto
+# 
+# library(corrplot)
+# library(RColorBrewer)
+# corrplot(correlation_matrix, method = "square", type = "upper", tl.col = "black", order = "hclust", col = brewer.pal(n = 5, name = "RdYlBu"))
+# correlation_matrix |>
+#   round(digits = 2) |>
+#   ggcorrplot(type = "upper", hc.order = TRUE, lab =TRUE)
+# 
+# library(ggcorrplot)
+# ggcorrplot(correlation_matrix, type = "upper", hc.order = TRUE, colors = brewer.pal(n = 3, name = "RdYlBu"))
+```
 
 ```{r}
-WR.DT |>
-  filter(nGames > 100) |>
-  select(playrate,WR,meanBan) |>
-  corrr::correlate() |>
-  corrr::focus(playrate:meanBan, mirror = TRUE) |>
-  corrr::network_plot()
 
-WR.DT |>
-  filter(nGames > 100) |>
-  select(playrate,WR,meanBan) |>
-  corrr::correlate() |>
-  corrr::rearrange(method = "MDS", absolute = FALSE) |>
-  corrr::shave() |>
-  corrr::rplot(shape = 15, colors = c("red", "green"))
+# corData.apply <- lapply(
+#       X = c(10,30,50,100,200),
+#       FUN = function(x){
+#         
+#         corData <- WR.DT |>
+#           filter(nGames > x) |>
+#           left_join(WR.DT.Ladder|>
+#                       select(player,ladderWR = WR), by="player" ) %>%
+#           filter(complete.cases(.)) |>
+#           select( playrate,WR,ladderWR,meanBan )
+#         
+#         corData |>
+#           corrr::correlate(method = "pearson") |>
+#           add_column( n = x) |>
+#           add_column( nrow = NROW(corData) )
+#           # corrr::as_cordf()
+#       }
+#     ) |>
+#   rbindlist()
+# 
+# corData.apply |>
+#   filter( term == "meanBan" ) |>
+#   select( term,playrate,WR,ladderWR )
+# 
+# lapply(
+#       X = c(10,30,50,100,200),
+#       FUN = function(x){
+#         corData <- WR.DT |>
+#           filter(nGames > x) |>
+#           left_join(WR.DT.Ladder|>
+#                       select(player,ladderWR = WR), by="player" ) %>%
+#           filter(complete.cases(.)) |>
+#           select( playrate,WR,ladderWR,meanBan )
+#         
+#         corr <- round(cor(corData), 2)
+#         p.mat <- cor_pmat(corData)
+#         
+#         ggcorrplot(corr,  type = "lower", p.mat = p.mat, col = brewer.pal(n = 5, name = "RdBu"))
+#           
+#       }
+#     ) 
+# 
+# corData <- WR.DT |>
+#   filter(nGames > 10) |>
+#   left_join(WR.DT.Ladder|>
+#               select(player,ladderWR = WR), by="player" ) %>%
+#   filter(complete.cases(.)) |>
+#   select( playrate,WR,ladderWR,meanBan )
+# 
+# corr <- round(cor(corData), 2)
+# p.mat <- cor_pmat(corData)
+# 
+# 
+# 
+# # Leave blank on no significant coefficient
+# ggcorrplot(corr, p.mat = p.mat, hc.order = TRUE, type = "lower", insig = "blank")
+```
 
-# install.packages("GGally")
-require(GGally)
-require(ggasym)
 
-correlation_matrix <- WR.DT |> 
-  filter(nGames > 100) |>
-  select(playrate,WR,meanBan) |>
-  cor()
-
-library(ggplot2)
-library(reshape2)
-WR.DT |> 
-  filter(nGames > 100) |>
-  select(playrate,WR,meanBan) |>
-  cor() |>
-  round(digits = 2) |>
-  melt() |>
-  ggplot(aes(Var1, Var2, fill = value)) +
-  geom_tile() +
-  scale_fill_gradient2(low="blue", mid="white", high="red") +
-  coord_equal()
-
-
-library(GGally)
-# ggcorr(correlation_matrix,nbreaks = 5, palette = "RdYlBu", geom = "tile") # non corretto
-
-library(corrplot)
-library(RColorBrewer)
-corrplot(correlation_matrix, method = "square", type = "upper", tl.col = "black", order = "hclust", col = brewer.pal(n = 5, name = "RdYlBu"))
-correlation_matrix |>
-  round(digits = 2) |>
-  ggcorrplot(type = "upper", hc.order = TRUE, lab =TRUE)
-
-library(ggcorrplot)
-ggcorrplot(correlation_matrix, type = "upper", hc.order = TRUE, colors = brewer.pal(n = 3, name = "RdYlBu"))
+```{r}
+# minData <- WR.DT |>
+#   filter(nGames > 100) |>
+#   select(playrate,meanBan)
+# 
+# pr.out <- minData |>
+#   prcomp(scale=T)
+# 
+# pr.out$rotation
+# 
+# pr.var <- pr.out$sdev^2
+# 
+# pve = pr.var / sum(pr.var)
 ```
 
 
@@ -591,10 +835,12 @@ fig <- DT.Aggreation %>%
 fig
 ```
 
+# Discussion
+
+## Alternative ways
+
 # Conclusions
 
-
-.
 # Legal bla bla {.unnumbered}
 
 This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
@@ -611,4 +857,29 @@ namesDT <- data.table( puuid_1 = c("a","b","c","d"),
 left_join(DT,namesDT,by=c("participant_1"="puuid_1")) %>%
   # mutate(c1 = replace(c1, origin==1, v2) )
   mutate(participant_1 = ifelse(origin == 1, puuid_2, participant_1))
+```
+
+```{r example-digraph }
+# DiagrammeR::grViz("digraph flowchart {
+#       # node definitions with substituted label text
+#       node [fontname = Helvetica, shape = rectangle]
+#       tab1 [label = '@@1']
+#       tab2 [label = '@@2']
+#       tab3 [label = '@@3']
+#       tab4 [label = '@@4']
+#       tab5 [label = '@@5']
+# 
+#       # edge definitions with the node IDs
+#       tab1 -> tab2;
+#       tab2 -> tab3;
+#       tab2 -> tab4 -> tab5
+#       }
+# 
+#       [1]: 'Questionnaire sent to n=1000 participants'
+#       [2]: 'Participants came to clinic for evaluation n=700'
+#       [3]: 'Participants non-eligible for the study n=100'
+#       [4]: 'Participants eligible for the study n=600'
+#       [5]: 'Study sample n=600'
+#       ",
+#   height = 300)
 ```
