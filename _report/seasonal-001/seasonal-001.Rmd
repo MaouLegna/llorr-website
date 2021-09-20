@@ -84,27 +84,29 @@ meta() %>%
 ```
 
 ```{r create-TimeBlcok}
-timeBlock.1.start <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5)
-timeBlock.2.start <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5)
-timeBlock.3.start <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5)
-timeBlock.4.start <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5)
-timeBlock.5.start <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5)
-# 30 min break
-timeBlock.6.start <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5)
-timeBlock.7.start <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5)
-timeBlock.8.start <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5)
-timeBlock.9.start <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5)
+seasonalDate <- "2021-08-14"
 
-timeBlock.1.end <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.2.end <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.3.end <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.4.end <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.5.end <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.1.start <- ymd_hms(glue::glue("{seasonalDate} 11:55:00")) + lubridate::minutes(5)
+timeBlock.2.start <- ymd_hms(glue::glue("{seasonalDate} 13:00:00")) + lubridate::minutes(5)
+timeBlock.3.start <- ymd_hms(glue::glue("{seasonalDate} 14:05:00")) + lubridate::minutes(5)
+timeBlock.4.start <- ymd_hms(glue::glue("{seasonalDate} 15:10:00")) + lubridate::minutes(5)
+timeBlock.5.start <- ymd_hms(glue::glue("{seasonalDate} 16:15:00")) + lubridate::minutes(5)
 # 30 min break
-timeBlock.6.end <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.7.end <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.8.end <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.9.end <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.6.start <- ymd_hms(glue::glue("{seasonalDate} 17:45:00")) + lubridate::minutes(5)
+timeBlock.7.start <- ymd_hms(glue::glue("{seasonalDate} 18:50:00")) + lubridate::minutes(5)
+timeBlock.8.start <- ymd_hms(glue::glue("{seasonalDate} 19:55:00")) + lubridate::minutes(5)
+timeBlock.9.start <- ymd_hms(glue::glue("{seasonalDate} 21:00:00")) + lubridate::minutes(5)
+
+timeBlock.1.end <- ymd_hms(glue::glue("{seasonalDate} 11:55:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.2.end <- ymd_hms(glue::glue("{seasonalDate} 13:00:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.3.end <- ymd_hms(glue::glue("{seasonalDate} 14:05:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.4.end <- ymd_hms(glue::glue("{seasonalDate} 15:10:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.5.end <- ymd_hms(glue::glue("{seasonalDate} 16:15:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+# 30 min break
+timeBlock.6.end <- ymd_hms(glue::glue("{seasonalDate} 17:45:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.7.end <- ymd_hms(glue::glue("{seasonalDate} 18:50:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.8.end <- ymd_hms(glue::glue("{seasonalDate} 19:55:00")) + lubridate::minutes(5) + lubridate::minutes(60)
+timeBlock.9.end <- ymd_hms(glue::glue("{seasonalDate} 21:00:00")) + lubridate::minutes(5) + lubridate::minutes(60)
 ```
 
 ```{r raw-data}
@@ -496,6 +498,13 @@ Game.Result.NA <- LoR.Melt.Seasonal %>%
   left_join(.,LineUp.DT,by=c("server","userID"))
 
 Game.Result.NA$ban <- lapply( 1:NROW(Game.Result.NA), function(x) (setdiff( Game.Result.NA$listDeck[x] %>% unlist(),Game.Result.NA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+```{r create-file}
+# rbind(Game.Result.ASIA,
+#       Game.Result.EU,
+#       Game.Result.NA) %>%
+#   .[, sapply(., class) != "list"] |>
+#   fwrite(file.path("C:","LlorR","data","clean","Seasonal_2021_xx.csv"))
 ```
 
 ```{r compute-missing-match-games}

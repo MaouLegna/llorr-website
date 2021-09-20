@@ -1,7 +1,7 @@
 ---
 title: "LoR Meta Index (LMI) expansion by using Bo3 data"
 description: |
-  The LMI is limited in its current setting as it uses only playrates and winrates. By using Bo3 data we propose a way to expand the LMI with a ban-index
+  The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index
 base_url: http://www.llorr-stats.com
 preview:
 author:
@@ -22,7 +22,7 @@ params:
   # prev:  "2021-07-07 21:00:00" #UTC tz / 'previous' week start
   start: "2021-07-07 21:00:00" #UTC tz / 'current' week start
   end:   "2021-08-25 21:00:00" #UTC tz / 'current' week end
-  skip:  1850000  # Patch 2.11 - after removing a few games  
+  # skip:  1850000  # Patch 2.11 - after removing a few games  
 ---
 
 ```{r setup, include=FALSE}
@@ -62,7 +62,7 @@ xaringanExtra::use_panelset()
 # library(metathis)
 metathis::meta() |>
   metathis::meta_description(
-    "The LMI is limited in its current setting as it uses only playrates and winrates. By using Bo3 data we propose a way to expand the LMI with a ban-index"
+    "The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"
   ) |> 
   metathis::meta_viewport() |> 
   metathis::meta_social(
@@ -86,37 +86,15 @@ xaringanExtra::style_panelset_tabs(font_family = "Roboto",
                                    )
 ```
 
-```{r create-TimeBlcok}
-timeBlock.1.start <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5)
-timeBlock.2.start <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5)
-timeBlock.3.start <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5)
-timeBlock.4.start <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5)
-timeBlock.5.start <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5)
-# 30 min break
-timeBlock.6.start <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5)
-timeBlock.7.start <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5)
-timeBlock.8.start <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5)
-timeBlock.9.start <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5)
-
-timeBlock.1.end <- ymd_hms("2021-08-14 11:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.2.end <- ymd_hms("2021-08-14 13:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.3.end <- ymd_hms("2021-08-14 14:05:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.4.end <- ymd_hms("2021-08-14 15:10:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.5.end <- ymd_hms("2021-08-14 16:15:00") + lubridate::minutes(5) + lubridate::minutes(60)
-# 30 min break
-timeBlock.6.end <- ymd_hms("2021-08-14 17:45:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.7.end <- ymd_hms("2021-08-14 18:50:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.8.end <- ymd_hms("2021-08-14 19:55:00") + lubridate::minutes(5) + lubridate::minutes(60)
-timeBlock.9.end <- ymd_hms("2021-08-14 21:00:00") + lubridate::minutes(5) + lubridate::minutes(60)
-```
-
 ```{r raw-data}
 #' load gameDT
 #'############
 file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip ) # ~2.11/2.12
-colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip ) # ~2.11/2.12
+# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+LoR.Match.RMD <- fread(file.DT, header = TRUE, na.strings = c("",NA) ) 
 
 #' load Account
 #'#############
@@ -133,12 +111,16 @@ LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
-```{r Ladder Win Rates}
-WR.DT.Ladder <- LoR.Match.RMD |>
+
+```{r WR-2021-06}
+seasonalDate <- "2021-06-19"
+filterDate <- ymd_hms(glue::glue("{seasonalDate} 11:55:00")) + lubridate::minutes(5)
+
+WR.DT.Ladder_2021_06 <- LoR.Match.RMD |>
   #' Base filters
   ###############
   filter( game_type == 'Ranked' ) |>
-  filter( game_start_time_utc >= as.POSIXct("2021-07-07 21:00:00", tz = "UTC") & game_start_time_utc < as.POSIXct("2021-07-14 21:00:00", tz = "UTC")  ) |>
+  filter( game_start_time_utc >= (as.POSIXct(filterDate)-days(14)) & game_start_time_utc < as.POSIXct(filterDate) ) |>
   #' 'process' data
   #################
   left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
@@ -166,26 +148,96 @@ WR.DT.Ladder <- LoR.Match.RMD |>
   ) |>
   ungroup() |>
   mutate( playrate = nGames/sum(nGames) )
+
+WR.DT_2021_06 <- fread(file.path("C:","LlorR","data","clean","LoR_Seasonal.csv"),na.strings = c("",NA)) |>
+  filter( game_start_time_utc > (as.POSIXct(filterDate)-days(2)) & game_start_time_utc < (as.POSIXct(filterDate)+days(2)) ) |>
+  filter(game_outcome!="tie") |>
+  select( player,opponent,game_outcome ) |>
+  group_by(player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) )
 ```
 
 
-```{r prepare-data}
-LoR.Melt.Seasonal <- LoR.Match.RMD |>
+```{r table-ban-2021-06}
+#' read game-result
+LoR.Seasonal.RMD_202106  <- fread(file.path("C:","LlorR","data","clean","Seasonal_2021_06.csv"),na.strings = c("",NA), encoding = "UTF-8")
+
+#' create lineUp
+LineUp.DT_202106 <- LoR.Seasonal.RMD_202106 |>
+  select(userID,starts_with("deck_"),LU) |>
+  distinct()
+
+#' all deck for bans
+deckForBan <- LineUp.DT_202106 %>%
+  filter(!is.na(deck_3) ) %>%
+  # filter(!is.na(deck_3) & server!="asia") %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>% unique() %>% sort()
+        
+#' create Ban DT      
+################
+ban.tbl <- LoR.Seasonal.RMD_202106 |>
+  filter(!is.na(deck_3) ) |>
+  group_by( ban ) |> # so accounting the cases where I know the bans
+  count(ban) |>
+  filter( !is.na(ban) )
+
+ban.DT <- tibble( deck = deckForBan ) |>
+    left_join(ban.tbl |> select(deck = ban,nBan=n) ,by = "deck")
+
+setDT(ban.DT)
+
+for (i in 1:NROW(ban.DT) ) {
+  deck <- pull(ban.DT[i,"deck"])
+  
+  whichLU <- LoR.Seasonal.RMD_202106 %>%
+    filter(!is.na(deck_3) ) %>%
+    filter( deck_1 == deck | deck_2 == deck | deck_3 == deck ) %>%
+    pull(LU)
+  
+  ban.DT[i,maxBan := LoR.Seasonal.RMD_202106 |>
+    filter( LU %in% whichLU ) |>
+    filter( !is.na(ban) ) |>
+    NROW() ]
+}
+
+WR.DT_2021_06 <- ban.DT |>  # start with ban.DT as it contains the list of all decks that theoretically can appears
+  left_join(WR.DT_2021_06,by=c("deck"="player")) |> # add the Seasonal data
+  mutate(across(c(nBan,nWin, nGames,playrate), ~replace_na(.x, 0)) ) |>
+  # mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill the missing values
+  mutate( meanBan = nBan/maxBan ) |>   # since the number of ban considers all the cases with ban information it is some to impute 0
+  left_join(WR.DT.Ladder_2021_06 |> select(player,lplayrate=playrate,lWR=WR),by=c("deck"="player")) # add ladder information
+  # |> mutate(across(everything(), ~replace_na(.x, 0)) )
+
+
+# WR.DT_2021_06 %$%
+#   cor(WR,lWR)
+```
+
+```{r Ladder-Win-Rates-Seasonal-2021-08}
+seasonalDate <- "2021-08-14"
+filterDate <- ymd_hms(glue::glue("{seasonalDate} 11:55:00")) + lubridate::minutes(5)
+
+WR.DT.Ladder_2021_08 <- LoR.Match.RMD |>
   #' Base filters
   ###############
-  filter( game_mode == 'SeasonalTournamentLobby' ) |>
-  filter( game_start_time_utc < as.POSIXct("2021-08-17 21:00:00", tz = "UTC") ) |>
+  filter( game_type == 'Ranked' ) |>
+  filter( game_start_time_utc >= (as.POSIXct(filterDate)-days(14)) & game_start_time_utc < as.POSIXct(filterDate) ) |>
   #' 'process' data
   #################
   left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
   mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
-  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  select( match_key,starts_with("player"),starts_with("opponent"),starts_with("game_outcome"),ends_with("_2"),-ends_with("_3"),-ends_with("_4") ) %>%
+  # get_dupes(match_key)
   #' melt data
   ############
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-    str_sub(
+  melt(id.vars=c("match_key"), measure.vars=patterns( str_sub(
       names(select(.,ends_with("_1")))
       ,end = -3)
   ),
@@ -193,238 +245,92 @@ LoR.Melt.Seasonal <- LoR.Match.RMD |>
     names(select(.,ends_with("_1")))
     ,end = -3)
   ) |>
-  #' finish 'process' data
-  ########################
-  left_join(LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) |>
-  left_join(LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) |>
-  select(-ends_with("puuid"),-refID)
+  # LoR.Melt.Matches.RMD |> 
+  filter(game_outcome!="tie") |>
+  select( player,opponent,game_outcome ) |>
+  group_by(player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) )
+
+WR.DT_2021_08 <- fread(file.path("C:","LlorR","data","clean","LoR_Seasonal.csv"),na.strings = c("",NA)) |>
+  filter( game_start_time_utc > (as.POSIXct(filterDate)-days(2)) & game_start_time_utc < (as.POSIXct(filterDate)+days(2)) ) |>
+  filter(game_outcome!="tie") |>
+  select( player,opponent,game_outcome ) |>
+  group_by(player) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) )
+
+# WR.DT_2021_08 |>
+#   arrange(desc(nGames))
 ```
+```{r table-ban-2021-08}
+#' read game-result
+LoR.Seasonal.RMD_202108  <- fread(file.path("C:","LlorR","data","clean","Seasonal_2021_08.csv"),na.strings = c("",NA), encoding = "UTF-8")
 
-```{r create-lineUp-DT}
-LineUp.DT <- left_join(LoR.Melt.Seasonal ,LoR.Account.RMD ,by=c("userID"="RiotID")) %>% 
-  select(userID,server,player,deck_code) %>%
-  group_by(userID,server) %>%
-  distinct(player,deck_code) %>%
-  # arrange(userID) %>%
-  # filter(str_detect(userID,"Oneiric")) %>%
-  summarise( listDeck=list(player),listCode=list(deck_code) )
+#' create lineUp
+LineUp.DT_202108 <- LoR.Seasonal.RMD_202108 |>
+  select(userID,starts_with("deck_"),LU) |>
+  distinct()
 
-LineUp.DT <- LineUp.DT %>%
-  cbind(.,map_df(.x = LineUp.DT$listCode, .f = ~assignLineUp(.x) )) %>%
-  # cbind(.,do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$listDeck[x]) ) ) ) %>%
-  # cbind(.,do.call(rbind, lapply(1:NROW(LineUp.DT), function(x) assignLineUp(LineUp.DT$listCode[x]) ) ) ) %>%
-  rename("code_1"="deck_1","code_2"="deck_2","code_3"="deck_3" ) %>%
-  left_join( .,LoR.Deck %>% select(deck_code,deck_1=archetype),by=c("code_1"="deck_code") ) %>%
-  left_join( .,LoR.Deck %>% select(deck_code,deck_2=archetype),by=c("code_2"="deck_code") ) %>%
-  left_join( .,LoR.Deck %>% select(deck_code,deck_3=archetype),by=c("code_3"="deck_code") ) %>%
-  # LineUp.DT %>%
-  dplyr::mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  ) %>%
-  ungroup()
-
-# LineUp.DT
-```
-```{r compute-games-asia}
-Game.Result.ASIA <- LoR.Melt.Seasonal %>%
-  filter( server=="asia" ) %>%
-  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
-  group_by(  userID,opponentID,server ) %>%
-  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
-  group_by(  userID,opponentID,server,timeBlock ) %>%
-  arrange( timeBlock ) %>%
-  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
-  arrange( userID, timeBlock ) %>%
-  # Identify the round with the official schedule
-  mutate( round = case_when(
-    # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
-    # JST = UTC - 9hrs
-    timeBlock > with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"Japan"),"UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan"),"UTC") ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan"),"UTC") ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan"),"UTC") ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan"),"UTC") ~ 5, # 16:15
-    
-    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan"),"UTC") ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan"),"UTC") ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan"),"UTC") ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan"),"UTC") ~ 9, # 21:00
-    )
-  ) %>%
-  # number of won games in the match
-  mutate( nWin = str_count(result,"win") ) %>%
-  # is the match won?
-  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
-  group_by(userID) %>%
-  # sum of ALL matches won
-  mutate( cumWin = cumsum(nWin)) %>%
-  # sum of ALL games won
-  mutate( cumMatchWin = cumsum(matchWin)) %>%
-  left_join(
-  tibble( userID = rep( LineUp.DT %>% filter(server=="asia") %>% pull(userID),each=9),
-          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="asia") %>% NROW())  ),
-          server = "asia"),
-  ., by = c("userID","round","server")) %>%
-  relocate(round, .after = server) %>%
-  left_join(.,LineUp.DT,by=c("server","userID"))
-  
-Game.Result.ASIA$ban <- lapply( 1:NROW(Game.Result.ASIA), function(x) (setdiff( Game.Result.ASIA$listDeck[x] %>% unlist(),Game.Result.ASIA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
-```
-
-```{r compute-games-europe}
-Game.Result.EU <- LoR.Melt.Seasonal %>%
-  filter( server=="europe" ) %>%
-  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
-  group_by(  userID,opponentID,server ) %>%
-  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
-  group_by(  userID,opponentID,server,timeBlock ) %>%
-  arrange( timeBlock ) %>%
-  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
-  arrange( userID, timeBlock ) %>%
-  # Identify the round with the official schedule
-  mutate( round = case_when(
-    # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
-    # JST = UTC - 9hrs
-    timeBlock > with_tz(force_tz(timeBlock.1.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"CET"),"UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"CET"),"UTC") ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"CET"),"UTC") ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"CET"),"UTC") ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"CET"),"UTC") ~ 5, # 16:15
-    
-    timeBlock > with_tz(force_tz(timeBlock.6.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"CET"),"UTC") ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"CET"),"UTC") ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"CET"),"UTC") ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start,"CET"),"UTC") ~ 9, # 21:00
-    )
-  ) %>%
-  # number of won games in the match
-  mutate( nWin = str_count(result,"win") ) %>%
-  # is the match won?
-  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
-  group_by(userID) %>%
-  # sum of ALL matches won
-  mutate( cumWin = cumsum(nWin)) %>%
-  # sum of ALL games won
-  mutate( cumMatchWin = cumsum(matchWin)) %>%
-  left_join(
-  tibble( userID = rep( LineUp.DT %>% filter(server=="europe") %>% pull(userID),each=9),
-          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="europe") %>% NROW())  ),
-          server = "europe"),
-  ., by = c("userID","round","server")) %>%
-  relocate(round, .after = server) %>%
-  left_join(.,LineUp.DT,by=c("server","userID"))
-
-Game.Result.EU$ban <- lapply( 1:NROW(Game.Result.EU), function(x) (setdiff( Game.Result.EU$listDeck[x] %>% unlist(),Game.Result.EU$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
-```
-
-```{r compute-games-americas}
-# with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC")
-Game.Result.NA <- LoR.Melt.Seasonal %>%
-  filter( server=="americas" ) %>%
-  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
-  group_by(  userID,opponentID,server ) %>%
-  mutate( timeBlock = min(game_start_time_utc) %>% as_datetime(., tz="UTC") ) %>%
-  group_by(  userID,opponentID,server,timeBlock ) %>%
-  arrange( timeBlock ) %>%
-  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(player) ) %>%
-  arrange( userID, timeBlock ) %>%
-  # Identify the round with the official schedule
-  mutate( round = case_when(
-    timeBlock > with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"US/Central"),"UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"US/Central"),"UTC") ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"US/Central"),"UTC") ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"US/Central"),"UTC") ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"US/Central"),"UTC") ~ 5, # 16:15
-    
-    timeBlock > with_tz(force_tz(timeBlock.6.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"US/Central"),"UTC") ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"US/Central"),"UTC") ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"US/Central"),"UTC") ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start,"US/Central"),"UTC") ~ 9, # 21:00
-    )
-  ) %>%
-  # number of won games in the match
-  mutate( nWin = str_count(result,"win") ) %>%
-  # is the match won?
-  mutate( matchWin = ifelse(nWin==2,1,0) ) %>%
-  group_by(userID) %>%
-  # sum of ALL matches won
-  mutate( cumWin = cumsum(nWin)) %>%
-  # sum of ALL games won
-  mutate( cumMatchWin = cumsum(matchWin)) %>%
-  left_join(
-  tibble( userID = rep( LineUp.DT %>% filter(server=="americas") %>% pull(userID),each=9),
-          round  = rep(seq(1,9,1), times = (LineUp.DT %>% filter(server=="americas") %>% NROW()) ),
-          server = "americas" ),
-  ., by = c("userID","round","server")) %>%
-  relocate(round, .after = server) %>%
-  left_join(.,LineUp.DT,by=c("server","userID"))
-
-Game.Result.NA$ban <- lapply( 1:NROW(Game.Result.NA), function(x) (setdiff( Game.Result.NA$listDeck[x] %>% unlist(),Game.Result.NA$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
-```
-```{r table-ban}
-deckForBan <- LineUp.DT %>%
+#' all deck for bans
+deckForBan <- LineUp.DT_202108 %>%
   filter(!is.na(deck_3) ) %>%
   # filter(!is.na(deck_3) & server!="asia") %>%
   select(contains("deck")) %>%
   unlist(.,use.names = F) %>% unique() %>% sort()
-              
-########
-
-ban.tbl <- rbind(Game.Result.EU,Game.Result.NA) %>%
-  group_by( LU ) %>%
-  count(ban) %>%
+        
+#' create Ban DT      
+################
+ban.tbl <- LoR.Seasonal.RMD_202108 |>
+  filter(!is.na(deck_3) ) |>
+  group_by( ban ) |>
+  count(ban) |>
   filter( !is.na(ban) )
 
 ban.DT <- tibble( deck = deckForBan ) |>
-    left_join(rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) |>
-                tabyl(ban) |>
-                select(deck = ban,nBan=n) |>
-                tibble()
-              ,by = "deck")
+    left_join(ban.tbl |> select(deck = ban,nBan=n) ,by = "deck")
 
 setDT(ban.DT)
+
 for (i in 1:NROW(ban.DT) ) {
   deck <- pull(ban.DT[i,"deck"])
   
-  whichLU <- LineUp.DT %>%
+  whichLU <- LoR.Seasonal.RMD_202108 %>%
     filter(!is.na(deck_3) ) %>%
     filter( deck_1 == deck | deck_2 == deck | deck_3 == deck ) %>%
     pull(LU)
   
-  ban.DT[i,maxBan := rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA) |>
+  ban.DT[i,maxBan := LoR.Seasonal.RMD_202108 |>
     filter( LU %in% whichLU ) |>
     filter( !is.na(ban) ) |>
     NROW() ]
 }
 
-ban.DT <- ban.DT |>
-  mutate( meanBan = nBan/maxBan ) |>
-  mutate(across(everything(), ~replace_na(.x, 0)) )
-```
+WR.DT_2021_08 <- ban.DT |>  # start with ban.DT as it contains the list of all decks that theoretically can appears
+  left_join(WR.DT_2021_08,by=c("deck"="player")) |> # add the Seasonal data
+  mutate(across(c(nBan,nWin, nGames,playrate), ~replace_na(.x, 0)) ) |>
+  # mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill the missing values
+  mutate( meanBan = nBan/maxBan ) |>   # since the number of ban considers all the cases with ban information it is some to impute 0
+  left_join(WR.DT.Ladder_2021_08 |> select(player,lplayrate=playrate,lWR=WR),by=c("deck"="player")) |> # add ladder information
+  mutate(across(everything(), ~replace_na(.x, 0)) ) # fill again
 
-```{r compute-win-rate}
-WR.DT <- LoR.Melt.Seasonal %>%
-  filter(game_outcome!="tie") %>%
-  select( player,opponent,game_outcome ) %>%
-  group_by(player) %>%
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win")
-  ) %>%
-  ungroup() %>%
-  mutate( playrate = nGames/sum(nGames) ) %>%
-  #'add ban
-  left_join(.,ban.DT,by=c("player"="deck")) %>%
-  #' remove the decks with no ban information so take all complete cases
-  filter(complete.cases(.))
-
-# WR.DT
+# WR.DT_2021_08 %$%
+#   cor(WR,lWR)
 ```
 
 # Introduction
 
-Composite Indicator (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis(FA) they are not entirely data driven and they are compiled in other to communicate a concept. Mostly used in social or policy evoluation, they allows for a  single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
+Composite Indicator (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis(FA) they are not entirely data driven and they are compiled in other to communicate a concept. Mostly used in social or policy evoluation, they allows for a single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
 
-In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index was that it is 'limited' as it use only two variables, playrates and winrates of a deck which would have been expanded once we could find additional (and appropriate) variables to add to it. A natural candidate as a third variable is the banrate of a deck (in a contest of BoX matches)
+In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index was that it is 'limited' as it use only two variables, playrates and win-rates of a deck which would have been expanded once we could find additional (and appropriate) variables to add to it. A natural candidate as a third variable is the ban-rate of a deck (in a contest of BoX matches)
 
 An experiment to add a third variable was done earlier this year, for 'Rise of the Underworld - Seasonal Tournament' report[^2].
 
@@ -438,8 +344,14 @@ Following the necessary steps, the proposed variation of the LMI contradicts the
 
 # Data
 
+I only consider the decks that appears in the cases of a full-line-up and whose I can extrapolate the banned deck.
+
+Values from the ladder are taken from Master players up to two weeks before the start of the first game of the Seasonal (Asian region)
+
+Lack of data for a deck (no games) is considered 0 playrate and 0 winrate
+
 ```{r create-gt-summary}
-gtSeasonal <- LoR.Melt.Seasonal |>
+gtSeasonal <- LoR.Seasonal.RMD |>
   select(server) |>
   gtsummary::tbl_summary() |>
   gtsummary::as_gt() |>
@@ -475,49 +387,100 @@ The LMI is a composite indicator (CI) and in a previous article we introduced th
 
 > For a manual on CI, a commonly referred guide is from the Joint Research Centre (JRC) of the European Commission: [Handbook on Constructing Composite Indicators - METHODOLOGY AND USER GUIDE](https://www.oecd.org/sdd/42495745.pdf)
 
-* 1. Theoretical Framework
+1.  Theoretical Framework
 
-> * Provide the basis for the selection and combination of variables into a meaningfu composite indicator under a fitness-for-porpuse principle (involment of experts and stakeholders is envisaged at this step)
+> Provide the basis for the selection and combination of variables into a meaningfu composite indicator under a fitness-for-porpuse principle (involment of experts and stakeholders is envisaged at this step)
 
-* 2. Data selection
+2.  Data selection
 
 > Should be based on the analytical soundness, measurability, coverage and relevance of the indicators to the phenomenon being measured and relationship to each other. The use of proxy variables should be considered when data are scarce (involvement of experts and stakeholders is envisaged at this step)
 
-* 3. Imputation of missing data
+When defining the CI structure there is also the need to maintain a coherent structure. This means, among other, that values in the same sub-dimension should all follows the same direction. In an increase of a variable imply an increase in the final value of the sub-dimension index then all the other variables should be same.
+
+Example: if we have a sub-dimension index related to "quality of life" containing life expectancy and child mortality, the higher the value of life expectancy the better and higher the final index should be. But, for the values of child mortality it is the opposite, the smaller the value, the better it is. In this case it's not a problem as a common practise is to just use the opposite values by changing the sign as it is a linear transformation and the smaller the value of child mortality (with opposite sign) the better it is in evalutating "quality of life".
+
+The ‘polarity’ of an individual indicator is the sign of the
+relation between the indicator and the concept to be measured. For
+example, in the case of well-being, “Life expectancy” has positive
+polarity, whereas “Unemployment rate” has negative polarity. I
+
+3.  Imputation of missing data
 
 > Is needed in order to provide a complete dataset (e.g by means or multiple imputation).
 
-* 4. Multivariate analysis
+4.  Multivariate analysis
 
 > Should be used to study the overall structure of the dataset, assess its suitability, and guide subsequent methodological choices (e.g. weighting aggregation).
 
-* 5. Normalization
+5.  Normalization
 
 > Should be carried out to render the variables comparable
 
-* 6. Weighting and aggregation
+6.  Weighting and aggregation
 
 > Should be done along the lines of the underying theoretical framework
 
-* 7. Uncertainty and sensitivity analysis
+7.  Uncertainty and sensitivity analysis
 
 > Should be undertaken to assess the robustness of the composite indicator in terms of e.g. the mechanism for indulging or excluding an indicator, the normalization scheme, the imputation of missing data, the choice, the choice of weights, the aggregation method
 
-* 8. Back to the data
+8.  Back to the data
 
 > Is needed to reveal the main drivers for an overall good or bad performance. Trasparency is promordial to good analysis
 
-* 9. Links to other indicators
+9.  Links to other indicators
 
 > Should be made to correlate the composite indicator (or its dimension) with existing (simple or composite) indicators as well as to identify linkages through regressions.
 
-* 10. Visulization of the results
+10. Visualization of the results
 
 > Should receive proper attention, given that the visualization can influence (or help to enhance interpretability)
 
-### Of Bans WinRates and P&B
+## The LMI Composite Indicator
 
-As the number of variables increase from the two of the base-LMI to three we now have more options as to combine the variables. Normally, this doesn't mean that each possible choice should be evaluated, the definition we want to communicate should guide our choices and so the characteristics of our variables, e.g. we don't add a variable of Life expectancy in a subdimension or 'Infrastructure quality'
+### Base LMI
+
+The basic LMI is made by aggregating playrates and win-rates
+
+The LMI concept was inspirated by the meta score on vS
+
+It used only two variables
+
+As it was only two variables there are no different way to aggregate the variables
+
+### Adding Banrate Information
+
+As the number of variables increase from the two of the base-LMI to three we now have more options as to combine the variables. Normally, this doesn't mean that each possible choice should be evaluated, the definition we want to communicate should guide our choices and so the characteristics of our variables, e.g. we don't add a variable of Life expectancy in a subdimension of 'Infrastructure quality'
+
+When creating the LMI I described it as a measure of *performance* of a deck and following that giving as performance's definition:
+
+> The performance of a deck is defined by its own strength and popularity inside the metagame.
+
+The definition of performance is probably not be as functional as it should as it seems a bit limiting in what it means. Yet, the term performance still remaing appropriate.
+
+What information can be added to the index? An easy inspiration can be taken from Riot's main games: League of Legends (LoL)
+
+In LoL a common value to describe the performance of a champion, in in addition to playrates and win-rates is the ban-rate of a champion.
+
+The most infamous value of the ban-rate was 95% ban-rate of Kassadin in S3. If we consider the definition of performance given earier we can see that the ban-rate doesn't fir perfectly strength or popularity in the metagame but it is more a case in the middle. It can seen as an aspect of strength as people don't want to deal with it so banning it but it can be as an aspect of popularity or better yet a more general *presence* as while it may have not been played it sort of lingered in the match. It was not present directly in the match but with its spirit (the ban).
+
+In the context of LoR such information can be added once we consider BoX data, currently only Bo3 with the easiest example being the Seasonal Tournaments.
+
+Its value is defined as following:
+
+-   **Ban Rate** - ratio between the number of bans and the number of matches of a deck.
+
+\begin{equation}
+
+BanRate = \frac{\#ban}{\#match}
+
+\end{equation}
+
+Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and Teemo/Ezreal was banned respectively 3 and 6 times; the ban rate would be $\frac{(3+6)}{(9+9)} = 50\%$
+
+As the variable is deemed appropriate for the LMI purpose the following step is to define the structure of the LMI to account for the new variable.
+
+With just three variables the possible ways to combine them are exactly three as shown in Fig:\@ref(fig:example-LMI-framework-1), Fig:\@ref(fig:example-LMI-framework-2) and Fig:\@ref(fig:example-LMI-framework-3)
 
 ```{r example-LMI-framework-1, fig.cap="(1/3) Possible theoretical framework for the LMI - All the variables are part of their own subdimension" }
 DiagrammeR::grViz("digraph {
@@ -528,7 +491,7 @@ DiagrammeR::grViz("digraph {
   IS10 [label = 'Strengh \n subdimension']
   IS11 [label = 'WinRate Index']
   
-  IP10 [label = 'Popularity \n subdimension']
+  IP10 [label = 'Popularity/Presence \n subdimension']
   IP11 [label = 'PlayRate Index']
   
   IB10 [label = 'Fear/Annoyance(?) \n subdimension']
@@ -543,7 +506,7 @@ DiagrammeR::grViz("digraph {
   height = 300)
 ```
 
-```{r example-LMI-framework-2, fig.cap="(2/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, banrate and winrate are both used to measure the 'strenght' of a deck" }
+```{r example-LMI-framework-2, fig.cap="(2/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, ban-rate and win-rate are both used to measure the 'strenght' of a deck" }
 DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
@@ -553,7 +516,7 @@ DiagrammeR::grViz("digraph {
   IS11 [label = 'WinRate Index']
   IS12 [label = 'BanRate Index']
   
-  IP10 [label = 'Popularity \n subdimension']
+  IP10 [label = 'Popularity/Presence \n subdimension']
   
   IP11 [label = 'PlayRate Index']
   
@@ -566,7 +529,7 @@ DiagrammeR::grViz("digraph {
   height = 300)
 ```
 
-```{r example-LMI-framework-3, fig.cap="(3/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, banrate and playrate are both used to measure the 'presence' of a deck" }
+```{r example-LMI-framework-3, fig.cap="(3/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, ban-rate and playrate are both used to measure the 'presence' of a deck" }
 DiagrammeR::grViz("digraph {
   graph [layout = dot, rankdir = TB]
   
@@ -575,7 +538,7 @@ DiagrammeR::grViz("digraph {
   IS10 [label = 'Strengh \n subdimension']
   IS11 [label = 'WinRate Index']
   
-  IP10 [label = 'Popularity \n Pick&Ban \n subdimension']
+  IP10 [label = 'Popularity/Presence \n subdimension']
   
   IP11 [label = 'PlayRate Index']
   IP12 [label = 'BanRate Index']
@@ -589,55 +552,326 @@ DiagrammeR::grViz("digraph {
   height = 300)
 ```
 
-## The LMI and its process.
+Each different structure correspond to a different way to see the ban-rate relationship with the other variables.
 
-The LMI concept was inspirated by the meta score on vS
+- In the first structure it is considered a different characteristic altogether in comparison to play-rates and win-rates.
 
-It used only two variables
+- In the second structure the ban-rate of a deck is considered a part of its 'strength', the higher it is the more it means that players don't want to deal with it be it for play-patterns, expected win-rates, or other reasons one may have.
 
-As it was only two variables there are no different way to aggregate the variables
+- In the third structure the ban-rate of a deck is considered a part of its 'presence', it may have not been played, but like in the Kassadin example before, it's lingering in the matches as an unseen factor that is still influential to the results. After all the ban or not of a deck, so if it takes an active or passive role in a match can heavily influence the remaining Match Ups.
 
--   **Ban Rate**: ratio between the number of bans and the number of matches of a deck
+While the second structure may seems the more intuitive choice, the third one is the one proposed, the motivations rely on the 4°step the multivariate analysis done on the data.
 
-```{r print-table-ban, echo=FALSE}
-WR.DT %>%
-  filter(nGames > 100) %>%
-  select(player,playrate,WR,contains("meanBan")) %>%
-  arrange(desc(meanBan)) %>%
-  reactable(.,
-            # wrap = FALSE,
-            bordered = TRUE,
-            highlight = TRUE,
-            striped = TRUE,
-            searchable = TRUE,
-            compact = TRUE, # compact the table
-            # fullWidth = FALSE, # don't fill the page
-            defaultPageSize = 10,
-            defaultColDef = colDef(
-               style = list(fontWeight = 500, color = "black",
-                       fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
-               # header = function(value) str_to_title(value),
-               #  cell = function(value) format(value, nsmall = 1),
-               align = "center",
-               headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
-            ),
-            theme = reactableTheme(
-                borderColor = "#dfe2e5",
-                stripedColor = "#f6f8fa",
-                highlightColor = "#f0f5f9",
-                # cellPadding = "8px 12px",
-                style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
-                searchInputStyle = list(width = "100%")),
-            columns = list(
-                player = colDef(name="Deck", align = "left" ),
-                playrate = colDef(name="PlayRate", format = colFormat(percent = TRUE, digits = 2)),
-                WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
-                meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) )
-              )
-            )
+### Statistical Analysis
+
+Let us start by showing the data we will be using.
+
+```{r print-table-ban, echo=FALSE }
+WR.DT_2021_08 %>%
+  # filter(nGames > 100) %>%
+  select(deck,nGames,playrate,WR,contains("meanBan")) %>%
+  arrange(desc(playrate)) %>%
+  # mutate( playrate = 3*playrate ) |>
+  reactable(
+    # wrap = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    striped = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 10,
+    defaultColDef = colDef(
+      style = list(fontWeight = 500, color = "black",
+                   fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
+      align = "center",
+      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+      ),
+    columns = list(
+      deck = colDef(name="Deck", align = "left" ),
+      nGames = colDef(name="#Games" ),
+      playrate = colDef(name="PlayRate", format = colFormat(percent = TRUE, digits = 2)),
+      WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
+      meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) )
+      )
+    )
 ```
 
-```{r}
+The previous table follows the 3°step of dealing with missing values. The possibles missing values were on cases of decks with no information on the ban.
+
+We don't know if it's possible to assume the missing value are MCAR (Missing Completely at Random).
+
+Normally when the missing data are MCAR, it is possible to just opt to remove the data with missing values, if it is ok the remove them in the first place.
+
+When they are not missing at random (MNAR), apply imputation tecniques should be considered (not necessary, but suggested).
+
+In this case we removed all data with missing values reducing the numbers of decks of our dataset from `r nWR.DT.missing` to `r nWR.DT.complete`
+
+#### Correlation
+
+To assess which sttucture should be used we need to check the relationship between variables. This can be done by looking at their correlations.
+
+Using all the data and calculating the correlation would be wrong, as, as showed in the previous LMI article it is better to limit the analysis to a smaller pool of decks with a sufficient amount of games.
+
+At the Seasonal Tournament the number of max games is overall small compared to the number of decks played so we tried a series of possible benchmarks as least number of games played.
+
+```{r compute-correlation}
+corData.apply <- lapply(
+      X = c(0,10,30,50,100,200),
+      FUN = function(x){
+
+        corData <- WR.DT_2021_08 |>
+          filter(nGames > x) %>%
+          # left_join(WR.DT.Ladder|>
+          #             select(player,ladderWR = WR), by="player" ) %>%
+          filter(complete.cases(.)) |>
+          select( playrate,WR,meanBan )
+          # select( playrate,WR,ladderWR,meanBan )
+
+  corData |>
+  cor() |>     # start from the correlation matrix
+  # corrr::correlate(method = "pearson") %>%
+  # corrr::as_matrix() |>
+  as.table() |> 
+  as.data.frame() |>                        # Marek's answer in TidyVerse format
+  rename("Cor"="Freq") |>
+  # filter( !is.na(Cor) ) |>
+  filter( Var1 != Var2 ) |>
+  # subset(Var1 != Var2 & abs(Freq)>0.5) %>% # omit diagonal and keep significant correlations (optional...)
+  filter(!duplicated(paste0(pmax(as.character(Var1), as.character(Var2)), pmin(as.character(Var1), as.character(Var2))))) |>
+                                           # keep only unique occurrences, as.character because Var1 and Var2 are factors
+  add_column( n = x) |>
+    add_column( nrow = NROW(corData) )
+          # corrr::as_cordf()
+      }
+    ) |>
+  rbindlist()
+```
+
+```{r print-gt-summaryCor}
+gt.Cor <- corData.apply |>
+  distinct(n,nrow) |>
+  # rename_all(~c("minGames","#Deck")) |>
+  gt() |>
+  cols_label(
+    n = md("**minGames**"),
+    nrow = md("**#Deck**")
+  ) |>
+  # gt::tab_header(
+  #   title = "Bo3 Data",
+  #   subtitle = "Matches by Server"
+  # ) |>
+  tab_source_note(
+    source_note = md(glue::glue("Amount of remaining Decks  \n depending on the required min amount of Games"))
+  )
+
+gt.Cor |>
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+# gt.Cor
+```
+
+At the first glance, the 200 games used during the MetaReports seems excessive as it reduce the decks to 1/10th, 10 games is probably not enough as the win-rates would be too unstable making us gravitating mostly on 30,50,100 but we will truly decide being guided by the correlation result.
+
+```{r print-gt-correlation}
+gt.corData <- corData.apply |>
+  mutate( contrast = glue::glue("{Var1}/{Var2}"),.keep = c("unused"),.before = "Cor" ) |>
+  mutate( Cor = round(Cor,2)) |>
+  select(-nrow) |>
+  pivot_wider(id_cols = "contrast",names_from = "n",values_from = "Cor") |>
+  gt() |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = `0`,
+      rows = `0` >= 0.20 | `0` < -0.20
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = `10`,
+      rows = `10` >= 0.20 | `10` < -0.20
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = `30`,
+      rows = `30` >= 0.20 | `30` < -0.20
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = `50`,
+      rows = `50` >= 0.20 | `50` < -0.20
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = `100`,
+      rows = `100` >= 0.20 | `100` < -0.20
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = `200`,
+      rows = `200` >= 0.20 | `200` < -0.20
+    )
+  ) |>
+  cols_label(
+    contrast   = md("**Correlation**"),
+  ) |>
+  tab_source_note(
+    source_note = md(glue::glue("Correlation between the three raw variables on different amount of required min amount of Games"))
+  ) %>%
+  cols_align(
+    align = "center"
+    # columns = vars(server)
+  )
+
+gt.corData |>
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+gt.corData
+```
+
+```{r compute-seqCor}
+corData <- lapply(seq(1,200,5), function(x)
+  {
+  cor06 <- WR.DT_2021_06 |>
+    select(nGames,WR,lWR,meanBan ) |>
+    filter( nGames >= x ) |>
+    select( -nGames ) |>
+    cor() %>%
+    .[3,1:2] |>
+    as.table() |>
+    as.data.frame() |>
+    mutate( Var1 = c("WR06","lWR06") )
+    # pivot_wider(names_from = "Var1",values_from = "Freq") |>
+    # rename( "WR06"="WR", "lWR06"="lWR" )
+  
+  cor08 <- WR.DT_2021_08 |>
+    select(nGames,WR,lWR,meanBan ) |>
+    filter( nGames >= x ) |>
+    select( -nGames ) |>
+    cor() %>%
+    .[3,1:2] |>
+    as.table() |>
+    as.data.frame() |>
+    mutate( Var1 = c("WR08","lWR08") ) 
+    # pivot_wider(names_from = "Var1",values_from = "Freq") |>
+    # rename( "WR08"="WR", "lWR08"="lWR" )
+  
+  rbind(cor06,cor08) |>
+    add_column( n = x )
+  }
+  ) |>
+  rbindlist()
+
+
+
+lapply(seq(1,200,5), function(x)
+  {
+  cor06 <- WR.DT_2021_06 |>
+    select(nGames,WR,lWR ) |>
+    filter( nGames >= x ) |>
+    select( -nGames ) |>
+    cor() %>%
+    .[1,2] |>
+    as.table() |>
+    as.data.frame() |>
+    mutate( Var1 = c("corWR06") )
+    # pivot_wider(names_from = "Var1",values_from = "Freq") |>
+    # rename( "WR06"="WR", "lWR06"="lWR" )
+  
+  cor08 <- WR.DT_2021_08 |>
+    select(nGames,WR,lWR ) |>
+    filter( nGames >= x ) |>
+    select( -nGames ) |>
+    cor() %>%
+    .[1,2] |>
+    as.table() |>
+    as.data.frame() |>
+    mutate( Var1 = c("corWR08") )
+    # pivot_wider(names_from = "Var1",values_from = "Freq") |>
+    # rename( "WR08"="WR", "lWR08"="lWR" )
+  
+  rbind(cor06,cor08) |>
+    add_column( n = x )
+  }
+  ) |>
+  rbindlist() |>
+  ggplot(aes(x = n, y = Freq, color=Var1, shape = Var1 )) +
+  geom_point(size = 2 ) +
+  theme_Publication() +
+  ggsci::scale_color_npg() +
+  geom_hline(yintercept = 0, color="red") +
+  ylim(-0.75,0.75)
+
+
+
+corData |> 
+  rename("Correlation"="Freq","minGames"="n","Variable"="Var1") |>
+  mutate(Variable = case_when( 
+     Variable == "lWR06" ~ "Ladder WinRate June",
+     Variable == "WR06" ~ "Seasonal WinRate June",
+     Variable == "lWR08" ~ "Ladder WinRate August",
+     Variable == "WR08" ~ "Seasonal WinRate August"
+    ) 
+  ) |>
+  mutate( Variable = factor( Variable, levels = c("Seasonal WinRate June","Ladder WinRate June","Seasonal WinRate August","Ladder WinRate August") ) ) |>
+  ggplot(aes(x = minGames, y = Correlation, color=Variable, shape = Variable )) +
+  geom_point(size = 2 ) +
+  theme_Publication() +
+  ggsci::scale_color_npg() +
+  geom_hline(yintercept = 0, color="red") +
+  ylim(-0.75,0.75)
+
+
+
+# corr <- round(corData, 3)
+# p.mat <- cor_pmat(corData)
+# ggcorrplot(corr,  type = "lower", col=brewer.pal(n = 3, name = "RdBu"), p.mat = p.mat) +
+#   theme_void( ) + 
+#   theme(axis.text.x = element_text(angle = 0, debug = FALSE), 
+#         axis.text.y = element_text(angle = 0, debug = FALSE)
+#         )
+
+# Leave blank on no significant coefficient
+# ggcorrplot(corr, p.mat = p.mat, hc.order = TRUE, type = "lower", insig = "blank")
+```
+
+```{r correlation}
 # WR.DT |>
 #   filter(nGames > 100) |>
 #   select(playrate,WR,meanBan) |>
@@ -690,66 +924,6 @@ WR.DT %>%
 # ggcorrplot(correlation_matrix, type = "upper", hc.order = TRUE, colors = brewer.pal(n = 3, name = "RdYlBu"))
 ```
 
-```{r}
-
-# corData.apply <- lapply(
-#       X = c(10,30,50,100,200),
-#       FUN = function(x){
-#         
-#         corData <- WR.DT |>
-#           filter(nGames > x) |>
-#           left_join(WR.DT.Ladder|>
-#                       select(player,ladderWR = WR), by="player" ) %>%
-#           filter(complete.cases(.)) |>
-#           select( playrate,WR,ladderWR,meanBan )
-#         
-#         corData |>
-#           corrr::correlate(method = "pearson") |>
-#           add_column( n = x) |>
-#           add_column( nrow = NROW(corData) )
-#           # corrr::as_cordf()
-#       }
-#     ) |>
-#   rbindlist()
-# 
-# corData.apply |>
-#   filter( term == "meanBan" ) |>
-#   select( term,playrate,WR,ladderWR )
-# 
-# lapply(
-#       X = c(10,30,50,100,200),
-#       FUN = function(x){
-#         corData <- WR.DT |>
-#           filter(nGames > x) |>
-#           left_join(WR.DT.Ladder|>
-#                       select(player,ladderWR = WR), by="player" ) %>%
-#           filter(complete.cases(.)) |>
-#           select( playrate,WR,ladderWR,meanBan )
-#         
-#         corr <- round(cor(corData), 2)
-#         p.mat <- cor_pmat(corData)
-#         
-#         ggcorrplot(corr,  type = "lower", p.mat = p.mat, col = brewer.pal(n = 5, name = "RdBu"))
-#           
-#       }
-#     ) 
-# 
-# corData <- WR.DT |>
-#   filter(nGames > 10) |>
-#   left_join(WR.DT.Ladder|>
-#               select(player,ladderWR = WR), by="player" ) %>%
-#   filter(complete.cases(.)) |>
-#   select( playrate,WR,ladderWR,meanBan )
-# 
-# corr <- round(cor(corData), 2)
-# p.mat <- cor_pmat(corData)
-# 
-# 
-# 
-# # Leave blank on no significant coefficient
-# ggcorrplot(corr, p.mat = p.mat, hc.order = TRUE, type = "lower", insig = "blank")
-```
-
 
 ```{r}
 # minData <- WR.DT |>
@@ -765,7 +939,6 @@ WR.DT %>%
 # 
 # pve = pr.var / sum(pr.var)
 ```
-
 
 # Results
 
