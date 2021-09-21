@@ -6,7 +6,7 @@ base_url: http://www.llorr-stats.com
 preview:
 author:
   - name: Valentino (Legna) Vazzoler
-date: 09-12-2021
+date: 09-21-2021
 output:
  distill::distill_article:
     toc: true
@@ -329,15 +329,15 @@ WR.DT_2021_08 <- ban.DT |>  # start with ban.DT as it contains the list of all d
 
 # Introduction
 
-Composite Indicator (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis (FA) they are not entirely data driven and they are compiled in other to communicate a concept. Mostly used in social or policy evaluation, they allows for a single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
+Composite Indicators (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis (FA) they are not entirely data driven and they are compiled in order to communicate a concept. Mostly used in social or policy evaluation, they allows for a single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
 
-In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index is that it only only use two variables, play-rates and win-rates. While they are probably the most important variables of performance they don't fully catch the complexities on the meta-game performances. This can be solved by adding other variables to compose the index and a natural candidate is the ban-rate of a deck (in a contest of BoX matches).
+In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index is it's composed by only two variables: play-rates and win-rates. While they are the most important variables of performance of a deck, they don't fully catch the complexities on the meta-game performances. This can be solved by adding other variables to the index and a natural candidate is the ban-rate of a deck (in a contest of BoX matches).
 
 An experiment to add the ban-rate was done earlier this year, for 'Rise of the Underworld - Seasonal Tournament' report[^2].
 
-The inclusion of such variable, was done without checking all the proper steps so that we wouldn't compromise the quality of the CI. In this article we introduce better the concept and framework of a CI, how to add the the information of the ban rates and their results.
+The inclusion of such variable, was done without checking all the proper steps so that we wouldn't compromise the quality of the CI. In this article we introduce in more detail the concept and framework of a CI and how to add the the information of the ban rates and their results.
 
-Following the necessary steps, the proposed variation of the LMI contradicts the expected theoretical-framework while confirming the past approach.
+Following the necessary steps, the proposed variation of the LMI partially contradicts the expected theoretical-framework requiring an higher level of complexity to reach the aimed .
 
 [^1]: [LMI - early concept](https://www.llorr-stats.com/analysis/lmi/)
 
@@ -349,11 +349,11 @@ Data are taken from the Seasonal tournaments 'Guardian of the Ancient' and 'Rise
 
 The Open Rounds are the are organized in a series of nine Bo3 Matches with open lists and a ban phase before the start of the games. The smaller amount of games from the Asian shard/server is allegedly because of the fewer players taking part of it[^3]
 
-Not all information about the tournament can be derived from the API. There is no direct data about the chosen ban deck or the entire line-up brought by a player at this have to be extracted by aggregating the metadata of games from a single match and the matches with other matches.
+Not all information about the tournament can be derived from the API. There is no direct data about the chosen ban deck or the entire line-up brought by a player at this have to be extracted by aggregating the metadata of games from a single match and all matches played during that day.
 
 [^3]: No official data are known at the moment of the writing. Supposition made from a series of points like the fewer amount of Master rank players when the cut-off takes place.
 
-We only consider the decks that appears in the cases of a full-line-up and whose I can extrapolate the banned deck.
+We only consider the decks that appears in the cases of a full-line-up and whose we can extrapolate the banned deck.
 
 To evaluate win-rates on the ladder, as additional source, we includes Ranked games from Master players (at least one of the two players being Master) from up to two weeks before the start of the first game of the Seasonal (because of the time zone, two weeks, before the start of the Asian Seasonal).
 
@@ -373,7 +373,7 @@ gtSeasonal <- rbind(
     source_note = md(glue::glue("Bo3 Data from Seasonal Open Rounds - Rise of the Underworld Open Rounds Matches - games extracted with Riot API"))
   )
 
-gtSeasonal
+# gtSeasonal
  
 gtSeasonal |>
  tab_options(
@@ -395,7 +395,9 @@ For a manual on CI, a commonly referred guide is from the Joint Research Centre 
 
 1.  Theoretical Framework
 
-> Provide the basis for the selection and combination of variables into a meaningfu composite indicator under a fitness-for-porpuse principle (involment of experts and stakeholders is envisaged at this step)
+> Provide the basis for the selection and combination of variables into a meaningful composite indicator under a fitness-for-porpuse principle (involment of experts and stakeholders is envisaged at this step)
+
+What is the concept that the CI wants to convey? Of what characteristics is it made and what variable can express them? This steps is all about setting the definition of what needs to be created.
 
 2.  Data selection
 
@@ -411,33 +413,57 @@ The ‘polarity’ of an individual indicator is the sign of the relation betwee
 
 > Is needed in order to provide a complete dataset (e.g by means or multiple imputation).
 
+In the real world rarely the available data are complete (and this article is no exception). If the missing value are MCAR (Missing Completely At Random) then there would be no problem to just remove the rows with missing values but this is not always the case and sometimes we can't just remove units as they too important and so we must try to impute the missing values without compromising the end results or estimate these values to be as near as possible as what we would have obtain as the "true" value (not compromising the quality and trying to estimate the best imputation are not the same problem).
+
+Dealing with outliers is also part of this step. In our case it's related to the minimum amount of games to require to a deck.
+
 4.  Multivariate analysis
 
 > Should be used to study the overall structure of the dataset, assess its suitability, and guide subsequent methodological choices (e.g. weighting aggregation).
+
+Sometimes the framework is not enough to guide our decision and variables may actually behave differently from our exceptions. This step is about checking the underlying structure of the data, helps identify groups and evaluate statistically evaluated structure of the data set to the theoretical framework and discuss potential differences.
+
+In this article this will be done when looking at the correlations among our variables.
 
 5.  Normalization
 
 > Should be carried out to render the variables comparable
 
+As this steps was invested with care in the previous article, we will maintain the choice for using a quantile normalization for our data.
+
+While it's possible to use different normalization for the same CI at different groups of variables, it's not a recommended practise.
+
 6.  Weighting and aggregation
 
 > Should be done along the lines of the underying theoretical framework
+
+This steps mostly intertwined with the the Multivariate analysis as it can highlight 
+
+Like the normalization step, this step too was was invested with care in the previous article and we will maintain the choice for using an harmonic mean when aggregating our data. It is possible to use different aggregation method for the same CI if it's justified (like for compensability)
 
 7.  Uncertainty and sensitivity analysis
 
 > Should be undertaken to assess the robustness of the composite indicator in terms of e.g. the mechanism for indulging or excluding an indicator, the normalization scheme, the imputation of missing data, the choice, the choice of weights, the aggregation method
 
+This is an highly complex step that will be left for future articles.
+
 8.  Back to the data
 
 > Is needed to reveal the main drivers for an overall good or bad performance. Trasparency is promordial to good analysis
+
+As it can be done better with the results of a uncertainty and sensitivity analysis, this steps too will be left for the future.
 
 9.  Links to other indicators
 
 > Should be made to correlate the composite indicator (or its dimension) with existing (simple or composite) indicators as well as to identify linkages through regressions.
 
+This can be done when comparing the result of [Balco's Meta-Score](https://lor-meta.com/tierlist/) which applies the same algorithm by vS but is not part of this article as we would also include the opinion of third-party experts (some high level players) to evaluate the different CI performances.
+
 10. Visualization of the results
 
 > Should receive proper attention, given that the visualization can influence (or help to enhance interpretability)
+
+While not the only choice we will maintain for now the same plot strcture used up until now in the meta-reports and the previous LMI article.
 
 ---
 
@@ -591,17 +617,11 @@ Each different structure correspond to a different way to see the ban-rate relat
 
 While the second structure may seems the more intuitive choice, none of these strctures are the one proposed at the end. This is because of the results we found during the statistical analysis.
 
-### Statistical Analysis
+## Statistical Analysis
 
 In this section we describes how the analysis was done in its entirely and not just the final version of the steps to do in order to create the LMI. This is so to highlight some of the results we found and how we add the account for them.
 
-<!-- We don't know if it's possible to assume the missing value are MCAR (Missing Completely at Random). -->
-
-<!-- Normally when the missing data are MCAR, it is possible to just opt to remove the data with missing values, if it is ok the remove them in the first place. -->
-
-<!-- When they are not missing at random (MNAR), apply imputation tecniques should be considered (not necessary, but suggested). -->
-
-#### Correlation
+### Correlation
 
 To assess which structure should be used we need to check the relationship between variables. This can be done by looking at their correlations.
 
@@ -1110,7 +1130,7 @@ str_pca|>round(3)
 
 # Results
 
-If we tried to apply the proposed structure for the LMI and create again the graph from the [Seasonal - Rise of the Underworld report](https://www.llorr-stats.com/report/seasonal-001/#lmi---tournament-edition) there is a clear difference from the past version. With the new framework Akshan/Sivir (DE/SH) is not in a league of its own while still being the best decks
+If we tried to apply the proposed structure for the LMI and create again the graph from the [Seasonal - Rise of the Underworld report](https://www.llorr-stats.com/report/seasonal-001/#lmi---tournament-edition) there is a clear difference from the past version. With the new framework Akshan/Sivir (DE/SH) is not in a league of its own while still being the best decks. We want to remember it is not like the previous or the current iteration is wrong and the other correct, they just measure the same/similar data in a different way. While the previous iteration created a more sensational graph we consider the current one more 'realistic' as the difference between Akshan/Sivir (DE/SH) and the other top performing decks was way too high. One may object that the difference is now too small but even it was the case we still consider it an improvement from the previous framework.
 
 ```{r ggplotly-LMI}
 textWRPR <- function(LMI,Deck,WR, playrate,ban){
@@ -1129,23 +1149,34 @@ fig <- LMI.DT %>%
   mutate( size = scale_minmax(LMI) ) |>
   mutate_if(is.numeric, funs(round(., 4)) ) %>%
   mutate( tooltip = textWRPR(LMI = LMI,Deck = deck,WR = WR,playrate = playrate,ban = meanBan) ) |>
-  rename("Tier"="tier","Deck"="deck","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","WR dim"="str_dim","Freq dim"="PR_ind","LMI"="LMI") %>%
+  rename("Tier"="tier","Deck"="deck","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","LMI"="LMI") %>%
   plot_ly(
     type = 'scatter',
     mode = 'markers',
-    x = ~`WR dim`,
-    y = ~`Freq dim`,
+    x = ~`str_dim`,
+    y = ~`PR_ind`,
     color = ~LMI,
     marker = list(size = ~size*100 , sizeref = 0.1, sizemode = 'area'),
     text = ~tooltip,
     hovertemplate = paste("<b>%{text}</b><br><extra></extra>")
-    ) %>% layout(xaxis = list(title = "WR dim",titlefont = f),
-                 yaxis = list(title = "Freq dim",titlefont = f),
+    ) %>% layout(xaxis = list(title = "Strenght Index",titlefont = f),
+                 yaxis = list(title = "Popularity Index",titlefont = f),
                  title = 'LoR-Meta Index (LMI)'
                  ) %>% suppressWarnings()
 
+
 fig
 ```
+
+# Conclusions
+
+We started this article with the aim of adding the ban-rate to the LMI, contrary from out expectations this required to consider more the relationship with the selected variables and the possible causal relationship among than (in particular the ban-rates with the seasonal win-rates). To solve this problem we proposed to add a forth variable in the ladder win-rates from ranked games prior to the tournament. 
+
+A question that emerged during the analysis is about how to evaluate decks with a really small numbers of games because of an high ban-rate so if the selection filter should be adjusted to account for them. This could be done in future analysis that includes the uncertainty and sensitivity analysis.
+
+As the new LMI doesn't create what seems to be an outlier in Akshan/Sivir (DE/SH) a possible research question is how to determine is an even simpler way the strength of a deck. Meaning is we can translate the LMI into a tier-value, for example from 'tier-D' to 'tier-S', the commonly system used by gamers.
+
+If we tried used the cut-off values used by Balco we would have the following results.
 
 ```{r ggplotly-LMI-tier}
 textWRPR <- function(LMI,Deck,WR, playrate,ban){
@@ -1164,33 +1195,28 @@ fig <- LMI.DT %>%
   mutate( size = scale_minmax(LMI) ) |>
   mutate_if(is.numeric, funs(round(., 4)) ) %>%
   mutate( tooltip = textWRPR(LMI = LMI,Deck = deck,WR = WR,playrate = playrate,ban = meanBan) ) |>
-  rename("Tier"="tier","Deck"="deck","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","WR dim"="str_dim","Freq dim"="PR_ind","LMI"="LMI") %>%
+  rename("Tier"="tier","Deck"="deck","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","LMI"="LMI") %>%
   plot_ly(
     type = 'scatter',
     mode = 'markers',
-    x = ~`WR dim`,
-    y = ~`Freq dim`,
+    x = ~`str_dim`,
+    y = ~`PR_ind`,
     color = ~Tier,
     marker = list(size = ~size*100 , sizeref = 0.1, sizemode = 'area'),
     text = ~tooltip,
     hovertemplate = paste("<b>%{text}</b><br><extra></extra>")
-    ) %>% layout(xaxis = list(title = "WR dim",titlefont = f),
-                 yaxis = list(title = "Freq dim",titlefont = f),
+    ) %>% layout(xaxis = list(title = "Strenght Index",titlefont = f),
+                 yaxis = list(title = "Popularity Index",titlefont = f),
                  title = 'LoR-Meta Index (LMI)'
                  ) %>% suppressWarnings()
 
 fig
 ```
+As the cut-off values were chosen without any particular reason behind them, a future article will try to investigate different options for the cut-off values.
 
-# Conclusions
+To expand the application of this version of the LMI an analysis that will follow will try to apply this framework to Bo3 taken from the gauntlet and friendly Bo3.
 
-Problems: only decks with at least one games 
-
-Decks with very high ban rate but few games.
-
-Adding the information
-
-
+Lastly, as the variable we are using are a result of the state of the metagame of that time future article will try to check if we can add informations regarding the quota of counter-decks for a specific deck are played in a particular time of the meta/during the tournament.
 
 # Appendix {.appendix}
 
