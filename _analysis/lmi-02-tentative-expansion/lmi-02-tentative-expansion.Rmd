@@ -271,6 +271,7 @@ WR.DT_2021_08 <- fread(file.path("C:","LlorR","data","clean","LoR_Seasonal.csv")
 # WR.DT_2021_08 |>
 #   arrange(desc(nGames))
 ```
+
 ```{r table-ban-2021-08}
 #' read game-result
 LoR.Seasonal.RMD_202108  <- fread(file.path("C:","LlorR","data","clean","Seasonal_2021_08.csv"),na.strings = c("",NA), encoding = "UTF-8")
@@ -319,8 +320,8 @@ WR.DT_2021_08 <- ban.DT |>  # start with ban.DT as it contains the list of all d
   mutate(across(c(nBan,nWin, nGames,playrate), ~replace_na(.x, 0)) ) |>
   # mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill the missing values
   mutate( meanBan = nBan/maxBan ) |>   # since the number of ban considers all the cases with ban information it is some to impute 0
-  left_join(WR.DT.Ladder_2021_08 |> select(player,lplayrate=playrate,lWR=WR),by=c("deck"="player")) |> # add ladder information
-  mutate(across(everything(), ~replace_na(.x, 0)) ) # fill again
+  left_join(WR.DT.Ladder_2021_08 |> select(player,lplayrate=playrate,lWR=WR),by=c("deck"="player")) # add ladder information
+  # mutate(across(everything(), ~replace_na(.x, 0)) ) # fill again
 
 # WR.DT_2021_08 %$%
 #   cor(WR,lWR)
@@ -620,7 +621,7 @@ corData.apply <- lapply(
       X = c(0,10,30,50,100,200),
       FUN = function(x){
 
-        corData <- WR.DT_2021_08 |>
+        corData <- WR.DT_2021_06 |>
           filter(nGames > x) %>%
           # left_join(WR.DT.Ladder|>
           #             select(player,ladderWR = WR), by="player" ) %>%
@@ -766,10 +767,15 @@ gt.corData
 ```
 
 ```{r compute-seqCor}
-corData <- lapply(seq(1,200,5), function(x)
+# corData <- 
+lapply(seq(0,200,5), function(x)
   {
   cor06 <- WR.DT_2021_06 |>
     select(nGames,WR,lWR,meanBan ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill again
+    mutate( WR = scale_quantile(WR),
+            lWR = scale_quantile(lWR),
+            meanBan = scale_quantile(meanBan) )  |>
     filter( nGames >= x ) |>
     select( -nGames ) |>
     cor() %>%
@@ -782,6 +788,10 @@ corData <- lapply(seq(1,200,5), function(x)
   
   cor08 <- WR.DT_2021_08 |>
     select(nGames,WR,lWR,meanBan ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill again
+    mutate( WR = scale_quantile(WR),
+            lWR = scale_quantile(lWR),
+            meanBan = scale_quantile(meanBan) )  |>
     filter( nGames >= x ) |>
     select( -nGames ) |>
     cor() %>%
@@ -796,14 +806,35 @@ corData <- lapply(seq(1,200,5), function(x)
     add_column( n = x )
   }
   ) |>
-  rbindlist()
+  rbindlist() |> 
+  rename("Correlation"="Freq","minGames"="n","Variable"="Var1") |>
+  mutate(Variable = case_when( 
+     Variable == "lWR06" ~ "Ladder WinRate June",
+     Variable == "WR06" ~ "Seasonal WinRate June",
+     Variable == "lWR08" ~ "Ladder WinRate August",
+     Variable == "WR08" ~ "Seasonal WinRate August"
+    ) 
+  ) |>
+  mutate( Variable = factor( Variable, levels = c("Seasonal WinRate June","Ladder WinRate June","Seasonal WinRate August","Ladder WinRate August") ) ) |>
+  ggplot(aes(x = minGames, y = Correlation, color=Variable, shape = Variable )) +
+  geom_point(size = 2 ) +
+  theme_Publication() +
+  ggsci::scale_color_npg() +
+  geom_hline(yintercept = 0, color="red") +
+  ylim(-0.75,0.75)
+```
 
 
-
-lapply(seq(1,200,5), function(x)
+```{r compute-corWR}
+lapply(seq(0,200,5), function(x)
   {
   cor06 <- WR.DT_2021_06 |>
     select(nGames,WR,lWR ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
+    mutate( WR = scale_quantile(WR),
+            lWR = scale_quantile(lWR)
+            # meanBan = scale_quantile(meanBan) 
+    )  |>
     filter( nGames >= x ) |>
     select( -nGames ) |>
     cor() %>%
@@ -816,6 +847,11 @@ lapply(seq(1,200,5), function(x)
   
   cor08 <- WR.DT_2021_08 |>
     select(nGames,WR,lWR ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
+    mutate( WR = scale_quantile(WR),
+            lWR = scale_quantile(lWR),
+            # meanBan = scale_quantile(meanBan) 
+    ) |>
     filter( nGames >= x ) |>
     select( -nGames ) |>
     cor() %>%
@@ -838,27 +874,6 @@ lapply(seq(1,200,5), function(x)
   geom_hline(yintercept = 0, color="red") +
   ylim(-0.75,0.75)
 
-
-
-corData |> 
-  rename("Correlation"="Freq","minGames"="n","Variable"="Var1") |>
-  mutate(Variable = case_when( 
-     Variable == "lWR06" ~ "Ladder WinRate June",
-     Variable == "WR06" ~ "Seasonal WinRate June",
-     Variable == "lWR08" ~ "Ladder WinRate August",
-     Variable == "WR08" ~ "Seasonal WinRate August"
-    ) 
-  ) |>
-  mutate( Variable = factor( Variable, levels = c("Seasonal WinRate June","Ladder WinRate June","Seasonal WinRate August","Ladder WinRate August") ) ) |>
-  ggplot(aes(x = minGames, y = Correlation, color=Variable, shape = Variable )) +
-  geom_point(size = 2 ) +
-  theme_Publication() +
-  ggsci::scale_color_npg() +
-  geom_hline(yintercept = 0, color="red") +
-  ylim(-0.75,0.75)
-
-
-
 # corr <- round(corData, 3)
 # p.mat <- cor_pmat(corData)
 # ggcorrplot(corr,  type = "lower", col=brewer.pal(n = 3, name = "RdBu"), p.mat = p.mat) +
@@ -871,74 +886,123 @@ corData |>
 # ggcorrplot(corr, p.mat = p.mat, hc.order = TRUE, type = "lower", insig = "blank")
 ```
 
-```{r correlation}
-# WR.DT |>
-#   filter(nGames > 100) |>
-#   select(playrate,WR,meanBan) |>
-#   corrr::correlate() |>
-#   corrr::focus(playrate:meanBan, mirror = TRUE) |>
-#   corrr::network_plot()
-# 
-# WR.DT |>
-#   filter(nGames > 100) |>
-#   select(playrate,WR,meanBan) |>
-#   corrr::correlate() |>
-#   corrr::rearrange(method = "MDS", absolute = FALSE) |>
-#   corrr::shave() |>
-#   corrr::rplot(shape = 15, colors = c("red", "green"))
-# 
-# # install.packages("GGally")
-# require(GGally)
-# require(ggasym)
-# 
-# correlation_matrix <- WR.DT |> 
-#   filter(nGames > 100) |>
-#   select(playrate,WR,meanBan) |>
-#   cor()
-# 
-# library(ggplot2)
-# library(reshape2)
-# WR.DT |> 
-#   filter(nGames > 100) |>
-#   select(playrate,WR,meanBan) |>
-#   cor() |>
-#   round(digits = 2) |>
-#   melt() |>
-#   ggplot(aes(Var1, Var2, fill = value)) +
-#   geom_tile() +
-#   scale_fill_gradient2(low="blue", mid="white", high="red") +
-#   coord_equal()
-# 
-# 
-# library(GGally)
-# # ggcorr(correlation_matrix,nbreaks = 5, palette = "RdYlBu", geom = "tile") # non corretto
-# 
-# library(corrplot)
-# library(RColorBrewer)
-# corrplot(correlation_matrix, method = "square", type = "upper", tl.col = "black", order = "hclust", col = brewer.pal(n = 5, name = "RdYlBu"))
-# correlation_matrix |>
-#   round(digits = 2) |>
-#   ggcorrplot(type = "upper", hc.order = TRUE, lab =TRUE)
-# 
-# library(ggcorrplot)
-# ggcorrplot(correlation_matrix, type = "upper", hc.order = TRUE, colors = brewer.pal(n = 3, name = "RdYlBu"))
-```
-
-
 ```{r}
-# minData <- WR.DT |>
-#   filter(nGames > 100) |>
-#   select(playrate,meanBan)
-# 
-# pr.out <- minData |>
-#   prcomp(scale=T)
-# 
-# pr.out$rotation
-# 
-# pr.var <- pr.out$sdev^2
-# 
-# pve = pr.var / sum(pr.var)
+lapply(seq(0,200,5), function(x)
+  {
+  cor06 <- WR.DT_2021_06 |>
+    filter( nGames >= x ) |>
+    select(nGames,WR,lWR,meanBan ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
+    mutate( WR = scale_quantile(WR),
+            lWR = scale_quantile(lWR),
+            # meanBan = scale_quantile(meanBan) 
+    ) |>
+    rowwise() |>
+    mutate( WRind08 = mean(c_across(contains("WR") ) ) ) |>
+    ungroup() |>
+    select( -nGames,-WR,-lWR, ) |>
+    cor() %>%
+    .[1,2] |>
+    as.table() |>
+    as.data.frame() |>
+    mutate( Var1 = c("WRind06") )
+    # pivot_wider(names_from = "Var1",values_from = "Freq") |>
+    # rename( "WR06"="WR", "lWR06"="lWR" )
+  
+  cor08 <- WR.DT_2021_08 |>
+    filter( nGames >= x ) |>
+    select(nGames,WR,lWR,meanBan ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
+    mutate( WR = scale_quantile(WR),
+            lWR = scale_quantile(lWR),
+            # meanBan = scale_quantile(meanBan) 
+    ) |>
+    rowwise() |>
+    mutate( WRind08 = mean(c_across(contains("WR") ) ) ) |>
+    ungroup() |>
+    select( -nGames,-WR,-lWR, ) |>
+    cor() %>%
+    .[1,2] |>
+    as.table() |>
+    as.data.frame() |>
+    mutate( Var1 = c("WRind08") )
+    # pivot_wider(names_from = "Var1",values_from = "Freq") |>
+    # rename( "WR08"="WR", "lWR08"="lWR" )
+  
+  rbind(cor06,cor08) |>
+    add_column( n = x )
+  }
+  ) |>
+  rbindlist() |>
+  ggplot(aes(x = n, y = Freq, color=Var1, shape = Var1 )) +
+  geom_point(size = 2 ) +
+  theme_Publication() +
+  ggsci::scale_color_npg() +
+  geom_hline(yintercept = 0, color="red") +
+  ylim(-0.75,0.75)
 ```
+
+
+```{r normalization-step-1}
+LMI.DT <- WR.DT_2021_08 |>
+    filter( nGames >= 70 ) |>
+    select(playrate,WR,lWR,meanBan ) |>
+    mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
+    mutate( PR_ind = scale_quantile(playrate),
+            WR_ind = scale_quantile(WR),
+            lWR_ind = scale_quantile(lWR),
+            meanBan_ind = scale_quantile(meanBan)
+    )
+```
+
+
+```{r PCA-1}
+# library(factoextra)
+# PCA <- prcomp(LMI.DT[,c("WR_ind","lWR_ind")],scale=T)
+# # Eigenvalues
+# eig.val <- factoextra::get_eigenvalue(PCA)
+# eig.val
+#   
+# # Results for Variables
+# res.var <- get_pca_var(PCA)
+# res.var$coord          # Coordinates
+# res.var$contrib        # Contributions to the PCs
+# res.var$cos2           # Quality of representation
+
+
+PCA <- psych::principal(r = LMI.DT[,c("WR_ind","lWR_ind")]
+                        , nfactors = 2, rotate = "none")
+PCA <- psych::principal(r = LMI.DT[,c("WR","lWR")] , nfactors = 2, rotate = "none")
+
+mtcars[,1:2] |>
+  mutate(across(everything(), scale() ))
+
+PCA <- psych::principal(r = mtcars[,1:2] , nfactors = 2, rotate = "none")
+
+# eigen(cor(LMI.DT[,.(WR_ind,lWR_ind,meanBan_ind)]))
+loading=PCA$loadings[,1]
+win_pca = loading/sum(loading)
+win_pca
+# sum(win_pca)
+
+PCA <- tibble( p = rpois(100,5),
+        e = floor(rnorm(100,20,6))
+) |> psych::principal(nfactors = 2, rotate = "none")
+
+
+LMI.DT <- LMI.DT |>
+  mutate( WIN_ind    = map2_dbl(.x = WR_ind, .y = lWR_ind, ~weighted.mean(x = c(.x,.y),w = win_pca )),.keep = "unused" ) |>
+  mutate( WIN_ind = scale_quantile(WIN_ind) )
+  
+
+PCA <- psych::principal(r = LMI.DT[,c("WIN_ind","meanBan_ind")]
+                        , nfactors = 2, rotate = "none")
+# eigen(cor(LMI.DT[,.(WR_ind,lWR_ind,meanBan_ind)]))
+loading=PCA$loadings[,1]
+str_pca = loading/sum(loading)
+str_pca
+```
+
 
 # Results
 
