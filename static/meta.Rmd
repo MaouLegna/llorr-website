@@ -569,7 +569,7 @@ shared_code %>%
             columns = list(
               deck_code = colDef(name = "DeckCode", cell = function(value, index) {
                 # Render as a link
-                url <- sprintf("https://lor.runeterra.ar/decks/code/%s", value)
+                url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
                 # url <- sprintf("https://lor.runeterra.ar/decks/code/%s",deckCodeTbl[index, "deck_code"], value)
                 htmltools::tags$a(href = url, target = "_blank", as.character(value))
                 }),

@@ -14,7 +14,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: false
 twitter:
   site: "@Maou_Legna"
   creator: "@Maou_Legna"
@@ -329,11 +329,11 @@ WR.DT_2021_08 <- ban.DT |>  # start with ban.DT as it contains the list of all d
 
 # Introduction
 
-Composite Indicator (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis(FA) they are not entirely data driven and they are compiled in other to communicate a concept. Mostly used in social or policy evoluation, they allows for a single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
+Composite Indicator (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis (FA) they are not entirely data driven and they are compiled in other to communicate a concept. Mostly used in social or policy evaluation, they allows for a single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from [viciousSyndicate](https://www.vicioussyndicate.com) (vS).
 
-In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index was that it is 'limited' as it use only two variables, playrates and win-rates of a deck which would have been expanded once we could find additional (and appropriate) variables to add to it. A natural candidate as a third variable is the ban-rate of a deck (in a contest of BoX matches)
+In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)[^1]. The index didn't just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index is that it only only use two variables, play-rates and win-rates. While they are probably the most important variables of performance they don't fully catch the complexities on the meta-game performances. This can be solved by adding other variables to compose the index and a natural candidate is the ban-rate of a deck (in a contest of BoX matches).
 
-An experiment to add a third variable was done earlier this year, for 'Rise of the Underworld - Seasonal Tournament' report[^2].
+An experiment to add the ban-rate was done earlier this year, for 'Rise of the Underworld - Seasonal Tournament' report[^2].
 
 The inclusion of such variable, was done without checking all the proper steps so that we wouldn't compromise the quality of the CI. In this article we introduce better the concept and framework of a CI, how to add the the information of the ban rates and their results.
 
@@ -345,16 +345,25 @@ Following the necessary steps, the proposed variation of the LMI contradicts the
 
 # Data
 
-I only consider the decks that appears in the cases of a full-line-up and whose I can extrapolate the banned deck.
+Data are taken from the Seasonal tournaments 'Guardian of the Ancient' and 'Rise of the Underworld' Open Rounds.
 
-Values from the ladder are taken from Master players up to two weeks before the start of the first game of the Seasonal (Asian region)
+The Open Rounds are the are organized in a series of nine Bo3 Matches with open lists and a ban phase before the start of the games. The smaller amount of games from the Asian shard/server is allegedly because of the fewer players taking part of it[^3]
 
-Lack of data for a deck (no games) is considered 0 playrate and 0 winrate
+Not all information about the tournament can be derived from the API. There is no direct data about the chosen ban deck or the entire line-up brought by a player at this have to be extracted by aggregating the metadata of games from a single match and the matches with other matches.
+
+[^3]: No official data are known at the moment of the writing. Supposition made from a series of points like the fewer amount of Master rank players when the cut-off takes place.
+
+We only consider the decks that appears in the cases of a full-line-up and whose I can extrapolate the banned deck.
+
+To evaluate win-rates on the ladder, as additional source, we includes Ranked games from Master players (at least one of the two players being Master) from up to two weeks before the start of the first game of the Seasonal (because of the time zone, two weeks, before the start of the Asian Seasonal).
 
 ```{r create-gt-summary}
-gtSeasonal <- LoR.Seasonal.RMD |>
-  select(server) |>
-  gtsummary::tbl_summary() |>
+gtSeasonal <- rbind(
+  LoR.Seasonal.RMD_202106 |> add_column(Seasonal = "Seasonal - Guardian of the Ancient"),
+  LoR.Seasonal.RMD_202108 |> add_column(Seasonal = "Seasonal - Rise of the Underworld")
+) |>
+  select(server,Seasonal) |>
+  gtsummary::tbl_summary(by = Seasonal) |>
   gtsummary::as_gt() |>
   gt::tab_header(
     title = "Bo3 Data",
@@ -364,21 +373,17 @@ gtSeasonal <- LoR.Seasonal.RMD |>
     source_note = md(glue::glue("Bo3 Data from Seasonal Open Rounds - Rise of the Underworld Open Rounds Matches - games extracted with Riot API"))
   )
 
+gtSeasonal
+ 
 gtSeasonal |>
  tab_options(
     table.background.color = "transparent",
     table.font.color = "black",
     table.font.color.light = "black"
    )
-
-# gtSeasonal
 ```
 
-All games from this analysis are from the 'Rise of the Underworld - Seasonal Tournament - Open Rounds'. This section of the tournament is organized in a series of nine Bo3 Matches with open lists and a ban phase before the start of the games. The smaller amount of games from the asian shard/server is allegedly because of the fewer players taking part of it[^3]
-
-Not all information about the tournament can be derived from the API. There is direct data about the chosen ban deck or the entire line-up brought by a player at this have to be extracted by aggregating the metadata of games from a single match and the matches with other matches.
-
-[^3]: No official data are known at the moment of the writing. Supposition made from a series of points like the fewer amoutn of Master rank players when the cutoff takes place.
+Example and part of the raw-data used can be found in Appendix \@ref(tab:table-minmax))
 
 # Methods
 
@@ -386,7 +391,7 @@ Not all information about the tournament can be derived from the API. There is d
 
 The LMI is a composite indicator (CI) and in a previous article we introduced the tool we gave a brief explanation about how to create them. Here, we want to give a better and more complete overview of the tool.
 
-> For a manual on CI, a commonly referred guide is from the Joint Research Centre (JRC) of the European Commission: [Handbook on Constructing Composite Indicators - METHODOLOGY AND USER GUIDE](https://www.oecd.org/sdd/42495745.pdf)
+For a manual on CI, a commonly referred guide is from the Joint Research Centre (JRC) of the European Commission: [Handbook on Constructing Composite Indicators - METHODOLOGY AND USER GUIDE](https://www.oecd.org/sdd/42495745.pdf). In that guide building a composite indicator requires the following 10 steps:
 
 1.  Theoretical Framework
 
@@ -400,10 +405,7 @@ When defining the CI structure there is also the need to maintain a coherent str
 
 Example: if we have a sub-dimension index related to "quality of life" containing life expectancy and child mortality, the higher the value of life expectancy the better and higher the final index should be. But, for the values of child mortality it is the opposite, the smaller the value, the better it is. In this case it's not a problem as a common practise is to just use the opposite values by changing the sign as it is a linear transformation and the smaller the value of child mortality (with opposite sign) the better it is in evalutating "quality of life".
 
-The ‘polarity’ of an individual indicator is the sign of the
-relation between the indicator and the concept to be measured. For
-example, in the case of well-being, “Life expectancy” has positive
-polarity, whereas “Unemployment rate” has negative polarity. I
+The ‘polarity’ of an individual indicator is the sign of the relation between the indicator and the concept to be measured. For example, in the case of well-being, “Life expectancy” has positive polarity, whereas “Unemployment rate” has negative polarity. I
 
 3.  Imputation of missing data
 
@@ -437,37 +439,63 @@ polarity, whereas “Unemployment rate” has negative polarity. I
 
 > Should receive proper attention, given that the visualization can influence (or help to enhance interpretability)
 
+---
+
+When creating for the first time a CI these 10 steps aren't done in a strict sequential order, so in this article we will sometimes return to what is are previous steps compared to the one we are mainly referring in a section of the article.
+
 ## The LMI Composite Indicator
 
 ### Base LMI
 
-The basic LMI is made by aggregating playrates and win-rates
+The basic LMI is made by aggregating play-rates and win-rates and its creation was was inspired by seeing the meta score on vS.
 
-The LMI concept was inspirated by the meta score on vS
+While the base raw data are from the same concept, they are combined in a different way.
 
-It used only two variables
+From their F.A.Q.
 
-As it was only two variables there are no different way to aggregate the variables
+> **Q: What is the meaning of the Meta Score and how do you compute it?**
+>
+> The Meta Score is a supplementary metric that measures each archetype's relative standing in the meta, based on both win rate and prevalence, and in comparison to the theoretical "best deck".
+>
+> How is it computed?
+>
+> ...
+>
+> 1.  We take the highest win rate recorded by a current archetype in a specific rank group, and set it to a fixed value of 100. We then determine the fixed value of 0 by deducting the highest win rate from 100%. For example, if the highest win rate recorded is 53%, a win rate of 47% will be set as the fixed value of 0. This is a deck's **Power Score**. The range of 47% -- 53%, whose power score ranges from 0 to 100, will contain "viable" decks. The length of this range will vary depending on the current state of the meta. Needless to say, it is possible for a deck to have a negative power score, but it can never have a power score that exceeds 100.
+>
+> 2.  We take the highest frequency recorded by a current archetype in a specific rank group, and set it to a fixed value of 100. The fixed value of 0 will then always be 0% popularity. This is a deck's **Frequency Score**. A deck's frequency score cannot be a negative number.
+>
+> 3.  We calculate the simple average of a deck's Power Score and Frequency Score to find its **vS Meta Score**. The vS Meta Score is a deck's relative distance to the hypothetical strongest deck in the game. Think of Power Score and Frequency Score as the coordinates (x, y) of a deck within a Scatter Plot. The Meta Score represents its relative placement in the plane between the fixed values of (0, 0) and (100,100).
+>
+> 4.  If a deck records both the highest popularity and the highest win rate, its Meta Score will be 100. It will be, undoubtedly, the best deck in the game.
+
+While for the LMI:
+
+1. Only decks with at least 200 games are considered. A similar filter is most likely being applied by vS too, we just don't know the values for the cut-off
+
+2. Play-rates and win-rates are normalized with a quantile normalization into a Freq-Index and a Win-Index
+
+3. Freq-Index and a Win-Index are aggregated by an harmonic mean of equal weights into the LMI
+
+The reasoning behind these choices compared to other options can be found in the [LMI - early concept](https://www.llorr-stats.com/analysis/lmi/) article.
 
 ### Adding Banrate Information
 
-As the number of variables increase from the two of the base-LMI to three we now have more options as to combine the variables. Normally, this doesn't mean that each possible choice should be evaluated, the definition we want to communicate should guide our choices and so the characteristics of our variables, e.g. we don't add a variable of Life expectancy in a subdimension of 'Infrastructure quality'
+As the number of variables increase from the two of the base-LMI to three we now have more options as to combine them. Normally, this doesn't mean that each possible choice should be evaluated, the definition we want to communicate should guide our choices and so the characteristics of our variables, e.g. we don't add a variable of Life expectancy in a sub-dimension of 'Infrastructure quality'
 
-When creating the LMI I described it as a measure of *performance* of a deck and following that giving as performance's definition:
+When creating the LMI we described it as a measure of *performance* of a deck and as definition of performance of a deck as:
 
 > The performance of a deck is defined by its own strength and popularity inside the metagame.
 
-The definition of performance is probably not be as functional as it should as it seems a bit limiting in what it means. Yet, the term performance still remaing appropriate.
+The definition of performance is probably not be as functional as it should as it seems a bit limiting in what it means. Yet, the term performance still remains appropriate.
 
 What information can be added to the index? An easy inspiration can be taken from Riot's main games: League of Legends (LoL)
 
-In LoL a common value to describe the performance of a champion, in in addition to playrates and win-rates is the ban-rate of a champion.
+In LoL a common value to describe the performance of a champion, in in addition to play-rates and win-rates is the ban-rate of a champion.
 
-The most infamous value of the ban-rate was 95% ban-rate of Kassadin in S3. If we consider the definition of performance given earier we can see that the ban-rate doesn't fir perfectly strength or popularity in the metagame but it is more a case in the middle. It can seen as an aspect of strength as people don't want to deal with it so banning it but it can be as an aspect of popularity or better yet a more general *presence* as while it may have not been played it sort of lingered in the match. It was not present directly in the match but with its spirit (the ban).
+The most infamous value of the ban-rate was 95% ban-rate of Kassadin in S3. If we consider the definition of performance given earlier we can see that the ban-rate doesn't fir perfectly strength or popularity in the metagame but it is more a case in the middle. It can seen as an aspect of strength as people don't want to deal with it, so banning it, but it can be as an aspect of popularity or better yet a more general *presence* as while it may have not been played it sort of lingers in the match. The banned champion was not present directly in the match but with its spirit (the ban).
 
-In the context of LoR such information can be added once we consider BoX data, currently only Bo3 with the easiest example being the Seasonal Tournaments.
-
-Its value is defined as following:
+In the context of LoR such information can be added once we consider BoX data, currently only Bo3 with the easiest example being the Seasonal Tournaments and a possible way to define it is:
 
 -   **Ban Rate** - ratio between the number of bans and the number of matches of a deck.
 
@@ -561,72 +589,38 @@ Each different structure correspond to a different way to see the ban-rate relat
 
 - In the third structure the ban-rate of a deck is considered a part of its 'presence', it may have not been played, but like in the Kassadin example before, it's lingering in the matches as an unseen factor that is still influential to the results. After all the ban or not of a deck, so if it takes an active or passive role in a match can heavily influence the remaining Match Ups.
 
-While the second structure may seems the more intuitive choice, the third one is the one proposed, the motivations rely on the 4°step the multivariate analysis done on the data.
+While the second structure may seems the more intuitive choice, none of these strctures are the one proposed at the end. This is because of the results we found during the statistical analysis.
 
 ### Statistical Analysis
 
-Let us start by showing the data we will be using.
+In this section we describes how the analysis was done in its entirely and not just the final version of the steps to do in order to create the LMI. This is so to highlight some of the results we found and how we add the account for them.
 
-```{r print-table-ban, echo=FALSE }
-WR.DT_2021_08 %>%
-  # filter(nGames > 100) %>%
-  select(deck,nGames,playrate,WR,contains("meanBan")) %>%
-  arrange(desc(playrate)) %>%
-  # mutate( playrate = 3*playrate ) |>
-  reactable(
-    # wrap = FALSE,
-    bordered = TRUE,
-    highlight = TRUE,
-    striped = TRUE,
-    searchable = TRUE,
-    compact = TRUE, # compact the table
-    # fullWidth = FALSE, # don't fill the page
-    defaultPageSize = 10,
-    defaultColDef = colDef(
-      style = list(fontWeight = 500, color = "black",
-                   fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
-      align = "center",
-      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
-      ),
-    columns = list(
-      deck = colDef(name="Deck", align = "left" ),
-      nGames = colDef(name="#Games" ),
-      playrate = colDef(name="PlayRate", format = colFormat(percent = TRUE, digits = 2)),
-      WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
-      meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) )
-      )
-    )
-```
+<!-- We don't know if it's possible to assume the missing value are MCAR (Missing Completely at Random). -->
 
-The previous table follows the 3°step of dealing with missing values. The possibles missing values were on cases of decks with no information on the ban.
+<!-- Normally when the missing data are MCAR, it is possible to just opt to remove the data with missing values, if it is ok the remove them in the first place. -->
 
-We don't know if it's possible to assume the missing value are MCAR (Missing Completely at Random).
-
-Normally when the missing data are MCAR, it is possible to just opt to remove the data with missing values, if it is ok the remove them in the first place.
-
-When they are not missing at random (MNAR), apply imputation tecniques should be considered (not necessary, but suggested).
-
-In this case we removed all data with missing values reducing the numbers of decks of our dataset from `r nWR.DT.missing` to `r nWR.DT.complete`
+<!-- When they are not missing at random (MNAR), apply imputation tecniques should be considered (not necessary, but suggested). -->
 
 #### Correlation
 
-To assess which sttucture should be used we need to check the relationship between variables. This can be done by looking at their correlations.
+To assess which structure should be used we need to check the relationship between variables. This can be done by looking at their correlations.
 
 Using all the data and calculating the correlation would be wrong, as, as showed in the previous LMI article it is better to limit the analysis to a smaller pool of decks with a sufficient amount of games.
 
-At the Seasonal Tournament the number of max games is overall small compared to the number of decks played so we tried a series of possible benchmarks as least number of games played.
+At the Seasonal Tournament the number of games in total is overall small compared to the number of decks played so we tried a series of possible cut-off as min number of games played and find a compromise between not eliminating too many decks and having enough data to have quality results.
 
 ```{r compute-correlation}
 corData.apply <- lapply(
       X = c(0,10,30,50,100,200),
       FUN = function(x){
 
-        corData <- WR.DT_2021_06 |>
-          filter(nGames > x) %>%
+        corData <- WR.DT_2021_08 |>
+          filter(nGames >= x) %>%
+          select( playrate,WR,meanBan ) %>%
           # left_join(WR.DT.Ladder|>
           #             select(player,ladderWR = WR), by="player" ) %>%
-          filter(complete.cases(.)) |>
-          select( playrate,WR,meanBan )
+          filter(complete.cases(.))
+          
           # select( playrate,WR,ladderWR,meanBan )
 
   corData |>
@@ -648,6 +642,16 @@ corData.apply <- lapply(
     ) |>
   rbindlist()
 ```
+
+We tried to decide the min number of games required by looking at the amount of remaining decks we would have. The effect of different choices can be seen in Tab:\@ref(tab:print-gt-summaryCor).
+
+**Note**: it's the number of decks with also no missing values, as in the 296 decks there is 1 with no mean ban-rate even at cut-off of zero, the overall number is reduced by one.
+
+<caption>
+
+(\#tab:print-gt-summaryCor)Cut-off Table
+
+</caption>
 
 ```{r print-gt-summaryCor}
 gt.Cor <- corData.apply |>
@@ -676,7 +680,13 @@ gt.Cor |>
 # gt.Cor
 ```
 
-At the first glance, the 200 games used during the MetaReports seems excessive as it reduce the decks to 1/10th, 10 games is probably not enough as the win-rates would be too unstable making us gravitating mostly on 30,50,100 but we will truly decide being guided by the correlation result.
+At the first glance, the 200 games used during the meta-reports seems excessive as it reduce the decks to 1/10th, 10 games is probably not enough as the win-rates would be too unstable making us gravitating mostly on 30,50,100 but we will truly decide being guided by the correlation results as shown in Tab:\@ref(tab:print-gt-correlation).
+
+<caption>
+
+(\#tab:print-gt-correlation)Correlation Table at different cut-off
+
+</caption>
 
 ```{r print-gt-correlation}
 gt.corData <- corData.apply |>
@@ -763,16 +773,22 @@ gt.corData |>
     table.font.color.light = "black"
    )
 
-gt.corData
+# gt.corData
 ```
+The resulting correlations took us by surprise in a first moment. Not only the variable with the higher correlation to the ban-rate is the play-rate and not the win-rate (the expected initial result) but the correlation with win-rate seems to be negative. This is not strange, in Bo3 setting after the bans each player tries to enforce the best match-ups among the remaining decks so it easier to have bad match-ups even for highly-performing decks on the ladder. This made us question whatever to aggregate the ban-rate with play-rate, so the structure in Fig:\@ref(fig:example-LMI-framework-3). What we actually did was to consider:
 
-```{r compute-seqCor}
+- If the ban-rate of a deck during the Seasonal is negative correlated its win-rate it's probably because many brought counter line-ups to popular and strong decks. So it would also means that the ban-rate is also correlated to the performance of a decks in the ladder before the tournament.
+
+We tried to see if this is the case by looking at the correlation of the ban-rates with not just the win-rates at the Seasonal but also the win-rates from the ladder up to two weeks before the tournament starts. Since the aggregation is not done with the raw values but the normalized transformation the correlation is calculated after the normalization step using the quantile normalization as done in the previous iteration of the LMI. In addition, not to be affected by the particular tournament chosen this is why we also used the data from the 'Seasonal Tournament - Guardian of the Ancient' when the case-study was aimed to compute the LMI for the 'Rise of the Underworld' edition. As seens in Fig:\@ref(fig:print-seqCor) this was a crucial choice as the relationship of the ban-rates with the Seasonal win-rates can change radically. In the June tournament the metagame was more polarized and this probably affected the correlations.
+
+```{r print-seqCor, fig.cap="correlation of Seasonal Win-Rates and Ladder Win-Rates with the Ban-Rates at different benchmarks of minimum amount of games for each deck"}
 # corData <- 
 lapply(seq(0,200,5), function(x)
   {
   cor06 <- WR.DT_2021_06 |>
-    select(nGames,WR,lWR,meanBan ) |>
-    mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill again
+    select(nGames,WR,lWR,meanBan ) %>%
+    filter(complete.cases(.)) |>
+    # mutate(across(everything(), ~replace_na(.x, 0)) ) |>
     mutate( WR = scale_quantile(WR),
             lWR = scale_quantile(lWR),
             meanBan = scale_quantile(meanBan) )  |>
@@ -787,8 +803,9 @@ lapply(seq(0,200,5), function(x)
     # rename( "WR06"="WR", "lWR06"="lWR" )
   
   cor08 <- WR.DT_2021_08 |>
-    select(nGames,WR,lWR,meanBan ) |>
-    mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill again
+    select(nGames,WR,lWR,meanBan ) %>%
+    filter(complete.cases(.)) |>
+    # mutate(across(everything(), ~replace_na(.x, 0)) ) |>
     mutate( WR = scale_quantile(WR),
             lWR = scale_quantile(lWR),
             meanBan = scale_quantile(meanBan) )  |>
@@ -818,14 +835,30 @@ lapply(seq(0,200,5), function(x)
   mutate( Variable = factor( Variable, levels = c("Seasonal WinRate June","Ladder WinRate June","Seasonal WinRate August","Ladder WinRate August") ) ) |>
   ggplot(aes(x = minGames, y = Correlation, color=Variable, shape = Variable )) +
   geom_point(size = 2 ) +
+  labs(title = element_markdown("Correlation of ban-rates and win-rates at different cut-off"),
+       caption = element_markdown("Seasonal win-rates and ban-rates from Bo3 Data from \n Seasonal Open Rounds - Gurdian of the Ancient and Rise of the Underworld Open Rounds Matches \n Ladder win-rates from up to two weeks prior the tournament ranked games from Master players up - games extracted with Riot API") 
+      ) +
   theme_Publication() +
   ggsci::scale_color_npg() +
-  geom_hline(yintercept = 0, color="red") +
-  ylim(-0.75,0.75)
+  geom_hline(yintercept = 0, color="red")  +
+  ylim(-0.75,0.75) +
+  theme(plot.title = element_text(family = 'Helvetica', 
+                              color = 'grey50', 
+                              face = 'bold', 
+                              size = 18, 
+                              hjust = 0))
+  # theme(plot.caption = element_text(hjust = 0, face= "italic") )
 ```
 
+How to continue was the hardest part of the analysis. The correlation of ladder win-rates have a strong positive orientation with the ban-rates while the correlation with the Sesonal win-rates is more unstable and tends to be negative for certain value. If we wanted to use the structure of Fig:\@ref(fig:example-LMI-framework-1) or Fig:\@ref(fig:example-LMI-framework-2) than our problem would have to aggregate variables with different orientations. While this is not a rule one must always follows in the cases mentioned this would negatively impact the quality of the LMI. We would have for sure that an high value of a deck would decrease the win-rate index and to have an high LMI we may not want an high ban-rates as it's increase may decreae the win-rate. It would be harder to have decks with high LMI and high values of both win-rates and ban-rates. At the same time, can we really say the strength of the deck is the one we measured if the win-rates we observe seems to be a consequence of the metagame from the ladder and the high performances in Bo1 that is reflected by high ban-rates as to suggest people don't want to deal with decks they in the ladder they found are difficult to deal with unless the line-up can handle them?
 
-```{r compute-corWR}
+The solution proposed is to use a win-index that is not created from just the Seasonal win-rates but also the ladder win-rates to include both informations and having the ladder value reduce if not remove the negative correlation of the Seasonal value. Both for this to work we have to check a couple of conditions:
+
+- Win-rates from Seasonal and ladder needs to be correlated and the orientation shouldn't change depending on the tournament, which is a legit worry after seeing the previous figure. A positive correlation can be found and seen in Fig:\@ref(fig:print-corWR).
+
+- The aggregated win-rates have works better as a component to aggregate with ban-rates. The results can be seen in Fig:\@ref(fig:print-corBanWin).
+
+```{r print-corWR, fig.cap="correlation of Seasonal Win-Rates with Ladder Win-Rates at different benchmarks of minimum amount of games for each deck"}
 lapply(seq(0,200,5), function(x)
   {
   cor06 <- WR.DT_2021_06 |>
@@ -866,13 +899,28 @@ lapply(seq(0,200,5), function(x)
     add_column( n = x )
   }
   ) |>
-  rbindlist() |>
-  ggplot(aes(x = n, y = Freq, color=Var1, shape = Var1 )) +
+  rbindlist() |> 
+  rename("Correlation"="Freq","minGames"="n","Variable"="Var1") |>
+  mutate(Variable = case_when( 
+     Variable == "corWR06" ~ "Guardian of the Ancient - June",
+     Variable == "corWR08" ~ "Rise of the Underworld - August"
+    ) 
+  ) |>
+  mutate( Variable = factor( Variable, levels = c("Guardian of the Ancient - June","Rise of the Underworld - August") ) ) |>
+  ggplot(aes(x = minGames, y = Correlation, color=Variable, shape = Variable )) +
   geom_point(size = 2 ) +
+  labs(title = element_markdown("Correlation of Seasonal and ladder win-rates at different cut-off"),
+       caption = element_markdown("Seasonal win-rates from Bo3 Data from \n Seasonal Open Rounds - Gurdian of the Ancient and Rise of the Underworld Open Rounds Matches \n Ladder win-rates from up to two weeks prior the tournament ranked games from Master players up - games extracted with Riot API") 
+      ) +
   theme_Publication() +
   ggsci::scale_color_npg() +
-  geom_hline(yintercept = 0, color="red") +
-  ylim(-0.75,0.75)
+  geom_hline(yintercept = 0, color="red")  +
+  ylim(-0.75,0.75) +
+  theme(plot.title = element_text(family = 'Helvetica', 
+                              color = 'grey50', 
+                              face = 'bold', 
+                              size = 18, 
+                              hjust = 0))
 
 # corr <- round(corData, 3)
 # p.mat <- cor_pmat(corData)
@@ -886,7 +934,7 @@ lapply(seq(0,200,5), function(x)
 # ggcorrplot(corr, p.mat = p.mat, hc.order = TRUE, type = "lower", insig = "blank")
 ```
 
-```{r}
+```{r print-corBanWin, fig.cap="correlation of Ban-rates with a Win-Index computed as harmonic mean of Seasonal and ladder win-Rates with Ladder at different benchmarks of minimum amount of games for each deck"}
 lapply(seq(0,200,5), function(x)
   {
   cor06 <- WR.DT_2021_06 |>
@@ -933,108 +981,140 @@ lapply(seq(0,200,5), function(x)
     add_column( n = x )
   }
   ) |>
-  rbindlist() |>
-  ggplot(aes(x = n, y = Freq, color=Var1, shape = Var1 )) +
+  rbindlist() |> 
+  rename("Correlation"="Freq","minGames"="n","Variable"="Var1") |>
+  mutate(Variable = case_when( 
+     Variable == "WRind06" ~ "Guardian of the Ancient - June",
+     Variable == "WRind08" ~ "Rise of the Underworld - August"
+    ) 
+  ) |>
+  mutate( Variable = factor( Variable, levels = c("Guardian of the Ancient - June","Rise of the Underworld - August") ) ) |>
+  ggplot(aes(x = minGames, y = Correlation, color=Variable, shape = Variable )) +
   geom_point(size = 2 ) +
+  labs(title = element_markdown("Correlation of ban-rates with a win-index at different cut-off"),
+       caption = element_markdown("Ban-rates from Bo3 Data from \n Seasonal Open Rounds - Gurdian of the Ancient and Rise of the Underworld Open Rounds Matches \n Ladder win-rates from up to two weeks prior the tournament ranked games from Master players up - games extracted with Riot API \n Win-Index as harmonic mean of Seasonal and ladder win-rates") 
+      ) +
   theme_Publication() +
   ggsci::scale_color_npg() +
-  geom_hline(yintercept = 0, color="red") +
-  ylim(-0.75,0.75)
+  geom_hline(yintercept = 0, color="red")  +
+  ylim(-0.75,0.75) +
+  theme(plot.title = element_text(family = 'Helvetica', 
+                              color = 'grey50', 
+                              face = 'bold', 
+                              size = 18, 
+                              hjust = 0))
 ```
 
+Considering the overall results the final choices to the LMI frameworks are the following:
 
-```{r normalization-step-1}
+- Having the LMI as seen in Fig:\@ref(fig:example-LMI-framework-4). This is an aggregation of three subdimensions: popularity(playrate), ban and a win-subdimension which is made of the ladder and seasonal win rates. This can be justified by the correlation of the ban-index with both the play-index and the win-index. This option can 
+
+```{r example-LMI-framework-4, fig.cap="Possible theoretical framework for the LMI - adding both ban-rate and ladder win-rate, using three main subdimension: ban, playrate and strength" }
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  I [label = 'LMI']
+  IS0 [label = 'Strengh \n subdimension']
+  IB0 [label = 'Ban \n subdimension']
+  IP0 [label = 'Popularity/Presence \n subdimension']
+  
+  IS1 [label = 'Strength Index']
+  IB1 [label = 'BanRate Index']
+  IP1 [label = 'PlayRate Index']
+  
+  IS21 [label = 'Seasonal WinRate Index']
+  IS22 [label = 'Ladder WinRate  Index']
+  
+  # edge definitions with the node IDs
+  I -> {IS0,IP0 IB0} [dir=back]
+  IS0 -> IS1 [dir=back]
+  IB0 -> IB1 [dir=back]
+  IP0 -> IP1 [dir=back]
+  
+  IS1 -> {IS21,IS22} [dir=back]
+  }",
+  height = 300)
+```
+
+- Having the LMI as seen in Fig:\@ref(fig:LMI-framework). The ban-rates shows a stronger causal relationship with the win-rates compared to the playrates (Fig:\@ref(fig:print-seqCor)) so considering it part of the *strenght* of a deck can be considered more appropriate. This the option which tries to follows the definition which was given before: 'The performance of a deck is defined by its own strength and popularity inside the metagame.' and is in fact the framework which is proposed.
+
+```{r LMI-framework, fig.cap="Proposed LMI theoretical framework - mainteining two main subdimension and having the ban-rate as a component of the 'strength' subdimension" }
+DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]
+  
+  node [shape = rectangle]        
+  I [label = 'LMI']
+  IS0 [label = 'Strengh \n subdimension']
+  IP0 [label = 'Popularity/Presence \n subdimension']
+  
+  IS11 [label = 'BanRate Index']
+  IS12 [label = 'Strength Index']
+  IP1 [label = 'PlayRate Index']
+  
+  IS21 [label = 'Seasonal WinRate Index']
+  IS22 [label = 'Ladder WinRate  Index']
+  
+  # edge definitions with the node IDs
+  I -> {IS0,IP0} [dir=back]
+  IP0 -> IP1 [dir=back]
+  IS0 -> {IS11,IS12} [dir=back]
+  
+  IS12 -> {IS21,IS22} [dir=back]
+  }",
+  height = 300)
+```
+```{r compute-LMI}
 LMI.DT <- WR.DT_2021_08 |>
     filter( nGames >= 70 ) |>
-    select(playrate,WR,lWR,meanBan ) |>
+    # select(playrate,WR,lWR,meanBan ) |>
     mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
     mutate( PR_ind = scale_quantile(playrate),
             WR_ind = scale_quantile(WR),
             lWR_ind = scale_quantile(lWR),
             meanBan_ind = scale_quantile(meanBan)
-    )
+    ) |>
+  mutate( WIN_ind    = map2_dbl(.x = WR_ind, .y = lWR_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( WIN_ind = scale_quantile(WIN_ind) ) |>
+  mutate( str_dim = map2_dbl(.x = WIN_ind, .y = meanBan_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( str_dim = scale_quantile(str_dim) ) |>
+  mutate( str_dim = map2_dbl(.x = WIN_ind, .y = meanBan_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( str_dim = scale_quantile(str_dim) ) |>
+  mutate( LMI = map2_dbl(.x = str_dim, .y = PR_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( LMI = scale_quantile(LMI) ) |> 
+  mutate(tier = case_when( 
+     LMI >= 0.9 ~ "Tier1",
+     # 0.90 <= LMI & LMI < 0.975 ~ "Tier1",
+     0.60 <= LMI & LMI < 0.90 ~ "Tier2",
+     0.30 <= LMI & LMI < 0.60 ~ "Tier3",
+     LMI < 03.0 ~ "Tier4 or lower",
+    ) 
+  )
 ```
 
+### Weigths
 
-```{r PCA-1}
-# library(factoextra)
-# PCA <- prcomp(LMI.DT[,c("WR_ind","lWR_ind")],scale=T)
-# # Eigenvalues
-# eig.val <- factoextra::get_eigenvalue(PCA)
-# eig.val
-#   
-# # Results for Variables
-# res.var <- get_pca_var(PCA)
-# res.var$coord          # Coordinates
-# res.var$contrib        # Contributions to the PCs
-# res.var$cos2           # Quality of representation
+Aggregating variable into a single index this is always done by applying weights to each component, be them equal weights or another vector. The decision can be made by following different method not all being entirely data-driven. A common way to compute the weights is by using the normalized loading factors of the first eigenvalue from the principal components. With the proposed structure both the weights for the win-index and strength index resulted in a equal weights (0.50 and 0.50). As it is both the simplest case and being confirmed by a data-driven approach equal weights are the applied weights.
 
+**Note**: if we used the 3-subdimension structure the resulting weights would have been
 
-PCA <- psych::principal(r = LMI.DT[,c("WR_ind","lWR_ind")]
-                        , nfactors = 2, rotate = "none")
-PCA <- psych::principal(r = LMI.DT[,c("WR","lWR")] , nfactors = 2, rotate = "none")
-
-mtcars[,1:2] |>
-  mutate(across(everything(), scale() ))
-
-PCA <- psych::principal(r = mtcars[,1:2] , nfactors = 2, rotate = "none")
-
-# eigen(cor(LMI.DT[,.(WR_ind,lWR_ind,meanBan_ind)]))
-loading=PCA$loadings[,1]
-win_pca = loading/sum(loading)
-win_pca
-# sum(win_pca)
-
-PCA <- tibble( p = rpois(100,5),
-        e = floor(rnorm(100,20,6))
-) |> psych::principal(nfactors = 2, rotate = "none")
-
-
-LMI.DT <- LMI.DT |>
-  mutate( WIN_ind    = map2_dbl(.x = WR_ind, .y = lWR_ind, ~weighted.mean(x = c(.x,.y),w = win_pca )),.keep = "unused" ) |>
-  mutate( WIN_ind = scale_quantile(WIN_ind) )
-  
-
-PCA <- psych::principal(r = LMI.DT[,c("WIN_ind","meanBan_ind")]
-                        , nfactors = 2, rotate = "none")
+```{r PCA}
+PCA <- psych::principal(r = LMI.DT[,c("PR_ind","WIN_ind","meanBan_ind")] |>
+                          rename("PlayRate Index"="PR_ind","Strength Index"="WIN_ind","BanRate Index"="meanBan_ind") 
+                        , nfactors = 3, rotate = "none")
 # eigen(cor(LMI.DT[,.(WR_ind,lWR_ind,meanBan_ind)]))
 loading=PCA$loadings[,1]
 str_pca = loading/sum(loading)
-str_pca
+str_pca|>round(3)
 ```
-
 
 # Results
 
-# LMI - Tournament Edition
-
-When I wrote the basic theory about the index I mentioned how it's a concept that can be expanded whenever I can find more (appropriate) variable to add. At the previous Seasonal I already had an idea but had no time to apply it. In this case I added the information regarding the ban rate of a deck.
-
-Short explanation: Since now we have 3 variables there two options to consider, either they are used independently as before, or a new step is added a mid-tier aggregation. Since ban rate are always associated with pick rates (p&b) I dediced to create a "p&b dimension" that is composed by the play rate and ban rate. I applied the quantile normalization to use the same scale and the play rate, but there was an option to leave the value raw, the important part is probably leave decks with 0% ban rate to remain 0 and this happens with most transformations. the play rate and ban rate are aggregated with a weighed mean (but in this case with equals weights) the resulting p&b-dimension-index is normalized and then finally aggregated to create the LMI. This is just a quick application of the theory but a more rigorous approach will require testing all the steps with the new framework
-
-```{r data-aggregation}
-DT.Aggreation <- WR.DT %>%
-  filter( nGames > 100 ) %>%
-  # filter( playrate > 0.01 ) %>%
-  mutate( freq_ind    = scale_quantile(playrate) ) %>%
-  mutate( ban_ind     = scale_quantile(meanBan) ) %>%
-  mutate( wr_dim      = scale_quantile(WR) ) %>%
-  
-  rowwise() %>%
-  #' pick ban
-  mutate( pb_dim    = map2_dbl(.x = freq_ind, .y = ban_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5))) ) %>%
-  ungroup() %>%
-  mutate( pb_dim    = scale_quantile(pb_dim) ) %>%
-  rowwise() %>%
-  mutate( hmeta_ind = harm.mean(c_across(ends_with("_dim")) ) ) %>%
-  ungroup()
-
-# DT.Aggreation
-```
+If we tried to apply the proposed structure for the LMI and create again the graph from the [Seasonal - Rise of the Underworld report](https://www.llorr-stats.com/report/seasonal-001/#lmi---tournament-edition) there is a clear difference from the past version. With the new framework Akshan/Sivir (DE/SH) is not in a league of its own while still being the best decks
 
 ```{r ggplotly-LMI}
-textWRPR <- function(Deck,WR, playrate,ban){
-  glue("Deck: {Deck}\nWin Rate: {scales::percent(WR,accuracy = 0.1)}\nPlay Rate: {scales::percent(playrate,accuracy = 0.1)}\nmean Ban Rate: {scales::percent(ban,accuracy = 0.1)}")
+textWRPR <- function(LMI,Deck,WR, playrate,ban){
+  glue("LMI: {LMI*100}\nDeck: {Deck}\nWin Rate: {scales::percent(WR,accuracy = 0.1)}\nPlay Rate: {scales::percent(playrate,accuracy = 0.1)}\nmean Ban Rate: {scales::percent(ban,accuracy = 0.1)}")
 }
 
 f <- list(
@@ -1043,27 +1123,22 @@ f <- list(
   color = "#7f7f7f"
 )
 
-fig <- DT.Aggreation %>%
-  select(player,WR,playrate,meanBan,wr_dim,pb_dim,hmeta_ind) %>%
+fig <- LMI.DT %>%
+  slice_max(LMI,n=30) |>
+  select(tier,deck,WR,playrate,meanBan,str_dim,PR_ind,LMI) %>%
+  mutate( size = scale_minmax(LMI) ) |>
   mutate_if(is.numeric, funs(round(., 4)) ) %>%
-  mutate( tooltip = textWRPR(Deck = player,WR = WR,playrate = playrate,ban = meanBan) ) %>%
-  rename("Deck"="player","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","WR dim"="wr_dim","Freq dim"="pb_dim","LMI"="hmeta_ind") %>%
+  mutate( tooltip = textWRPR(LMI = LMI,Deck = deck,WR = WR,playrate = playrate,ban = meanBan) ) |>
+  rename("Tier"="tier","Deck"="deck","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","WR dim"="str_dim","Freq dim"="PR_ind","LMI"="LMI") %>%
   plot_ly(
     type = 'scatter',
     mode = 'markers',
     x = ~`WR dim`,
     y = ~`Freq dim`,
-    marker = list(size = ~LMI*100, sizeref = 0.1, sizemode = 'area'),
     color = ~LMI,
+    marker = list(size = ~size*100 , sizeref = 0.1, sizemode = 'area'),
     text = ~tooltip,
-    hovertemplate = paste(
-      "LMI:<b>%{marker.size:,}<br>",
-      "<b>%{text}</b><br><extra></extra>",sep = ""
-      # "%{yaxis.title.text}: %{y:$,.0f}<br>",
-      # "%{xaxis.title.text}: %{x:.0%}<br>",
-      # "Number Employed: %{marker.size:,}",
-      # "<extra></extra>"
-      )
+    hovertemplate = paste("<b>%{text}</b><br><extra></extra>")
     ) %>% layout(xaxis = list(title = "WR dim",titlefont = f),
                  yaxis = list(title = "Freq dim",titlefont = f),
                  title = 'LoR-Meta Index (LMI)'
@@ -1072,51 +1147,90 @@ fig <- DT.Aggreation %>%
 fig
 ```
 
-# Discussion
+```{r ggplotly-LMI-tier}
+textWRPR <- function(LMI,Deck,WR, playrate,ban){
+  glue("LMI: {LMI*100}\nDeck: {Deck}\nWin Rate: {scales::percent(WR,accuracy = 0.1)}\nPlay Rate: {scales::percent(playrate,accuracy = 0.1)}\nmean Ban Rate: {scales::percent(ban,accuracy = 0.1)}")
+}
 
-## Alternative ways
+f <- list(
+  family = "Courier New, monospace",
+  size = 18,
+  color = "#7f7f7f"
+)
+
+fig <- LMI.DT %>%
+  slice_max(LMI,n=30) |>
+  select(tier,deck,WR,playrate,meanBan,str_dim,PR_ind,LMI) %>%
+  mutate( size = scale_minmax(LMI) ) |>
+  mutate_if(is.numeric, funs(round(., 4)) ) %>%
+  mutate( tooltip = textWRPR(LMI = LMI,Deck = deck,WR = WR,playrate = playrate,ban = meanBan) ) |>
+  rename("Tier"="tier","Deck"="deck","Win_Rate"="WR","Play_Rate"="playrate","Ban Rate"="meanBan","WR dim"="str_dim","Freq dim"="PR_ind","LMI"="LMI") %>%
+  plot_ly(
+    type = 'scatter',
+    mode = 'markers',
+    x = ~`WR dim`,
+    y = ~`Freq dim`,
+    color = ~Tier,
+    marker = list(size = ~size*100 , sizeref = 0.1, sizemode = 'area'),
+    text = ~tooltip,
+    hovertemplate = paste("<b>%{text}</b><br><extra></extra>")
+    ) %>% layout(xaxis = list(title = "WR dim",titlefont = f),
+                 yaxis = list(title = "Freq dim",titlefont = f),
+                 title = 'LoR-Meta Index (LMI)'
+                 ) %>% suppressWarnings()
+
+fig
+```
 
 # Conclusions
+
+Problems: only decks with at least one games 
+
+Decks with very high ban rate but few games.
+
+Adding the information
+
+
+
+# Appendix {.appendix}
+
+<caption>
+
+(\#tab:print-table-ban)Quantile table
+
+</caption>
+
+```{r print-table-ban }
+WR.DT_2021_08 %>%
+  # filter(nGames > 100) %>%
+  select(deck,nGames,playrate,WR,contains("meanBan")) %>%
+  arrange(desc(playrate)) %>%
+  # mutate( playrate = 3*playrate ) |>
+  reactable(
+    # wrap = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    striped = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 10,
+    defaultColDef = colDef(
+      style = list(fontWeight = 500, color = "black",
+                   fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
+      align = "center",
+      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+      ),
+    columns = list(
+      deck = colDef(name="Deck", align = "left" ),
+      nGames = colDef(name="#Games" ),
+      playrate = colDef(name="PlayRate", format = colFormat(percent = TRUE, digits = 2)),
+      WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
+      meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) )
+      )
+    )
+```
 
 # Legal bla bla {.unnumbered}
 
 This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
-
-```{r}
-DT <- data.table(participant_1 = c("a","A","b","c"),
-           participant_2 = c("b","D","a","d"),
-           origin = c(1,2,1,1))
-
-namesDT <- data.table( puuid_1 = c("a","b","c","d"),
-            puuid_2 = c("A","B","C","D"))
-
-
-left_join(DT,namesDT,by=c("participant_1"="puuid_1")) %>%
-  # mutate(c1 = replace(c1, origin==1, v2) )
-  mutate(participant_1 = ifelse(origin == 1, puuid_2, participant_1))
-```
-
-```{r example-digraph }
-# DiagrammeR::grViz("digraph flowchart {
-#       # node definitions with substituted label text
-#       node [fontname = Helvetica, shape = rectangle]
-#       tab1 [label = '@@1']
-#       tab2 [label = '@@2']
-#       tab3 [label = '@@3']
-#       tab4 [label = '@@4']
-#       tab5 [label = '@@5']
-# 
-#       # edge definitions with the node IDs
-#       tab1 -> tab2;
-#       tab2 -> tab3;
-#       tab2 -> tab4 -> tab5
-#       }
-# 
-#       [1]: 'Questionnaire sent to n=1000 participants'
-#       [2]: 'Participants came to clinic for evaluation n=700'
-#       [3]: 'Participants non-eligible for the study n=100'
-#       [4]: 'Participants eligible for the study n=600'
-#       [5]: 'Study sample n=600'
-#       ",
-#   height = 300)
-```
