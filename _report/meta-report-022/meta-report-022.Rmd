@@ -2,8 +2,8 @@
 title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°22)"
 description: |
   Patch 2.14 - Week 2 - Requiem for Akshan/Sivir
-base_url: https://llorr-stats.netlify.app
-preview: "http://dd.b.pvp.net/2_15_0/set5/en_us/img/cards/05BC041-full.png"
+base_url: https://www.llorr-stats.com
+preview: "https://dd.b.pvp.net/2_15_0/set5/en_us/img/cards/05BC041-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
 date: 09-8-2021
@@ -53,9 +53,9 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 # require(Hmisc)    # provides knitrSet and other functions
 xaringanExtra::use_panelset()
 #' Python
-py_run_string("print('Hello World')")
-lor_deckcodes <- import("lor_deckcodes")
-py_module_available("lor_deckcodes")
+reticulate::py_run_string("print('Hello World')")
+# lor_deckcodes <- import("lor_deckcodes")
+# py_module_available("lor_deckcodes")
 ```
 
 ```{r panelset-style}
