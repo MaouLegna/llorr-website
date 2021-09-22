@@ -1388,7 +1388,7 @@ deckCodeTbl |>
 
 `r kableExtra::text_spec("New:", color = "red")` added a Tier classification of decks based on their LMI value. This is more experimental and not as strict as a result of one of my analysis (in this case it's a first glimpse to the distribution of the LMI values). The classification is as follows:
 
-- **Tier0** with LMI >= 0.975
+- **Tier0** with LMI >= 97.5
 
 - **Tier1** with LMI $\in$ [85,97.5)
 
