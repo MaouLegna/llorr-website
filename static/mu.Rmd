@@ -411,7 +411,7 @@ ft <- grid %>%
   # width(., width = 1.5)
 ```
 
-```{r print-flex}
+```{r print-flex, fig.width=12, fig.height=8}
 save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
 ft
 ```
@@ -422,9 +422,9 @@ ft
 # knitr::include_graphics(path = "./images/mugrid.png")
 ```
 
-# Grid 2.12/2.13 {data-icon="fa-file-image"}
+<!-- # Grid 2.12/2.13 {data-icon="fa-file-image"} -->
 
-![](images/mugrid_patch_2_12to13.png)
+<!-- ![](images/mugrid_patch_2_12to13.png) -->
 
 # Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 
@@ -445,22 +445,22 @@ MUtbl %>%
               )
 ```
 
-### Match Ups Data (2.12/2.13)
+<!-- ### Match Ups Data (2.12/2.13) -->
 
-```{r}
-# MUtbl %>%
-#   filter( muGames > 10 ) %>%
-#   fwrite( "data/mutbl_patch_2_12to13.csv" )
-fread("data/mutbl_patch_2_12to13.csv") %>%
-  select(player,opponent,muWin,muGames,muWR) %>%
-  download_this(.,
-              button_label = "Download MU data (2.12/2.13) as .csv",
-              output_name = "mutable",
-              button_type = "success",
-              has_icon = TRUE,
-              icon = "fa fa-save"
-              )
-```
+<!-- ```{r} -->
+<!-- # MUtbl %>% -->
+<!-- #   filter( muGames > 10 ) %>% -->
+<!-- #   fwrite( "data/mutbl_patch_2_12to13.csv" ) -->
+<!-- fread("data/mutbl_patch_2_12to13.csv") %>% -->
+<!--   select(player,opponent,muWin,muGames,muWR) %>% -->
+<!--   download_this(., -->
+<!--               button_label = "Download MU data (2.12/2.13) as .csv", -->
+<!--               output_name = "mutable", -->
+<!--               button_type = "success", -->
+<!--               has_icon = TRUE, -->
+<!--               icon = "fa fa-save" -->
+<!--               ) -->
+<!-- ``` -->
 
 ### Match Ups Grid
 
@@ -476,19 +476,19 @@ download_file(
 )
 ```
 
-### Match Ups Grid (2.12/2.13)
+<!-- ### Match Ups Grid (2.12/2.13) -->
 
-```{r}
-download_file(
-  path = file.path("images/mugrid_patch_2_12to13.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download MU grid (2.12/2.13) as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
+<!-- ```{r} -->
+<!-- download_file( -->
+<!--   path = file.path("images/mugrid_patch_2_12to13.png"), -->
+<!--   # path = system.file("assets/css/all.min.css", package = "downloadthis"), -->
+<!--   button_label = "Download MU grid (2.12/2.13) as .png", -->
+<!--   button_type = "primary", -->
+<!--   has_icon = TRUE, -->
+<!--   icon = "fa fa-save", -->
+<!--   self_contained = FALSE -->
+<!-- ) -->
+<!-- ``` -->
 
 ## Column {data-width="800"}
 

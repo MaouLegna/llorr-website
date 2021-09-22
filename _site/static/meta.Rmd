@@ -421,8 +421,7 @@ flexdashboard::valueBox(glue::glue("{length(fct_meta)} Meta Decks"),
 
 ```{r value-underdog}
 flexdashboard::valueBox(glue::glue("{length(fct_underdog)} Underdog Decks"),
-                        caption = glue::glue("Decks with PlayRate with at least 1%"),
-                        # caption = glue::glue("Decks with a PlayRate in [0.1%,1%) \n positive WinRate"),
+                        caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"),
                         icon = "fa-dog",
                         color = "#ff7f24")
 ```
@@ -569,7 +568,7 @@ shared_code %>%
             columns = list(
               deck_code = colDef(name = "DeckCode", cell = function(value, index) {
                 # Render as a link
-                url <- sprintf("https://lor.runeterra.ar/decks/code/%s", value)
+                url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
                 # url <- sprintf("https://lor.runeterra.ar/decks/code/%s",deckCodeTbl[index, "deck_code"], value)
                 htmltools::tags$a(href = url, target = "_blank", as.character(value))
                 }),
@@ -650,7 +649,7 @@ dot_plot <- keyDeckDaily |>
 # dot_plot
 ```
 
-```{r print-plot-meta-evo}
+```{r print-plot-meta-evo, fig.width=12, fig.height=8}
 subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
   layout(showlegend = FALSE) |>
   plotly::highlight(on = "plotly_click", off = "plotly_doubleclick")
