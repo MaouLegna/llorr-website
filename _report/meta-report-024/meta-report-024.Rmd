@@ -67,7 +67,7 @@ metathis::meta() |>
   ) |> 
   metathis::meta_viewport() |> 
   metathis::meta_social(
-    title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°23)",
+    title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°24)",
     url = "https://www.llorr-stats.com/",
     image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC188-full.png",
     image_alt = "Shellfolk",
@@ -1388,7 +1388,7 @@ deckCodeTbl |>
 
 `r kableExtra::text_spec("New:", color = "red")` added a Tier classification of decks based on their LMI value. This is more experimental and not as strict as a result of one of my analysis (in this case it's a first glimpse to the distribution of the LMI values). The classification is as follows:
 
-- **Tier0** with LMI >= 99
+- **Tier0** with LMI >= 0.975
 
 - **Tier1** with LMI $\in$ [85,97.5)
 
