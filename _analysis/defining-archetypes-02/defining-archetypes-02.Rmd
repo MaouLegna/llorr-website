@@ -1,0 +1,271 @@
+---
+title: "Defining Archetypes #2: The state of the problem"
+description: |
+  First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra
+base_url: https://www.llorr-stats.com
+preview:
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 09-23-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true    
+    toc_depth: 3
+    self_contained: false
+citation: false
+draft: FALSE
+params:
+  start: "2021-07-15 21:00:00" #UTC tz / 'current' week start
+  end:   "2021-08-22 21:00:00" #UTC tz / 'current' week end
+  skip:  2800000  # Patch 2.11 - after removing a few games  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=9,
+  fig.height=6,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
+)
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
+```
+
+```{r twitter-meta, echo = FALSE}
+metathis::meta() |>
+  metathis::meta_description(
+    "Patch 2.15 - Week 2 - At the end of the (S1) World"
+  ) |> 
+  metathis::meta_viewport() |> 
+  metathis::meta_social(
+    title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°24)",
+    url = "https://www.llorr-stats.com/",
+    image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC188-full.png",
+    image_alt = "Shellfolk",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
+
+```{r raw-data}
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) |>
+  pivot_longer(
+  cols = contains("puuid"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+# Data {.unnumbered}
+
+```{r account-info}
+masterEU   <- LoR.Account.RMD |> filter(activeShard=="europe"   & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
+masterNA   <- LoR.Account.RMD |> filter(activeShard=="americas" & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
+masterASIA <- LoR.Account.RMD |> filter(activeShard=="asia"     & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
+
+namesList.EU.RMD   <- lor_leaderboard("europe")$name
+namesList.NA.RMD   <- lor_leaderboard("americas")$name
+namesList.ASIA.RMD <- lor_leaderboard("asia")$name
+```
+
+```{r nGames-data}
+minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
+maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
+
+max_time <- LoR.Match.RMD |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") |>
+  slice_max(game_start_time_utc) |>
+  pull(game_start_time_utc) |>
+  format(format = "%Y-%m-%d %H:%M:%S")
+
+nGames <- LoR.Match.RMD |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") |>
+  tabyl(game_type) |>
+  filter( game_type=="Ranked" ) |>
+  pull(n)
+```
+
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
+  #' Base filters
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+  #' 'process' data
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) |>
+  #' finish 'process' data
+  left_join(LoR.Account.RMD[,c("puuid","RiotID","refID")] |> setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) |>
+  left_join(LoR.Account.RMD[,c("puuid","RiotID")] |> setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) |>
+  left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions")) |>
+  select(-ends_with("puuid"),-refID)
+```
+
+```{r}
+library(dbscan)
+
+data(iris)
+iris <- as.matrix(iris[,1:4])
+```
+
+```{r}
+kNNdistplot(iris, k = 5)
+abline(h=.5, col = "red", lty=2)
+```
+```{r}
+res <- dbscan(iris, eps = .5, minPts = 5)
+res
+```
+```{r}
+pairs(iris, col = res$cluster + 1L)
+```
+
+```{r}
+hullplot(x = iris, cl = res) # grafico delle aree convesse
+```
+
+```{r}
+# if(!require(devtools)) install.packages("devtools")
+# devtools::install_github("kassambara/factoextra")
+
+library(factoextra)
+data("multishapes")
+df <- multishapes[, 1:2]
+set.seed(123)
+km.res <- kmeans(df, 5, nstart = 25)
+fviz_cluster(km.res, df, frame = FALSE, geom = "point")
+
+# install.packages("fpc")
+# install.packages("dbscan")
+```
+
+```{r}
+# Load the data 
+# Make sure that the package factoextra is installed
+data("multishapes", package = "factoextra")
+df <- multishapes[, 1:2]
+```
+
+```{r}
+library("fpc")
+# Compute DBSCAN using fpc package
+set.seed(123)
+db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
+# Plot DBSCAN results
+plot(db, df, main = "DBSCAN", frame = FALSE)
+```
+```{r}
+library("factoextra")
+fviz_cluster(db, df, stand = FALSE, frame = FALSE, geom = "point")
+```
+
+```{r}
+# Print DBSCAN
+print(db)
+```
+
+```{r}
+# Cluster membership. Noise/outlier observations are coded as 0
+# A random subset is shown
+db$cluster[sample(1:1089, 50)]
+```
+```{r}
+dbscan::kNNdistplot(df, k =  5)
+abline(h = 0.15, lty = 2)
+```
+
+```{r}
+#The iris dataset is used:
+
+# Load the data
+data("iris")
+iris <- as.matrix(iris[, 1:4])
+#The optimal value of “eps” parameter can be determined as follow:
+
+dbscan::kNNdistplot(iris, k =  4)
+abline(h = 0.4, lty = 2)
+# Compute DBSCAN using fpc::dbscan() and dbscan::dbscan(). Make sure that the 2 packages are installed:
+
+set.seed(123)
+# fpc package
+res.fpc <- fpc::dbscan(iris, eps = 0.4, MinPts = 4)
+# dbscan package
+res.db <- dbscan::dbscan(iris, 0.4, 4)
+# The result of the function fpc::dbscan() provides an object of class ‘dbscan’ containing the following components:
+# cluster: integer vector coding cluster membership with noise observations (singletons) coded as 0
+# isseed: logical vector indicating whether a point is a seed (not border, not noise)
+# eps: parameter eps
+# MinPts: parameter MinPts
+# The result of the function dbscan::dbscan() is an integer vector with cluster assignments. Zero indicates noise points.
+# Note that the function dbscan:dbscan() is a fast re-implementation of DBSCAN algorithm. The implementation is significantly faster and can work with larger data sets than the function fpc:dbscan().
+
+# Make sure that both version produce the same results:
+
+all(res.fpc$cluster == res.db)
+## [1] TRUE
+#The result can be visualized as follow:
+
+fviz_cluster(res.fpc, iris, geom = "point")
+```
+
+
+# Legal bla bla {.unnumbered}
+
+This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
