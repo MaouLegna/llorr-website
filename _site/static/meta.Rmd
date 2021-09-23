@@ -15,7 +15,7 @@ params:
   # start: "2021-07-14 21:00:00" #UTC tz / 'previous' patch start
   # end:   "2021-08-25 21:00:00" #UTC tz / 'previous' patch end
   start: "2021-09-01 21:00:00" #UTC tz / 'current' patch start
-  end:   "2021-09-30 21:00:00" #UTC tz / 'current' patch end
+  end:   "2021-10-30 21:00:00" #UTC tz / 'current' patch end
   skip:  2800000  # Patch 2.14
 ---
 
@@ -175,37 +175,47 @@ LoR.Melt.Matches.RMD[ player %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Aksh
 LoR.Deck <- LoR.Deck[ deck_code %in%  (LoR.Melt.Matches.RMD |> distinct(deck_code) |> pull()) ]
 
 #' Sion
-RubinBait_deckCode_1 <- LoR.Deck %>%
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
-  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) %>%
-  rowwise() %>%
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
-  filter(nCard==3) %>%
+RubinBait_deckCode_1 <- LoR.Deck |>
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
+  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) |>
+  rowwise() |>
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
+  filter(nCard==3) |>
   pull(deck_code)
 
 LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_1, player:="RubinBait - Draven / Sion" ]
 
 #' Ezreal
-RubinBait_deckCode_2 <- LoR.Deck %>%
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
-  filter(archetype %in% c("Draven / Ezreal") ) %>%
-  rowwise() %>%
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
-  filter(nCard==3) %>%
+RubinBait_deckCode_2 <- LoR.Deck |>
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
+  filter(archetype %in% c("Draven / Ezreal") ) |>
+  rowwise() |>
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
+  filter(nCard==3) |>
   pull(deck_code)
 
 LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_2, player:="RubinBait - Draven / Ezreal" ]
 
 #' Cait 
-RubinBait_deckCode_3 <- LoR.Deck %>%
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
-  filter(archetype %in% c("Caitlyn / Draven") ) %>%
-  rowwise() %>%
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
-  filter(nCard==3) %>%
+RubinBait_deckCode_3 <- LoR.Deck |>
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
+  filter(archetype %in% c("Caitlyn / Draven") ) |>
+  rowwise() |>
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
+  filter(nCard==3) |>
   pull(deck_code)
 
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_3, player:="RubinBait - Caitlyn / Draven" ]
+#' Bandle
+RubinBait_deckCode_4 <- LoR.Deck |>
+  filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
+  rowwise() |>
+  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
+  filter(key_search==3) |>
+  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
+  filter(key_search==3) |>
+  pull(deck_code)
+
+LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_3, player:="RubinBait - BandleBurn" ]
 
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Ezreal")
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Sion")
