@@ -16,8 +16,8 @@ output:
 citation: false
 draft: FALSE
 params:
-  start: "2021-07-15 21:00:00" #UTC tz / 'current' week start
-  end:   "2021-08-22 21:00:00" #UTC tz / 'current' week end
+  start: "2021-09-01 21:00:00" #UTC tz / start of emergency patch 2.14
+  end:   "2021-08-22 21:00:00" #UTC tz / end of patch 2.15
   skip:  2800000  # Patch 2.11 - after removing a few games  
 ---
 
@@ -102,33 +102,6 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 ```
 
 # Data {.unnumbered}
-
-```{r account-info}
-masterEU   <- LoR.Account.RMD |> filter(activeShard=="europe"   & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-masterNA   <- LoR.Account.RMD |> filter(activeShard=="americas" & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-masterASIA <- LoR.Account.RMD |> filter(activeShard=="asia"     & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-
-namesList.EU.RMD   <- lor_leaderboard("europe")$name
-namesList.NA.RMD   <- lor_leaderboard("americas")$name
-namesList.ASIA.RMD <- lor_leaderboard("asia")$name
-```
-
-```{r nGames-data}
-minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))
-maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
-
-max_time <- LoR.Match.RMD |>
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") |>
-  slice_max(game_start_time_utc) |>
-  pull(game_start_time_utc) |>
-  format(format = "%Y-%m-%d %H:%M:%S")
-
-nGames <- LoR.Match.RMD |>
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") |>
-  tabyl(game_type) |>
-  filter( game_type=="Ranked" ) |>
-  pull(n)
-```
 
 ```{r prepare-data}
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
