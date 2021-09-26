@@ -1,8 +1,9 @@
 ---
 title: "(Legna’s) Legends of Runeterra Stats (with R)"
 description: |
-  On the Resources page it's possible to find link for MatchUps and General winrate/deckcodes/structures that is updated regularly and use the entire patch data. <br>
-  New - 2021-09-22: Added a new analysis on the LMI that includes the ban-rate of a deck when using Bo3 data.
+  New - 2021-09-25: Bo3-Helper on Resrouces with current meta decks,
+  2021-09-22: Added a new analysis on the LMI that includes the ban-rate of a deck when using Bo3 data.
+  2021-09: On the Resources page it's possible to find link for MatchUps and General winrate/deckcodes/structures that is updated regularly and use the entire patch data. <br>
 output:
   distill::distill_article:
     self_contained: false

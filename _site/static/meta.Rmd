@@ -5,6 +5,7 @@ base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     navbar:
+      - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     # orientation: columns
     # vertical_layout: fill
@@ -17,6 +18,7 @@ params:
   start: "2021-09-01 21:00:00" #UTC tz / 'current' patch start
   end:   "2021-10-30 21:00:00" #UTC tz / 'current' patch end
   skip:  2800000  # Patch 2.14
+  hrs: 2
 ---
 
 
@@ -39,9 +41,9 @@ options(digits.secs = 6)
 options(scipen=999)
 
 #' R Option
-pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
-               flextable,officer,scales,htmltools,
-               downloadthis)
+# pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
+#                flextable,officer,scales,htmltools,
+#                downloadthis)
 ```
 
 ```{r load-data}
@@ -215,7 +217,7 @@ RubinBait_deckCode_4 <- LoR.Deck |>
   filter(key_search==3) |>
   pull(deck_code)
 
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_3, player:="RubinBait - BandleBurn" ]
+LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_4, player:="RubinBait - BandleBurn" ]
 
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Ezreal")
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Sion")
@@ -253,13 +255,14 @@ fct_underdog <- WR.DT |>
 ```
 
 ```{r shared-data}
-Champion.deck.daily.byserver <- (LoR.Melt.Matches.RMD |>
+Champion.deck.daily.byserver <- LoR.Melt.Matches.RMD |>
   rename("Archetype"="player") |>
   arrange(game_start_time_utc) |>
   group_by(server) |>
   select(game_start_time_utc,Archetype,server) |>
   mutate( num_cc = factor(Archetype) |> as.numeric() ) |>
-    ungroup() |> as.data.table())[ , playRate := (cumsum(num_cc)/num_cc)/.I , by=Archetype ] |>
+    ungroup() |> as.data.table() %>%
+  .[ , playRate := (cumsum(num_cc)/num_cc)/.I , by=Archetype ] |>
   select(!num_cc) |>
   mutate( Archetype = factor(Archetype) |> fct_infreq() )
 
@@ -273,11 +276,19 @@ maxFreq <- Champion.deck.daily.byserver |>
 # options(digits.secs = 0)
 Champion.deck.daily.byserver <- Champion.deck.daily.byserver |>
   mutate( game_start_time_utc = floor_date(game_start_time_utc, unit = "hours") ) |>
-  group_by(game_start_time_utc,Archetype) |>
+  group_by(game_start_time_utc,server,Archetype) |>
   slice_head(n=1) |>
+  ungroup() |>
+  group_by(server,Archetype) |>
+  filter(row_number() %% params$hrs == 1) %>%
+  ungroup() %>%
+  filter(complete.cases(.)) |>
   ungroup()
 
+# hrs_filter <- unique(Champion.deck.daily.byserver$game_start_time_utc)[ c(rep(FALSE,params$hrs-1),TRUE) ]
+
 keyDeckDaily <- Champion.deck.daily.byserver |>
+  # filter( game_start_time_utc %in% hrs_filter  ) |>
   filter( Archetype %in% fct_meta &
             game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
   mutate( server = str_to_title(server), playRate = round(playRate,3) ) |>
@@ -452,7 +463,7 @@ flexdashboard::valueBox(Sys.Date(),
 ### Filters
 
 ```{r filters-deck-structure}
-deckStrctures_meta     <- map_df(.x = c(fct_meta), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD,archetype =.x,minN = 5) ) |>
+deckStrctures_meta  <- map_df(.x = c(fct_meta), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD,archetype =.x,minN = 5) ) |>
   as_tibble() |>
   add_column(popularity = "Meta")
 
@@ -467,9 +478,9 @@ deckStrctures_underdog <- map_df(.x = c(fct_underdog), ~get_deck_structure_2_met
 #   as_tibble() |>
 #   add_column(popularity = "Underdog")
 
-shared_data <- SharedData$new(rbind(deckStrctures_meta,deckStrctures_underdog))
-filter_select(id = "popularity", label = "Meta/Underdog", sharedData = shared_data, group = ~popularity)
-filter_select(id = "archetype", label = "Archetype", sharedData = shared_data, group = ~archetype)
+shared_data <- crosstalk::SharedData$new(rbind(deckStrctures_meta,deckStrctures_underdog))
+crosstalk::filter_select(id = "popularity", label = "Meta/Underdog", sharedData = shared_data, group = ~popularity)
+crosstalk::filter_select(id = "archetype", label = "Archetype", sharedData = shared_data, group = ~archetype)
 ```
 ## Row {data-heigth="850"}
 
@@ -549,9 +560,9 @@ deckCodeTbl  <- LoR.Melt.Matches.RMD |>
 ### Filters
 
 ```{r filter-deck-code-tbl}
-shared_code <- SharedData$new(deckCodeTbl)
-filter_select(id = "server", label = "Server", sharedData = shared_code, group = ~server)
-filter_select(id = "player", label = "Archetype", sharedData = shared_code, group = ~player)
+shared_code <- crosstalk::SharedData$new(deckCodeTbl)
+crosstalk::filter_select(id = "server", label = "Server", sharedData = shared_code, group = ~server)
+crosstalk::filter_select(id = "player", label = "Archetype", sharedData = shared_code, group = ~player)
 ```
 
 ## Row
@@ -571,7 +582,7 @@ shared_code %>%
             wrap = TRUE,
             # filterable = TRUE,
             defaultColDef = colDef(
-              style = list(background = color,fontFamily = "Roboto", fontSize = "14px"),
+              style = list(fontFamily = "Roboto", fontSize = "14px"),
               align = "center",
               minWidth = 120
               ) ,
@@ -660,7 +671,7 @@ dot_plot <- keyDeckDaily |>
 ```
 
 ```{r print-plot-meta-evo, fig.width=12, fig.height=8}
-subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
+plotly::subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
   layout(showlegend = FALSE) |>
   plotly::highlight(on = "plotly_click", off = "plotly_doubleclick")
 ```
@@ -699,7 +710,3 @@ subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
 #### General info
 
 When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
-
-`r kableExtra::text_spec("UPDATE:", color = "red")` the API problem has been fixed so I can return to collect the games. Since it would be a shame to trow away all the old data since I have only few games with the old patch I added the grid for the previous cycle of buff/nerfs as it can still provide informations for MU that didn't change from the release of BandleCity (looking at you Soraka).
-
-While I could add the table too it would probably clog the page too much and distract from the current data. But as an alternative I added the change to download the old-patch data if one really needs them.

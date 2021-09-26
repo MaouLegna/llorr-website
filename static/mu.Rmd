@@ -196,6 +196,18 @@ RubinBait_deckCode_3 <- LoR.Deck %>%
 
 LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_3, player:="RubinBait - Caitlyn / Draven" ]
 
+#' Bandle
+RubinBait_deckCode_4 <- LoR.Deck |>
+  filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
+  rowwise() |>
+  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
+  filter(key_search==3) |>
+  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
+  filter(key_search==3) |>
+  pull(deck_code)
+
+LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_4, player:="RubinBait - BandleBurn" ]
+
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Ezreal")
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Sion")
 # LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Caitlyn / Draven")
@@ -272,6 +284,7 @@ reactable(.,
           fullWidth = T, # don't fill the page
           defaultPageSize = 20,
           wrap = TRUE,
+          defaultSorted = list(muGames = "desc"),
             # filterable = TRUE,
             defaultColDef = colDef(
               style = list(fontFamily = "Roboto", fontSize = "13px"), align = "center"
@@ -282,13 +295,13 @@ reactable(.,
               opponent = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black")),
               
               muWin    = colDef(name = "#Win" ), # , style = list( fontSize = "13px")
-              muGames  = colDef(name = "#Games"),
+              muGames  = colDef(name = "#Games",defaultSortOrder = "desc"),
               
               # muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
               
               muWR  = colDef(
                 name = "Win Rate",
-                defaultSortOrder = "desc",
+                # defaultSortOrder = "desc",
                 cell = function(value) {
                   label <- paste0(round(value * 100,1), "%")
                   bar_chart_pos_neg(label, value)
@@ -514,3 +527,13 @@ The format of the table is the usual way I display the match-ups data but I also
 #### General info
 
 When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
+
+
+```{r update-Shiny}
+MUtbl |>
+  filter(player %in% TopCC & opponent %in% TopCC ) |>
+  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle01-MUtbl.csv"))
+
+save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
+```
+
