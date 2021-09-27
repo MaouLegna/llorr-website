@@ -295,7 +295,7 @@ keyDeckDaily <- Champion.deck.daily.byserver |>
   highlight_key(~Archetype)
 ```
 
-# MetaDeck-Structure {data-icon="fa-table"}
+# Meta-Stats {data-icon="fa-table"}
 
 ```{r process-winRate}
 WR.DT <- LoR.Melt.Matches.RMD |>

@@ -45,6 +45,7 @@ knitr::opts_chunk$set(
 
 #' R Option
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
+require("factoextra")
 
 # require(Hmisc)    # provides knitrSet and other functions
 xaringanExtra::use_panelset()
@@ -77,6 +78,21 @@ meta() %>%
     twitter_creator = "@Maou_Legna"
   )
 ```
+```{r functions}
+#' extract the top n most played list for 'archetypes provided'
+top_n_codes <- \(DT = LoR.Melt.Matches.RMD,archetypes,n,dopull=T) DT|>filter(player%in%{{archetypes}})|>group_by(player)|>count(deck_code)|>slice_max(deck_code,n=n,with_ties=F)|>ungroup()%>%{if( dopull==T ) pull(.,deck_code) else .}
+
+#' distance Matrix given deck_codes
+dsimMatrix <- function( codes ) {
+  deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
+  for (i in 1:length(codes)) {
+    decklist <- codes[i] |> lordecks::get_decklist_from_code()
+    deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
+  }
+  deck.matrix |> mutate( across(everything(), ~replace_na(.x, 0)) )
+}
+```
+
 
 ```{r raw-data}
 #' load gameDT
@@ -181,79 +197,140 @@ RubinBait_deckCode_4 <- LoR.Deck |>
   pull(deck_code)
 
 LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_4, player:="RubinBait - BandleBurn" ]
-
-# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Ezreal")
-# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Sion")
-# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Caitlyn / Draven")
 ```
 
-```{r}
-ExampleDT1 <- LoR.Melt.Matches.RMD |>
-  # tabyl(player) |>
-  # arrange(desc(n))
-  filter( player %in% c( "Draven / Sion (NX/PZ)","Nami / Zoe","Senna / Veigar (BC/SI)","Gangplank / Twisted Fate (BC/BW)","Poppy / Ziggs (BC/NX)" ) ) |>
-  group_by(player) |>
-  count(deck_code) |>
-  # arrange(player,desc(n)) |>
-  top_n(5)
-```
-```{r}
-ExampleDT2 <- LoR.Melt.Matches.RMD |>
-  filter( str_detect(factions,"Noxus") ) |>
-  # tabyl(player) |>
-  # arrange(desc(n))
-  filter( player %in% c( "Draven / Sion (NX/PZ)","Poppy / Ziggs (BC/NX)","Caitlyn / Draven","Gangplank / Miss Fortune (BW/NX)","Draven / Jinx" ) ) |>
-  group_by(player) |>
-  count(deck_code) |>
-  # arrange(player,desc(n)) |>
-  top_n(5)
-```
+```{r prepare-examples}
+#' archetypes names
+archetypes1 <- c( "Draven / Sion (NX/PZ)",
+                  "Nami / Zoe",
+                  "Senna / Veigar (BC/SI)",
+                  "Gangplank / Twisted Fate (BC/BW)",
+                  "Poppy / Ziggs (BC/NX)" )
 
-```{r}
-ExampleDT3 <- LoR.Melt.Matches.RMD |>
-  filter( str_detect(factions,"Noxus") ) |>
-  # tabyl(player) |>
-  # arrange(desc(n))
-  filter( player %in% c( "Draven / Sion (NX/PZ)","RubinBait - Draven / Sion","RubinBait - Draven / Ezreal","RubinBait - BandleBurn" ) ) |>
-  group_by(player) |>
-  count(deck_code) |>
-  # arrange(player,desc(n)) |>
-  top_n(5)
+archetypes2 <- c( "Draven / Sion (NX/PZ)",
+                  "Poppy / Ziggs (BC/NX)",
+                  "Braum / Vladimir",
+                  # "Caitlyn / Draven",
+                  "Gangplank / Miss Fortune (BW/NX)",
+                  "Swain / Twisted Fate" )
 
-codes <- ExampleDT3$deck_code
+archetypes3 <- c( "Draven / Sion (NX/PZ)",
+                  "RubinBait - Draven / Sion",
+                  "RubinBait - Caitlyn / Draven",
+                  "RubinBait - BandleBurn" )
+
+#' codes
+exCodes1 <- top_n_codes(archetypes = archetypes1,n = 10,dopull = T)
+exCodes2 <- top_n_codes(archetypes = archetypes2,n = 10,dopull = T)
+exCodes3 <- top_n_codes(archetypes = archetypes3,n = 10,dopull = T)
+
+#' distance matrix
+DSim_1 <- dsimMatrix(exCodes1)
+DSim_2 <- dsimMatrix(exCodes2)
+DSim_3 <- dsimMatrix(exCodes3)
 ```
 
-```{r Example1-matrix}
-deck.matrix <- LoR.Card$cardCode %>% purrr::map_dfc(setNames, object = list(numeric()))
+```{r microbenchark }
+set.seed(123)
+microTimes <- microbenchmark::microbenchmark(
+  hclust(DSim_ex1, method = "complete"),
+  hclust(DSim_ex1, method = "single"),
+  hclust(DSim_ex1, method = "average"),
+  hclust(DSim_ex1, method = "centroid"),
+  times = 50L
+)
 
-for (i in 1:length(codes)) {
-  # decklist <- codes[1] %>% get_decklist_from_code()
-  decklist <- codes[i] %>% get_decklist_from_code()
-  deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
-}
+microTimes
+```
 
-deck.matrix <- deck.matrix |>
-  mutate( across(everything(), ~replace_na(.x, 0)) )
+```{r Example1}
+ex1.hc.complete <- hclust(DSim_ex1, method = "complete")
+ex1.hc.single   <- hclust(DSim_ex1, method = "single")
+ex1.hc.average  <- hclust(DSim_ex1, method = "average")
+ex1.hc.centroid <- hclust(DSim_ex1, method = "centroid")
 
-DSim_ex1 <- eisen_cos.sim(deck.matrix)
 
-hc.complete <- hclust(DSim_ex1, method = "average")
+
+hc.complete$labels <- ExampleDT1$player
+fviz_dend(hc.complete, cex = 0.5,
+          label_cols =  ExampleDT1$origin )
+
+
 # plot(hc.complete)
 
 fviz_dist(DSim_ex1,
           gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")) +
   labs(title = "Distance Matrix")
+
+
+# Gap statistic plot
+fviz_gap_stat(res.km$gap_stat)
+# Optimal number of clusters using gap statistics
+res.km$nbclust
+
+# Silhouette plot
+fviz_silhouette(res.km)
+
+# Print result
+res.km
+
+# Enhanced hierarchical clustering
+res.hc <- eclust(df, "hclust") # compute hclust
+fviz_dend(res.hc, rect = TRUE) # dendrogam
+
+
+fviz_dend(hc, cex = 0.5)
+       
 ```
 
+
+
 ```{r}
+# Cut the tree
+fviz_dend(res.hc, cex = 0.5, k = 4, color_labels_by_k = TRUE)
+
+
+# Don't color labels, add rectangles
+fviz_dend(res.hc, cex = 0.5, k = 4,
+ color_labels_by_k = FALSE, rect = TRUE)
+
+# Change the color of tree using black color for all groups
+# Change rectangle border colors
+fviz_dend(res.hc, rect = TRUE, k_colors ="black",
+rect_border = 2:5, rect_lty = 1)
+```
+
+
+```{r fig.width=12, fig.height=8 }
+ex1DT <- top_n_codes(archetypes = archetypes1,n = 10,dopull = F) |>
+  mutate( origin = as.numeric(as.factor(player)) )
+
 hc.complete <- hclust(DSim_ex1, method = "average")
 # plot(hc.complete)
 
 fviz_dist(DSim_ex1,
-          gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")) +
+          gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")
+          ) +
   labs(title = "Distance Matrix")
   
-fviz_dend(hc.complete, cex = 0.5)
+# Customized color for groups
+fviz_dend(res.hc, k = 4,
+ k_colors = c("#1B9E77", "#D95F02", "#7570B3", "#E7298A"))
+
+# Color labels using k-means clusters
+km.clust <- kmeans(df, 4)$cluster
+fviz_dend(res.hc, k = 4,
+ k_colors = c("blue", "green3", "red", "black"),
+ label_cols =  km.clust[res.hc$order], cex = 0.6)
+
+
+ExampleDT1 |>
+  distinct(player,.keep_all = T) >
+  select(player,origin)
+plot(hc.complete, labels = ExampleDT1$player)
+
+library("factoextra")
+
 
 # ggplot(DSim_ex1)+
 #       geom_tile()
@@ -262,6 +339,43 @@ fviz_dend(hc.complete, cex = 0.5)
 # res.coph <- cophenetic(hc.complete)
 # # Correlation between cophenetic distance and the original distance
 # cor(DSim_ex1, res.coph)
+
+data(USArrests)
+df <- scale(USArrests)
+# Hierarchical clustering
+res.hc <- hclust(dist(df))
+# Default plot
+fviz_dend(res.hc)
+
+
+archetypes1.pretty <- c("Draven/Sion","StarFish","Darkness","Ping City","Poppy/Ziggs")
+ex1.hc.complete$labels <- rep(archetypes1.pretty,each=10)
+ex1.hc.single$labels <- rep(archetypes1.pretty,each=10)
+
+fviz_dend(ex1.hc.complete, cex = 0.5,
+          label_cols = rep(1:5,each=10) ) + 
+  labs(title = "Complete") +
+  
+fviz_dend(ex1.hc.single, cex = 0.5,
+        label_cols = rep(1:5,each=10) ) + 
+  labs(title = "Single") +
+  
+fviz_dend(ex1.hc.average, cex = 0.5,
+        label_cols = rep(1:5,each=10) ) + 
+  labs(title = "Average") +
+  
+fviz_dend(ex1.hc.centroid, cex = 0.5,
+        label_cols = rep(1:5,each=10) ) + 
+  labs(title = "Centroid")  
+  
+  
+  
+
+# Color labels using k-means clusters
+km.clust <- kmeans(df, 4)$cluster
+fviz_dend(res.hc, k = 4,
+ k_colors = c("blue", "green3", "red", "black"),
+ label_cols =  km.clust[res.hc$order], cex = 0.6)
 ```
 
 
