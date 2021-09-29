@@ -15,10 +15,6 @@ output:
     self_contained: false
 citation: false
 draft: FALSE
-params:
-  start: "2021-09-01 21:00:00" #UTC tz / start of emergency patch 2.14
-  end:   "2021-09-22 21:00:00" #UTC tz / end of patch 2.15
-  skip:  2800000  # Patch 2.11 - after removing a few games  
 ---
 
 ```{r setup, include=FALSE}
@@ -96,28 +92,22 @@ cos.dsimMatrix <- function( codes ) {
 
 
 ```{r raw-data}
-#' load gameDT
-#'############
-file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
-
-#' load Account
-#'#############
-file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
-LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) |>
-  pivot_longer(
-  cols = contains("puuid"),
-  names_to = "origin",
-  values_to = "puuid"
-)
-
 #' load DeckDT
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
+```{r Rubin-fix}
+LoR.Deck |>
+  filter(factions =="faction_MtTargon_Name,faction_ShadowIsles_Name") |>
+  rowwise() |>
+  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Mistwraith")),na.rm = T)) |>
+  filter(key_search==3) |>
+  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Pale Cascade")),na.rm = T)) |>
+  filter(key_search==3) |>
+  pull(deck_code)
+```
+
+
 ```{r Rubin-fix}
 deck_filter <- LoR.Match.RMD |>
   #' Base filters
@@ -205,57 +195,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   left_join(LoR.Account.RMD[,c("puuid","RiotID")] |> setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) |>
   left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions")) |>
   select(-ends_with("puuid"),-refID)
-```
-
-```{r Rubin-fix}
-#' ASZ
-LoR.Melt.Matches.RMD[ player %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Akshan / Sivir / Zed"), player := "ASZ - Sivir Ionia"  ] 
-
-#' RubinBaits decks
-LoR.Deck <- LoR.Deck[ deck_code %in%  (LoR.Melt.Matches.RMD |> distinct(deck_code) |> pull()) ]
-
-#' Sion
-RubinBait_deckCode_1 <- LoR.Deck |>
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
-  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) |>
-  rowwise() |>
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
-  filter(nCard==3) |>
-  pull(deck_code)
-
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_1, player:="RubinBait - Draven / Sion" ]
-
-#' Ezreal
-RubinBait_deckCode_2 <- LoR.Deck |>
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
-  filter(archetype %in% c("Draven / Ezreal") ) |>
-  rowwise() |>
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
-  filter(nCard==3) |>
-  pull(deck_code)
-
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_2, player:="RubinBait - Draven / Ezreal" ]
-
-#' Cait 
-RubinBait_deckCode_3 <- LoR.Deck |>
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
-  filter(archetype %in% c("Caitlyn / Draven") ) |>
-  rowwise() |>
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
-  filter(nCard==3) |>
-  pull(deck_code)
-
-#' Bandle
-RubinBait_deckCode_4 <- LoR.Deck |>
-  filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
-  rowwise() |>
-  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
-  filter(key_search==3) |>
-  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
-  filter(key_search==3) |>
-  pull(deck_code)
-
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_4, player:="RubinBait - BandleBurn" ]
 ```
 
 ```{r distances}

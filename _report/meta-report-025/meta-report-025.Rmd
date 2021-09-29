@@ -6,7 +6,7 @@ base_url: https://www.llorr-stats.com
 preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC163-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
-date: 09-22-2021
+date: 09-29-2021
 output:
  distill::distill_article:
     toc: true
@@ -14,7 +14,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 params:
   prev:  "2021-09-15 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-09-22 21:00:00" #UTC tz / 'current' week start
@@ -70,7 +70,7 @@ metathis::meta() |>
     title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°25)",
     url = "https://www.llorr-stats.com/",
     image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC163-full.png",
-    image_alt = "Ziggs lv2",
+    image_alt = "Ziggs lv1",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",
@@ -380,6 +380,7 @@ RegionByRegion <- Region.Freq |>
   labs(
     title = "Regions Play Rate",
     subtitle = "number of times a region is included in a deck",
+    caption = glue::glue("Ranked games from {params$start} UTC to {params$end} UTC. Metadata of games collected with RiotGames API"),
     x = "Region",
     y = "Play Rate"
     # caption = "number of times a region is included in a deck" 
@@ -552,6 +553,7 @@ RegionByCards <- Regions.Freq.byCards |>
   labs(
     title = "Regions Play Rate",
     subtitle = "number of times a card within a region is included in a deck",
+    caption = glue::glue("Ranked games from {params$start} UTC to {params$end} UTC. Metadata of games collected with RiotGames API"),
     x = "Region",
     y = "Play Rate"
     # caption = "number of times a region is included in a deck
@@ -712,7 +714,8 @@ ChampionCombo.plot <- CC.table |>
   labs(x = "Champions",
        y = "Play Rate",
        title = "Champions Combination Play Rates",
-       caption = paste0("Relative frequencies of the top ",nrowPlot," combination of champions in a deck")
+       subtitle = glue::glue("Play-Rates of the top {nrowPlot} most played combination of champions/regions"),
+       caption = glue::glue("Ranked games from {params$start} UTC to {params$end} UTC. Metadata of games collected with RiotGames API")
        ) +
   theme( legend.position = "none",
          axis.text = element_text(size = 10, face = "bold", color = "grey50"),
@@ -720,14 +723,6 @@ ChampionCombo.plot <- CC.table |>
          )
 
 ChampionCombo.plot
-
-# mtcars |>
-#   group_by(cyl) |>
-#   summarize(wt = mean(wt), mpg = mean(mpg)) |>
-#   ungroup() |>
-#   mutate(wt = sprintf("%.2f", wt),
-#          mpg = sprintf("%.1f", mpg)) -> tb
-
 ```
 :::
 
@@ -1187,7 +1182,26 @@ bscols(
 
 # Decks of the week {.tabset .tabset-fade .tabset-pills}
 
-As I added a section dedicated to decks' information which includes [Meta and Underdog decks](www.llorr-stats.com/static/meta.html) this section can be dedicated to more obscure decks are peculiar cases.
+This week deck choice is fulfilling [a promise I did on Reddit](https://www.reddit.com/r/LegendsOfRuneterra/comments/pvts7r/comment/hecqxs5/?utm_source=share&utm_medium=web2x&context=3)
+
+```{r}
+deck.of.week <- "Lucian / Zed"
+WR.deck.week <- LoR.Melt.Matches.RMD |>
+  filter(player == deck.of.week ) |>
+  summarise( WR = mean(game_outcome=="win") ) %>%
+  pull() %>%
+  scales::percent(.,accuracy = 0.1)
+```
+
+As cards are released quite frequently it's obvious that some decks takes a seat back, sometimes because of power-creep, but sometimes, people just don't have the time and want to focus on the new toys.
+
+With the release of BandleCity while there are of course some top-tier deck that are above the rest I don't think I'm in the minority by saying this is overall an healthy meta with lots and lots of option.
+
+This week I want to highlight something old, maybe so old that may result fresh for some players: `r deck.of.week`
+
+With a respectable win rate of `r WR.deck.week` (even accounting the small sample size), this wants to be a reminder that are often forgotten options are still worth exploring.
+
+Note: I'm not Master but I'm currently having fun and discrete success with Nightfall, for the lower ranks like me my message this week is: "Play your deck and have fun! This is a good moment to let your deck building prowess carry you."
 
 ```{r deck-structure-prepare}
 # brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
@@ -1203,13 +1217,13 @@ make_color_pal <- function(colors, bias = 1) {
 good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ```
 
+::: l-page
+
 ::::: {.panelset}
 ::: {.panel}
-## Lucian Zed
+## Lucian / Zed
 
-This week I wanted to highlight the power of social-media / influencers on play-rates.
-
-```{r}
+```{r deckweek, layout="l-page"}
 deck.of.week <- "Lucian / Zed"
 
 SubDeck_deck_code <- LoR.Melt.Matches.RMD |>
@@ -1272,7 +1286,7 @@ deckCodeTbl  <- LoR.Melt.Matches.RMD |>
   ungroup()
 ```
 
-```{r print-deck-code-tbl}
+```{r print-deck-code-tbl, layout="l-page"}
 #' Contained in lor_costants
 # urlruneterraAR <- "https://runeterra.ar/"
 # urlrank <- "Main/Lor/Rank/"
@@ -1300,7 +1314,7 @@ deckCodeTbl |>
                 # Render as a link
                 url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
                 htmltools::tags$a(href = url, target = "_blank", as.character(value))
-                }),
+                },minWidth = 400),
               server = colDef(name = "Server",minWidth = 150),
               player = colDef(name = "Archetype",minWidth = 150),
               n     = colDef(name = "Games" )
@@ -1321,6 +1335,7 @@ deckCodeTbl |>
 
 :::::
 <!-- Close Deck Structure panelset -->
+:::
 
 # LoR-Meta Index (LMI)
 
@@ -1335,6 +1350,8 @@ deckCodeTbl |>
 - **Tier3 or lower** with LMI < 60
 
 This method will be improved in the next weeks, maybe adding the ban rate which can be extracted from Gauntlet and Bo3 Friendly Matches.
+
+`r kableExtra::text_spec("Note:", color = "red")`Hovering over a circle will display a deck values.
 
 > The LMI [^3] [^4] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
@@ -1362,7 +1379,7 @@ DT.Aggreation <- WR.DT |>
   )
 ```
 
-```{r ggplotly-LMI,echo=FALSE, fig.width=12, fig.height=8}
+```{r ggplotly-LMI,echo=FALSE, fig.width=12, fig.height=8, layout="l-body-outset"}
 fig <- DT.Aggreation |>
   slice_max(LMI,n = 50,with_ties = F) %>%
   mutate_if(is.numeric, funs(round(., 4)) ) |>
@@ -1377,6 +1394,72 @@ fig <- DT.Aggreation |>
         )
 
 ggplotly(fig, tooltip="text")
+```
+
+
+# Win Marathons Leaders
+
+`r kableExtra::text_spec("New:", color = "red")` Top3 Players (or more in case of ties) from each server that had the highest amount of consecutive wins with the same archetype. The provided deckcode is the one played in the last win found.
+
+```{r win-marathon, layout="l-page"}
+require(reactablefmtr)
+
+LoR.Melt.Matches.RMD[order(game_start_time_utc)][, counter := rowid(rleid(game_outcome)), by=c("userID","player") ][ game_outcome == "win" ] |>
+  # filter( server=="asia" & userID == "Ryo 6192" & player ==	"Senna / Veigar (BC/SI)" )
+  group_by(userID) |>
+  slice_max(counter,n=1) |>
+  ungroup() |>
+  group_by(server) |>
+  slice_max(counter,n=3) |>
+  left_join(LoR.Account.RMD[ ,c("RiotID","gameName") ]|>distinct(RiotID,.keep_all = T), by =c("userID"="RiotID") ) |>
+  select(server,gameName,counter,player,deck_code) |>
+  mutate( server = str_to_title(server) ) |>
+  group_by(server) |>
+  mutate( ranking = rank(-counter,ties.method = "min" ) ) |>
+  ungroup() %>% 
+  mutate(counter_icons = dplyr::case_when(
+    ranking == 1 ~ "trophy",
+    ranking == 2 ~ "medal",
+    ranking == 3 ~ "minus",
+    TRUE ~ "other"
+  )) %>%
+  reactable(
+            # groupBy = c("server"),
+            bordered = TRUE,
+            highlight = TRUE,
+            # searchable = TRUE,
+            compact = TRUE, # compact the table height
+            fullWidth = T, # don't fill the page
+            # defaultPageSize = 20,
+            pagination = FALSE,
+            wrap = TRUE,
+            # filterable = TRUE,
+            defaultColDef = colDef(
+              style = list(background = color,fontFamily = "Roboto", fontSize = "14px"),
+              align = "center",
+              minWidth = 120
+              ) ,
+            columns = list(
+              deck_code = colDef(name = "DeckCode", cell = function(value, index) {
+                # Render as a link
+                url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
+                htmltools::tags$a(href = url, target = "_blank", as.character(value))
+                },minWidth = 400),
+              server = colDef(name = "Server"),
+              gameName = colDef(name = "Player",minWidth = 200),
+              player = colDef(name = "Archetype",minWidth = 200),
+              counter_icons = colDef(show = FALSE),
+              ranking = colDef(show = FALSE),
+              counter = colDef(name = "Consecutive Wins",cell = icon_sets(., icon_ref = "counter_icons", icon_size = 15, colors = "#67a9cf") )
+              ),
+             rowStyle = JS("function(rowInfo) {
+                           if (rowInfo.level > 0) {
+                           return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
+                           } else {
+                           return { borderLeft: '2px solid transparent' }
+                           }
+                           }")
+            )
 ```
 
 # Cards Presence
