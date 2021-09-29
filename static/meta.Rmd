@@ -5,7 +5,7 @@ base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     navbar:
-      - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/meta.html", align: right }
+      - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/mu.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     # orientation: columns
     # vertical_layout: fill
@@ -68,6 +68,67 @@ LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding
 #' load DeckDT
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+```{r Rubin-fix}
+deck_filter <- LoR.Match.RMD |>
+  #' Base filters
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  select(deck_code_1,deck_code_2) |>
+  pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
+  filter(decks!="") |>
+  distinct(decks)
+
+LoR.Deck <- LoR.Deck[ deck_code %in% deck_filter$decks  ]
+
+#' ASZ
+LoR.Deck[ archetype %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Akshan / Sivir / Zed"), archetype := "ASZ - Sivir Ionia"  ] 
+
+#' Sion
+RubinBait_deckCode_1 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Deck[deck_code %in% RubinBait_deckCode_1, archetype:="RubinBait - Draven / Sion" ]
+
+#' Ezreal
+RubinBait_deckCode_2 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Draven / Ezreal") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Deck[deck_code %in% RubinBait_deckCode_2, archetype:="RubinBait - Draven / Ezreal" ]
+
+#' Cait 
+RubinBait_deckCode_3 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Caitlyn / Draven") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Deck[deck_code %in% RubinBait_deckCode_3, archetype:="RubinBait - Caitlyn / Draven" ]
+
+#' Bandle
+# RubinBait_deckCode_4 <- LoR.Deck |>
+#   filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
+#   rowwise() |>
+#   mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
+#   filter(key_search==3) |>
+#   mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
+#   filter(key_search==3) |>
+#   pull(deck_code)
+# 
+# LoR.Deck[deck_code %in% RubinBait_deckCode_4, archetype:="RubinBait - BandleBurn" ]
 ```
 
 ```{r functions}
@@ -167,61 +228,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
   select(-ends_with("puuid"),-refID)
-```
-
-```{r Rubin-fix}
-#' ASZ
-LoR.Melt.Matches.RMD[ player %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Akshan / Sivir / Zed"), player := "ASZ - Sivir Ionia"  ] 
-
-#' RubinBaits decks
-LoR.Deck <- LoR.Deck[ deck_code %in%  (LoR.Melt.Matches.RMD |> distinct(deck_code) |> pull()) ]
-
-#' Sion
-RubinBait_deckCode_1 <- LoR.Deck |>
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
-  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) |>
-  rowwise() |>
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
-  filter(nCard==3) |>
-  pull(deck_code)
-
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_1, player:="RubinBait - Draven / Sion" ]
-
-#' Ezreal
-RubinBait_deckCode_2 <- LoR.Deck |>
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
-  filter(archetype %in% c("Draven / Ezreal") ) |>
-  rowwise() |>
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
-  filter(nCard==3) |>
-  pull(deck_code)
-
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_2, player:="RubinBait - Draven / Ezreal" ]
-
-#' Cait 
-RubinBait_deckCode_3 <- LoR.Deck |>
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") |>
-  filter(archetype %in% c("Caitlyn / Draven") ) |>
-  rowwise() |>
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |> # "04FR018" # Abominable Guardian
-  filter(nCard==3) |>
-  pull(deck_code)
-
-#' Bandle
-RubinBait_deckCode_4 <- LoR.Deck |>
-  filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
-  rowwise() |>
-  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
-  filter(key_search==3) |>
-  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
-  filter(key_search==3) |>
-  pull(deck_code)
-
-LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_4, player:="RubinBait - BandleBurn" ]
-
-# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Ezreal")
-# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Draven / Sion")
-# LoR.Melt.Matches.RMD |> filter(player == "RubinBait - Caitlyn / Draven")
 ```
 
 ```{r decks}

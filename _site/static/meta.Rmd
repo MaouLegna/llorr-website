@@ -5,7 +5,7 @@ base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     navbar:
-      - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/meta.html", align: right }
+      - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/mu.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     # orientation: columns
     # vertical_layout: fill

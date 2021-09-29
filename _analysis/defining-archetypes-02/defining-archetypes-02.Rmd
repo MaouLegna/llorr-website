@@ -83,13 +83,14 @@ meta() %>%
 top_n_codes <- \(DT = LoR.Melt.Matches.RMD,archetypes,n,dopull=T) DT|>filter(player%in%{{archetypes}})|>group_by(player)|>count(deck_code)|>slice_max(deck_code,n=n,with_ties=F)|>ungroup()%>%{if( dopull==T ) pull(.,deck_code) else .}
 
 #' distance Matrix given deck_codes
-dsimMatrix <- function( codes ) {
+cos.dsimMatrix <- function( codes ) {
   deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
   for (i in 1:length(codes)) {
     decklist <- codes[i] |> lordecks::get_decklist_from_code()
     deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
   }
-  deck.matrix |> mutate( across(everything(), ~replace_na(.x, 0)) )
+  deck.matrix <- deck.matrix |> mutate( across(everything(), ~replace_na(.x, 0)) ) 
+  eisen_cos.sim(deck.matrix)
 }
 ```
 
@@ -117,8 +118,66 @@ LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
+```{r Rubin-fix}
+deck_filter <- LoR.Match.RMD |>
+  #' Base filters
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  select(deck_code_1,deck_code_2) |>
+  pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
+  filter(decks!="") |>
+  distinct(decks)
 
-# Data {.unnumbered}
+LoR.Deck <- LoR.Deck[ deck_code %in% deck_filter$decks  ]
+
+#' ASZ
+LoR.Deck[ archetype %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Akshan / Sivir / Zed"), archetype := "ASZ - Sivir Ionia"  ] 
+
+#' Sion
+RubinBait_deckCode_1 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Deck[deck_code %in% RubinBait_deckCode_1, archetype:="RubinBait - Draven / Sion" ]
+
+#' Ezreal
+RubinBait_deckCode_2 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Draven / Ezreal") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Deck[deck_code %in% RubinBait_deckCode_2, archetype:="RubinBait - Draven / Ezreal" ]
+
+#' Cait 
+RubinBait_deckCode_3 <- LoR.Deck %>%
+  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
+  filter(archetype %in% c("Caitlyn / Draven") ) %>%
+  rowwise() %>%
+  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
+  filter(nCard==3) %>%
+  pull(deck_code)
+
+LoR.Deck[deck_code %in% RubinBait_deckCode_3, archetype:="RubinBait - Caitlyn / Draven" ]
+
+#' Bandle
+# RubinBait_deckCode_4 <- LoR.Deck |>
+#   filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
+#   rowwise() |>
+#   mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
+#   filter(key_search==3) |>
+#   mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
+#   filter(key_search==3) |>
+#   pull(deck_code)
+# 
+# LoR.Deck[deck_code %in% RubinBait_deckCode_4, archetype:="RubinBait - BandleBurn" ]
+```
 
 ```{r prepare-data}
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
@@ -199,6 +258,17 @@ RubinBait_deckCode_4 <- LoR.Deck |>
 LoR.Melt.Matches.RMD[deck_code %in% RubinBait_deckCode_4, player:="RubinBait - BandleBurn" ]
 ```
 
+```{r distances}
+
+# example <- matrix( c(3,1,0,0,0,
+#                      0,2,0,0,0,
+#                      3,0,0,0,0), ncol = 5, byrow=T )
+# 
+# dist(example, method = "manhattan")
+
+```
+
+
 ```{r prepare-examples}
 #' archetypes names
 archetypes1 <- c( "Draven / Sion (NX/PZ)",
@@ -219,16 +289,144 @@ archetypes3 <- c( "Draven / Sion (NX/PZ)",
                   "RubinBait - Caitlyn / Draven",
                   "RubinBait - BandleBurn" )
 
+set.seed(7998)
+archetypes4 <- LoR.Melt.Matches.RMD |>
+  tabyl(player) |>
+  arrange(desc(n)) |>
+  filter(n >= 100) |>
+  select(player) |>
+  slice_sample(n = 15) |>
+  pull()
+
 #' codes
 exCodes1 <- top_n_codes(archetypes = archetypes1,n = 10,dopull = T)
 exCodes2 <- top_n_codes(archetypes = archetypes2,n = 10,dopull = T)
 exCodes3 <- top_n_codes(archetypes = archetypes3,n = 10,dopull = T)
 
 #' distance matrix
-DSim_1 <- dsimMatrix(exCodes1)
-DSim_2 <- dsimMatrix(exCodes2)
-DSim_3 <- dsimMatrix(exCodes3)
+DSim_ex1 <- dsimMatrix(exCodes1)
+DSim_ex2 <- dsimMatrix(exCodes2)
+DSim_ex3 <- dsimMatrix(exCodes3)
 ```
+
+# Introduction
+
+Defining archetypes on Legends of Runeterra is both a complex and simple problem. It's simple if we consider that it's possible to define decks by the combination of champions and regions of choice but it's also complex by the fact that such definition is limited 
+
+On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-01/) we gave a possible method about how to compare archetypes and see if they can be considered from a shared common archetype or not. The proposed method makes use of inferential statistical analysis to reach a conclusion and so giving the results a certain robustness (not in the statistical meaning) with precise decision parameters. Sadly, it's also a methodology that's more fitting a posterior analysis, when hypothetical archetypes are already defined, a tool more fitted to refine the results.
+
+# Data
+
+The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
+
+```{r}
+# tbl1 <- LoR.Match.RMD |>
+#   #' Stay only 'among' the row with the games in the time-frame I want
+#   ####################################################################
+#   slice(minrow_live:maxrow_live) |>
+#   #' Extrapolate Friendly and 'to Scrap' matches
+#   ##############################################
+#   mutate( game_type = case_when(
+#     status==404   ~ "Friendly",
+#     is.na(status) ~ "to Scrap",
+#     TRUE ~ as.character(game_type)
+#     )) |>
+#   #' Give to the new game_types a game_start_time_utc among the timeframe on interest
+#   #' so it can be used a filter without worrying about other parameter like status and so on
+#   ##########################################################################################
+#   mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% c("Friendly","to Scrap"),  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) |>
+#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+#   mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) |> fct_infreq() ) |>
+#   select(Status=game_type,Server=server) |>
+#   #' Create tbl
+#   #############
+#   tbl_summary()
+# 
+# 
+# LoR.Melt.Matches.RMD |>
+#   gt() |>
+#   tab_header(
+#     title = "by the Numbers",
+#     subtitle = "Ranked Games - Patch 2.15 second week / Master players"
+#     #'**************************************************************************** *
+#     # Update che patch-week!
+#     #'**************************************************************************** *
+#   ) |>
+#   tab_footnote(
+#     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
+#     locations = cells_title(groups = c("subtitle"))
+#     ) |>
+#   tab_footnote(
+#     footnote = md(glue::glue("EU Master players in the ladder: {length(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
+#                               NA Master players in the ladder: {length(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
+#                               ASIA Master players in the ladder: {length(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
+#     locations = cells_title(groups = c("subtitle"))
+#   ) |>
+#   tab_options(data_row.padding = px(1.2))
+#   
+# nGames_tbl |>
+#  tab_options(
+#     table.background.color = "transparent",
+#     table.font.color = "black",
+#     table.font.color.light = "black"
+#    )
+```
+
+
+## Complete Data
+
+## Examples
+
+In this article we will use 4 different examples:
+
+1. Five archetypes with Different regions & different play style
+  - Draven / Sion (NX/PZ)
+  - Starfish - Nami / Zoe
+  - Darkness - Senna / Veigar (BC/SI)
+  - Ping City - Gangplank / Twisted Fate (BC/BW)
+  - Poppy / Ziggs (BC/NX)
+  
+2. Five archetypes with a common regions & different play style
+  - Draven / Sion (NX/PZ)
+  - Poppy / Ziggs (BC/NX)
+  - Braum / Vladimir
+  - Ping City - Gangplank / Twisted Fate (BC/BW)
+  - Poppy / Ziggs (BC/NX)
+
+
+3. Four Similar regions & similar play style
+  - RubinBait - Draven / Sion
+  - RubinBait - Caitlyn / Draven
+  - RubinBait - BandleBurn
+  - Draven / Sion (NX/PZ)[^1]
+  
+4. Random selection of 15 archetypes
+  
+[^1]: much different from the other burn 3 burn decks but has the role of highlightiun
+
+```{r}
+archetypes1 <- c( "Draven / Sion (NX/PZ)",
+                  "Nami / Zoe",
+                  "Senna / Veigar (BC/SI)",
+                  "Gangplank / Twisted Fate (BC/BW)",
+                  "Poppy / Ziggs (BC/NX)" )
+
+archetypes2 <- c( "Draven / Sion (NX/PZ)",
+                  "Poppy / Ziggs (BC/NX)",
+                  "Braum / Vladimir",
+                  # "Caitlyn / Draven",
+                  "Gangplank / Miss Fortune (BW/NX)",
+                  "Swain / Twisted Fate" )
+
+archetypes3 <- c( "Draven / Sion (NX/PZ)",
+                  "RubinBait - Draven / Sion",
+                  "RubinBait - Caitlyn / Draven",
+                  "RubinBait - BandleBurn" )
+
+
+
+```
+
 
 ```{r microbenchark }
 set.seed(123)
@@ -237,11 +435,40 @@ microTimes <- microbenchmark::microbenchmark(
   hclust(DSim_ex1, method = "single"),
   hclust(DSim_ex1, method = "average"),
   hclust(DSim_ex1, method = "centroid"),
-  times = 50L
+  times = 50
 )
 
 microTimes
 ```
+
+# Methods
+
+## Aggregating Data - Clustering
+
+### Hierarchical Clustering
+
+It is good to find small subgroups
+
+#### Complete
+
+#### Single
+
+### DBSCAN
+
+# Analysis
+
+## Hierchical Clustering
+
+### Example 1 - Different regions & different win conditions
+
+### Example 2 - Similar regions & different win conditions
+
+### Example 3 - Similar regions & similar win conditions
+
+## DBSCAN
+
+# Conclusion
+
 
 ```{r Example1}
 ex1.hc.complete <- hclust(DSim_ex1, method = "complete")
@@ -368,7 +595,21 @@ fviz_dend(ex1.hc.centroid, cex = 0.5,
         label_cols = rep(1:5,each=10) ) + 
   labs(title = "Centroid")  
   
-  
+
+
+iris0 <- iris %>%  
+  group_by(Species) %>%  
+  nest() %>%  
+  mutate(
+    gg1 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Sepal.Width)) + geom_point()),
+    gg2 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Width)) + geom_point()),
+    gg3 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Length)) + geom_point()),
+    g = purrr::pmap(list(gg1, gg2, gg3), ~ gridExtra::grid.arrange(..1, ..2, ..3))
+  )
+
+
+
+
   
 
 # Color labels using k-means clusters
@@ -376,6 +617,22 @@ km.clust <- kmeans(df, 4)$cluster
 fviz_dend(res.hc, k = 4,
  k_colors = c("blue", "green3", "red", "black"),
  label_cols =  km.clust[res.hc$order], cex = 0.6)
+
+
+
+#' distance Matrix given deck_codes
+cos.dsimMatrix <- function( codes ) {
+  deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
+  for (i in 1:length(codes)) {
+    decklist <- codes[i] |> lordecks::get_decklist_from_code()
+    deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
+  }
+  deck.matrix <- deck.matrix |> mutate( across(everything(), ~replace_na(.x, 0)) ) 
+  eisen_cos.sim(deck.matrix)
+}
+
+
+
 ```
 
 
@@ -386,6 +643,23 @@ library(dbscan)
 data(iris)
 iris <- as.matrix(iris[,1:4])
 ```
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+iris0 <- iris %>%  
+  group_by(Species) %>%  
+  nest() %>%  
+  mutate(
+    gg1 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Sepal.Width)) + geom_point()),
+    gg2 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Width)) + geom_point()),
+    gg3 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Length)) + geom_point()),
+    g = purrr::pmap(list(gg1, gg2, gg3), ~ gridExtra::grid.arrange(..1, ..2, ..3))
+  )
+```
+
 
 ```{r}
 kNNdistplot(iris, k = 5)
@@ -490,51 +764,4 @@ fviz_cluster(res.fpc, iris, geom = "point")
 
 # Legal bla bla {.unnumbered}
 
-This Meta Report was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
-
-
-```{r}
-
-# lor_deckcodes <- reticulate::import("lor_deckcodes")
-# 
-# lordecks::get_decklist_from_code("CQBQCAIEBAAQKBQBA4CQUAJJOSTQDLYBYIA4MAIBAYCQUGTAQEAYIANAAHAACAIBAUFNCAI",format = "simple")
-# 
-# sampleData <- LoR.Melt.Matches.RMD|>
-#   slice_tail(n=5) |>
-#   select(match_key,factions,deck_code)
-# 
-# sampleData |>
-#   distinct(deck_code) |>
-#   mutate(cards_list = map(.x = deck_code, .f = ~lordecks::get_decklist_from_code(.,format = "simple") )) |>
-#   right_join(sampleData, by = "deck_code") |>
-#   # distinct(across(c(starts_with("faction_"), cards_list))) %>%
-#   mutate(
-#     cards = map_chr(cards_list, str_flatten, collapse = " "),
-#     champs = str_extract_all(cards, pattern = paste(LoR.Champion$cardCode, collapse = "|")),
-#     champs_factions = str_extract_all(champs, pattern = paste(c("BC","BW","DE","FR","IO","NX","MT","SI","SH"), collapse = "|")),
-#     champs = map_chr(champs, str_flatten, collapse = " "),
-#     champs_factions = map_chr(champs_factions, str_flatten, collapse = " ")
-#   ) 
-#   
-# %>%
-#   left_join(data_regions %>% select(faction_abb1 = abbreviation, nameRef), by = c("faction_1" = "nameRef")) %>%
-#   left_join(data_regions %>% select(faction_abb2 = abbreviation, nameRef), by = c("faction_2" = "nameRef")) %>%
-#   unite(col = factions, faction_abb1, faction_abb2, sep = " ") %>%
-#   mutate(
-#     factions = str_remove_all(factions, pattern = " NA|NA "),
-#     across(c(champs, champs_factions, factions),  function(x) unname(sapply(x, function(x) { paste(sort(trimws(strsplit(x[1], ' ')[[1]])), collapse=' ')} ))),
-#     no_fix = map2_lgl(.x = factions, .y = champs_factions, .f = ~grepl(pattern = .x, x = .y)),
-#     champs_factions = str_replace_all(champs_factions, pattern = " ", replacement = "|"),
-#     champs_factions = paste0(champs_factions, "| "),
-#     factions_to_add = str_remove_all(factions, pattern = champs_factions),
-#     archetype = if_else(no_fix, champs, sprintf("%s (%s)", champs, factions_to_add))
-#   ) %>%
-#   left_join(data, ., by = c("faction_1", "faction_2", "cards_list")) %>%
-#   select(-c(cards_list, champs_factions, factions, no_fix, factions_to_add))
-# 
-# # make archetype name nicer
-# data <- data %>%
-#   mutate(archetype = str_replace_all(archetype, set_names(data_champs$name, data_champs$cardCode))) %>%
-#   mutate(across(archetype, function(x) ifelse(grepl("^( )", x), paste0("No Champions", x), x)))
-```
-
+This content was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
