@@ -890,39 +890,6 @@ ggplot(tidy(tukey.test), aes(colour=cut(adj.p.value, c(0, 0.01, 0.05, 1),
 
 We can see that the rejection for the ANOVA test can be explained by the resulting differences for SZ and ASZ decks. But simply looking at the threshold of 0.05 would ignore how this is a very borderline result. So, while rules *are not* meant to be broken (when doing analysis) this is a rare case where we don't blindy follows the raw numbers, meaning we accept the hyphotesis that SZ and ASZ too are from the same population / or the same Archetype.
 
-```{r pair-wise}
-# attach(DSim.tbl_2)
-# print(pairwise.t.test(value, group, p.adj = "bonf",))
-# detach()
-# 
-# attach(DSim.tbl_2)
-# print(pairwise.t.test(value, group, p.adj = "holm",))
-# detach()
-```
-```{r ecdf, fig.cap="ecdf of cosine distances between the deckcodes that accounts for at least 50% of the games played", fig.width=8}
-# DSim.tbl_1 |>
-# ggplot(aes(value, group = group, color = group)) +
-#   stat_ecdf() +
-#   ggsci::scale_fill_npg() +
-#   theme_Publication() + 
-#   ggtitle('ASZ vs AS') + 
-#   labs( x = "x", y = "Cumulative probability" ) +
-# 
-# DSim.tbl_2 |>
-# ggplot(aes(value, group = group, color = group)) +
-#   stat_ecdf() +
-#   ggsci::scale_fill_npg() +
-#   theme_Publication() + 
-#   ggtitle('ASZ vs SZ') + 
-#   labs( x = "x", y = "Cumulative probability" ) +
-#   
-# plot_annotation(title = 'Comparison of Empirical Cumulative Distribution Functions',
-#                 caption = 'ecdf of cosine distances between the deckcodes that accounts for at least 50% of the games played') +
-#   plot_layout(guides = 'auto', ncol = 2)
-```
-
-
-
 # Conclusion
 
 The analysis gives support to the hyphotesis of aggregating the archetypes defined as ASZ, SZ and AS as Dr.LoR suggested. [^8]

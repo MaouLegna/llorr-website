@@ -18,7 +18,7 @@ draft: FALSE
 params:
   # prev:  "2021-09-22 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-09-01 21:00:00" #UTC tz / 'current' week start
-  end:   "2021-10-06 21:00:00" #UTC tz / 'current' week end
+  end:   "2021-10-01 21:00:00" #UTC tz / 'current' week end
   skip:  2800000  # ~ Patch 2.16
 ---
 
@@ -137,10 +137,9 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
 mogwai_puuid <- "q-xgjPYyTqlidh5YBzhE2CLX7WVJM8UuU_gf5GK1rARhIwZ0dx3PfYQV-wrpSZGVq1OllQelhNTzmA"
 mogwai_youtube <- c("21ecacef-59d7-4fa1-83aa-e7a39c939692","42e2134d-8b6e-4bb6-8953-6f1636c1e8fd","3330e70f-e9dc-408c-8913-69d9fc47623c","204ab51e-5a5f-426d-92f4-1d3cee40a7d0")
 
-max(NT$pr)
-max(NT$NasusThresh) # 0.003633721
 
-36/0.003633721
+
+"36/0.003633721"
 
 NT <- LoR.Melt.Matches.RMD |>
   filter( match_key %!in% mogwai_youtube) |>
@@ -154,16 +153,150 @@ NT <- LoR.Melt.Matches.RMD |>
   pivot_wider( names_from = "isNasus",values_from = "n" ) |>
   dplyr::mutate( NasusThresh = replace_na(NasusThresh, 0)) |>
   mutate( pr = map2_dbl( .x = NasusThresh, .y = Other, ~.x/sum(.x,.y) ),
-          pr_other = map_dbl( .x = pr , .f = ~1-.x ) ) |>
+          pr_other = map_dbl( .x = pr , .f = ~1-.x ) )
   # mutate for second y-axis
-  mutate( )
+
   
 
 ggplot( data = NT  ) +
   geom_line(data = NT, aes(x = day, y = NasusThresh)) +
-  geom_line(data = NT, aes(x = day, y = pr*9907.2, color = "red") ) +
-  vline( )
+  geom_line(data = NT, aes(x = day, y = pr*(max(NT$NasusThresh)/max(NT$pr)), color = "red") ) 
   
 
+```
+
+```{r}
+faint_puuid <- "BKsmyUbF8IOIVO4TWVB_5e22SinE3GPHeghb52UEy8h09qA_UckmRKQMkvG9BmrM4FZWPOzzSYzKDQ"
+majin_puuid <- "gYz6UL16RuVFu22GcFD9OYa11Oh7W-iKpCcOGsHg25cSbR_IyE0EONhrnB9nx3r0pPpAicA6PS27Mg"
+
+deck <- "Sivir / Tristana (BC/SH)"
+Deck <- LoR.Melt.Matches.RMD |>
+  filter( match_key %!in% c(faint_puuid,majin_puuid) ) |>
+  mutate( time = floor_date(game_start_time_utc, unit="hour"),
+          isDeck = case_when(
+            player == deck ~ "Yes",
+            TRUE ~ "No"
+          ) ) |>
+  group_by( time ) |>
+  count( isDeck ) |>
+  pivot_wider( names_from = "isDeck",values_from = "n" ) |>
+  ungroup() |>
+  mutate( Yes = replace_na(Yes, 0),
+          cumYes = cumsum(Yes) )
+
+ggplot( data = Deck  ) +
+  geom_line(aes(x = time, y = cumYes)) +
+  geom_vline(xintercept = as_datetime("2021-09-28 22:00:00"), linetype="dashed", 
+                color = "red", size=0.5) +
+  geom_vline(xintercept = as_datetime("2021-09-29 19:00:00"), linetype="dashed", 
+                color = "red", size=0.5) +
+  theme_539() +
+  labs(
+    title = "Games of Sivir/Tristana",
+    subtitle = "cumulative number of games played since the release of Bandle",
+    caption = element_markdown(glue::glue("Ranked games from {params$start} UTC to {params$end} UTC.
+                                          Metadata of games collected with RiotGames API.
+                                          Games from Faint and MajiinBae are excluded in the count.
+                                          The first dashed line is once Dr.LoR tweeted of the deck.
+                                          The second dashed line when Dr.LoR tweeted MajiinBae's results with the deck")),
+    x = "Time",
+    y = "cumulative #Games"
+  ) +
+  theme(
+    axis.text=element_text(size=10),
+    axis.title=element_text(size=10,face="bold")
+    )
+  
+# ggsave("./images/tweet-effect-SivirTristana.png")
+```
+
+```{r}
+faint_puuid <- "BKsmyUbF8IOIVO4TWVB_5e22SinE3GPHeghb52UEy8h09qA_UckmRKQMkvG9BmrM4FZWPOzzSYzKDQ"
+majin_puuid <- "gYz6UL16RuVFu22GcFD9OYa11Oh7W-iKpCcOGsHg25cSbR_IyE0EONhrnB9nx3r0pPpAicA6PS27Mg"
+
+# deck <- "Sivir / Tristana (BC/SH)"
+deck <- "Fizz / Lee Sin (BC/IO)"
+Deck <- LoR.Melt.Matches.RMD |>
+  filter( match_key %!in% c(faint_puuid,majin_puuid) & game_start_time_utc >= as.POSIXct("2021-09-10 00:00:00", tz = "UTC") ) |>
+  arrange( game_start_time_utc ) |>
+  mutate( isDeck = case_when(
+            player == deck ~ 1,
+            TRUE ~ 0
+          ),
+          PR = cumsum(isDeck)/row_number() ) |>
+  select( game_start_time_utc, isDeck, PR )
+
+ggplot( data = Deck  ) +
+  geom_line(aes(x = game_start_time_utc, y = PR)) +
+  # geom_vline(xintercept = as_datetime("2021-09-28 22:00:00"), linetype="dashed", 
+  #               color = "red", size=0.5) +
+  # geom_vline(xintercept = as_datetime("2021-09-29 19:00:00"), linetype="dashed", 
+  #               color = "red", size=0.5) +
+  theme_539() +
+  labs(
+    title = element_markdown(glue::glue("Games of {deck}")),
+    subtitle = "cumulative number of games played since the release of Bandle",
+    caption = element_markdown(glue::glue("Ranked games from {params$start} UTC to {params$end} UTC.
+                                          Metadata of games collected with RiotGames API.
+                                          Games from Faint and MajiinBae are excluded in the count.
+                                          The first dashed line is once Dr.LoR tweeted of the deck.
+                                          The second dashed line when Dr.LoR tweeted MajiinBae's results with the deck")),
+    x = "Time",
+    y = "cumulative #Games"
+  ) +
+  theme(
+    axis.text=element_text(size=10),
+    axis.title=element_text(size=10,face="bold")
+    ) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.01) )
+  
+# ggsave("./images/tweet-effect-SivirTristana.png")
+
+
+LoR.Melt.Matches.RMD |>
+  slice_head(n=2) |>
+  jsonlite::write_json("prova.json")
+```
+
+```{r}
+
+deck <- "Fizz / Lee Sin (BC/IO)"
+Deck <- LoR.Melt.Matches.RMD |>
+  mutate( time = floor_date(game_start_time_utc, unit="hour"),
+          isDeck = case_when(
+            player == deck ~ "Yes",
+            TRUE ~ "No"
+          ) ) |>
+  group_by( time ) |>
+  count( isDeck ) |>
+  pivot_wider( names_from = "isDeck",values_from = "n" ) |>
+  ungroup() |>
+  mutate( Yes = replace_na(Yes, 0),
+          cumYes = cumsum(Yes) )
+  
+
+ggplot( data = Deck  ) +
+  geom_line(aes(x = time, y = cumYes)) +
+  geom_vline(xintercept = as_datetime("2021-09-22 23:00:00"), linetype="dashed", 
+                color = "red", size=0.5) +
+  geom_vline(xintercept = as_datetime("2021-09-23 13:00:00"), linetype="dashed", 
+                color = "red", size=0.5) +
+  theme_539() +
+  labs(
+    title = "Games of Fizz/Lee",
+    subtitle = "cumulative number of games played since the release of Bandle",
+    caption = element_markdown(glue::glue("Ranked games from {params$start} UTC to {params$end} UTC.
+                                          Metadata of games collected with RiotGames API.
+                                          The first dashed line is once impetuosPandsa tweeted of the deck.
+                                          The second dashed line when Yamato retweeted impetuosPandsa with his own results")),
+    x = "Time",
+    y = "cumulative #Games"
+  ) +
+  theme(
+    axis.text=element_text(size=10),
+    axis.title=element_text(size=10,face="bold")
+    )
+  
+ggsave("./images/tweet-effect-LeeFizz.png")
 ```
 

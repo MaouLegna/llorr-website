@@ -430,6 +430,11 @@ MUtbl %>%
               has_icon = TRUE,
               icon = "fa fa-save"
               )
+
+MUtbl %>%
+  filter( muGames > 10 ) %>%
+  select(player,opponent,muWin,muGames,muWR) |>
+  jsonlite::write_json("MU.json")
 ```
 
 <!-- ### Match Ups Data (2.12/2.13) -->
