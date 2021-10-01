@@ -103,6 +103,7 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 
 LoR.Deck[ archetype %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Akshan / Sivir / Zed"), archetype := "ASZ - Sivir Ionia"  ] 
 ```
+
 ```{r Rubin-fix}
 deck_filter <- LoR.Match.RMD |>
   #' Base filters

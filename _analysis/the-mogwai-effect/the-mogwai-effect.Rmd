@@ -1,0 +1,169 @@
+---
+title: "The Mogwai Effect"
+description: |
+  Youtber's content matters
+base_url: https://www.llorr-stats.com
+preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC133T1-full.png"
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 09-30-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+draft: FALSE
+params:
+  # prev:  "2021-09-22 21:00:00" #UTC tz / 'current' previous week start
+  start: "2021-09-01 21:00:00" #UTC tz / 'current' week start
+  end:   "2021-10-06 21:00:00" #UTC tz / 'current' week end
+  skip:  2800000  # ~ Patch 2.16
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=9,
+  fig.height=6,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
+)
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
+```
+
+```{r raw-data}
+# skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
+# skip.dt
+
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' load Account
+#'#############
+file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
+LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+  mutate( RiotID = paste(gameName,tagLine),refID = puuid ) |>
+  pivot_longer(
+  cols = contains("puuid"),
+  names_to = "origin",
+  values_to = "puuid"
+)
+
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+```{r archetype-fix}
+#' Limit the Deck DT to make the fixes much faster
+deck_filter <- LoR.Match.RMD |>
+  #' Base filters
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  select(deck_code_1,deck_code_2) |>
+  pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
+  filter(decks!="") |>
+  distinct(decks)
+
+LoR.Deck <- LoR.Deck[deck_code %in% deck_filter$decks]
+
+#' Archetype-Fix
+#'##############
+source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
+```
+
+```{r prepare-data}
+LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
+  #' Base filters
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+  #' 'process' data
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
+  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
+  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) |>
+  #' finish 'process' data
+  left_join(LoR.Account.RMD[,c("puuid","RiotID","refID")] |> setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) |>
+  left_join(LoR.Account.RMD[,c("puuid","RiotID")] |> setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid"))
+  # left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions"))
+  # select(-ends_with("puuid"),-refID)
+```
+
+```{r}
+# MegaM0gwai
+mogwai_puuid <- "q-xgjPYyTqlidh5YBzhE2CLX7WVJM8UuU_gf5GK1rARhIwZ0dx3PfYQV-wrpSZGVq1OllQelhNTzmA"
+mogwai_youtube <- c("21ecacef-59d7-4fa1-83aa-e7a39c939692","42e2134d-8b6e-4bb6-8953-6f1636c1e8fd","3330e70f-e9dc-408c-8913-69d9fc47623c","204ab51e-5a5f-426d-92f4-1d3cee40a7d0")
+
+max(NT$pr)
+max(NT$NasusThresh) # 0.003633721
+
+36/0.003633721
+
+NT <- LoR.Melt.Matches.RMD |>
+  filter( match_key %!in% mogwai_youtube) |>
+  mutate( day = as.Date(game_start_time_utc), 
+          isNasus = case_when(
+            player == "Nasus / Thresh" ~ "NasusThresh",
+            TRUE ~ "Other"
+          ) ) |>
+  group_by( day ) |>
+  count( isNasus ) |>
+  pivot_wider( names_from = "isNasus",values_from = "n" ) |>
+  dplyr::mutate( NasusThresh = replace_na(NasusThresh, 0)) |>
+  mutate( pr = map2_dbl( .x = NasusThresh, .y = Other, ~.x/sum(.x,.y) ),
+          pr_other = map_dbl( .x = pr , .f = ~1-.x ) ) |>
+  # mutate for second y-axis
+  mutate( )
+  
+
+ggplot( data = NT  ) +
+  geom_line(data = NT, aes(x = day, y = NasusThresh)) +
+  geom_line(data = NT, aes(x = day, y = pr*9907.2, color = "red") ) +
+  vline( )
+  
+
+```
+
