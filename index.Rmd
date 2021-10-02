@@ -1,12 +1,13 @@
 ---
 title: "(Legna’s) Legends of Runeterra Stats (with R)"
 description: |
-  Hi, Legna here. I you are looking for stats on the current metagame just click on MatchUps or Meta in the Navigation Bar. Last Update: 2021-10-01
+  Hi, Legna here. I you are looking for stats on the current metagame just click on MatchUps or Meta in the Navigation Bar. Last Update: 2021-10-02 10:45 CET
 output:
   distill::distill_article:
     self_contained: false
     anchor_sections: FALSE
 site: distill::distill_website
+# listing: report
 ---
 
 ```{r setup, include=FALSE}
@@ -133,4 +134,24 @@ ggplot(aes(x = x, y = value), data = gdat) +
     data = data.frame(X_train, y_train)
   ) +
   theme_void()
+```
+
+```{r twitter-meta, echo = FALSE}
+metathis::meta() |>
+  metathis::meta_description(
+    "Legends of Runeterra analysis, metaports and some more."
+  ) |> 
+  metathis::meta_viewport() |> 
+  metathis::meta_social(
+    title = "LlorR Stats - (Legna’s) Legends of Runeterra Stats (with R)",
+    url = "https://www.llorr-stats.com/",
+    # image = "https://raw.githubusercontent.com/jthomasmock/radix_themockup/master/static/logo-plot.png",
+    # image_alt = "Chaos into tidy code",
+    # image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC163-full.png",
+    # image_alt = "Tristana lv2",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
 ```

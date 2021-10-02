@@ -138,9 +138,6 @@ mogwai_puuid <- "q-xgjPYyTqlidh5YBzhE2CLX7WVJM8UuU_gf5GK1rARhIwZ0dx3PfYQV-wrpSZG
 mogwai_youtube <- c("21ecacef-59d7-4fa1-83aa-e7a39c939692","42e2134d-8b6e-4bb6-8953-6f1636c1e8fd","3330e70f-e9dc-408c-8913-69d9fc47623c","204ab51e-5a5f-426d-92f4-1d3cee40a7d0")
 
 
-
-"36/0.003633721"
-
 NT <- LoR.Melt.Matches.RMD |>
   filter( match_key %!in% mogwai_youtube) |>
   mutate( day = as.Date(game_start_time_utc), 
@@ -160,9 +157,37 @@ NT <- LoR.Melt.Matches.RMD |>
 
 ggplot( data = NT  ) +
   geom_line(data = NT, aes(x = day, y = NasusThresh)) +
-  geom_line(data = NT, aes(x = day, y = pr*(max(NT$NasusThresh)/max(NT$pr)), color = "red") ) 
+  geom_line(data = NT, aes(x = day, y = pr*(max(NT$NasusThresh)/max(NT$pr)), color = "red") ) +
+  geom_vline(xintercept = as.Date("2021-09-28"), linetype="dashed", 
+                color = "red", size=0.5) +
+  theme_539() +
+  labs(
+    title = "Games of Nasus/Thresh",
+    subtitle = "number of games played since the release of Bandle",
+    caption = element_markdown(glue::glue("Ranked games from {params$start} UTC to {params$end} UTC.
+                                          Metadata of games collected with RiotGames API.
+                                          Games from MegaMogwai are not included in the count.
+                                          The dashed line is the day MegaMogwai released the Nasus/Thresh video.")),
+    x = "Day",
+    y = "#Games"
+  ) +
+  scale_color_manual( 
+    name = element_blank(),
+    values = c("red","black"),
+    labels = c("<span style='color:red'>scaled playrate</span>","games")
+    ) +
+  theme(
+    axis.text=element_text(size=10),
+    axis.title=element_text(size=10,face="bold"),
+    legend.background = element_blank(),
+    legend.position = "top",
+    legend.key = element_blank(),
+    legend.key.width = unit(5,"pt"),
+    legend.text = element_markdown(margin = margin())
+    ) +
+  guides(fill="none")
   
-
+ggsave("./images/youtube-effect-MegaMogwai.png")
 ```
 
 ```{r}
