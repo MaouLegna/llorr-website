@@ -100,12 +100,7 @@ LoR.Match.RMD <- fread(file.DT, header = TRUE, na.strings = c("",NA) )
 #'#############
 file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
 LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
-  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
-  pivot_longer(
-  cols = c("puuid","puuid_1","puuid_2","puuid_3","puuid_4"),
-  names_to = "origin",
-  values_to = "puuid"
-)
+  mutate( RiotID = glue("{gameName}#{tagLine}") )
 
 #' load DeckDT
 #'############

@@ -171,12 +171,7 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 #'#############
 file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
 LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
-  mutate( RiotID = paste(gameName,tagLine),refID = puuid_4 ) %>%
-  pivot_longer(
-  cols = c("puuid","puuid_1","puuid_2","puuid_3","puuid_4"),
-  names_to = "origin",
-  values_to = "puuid"
-)
+  mutate( RiotID = glue("{gameName}#{tagLine}") )
 
 #' load DeckDT
 #'############
@@ -219,7 +214,7 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   ) %>%
   #' finish 'process' data
   ########################
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
+  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
   left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
   left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
   #' nChamp
@@ -229,7 +224,7 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
   ungroup() %>%
   mutate( nChamp = str_count(champions,pattern = "/")+1) %>%
   mutate( nChamp = replace(nChamp, str_detect(player,"Championless"),0) ) %>%
-  select(-ends_with("puuid"),-refID)
+  select(-ends_with("puuid"))
 ```
 
 The sample is made of `r NROW(LoR.Melt.Matches.RMD)` Ranked games from `r params$start` to `r params$end`, so covering the patch 2.12/2.13 after the start of the Ruination Event so that there aren't any changes in the card pool in the timeframe analyzed by amount of cards or balance changes.

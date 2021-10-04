@@ -1,4 +1,4 @@
-rmarkdown::render(
+rmarkdown::render_site(
   input = "static/mu.Rmd",
   envir = new.env()
 )
