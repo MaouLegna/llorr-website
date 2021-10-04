@@ -1,0 +1,1054 @@
+---
+title: "The 'Sneaky' Tournament Report (n°1)"
+description: |
+  Mastering Runeterra - EU edition #04 - 2021-10-02
+base_url: https://www.llorr-stats.com
+preview:
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 10-04-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+draft: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=9,
+  fig.height=6,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-page",
+  preview=FALSE
+)
+
+#' R Option
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+
+# require(Hmisc)    # provides knitrSet and other functions
+xaringanExtra::use_panelset()
+```
+
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(font_family = "Roboto",
+                                   active_foreground = "white",
+                                   hover_foreground = "black",
+                                   hover_border_color = "black",
+                                   active_background = "#007fff"
+                                   )
+```
+```{r raw-data}
+#' load account of only the players 
+#' who took plays in the tournament
+#'#################################
+LoR.Account.RMD <- fread(file.path("C:","LlorR","data","clean","MREU04_Account.csv"),na.strings = c("",NA))
+#' load names of the matches pairs
+#'################################
+LoR.Pair.Matches <- fread(file.path("C:","LlorR","data","clean","MREU04_namesMatches.csv"),na.strings = c("",NA))
+#' load the melt matches
+#'######################
+Match.DT <- fread(file.path("C:","LlorR","data","clean","MREU04_MatchDT.csv"), header = T, na.strings = c("", NA))
+#' load DeckDT
+#'############
+LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+#' tournament starting time
+tournament.start <- as.POSIXlt("2021-10-02 15:00:00", tz = "UTC")
+```
+
+# Data {.unnumbered}
+
+```{r previous-week}
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = 3*10^6 )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+LoR.Melt.Matches.RMD <- LoR.Match.RMD %>%
+  #' Base filters
+  filter( game_type=="Ranked" ) %>%
+  filter( game_start_time_utc >= tournament.start-lubridate::days(7) & game_start_time_utc < tournament.start ) %>%
+  #' 'process' data
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) %>%
+  left_join(.,LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) %>%
+  mutate( player_2 = opponent_1, opponent_2 = player_1 ) %>%
+  select( match_key,server,game_start_time_utc,
+          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("order_of_play"),-contains("deck_code"),-contains("deck_id"),-contains("participants") ) %>%
+  #' melt data
+  melt(id.vars=c("match_key","server","game_start_time_utc"), measure.vars=patterns(
+    str_sub(
+      names(select(.,ends_with("_1")))
+      ,end = -3)
+  ),
+  value.name = str_sub(
+    names(select(.,ends_with("_1")))
+    ,end = -3)
+  ) %>%
+  # filter(is.na(player))
+  select(-variable,-puuid,-match_key)
+
+#' WR tbl
+#'#######
+ladder.WR.DT <- LoR.Melt.Matches.RMD %>%
+  filter(game_outcome!="tie") %>%
+  select( player,opponent,game_outcome ) %>%
+  group_by(player) %>%
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) %>%
+  ungroup() %>%
+  mutate( playrate = nGames/sum(nGames) )
+
+#' MU tbl the date is already filtered
+#'####################################
+ladder.MUtbl <- LoR.Melt.Matches.RMD %>%
+  filter( game_outcome != "tie" ) %>%
+  select( player,opponent,game_outcome,server,factions ) %>%
+  # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
+  group_by(player,opponent) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win"),
+             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
+  ungroup() %>%
+  mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
+  chop(CI) %>%
+  unnest(CI) %>%
+  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
+  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
+  mutate( direction = replace(direction,direction==0.50,"TIE") ) %>%
+  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) %>%
+  # removing ~extra variables
+  select(-lower,-upper) %>%
+  left_join(.,ladder.WR.DT[,c("player","playrate")],by="player")
+```
+
+```{r create-gt-summary}
+namesBracket <- LoR.Pair.Matches|>
+  distinct(player)|>
+  filter(player!="BYE")
+
+tibble( partecipant = Match.DT|>distinct(player)|>filter(player!="BYE")|>NROW(),
+        matches = NROW(Match.DT|>distinct(player,opponent)) ,
+        games = NROW(Match.DT) ) |>
+  gt() |>
+  text_transform(
+    locations = cells_body(
+      columns = partecipant
+    ),
+    fn = function(x) {
+      glue::glue("{x}/{NROW(namesBracket)}")
+    }) |>
+  cols_label(
+    partecipant   = md("**Partecipants**"),
+    matches = md("**Matches**"),
+    games = md("**Games**")
+    ) |>
+  gt::tab_header(
+    title = glue::glue("Mastering Runeterra \n EU04")
+    ) |>
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+```
+
+```{r create-lineUp-DT}
+LineUp.DT <- Match.DT %>% 
+  select(playerID,player,server,playerDeck,deck_code) %>%
+  group_by(playerID,player) %>%
+  summarise( listDeck=list(unique(playerDeck)),listCode=list(unique(deck_code)) )
+
+LineUp.DT <- LineUp.DT %>%
+  cbind(.,map_df(.x = LineUp.DT$listCode, .f = ~assignLineUp(.x) )) %>%
+  rename("code_1"="deck_1","code_2"="deck_2","code_3"="deck_3" ) %>%
+  left_join( .,LoR.Deck %>% select(deck_code,deck_1=archetype),by=c("code_1"="deck_code") ) %>%
+  left_join( .,LoR.Deck %>% select(deck_code,deck_2=archetype),by=c("code_2"="deck_code") ) %>%
+  left_join( .,LoR.Deck %>% select(deck_code,deck_3=archetype),by=c("code_3"="deck_code") ) %>%
+  filter( !is.na(playerID) ) %>%
+  # LineUp.DT %>%
+  dplyr::mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  ) %>%
+  ungroup()
+```
+
+```{r compute-MU}
+playRates.byLU <- LineUp.DT |>
+  select(contains("deck_")) |>
+  unlist(use.names = F) %>%
+  tabyl(.,show_na = F) |>
+  arrange(desc(n))  |>
+  #' account for the presence of 3 decks
+  mutate(percent = 3*percent ) |>
+  rename( 'playerDeck'=1 )
+
+
+#' WR tbl
+#'#######
+WR.DT <- Match.DT |>
+  filter(game_outcome!="tie") |>
+  select(playerDeck,opponentDeck,game_outcome ) |>
+  group_by(playerDeck) |>
+  summarise( nWin   = sum(game_outcome=="win"),
+             nGames = n(),
+             WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  left_join(playRates.byLU, by="playerDeck" ) |>
+  rename( "playrate"="percent" )
+
+#' MU tbl the date is already filtered
+#'####################################
+MUtbl <- Match.DT %>%
+  filter( game_outcome != "tie" ) %>%
+  select( playerDeck,opponentDeck,game_outcome,server,factions ) %>%
+  group_by(playerDeck,opponentDeck) %>%
+  summarise( muWin   = sum(game_outcome=="win"),
+             muGames = n(),
+             muWR=mean(game_outcome=="win"),
+             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
+  ungroup() %>%
+  mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
+  chop(CI) %>%
+  unnest(CI) %>%
+  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
+  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
+  mutate( direction = replace(direction,direction==0.50,"TIE") ) %>%
+  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) %>%
+  # removing ~extra variables
+  select(-lower,-upper) %>%
+  left_join(.,WR.DT[,c("playerDeck","playrate")],by="playerDeck")
+
+
+# MUtbl|>
+#   group_by(playerDeck)|>
+#   summarise( Games = sum(muGames) )|>
+#   filter( Games <= 3 )
+```
+
+
+```{r compute-games-americas}
+Game.Result <- Match.DT |>
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  group_by( player,opponent,round ) |>
+  arrange( player,opponent,game_start_time_utc ) |>
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) |>
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2 | result =="BYE" ,1,0) ) |>
+  ungroup() |>
+  group_by(player) |>
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) |>
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) |>
+  left_join(LineUp.DT,by=c("player"))
+
+Game.Result$ban <- lapply( 1:NROW(Game.Result), function(x) (setdiff( Game.Result$listDeck[x] %>% unlist(),Game.Result$ldeck[x] %>% unlist() )) %>% ifelse(length(.)==1,.,NA ) ) %>% unlist(use.names = F)
+```
+
+```{r table-ban}
+#' all deck for bans
+deckForBan <- LineUp.DT %>%
+  # filter(!is.na(deck_3) ) %>%
+  # filter(!is.na(deck_3) & server!="asia") %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>% unique() %>% sort()
+        
+#' create Ban DT      
+################
+ban.tbl <- Game.Result |>
+  # filter(!is.na(deck_3) ) |>
+  group_by( ban ) |>
+  count(ban) |>
+  filter( !is.na(ban) )
+
+ban.DT <- tibble( deck = deckForBan ) |>
+  left_join(ban.tbl |> select(deck = ban,nBan=n) ,by = "deck") |>
+  as.data.table()
+
+for (i in 1:NROW(ban.DT) ) {
+  deck <- pull(ban.DT[i,"deck"])
+  
+  whichLU <- Game.Result %>%
+    # filter(!is.na(deck_3) ) %>%
+    filter( deck_1 == deck | deck_2 == deck | deck_3 == deck ) %>%
+    pull(LU)
+  
+  ban.DT[i,maxBan := Game.Result |>
+    filter( LU %in% whichLU ) |>
+    filter( !is.na(ban) ) |>
+    NROW() ]
+}
+
+full.ban.DT <- ban.DT |>  # start with ban.DT as it contains the list of all decks that theoretically can appears
+  left_join(WR.DT,by=c("deck"="playerDeck")) |> # add the Seasonal data
+  mutate(across(c(nBan,nWin, nGames,playrate), ~replace_na(.x, 0)) ) |>
+  # mutate(across(everything(), ~replace_na(.x, 0)) ) |> # fill the missing values
+  mutate( meanBan = nBan/maxBan ) |>   # since the number of ban considers all the cases with ban information it is some to impute 0
+  left_join(ladder.WR.DT |> select(deck=player,lplayrate=playrate,lWR=WR),by=c("deck"))
+```
+
+```{r compute-LMI}
+LMI.DT <- full.ban.DT %>%
+  filter( complete.cases(.) ) |>
+  filter( nGames >= 5 ) |>
+  # select(playrate,WR,lWR,meanBan ) |>
+  # mutate(across(everything(), ~replace_na(.x, 0)) ) |> 
+  mutate( PR_ind = scale_quantile(playrate),
+          WR_ind = scale_quantile(WR),
+          lWR_ind = scale_quantile(lWR),
+          meanBan_ind = scale_quantile(meanBan)
+          ) |>
+  mutate( WIN_ind    = map2_dbl(.x = WR_ind, .y = lWR_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( WIN_ind = scale_quantile(WIN_ind) ) |>
+  mutate( str_dim = map2_dbl(.x = WIN_ind, .y = meanBan_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( str_dim = scale_quantile(str_dim) ) |>
+  mutate( str_dim = map2_dbl(.x = WIN_ind, .y = meanBan_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( str_dim = scale_quantile(str_dim) ) |>
+  mutate( LMI = map2_dbl(.x = str_dim, .y = PR_ind, ~weighted.mean(x = c(.x,.y),w = c(0.5,0.5) )) ) |>
+  mutate( LMI = scale_quantile(LMI) ) |> 
+  mutate( tooltip = glue::glue("{deck}
+                               LMI {round(LMI*100,1)}
+                               WinRate {scales::percent(WR,accuracy = 0.1)}
+                               PlayRate {scales::percent(playrate,accuracy = 0.1)}
+                               mean BanRate {scales::percent(meanBan,accuracy = 0.1)}") ) |>
+  mutate( tooltip_mini = glue::glue("{deck}
+                               LMI {round(LMI*100,1)}") ) |>
+  mutate(tier = case_when( 
+     LMI >= 0.9 ~ "Tier1",
+     # 0.90 <= LMI & LMI < 0.975 ~ "Tier1",
+     0.60 <= LMI & LMI < 0.90 ~ "Tier2",
+     0.30 <= LMI & LMI < 0.60 ~ "Tier3",
+     LMI < 03.0 ~ "Tier4 or lower",
+    ) 
+  )
+```
+
+# Players Info
+
+::: l-page
+::::: {.panelset}
+
+::: {.panel}
+### Top 8 {.panel-name}
+
+```{r player-results}
+# remotes::install_github("jthomasmock/gtExtras")
+library(gtExtras)
+
+Game.Result |> 
+  group_by(player) |>
+  slice_max(cumMatchWin,n=1) |>
+  ungroup() |>
+  arrange(desc(cumMatchWin)) |>
+  slice_max(cumMatchWin,n=8) |>
+  select( player, cumWin, cumMatchWin, LU ) |>
+  add_column( rank = c(1:4,rep("5/8",4)), .before = "cumWin" ) |>
+  gt() |>
+  gt_theme_538() |>
+  gt_highlight_rows(
+    row = 1:4,
+    fill = "whitesmoke",
+    bold_target_only = TRUE,
+    target_col = "player"
+  ) |>
+  cols_align(
+    align = c("center"),
+    columns = 3:5
+    ) |>
+  tab_header(
+    title = "Top8 Players",
+    subtitle = "from Mastering Runeterra - EU04"
+  ) |>
+  tab_source_note(
+    source_note = "Metadata of games collected with RiotGames API."
+  ) |>
+  cols_label(
+    player   = md("**Player**"),
+    rank     = md("**Result**"),
+    cumWin   = md("**Games Won**"),
+    cumMatchWin = md("**Matches Won**"),
+    LU = md("**Line Up**")
+    ) |>
+  tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+```
+:::
+
+::: {.panel}
+### All Player Line-Ups {.panel-name}
+
+As some decks have not being played I don't have complete information
+
+```{r table-LineUps}
+LineUp.DT %>%
+  select(player,LU,deck_1,deck_2,deck_3 ) %>%
+  reactable(.,
+            # wrap = FALSE,
+            bordered = TRUE,
+            highlight = TRUE,
+            striped = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table
+            # fullWidth = FALSE, # don't fill the page
+            defaultPageSize = 30,
+            defaultColDef = colDef(
+               style = list(fontWeight = 500, color = "black",
+                       fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
+               # header = function(value) str_to_title(value),
+               #  cell = function(value) format(value, nsmall = 1),
+               align = "center",
+               headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+            ),
+            columns = list(
+              deck_1 = colDef(name = "Deck 1", style = list(color = "red", fontFamily = "Work Sans, sans-serif", fontSize = "12px"  ) ),
+              deck_2 = colDef(name = "Deck 2", style = list(color = "green", fontFamily = "Work Sans, sans-serif", fontSize = "12px") ),
+              deck_3 = colDef(name = "Deck 3", style = list(color = "blue", fontFamily = "Work Sans, sans-serif", fontSize = "12px" ) ),
+              LU = colDef(name = "Line Up", style = list(fontWeight = "bold", fontFamily = "Work Sans, sans-serif", fontSize = "12px" ) )
+              )
+          ) |>
+  reactablefmtr::add_title("Player's LineUps", background_color = "transparent" ) |>
+  reactablefmtr::add_subtitle("from Mastering Runeterra - EU04", background_color = "transparent") |>
+  reactablefmtr::add_source("Decks for each player who took part at the tournament.
+                            Missing values are from the lack of games with other decks.
+                            Metadata of games collected with RiotGames API.", background_color = "transparent")
+```
+:::
+:::::
+
+:::
+
+# Deck
+
+::: {.l-page}
+::::: {.panelset}
+
+::: {.panel}
+### Deck's Statistics {.panel-name}
+
+```{r table-overall}
+LMI.DT %>%
+  select(deck,nGames,WR,playrate,meanBan,lWR) %>%
+  mutate( diffLadder = WR-lWR ) |>
+  arrange(desc(nGames)) %>%
+  reactable(.,
+            # wrap = FALSE,
+            bordered = TRUE,
+            highlight = TRUE,
+            striped = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table
+            # fullWidth = FALSE, # don't fill the page
+            defaultPageSize = 15,
+            defaultColDef = colDef(
+               style = list(fontWeight = 500, color = "black",
+                       fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
+               # header = function(value) str_to_title(value),
+               #  cell = function(value) format(value, nsmall = 1),
+               align = "center",
+               headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+            ),
+            columns = list(
+                deck = colDef(name="Deck", align = "left" ),
+                nGames = colDef(name="#Games"),
+                WR = colDef(name="Win Rate", format = colFormat(percent = TRUE, digits = 2) ),
+                playrate = colDef(name="Play Rate", format = colFormat(percent = TRUE, digits = 2) ),
+                meanBan = colDef(name="Ban Rate", format = colFormat(percent = TRUE, digits = 2) ),
+                lWR = colDef(show=F),
+                diffLadder = colDef(name=("WinRate diff \n vs Ladder"),format = colFormat(percent = TRUE, digits = 2) )
+              )
+            ) |>
+  reactablefmtr::add_title("Deck's Statistics", background_color = "transparent") |>
+  reactablefmtr::add_subtitle("from Mastering Runeterra - EU04" , background_color = "transparent") |>
+  reactablefmtr::add_source("BanRate from matches whose I can deduce the banned deck.
+                            Playrates from all lineUps data so including also incomplete lineUps.
+                            Metadata of games collected with RiotGames API." , background_color = "transparent")
+```
+
+- **Ban Rate**: ratio between the number of bans and the number of matches of a deck.
+
+\begin{equation}
+
+BanRate = \frac{\#ban}{\#match}
+
+\end{equation}
+
+Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and Teemo/Ezreal was banned respectively 3 and 6 times; the ban rate would be $\frac{(3+6)}{(9+9)} = 50\%$
+
+- **PlayRate**:  ratio between the number of times a deck appears among all lineUps (including incomplete information cases) and the number of all decks in all lineUps.
+
+:::
+
+::: {.panel}
+### Single Decks PlayRate {.panel-name}
+
+How the results change is I consider only lineUps with complete information or not.
+
+```{r table-deck, echo=FALSE}
+left_join(
+LineUp.DT %>%
+  select(contains("deck_")) %>%
+  unlist(.,use.names = F) %>%
+  tabyl(.,show_na = F) %>% 
+  arrange(desc(n))  %>% 
+  #' account for the presence of 3 decks
+  mutate(percent = 3*percent ) %>%
+  rename( 'Deck'=1 ),
+LineUp.DT  %>%
+  select(contains("deck_")) %>%
+  filter(!is.na(deck_3)) %>%
+  select(contains("deck")) %>%
+  unlist(.,use.names = F) %>%
+  tabyl(.,show_na = F) %>% 
+  arrange(desc(n))  %>% 
+  #' account for the presence of 3 decks
+  mutate(percent = 3*percent ) %>%
+  rename( 'Deck'=1,"n_full"="n","percent_full"="percent" ),
+by="Deck"
+) %>%
+  reactable(.,
+            # wrap = FALSE,
+            bordered = TRUE,
+            highlight = TRUE,
+            striped = TRUE,
+            searchable = TRUE,
+            compact = TRUE, # compact the table
+            # fullWidth = FALSE, # don't fill the page
+            defaultPageSize = 20,
+            defaultColDef = colDef(
+               style = list(fontWeight = 500, color = "black",
+                       fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
+               # header = function(value) str_to_title(value),
+               #  cell = function(value) format(value, nsmall = 1),
+               align = "center",
+               headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+            ),
+            columns = list(
+              deck = colDef(name = "Deck", style = list(fontWeight = "bold",color = "black",fontFamily = "Work Sans, sans-serif", fontSize = "13px") ),
+              n = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values,na.rm = T))),
+              n_full = colDef(name = "N (only full Line-Ups)",footer = function(values) sprintf("%.0f", sum(values,na.rm = T))),
+              percent = colDef(name = "Overall PlayRate",format = colFormat(percent = TRUE,digits = 2) ),
+              percent_full = colDef(name = "Overall PlayRate (only full Line-Ups)",format = colFormat(percent = TRUE,digits = 2) )
+            )
+    ) |>
+  reactablefmtr::add_title("Deck's Playrates", background_color = "transparent") |>
+  reactablefmtr::add_subtitle("from Mastering Runeterra - EU04", background_color = "transparent") |>
+  reactablefmtr::add_source("Relative frequencies from all data or only line-ups with full information.
+                            Metadata of games collected with RiotGames API.", background_color = "transparent")
+
+
+# MUtbl|>distinct(playerDeck) #59 Deck
+```
+:::
+:::::
+:::
+
+
+# Deck Performance
+
+This section 
+
+::: {.l-page}
+::::: {.panelset}
+
+::: {.panel}
+### Top10 Decks {.panel-name}
+
+```{r LMIxJason, fig.width=12, fig.height=8, layout="l-page", preview=TRUE}
+plot.LMIbasic <- LMI.DT |>
+  slice_max(LMI,n = 10,with_ties = F) %>%
+  mutate_if(is.numeric, funs(round(., 4)) ) |>
+  mutate( LMI = LMI*100 ) |>
+  ggplot( aes(x=playrate, y=WR, size = LMI, color = tier, text=tooltip_mini)) +
+  geom_point(alpha=0.6) +
+  scale_size(range = c(1, 15), name="LMI") +
+  theme_539() + 
+  guides(colour = guide_legend(override.aes = list(size=10)),
+         size = FALSE ) +
+  geom_text_repel( 
+    aes(label=tooltip_mini),
+    color = "grey25",
+    family = "Roboto",
+    # fontface = "bold",
+    size = 3,
+    fill = NA
+  ) +
+  theme( legend.position = "top",
+         # legend.margin = element_blank(),
+         legend.background = element_blank(),
+         legend.title = element_text(size=9, lineheight = 1.3),
+         legend.justification = "right"
+         ) +
+  labs(
+    title = "Top10 Decks at the Mastering Runeterra Tournament EU #04",
+    x = "PlayRate",
+    y = "WinRate",
+    caption = element_text(glue::glue("LMI computed with the improved version which included banrate and ladder win rates
+                                      Metadata of games collected with RiotGames API
+                                      by Legna"))
+    ) +
+  xlim(0, 0.40) +
+  ylim(0.30, 0.70)
+
+plot.LMIbasic
+  
+ggsave("./images/MREU04-LMI-basic.png")
+```
+
+```{r}
+downloadthis::download_this(
+  plot.LMIbasic,
+  button_label = "Download Top10 LMI plot as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+
+- **Tier0** with LMI >= 97.5
+
+- **Tier1** with LMI $\in$ [85,97.5)
+
+- **Tier2** with LMI $\in$ [60,85)
+
+- **Tier3 or lower** with LMI < 60
+
+`r kableExtra::text_spec("Note:", color = "red")`Hovering over a circle will display a deck values.
+
+> The LMI [^3] [^4] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+
+[^3]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
+
+[^4]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
+
+:::
+
+::: {.panel}
+### Playrate vs Ladder {.panel-name}
+
+```{r compute-cor-PR, fig.width=12, fig.height=8}
+CC.table.Ladder <- LoR.Melt.Matches.RMD |>
+  select(playerDeck=player) |>
+  tabyl(playerDeck) |> 
+  rename("ladderPlayrate"="percent","ladderN"="n")
+  # slice_head(n = 30)
+
+plot.corPR <- LMI.DT |>
+  # tabyl(playerDeck) |>
+  # slice_max(playrate,n=20) |>
+  rename( "playerDeck"="deck"  ) |>
+  # select(playerDeck=deck,tournamentPercent=playrate,WR,meanBan) |>
+  left_join(CC.table.Ladder, 
+            by=c("playerDeck")
+            ) %>%
+  filter(complete.cases(.) ) |>
+  ggplot(aes(ladderPlayrate,playrate)) +
+  geom_point() +
+  geom_label_repel( 
+    aes(label=playerDeck),
+    family = "Helvetica",
+    # fontface = "bold",
+    size = 3,
+  )+
+  stat_smooth(method="lm",se=FALSE,geom="line", alpha=0.8, color = "steelblue") +
+  geom_abline(intercept = 0, alpha=0.8, color = "grey75") +
+  # stat_smooth(method="lm",se=FALSE,aes(alpha=0.6)) +
+  ggpubr::stat_regline_equation(aes(label = ..rr.label..),size=5,show.legend = FALSE) +
+  labs(x = "Ladder Play Rate",
+       y = "Tournament Play Rate",
+       title = "Comparison of Play Rates",
+       subtitle = "Mastering Runeterra EU #04 - Comparing Ladder and Tournament PlayRates",
+       caption = element_text(glue::glue("Playrates from {tournament.start-lubridate::days(7)} to {tournament.start}, one week before the start of the tournament
+                                         Blue line is fitted values with a univariate linear model
+                                         Gray line is the diagonal for the first quadrant
+                                         Metadata of games collected with RiotGames API") )
+       ) +
+  theme_539()
+
+plot.corPR  
+
+ggsave("images/MREU04-PRcor.png")
+```
+
+```{r}
+downloadthis::download_this(
+  plot.corPR,
+  button_label = "Download Top10 LMI plot as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+:::
+
+::: {.panel}
+### WinRate vs Ladder {.panel-name}
+
+```{r compute-cor-WR}
+deck.to.remove <- c("Jarvan IV / Poppy (BC/DE)","Fizz / Nami (BW/MT)")
+
+plot.corWR <- WR.DT |>
+  # slice_max(playrate,n=20) |>
+  filter( nGames > 5 ) |>
+  select(playerDeck,tournamentWR=WR,nGames) |>
+  left_join(ladder.WR.DT |>
+              select(playerDeck=player,ladderWR=WR), by="playerDeck") %>%
+  filter(complete.cases(.) ) |>
+  filter( playerDeck %!in% deck.to.remove  ) |>
+  ggplot(aes(ladderWR,tournamentWR)) +
+  geom_point() +
+  geom_label_repel( 
+    aes(label=playerDeck),
+    family = "Helvetica",
+    # fontface = "bold",
+    size = 3,
+  ) +
+  stat_smooth(method="lm",se=FALSE,geom="line", alpha=0.6, color = "steelblue") +
+  geom_abline(intercept = 0, alpha=0.8, color = "grey75") +
+  ggpubr::stat_regline_equation(aes(label = ..rr.label..),size=5,show.legend = FALSE) +
+  labs(title = "Scatter plot of Win Rates",
+       x = "Ladder Win Rate",
+       y = "Tournament Win Rate",
+       caption = element_text(glue::glue("Playrates from {tournament.start-lubridate::days(7)} to {tournament.start} one week before the start of the tournament
+                                         Decks with at least 5 games
+                                         Decks removed for being outlier: {str_flatten(deck.to.remove, collapse=' & ')} that vastly outperformed the ladder winrate
+                                         Blue line is fitted values with a univariate linear model
+                                         Gray line is the diagonal for the first quadrant
+                                         Metadata of games collected with RiotGames API"))
+       ) +
+  theme_539()  +
+  xlim(0.30, 0.70) +
+  ylim(0.30, 0.70)
+
+plot.corWR
+
+ggsave("images/cor.ladder.png")
+```
+
+```{r}
+downloadthis::download_this(
+  plot.corWR,
+  button_label = "Download Top10 LMI plot as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+:::
+
+::: {.panel}
+
+### LMI (full) {.panel-name}
+
+```{r plot-LMI, fig.width=12, fig.height=8, layout="l-page", preview=TRUE}
+plot.LMIfull <- LMI.DT |>
+  mutate_if(is.numeric, funs(round(., 4)) ) |>
+  mutate( LMI = LMI*100 ) |>
+  ungroup() |>
+  ggplot( aes(x=PR_ind, y=WR_ind, size = LMI, color = tier, text=tooltip)) +
+  geom_point(alpha=0.6) +
+  scale_size(range = c(1, 15), name="LMI") +
+  theme_539() +
+  geom_label_repel( 
+    aes(label=tooltip),
+    family = "Roboto",
+    color = "grey50",
+    fontface = "bold",
+    size = 3,
+    fill = NA,
+    vjust = "outward",
+    label.padding = unit(0.8, "mm"),
+    label.size = unit(0.25, "mm"),
+    label.r = unit(0.5, "mm"),
+    min.segment.length = 0,
+    segment.linetype = 2
+  ) + 
+  guides(colour = guide_legend(override.aes = list(size=10)),
+         size = FALSE ) +
+  theme( legend.position = "top",
+         # legend.margin = element_blank(),
+         legend.background = element_blank(),
+         legend.title = element_text(size=9, lineheight = 1.3),
+         legend.justification = "right"
+         ) +
+  labs(
+    title = "LMI at Mastering Runeterra Tournament EU #04",
+    x = "Win Index",
+    y = "Freq Index",
+    caption = element_text(glue::glue("LMI computed with the improved version which included banrate and ladder win rates
+                                      Metadata of games collected with RiotGames API
+                                      by Legna"))
+    )
+
+plot.LMIfull
+
+ggsave("./images/MREU04-LMI-full.png")
+```
+
+```{r}
+downloadthis::download_this(
+  plot.LMIfull,
+  button_label = "Download (full) LMI plot as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+
+```{r plot-LMI-plotly, fig.width=12, fig.height=8, layout="l-page", preview=TRUE}
+# fig <- LMI.DT |> 
+#   # slice_max(LMI,n = 50,with_ties = F) %>%
+#   mutate_if(is.numeric, funs(round(., 4)) ) |>
+#   ggplot( aes(x=PR_ind, y=WR_ind, size = LMI^2, color = tier, text=tooltip)) +
+#   geom_point(alpha=0.6) +
+#   scale_size(range = c(1, 15), name="LMI") + 
+#   theme_minimal() +
+#   labs( title = "LoR-Meta Index (LMI)",
+#         caption = "top50 highest LMI values, with a min amount of 100 games.",
+#         x = "WR Index",
+#         y = "Freq Index"
+#         )
+# 
+# ggplotly(fig, tooltip="text")
+```
+:::
+
+:::::
+:::
+
+# Regions
+
+## Play Rate
+
+```{r process-tableFreq}
+Region.Freq <- Match.DT %>%
+  select(factions) %>%
+  separate_rows(factions,sep=",") %>%
+  tabyl(factions,show_na=F) %>%
+  tibble() %>% 
+  rename_all(~c("region","n","freq")) %>%
+  mutate(region = str_replace_all(region, set_names(data_regions$nameRef, data_regions$factions)) ) %>% 
+  add_column(., icon = data_regions$icon )
+```
+
+::: l-page
+::::: {.panelset}
+::: {.panel}
+### Plot {.panel-name}
+
+```{r plot-Region, fig.width=12, fig.height=8}
+sxLabel_card <- format(Region.Freq$freq*100,2)
+dxLabel_card <- format(Region.Freq$freq*100,2)
+sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() %>% scales::number(., accuracy = 0.01)
+dxLabel_card <- ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card , "") |> as.numeric() %>% scales::number(., accuracy = 0.01)
+
+RegionByRegion <- Region.Freq |>
+  ggplot(aes(x = reorder(region, freq), y = freq)) +
+  geom_bar(stat="identity") +
+  geom_bar_pattern(
+    aes(
+      pattern_filename = region,
+    ),
+    stat            = 'identity',
+    pattern         = 'image',
+    pattern_type    = 'none',
+    fill            = data_regions$colorRegion,
+    colour          = 'black',
+    pattern_scale   = -2,
+    pattern_filter  = 'point',
+    pattern_gravity = 'east'
+  ) +
+  # theme_void() +
+  labs(
+    title = "Regions Play Rate",
+    subtitle = "number of times a region is included in a deck",
+    x = "Region",
+    y = "Play Rate"
+    # caption = "number of times a region is included in a deck" 
+  ) +
+  annotate(geom = 'text', 
+         x = 1.0, 
+         y = 0.15, 
+         hjust = 0.5,
+         label = glue::glue('n = {NROW(Match.DT)}\nGini Index = {round(DescTools::Gini(Region.Freq$freq,na.rm = T),3)}'), 
+         fontface = 'bold') +
+  coord_flip() +
+  scale_pattern_filename_discrete(choices = data_regions$iconsPath ) +
+  scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
+  scale_fill_manual("legend", values = data_regions$colorRegion ) +
+  scale_y_continuous(limits = c(0, round(max(Region.Freq$freq+0.04 ),3) ),
+                     breaks = seq(0,0.5,0.04),
+                     expand = c(-0.001,0.02),
+                     labels = scales::percent_format(accuracy = 1) ) +
+  guides(fill = "none") +
+  #' Adding the text of the frequencies
+  geom_text(aes(label = sxLabel_card), hjust = 2.5, size = 5,position = position_dodge(width = 1)) +
+  geom_text(aes(label = dxLabel_card), hjust = -0.5, size = 5,position = position_dodge(width = 1)) +
+  theme_539() +
+  theme( legend.position = "none",
+         axis.text = element_text(face = "bold", color = "grey25"),
+         panel.grid.major.y = element_blank()
+         )
+  
+RegionByRegion
+```
+
+```{r}
+# downloadthis::download_this(
+#   RegionByRegion,
+#   button_label = "Download (full) LMI plot as .png",
+#   button_type = "primary",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
+```
+
+The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
+:::
+
+
+::: {.panel}
+### Regions combination ocurrances {.panel-name}
+
+```{r double-faction}
+tibble( faction_1 = rep(data_regions$nameRef,each = 9),
+        faction_2 = rep(data_regions$nameRef,time = 9)
+        ) %>%
+  left_join(.,
+Match.DT |>
+  select(factions) |>
+  mutate(factions = str_replace_all(factions,"faction_","")) |>
+  mutate(factions = str_replace_all(factions,"_Name","")) |>
+  separate(factions,into = c("faction_1","faction_2"),sep = ",") |>
+  mutate(across(contains("faction"),~factor(.,levels = data_regions$nameRef ))) |>
+  rowwise() |>
+  mutate(faction_2 = replace_na(faction_2, faction_1)) |>
+  ungroup() |>
+  count(faction_1,faction_2), by = c("faction_1","faction_2") ) %>%
+  filter( !(is.na(n) & faction_2 != faction_1) ) |>
+  mutate(n = replace_na(n, 0)) |>
+  ggplot(aes(faction_1, faction_2, fill=n)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  geom_text(aes(label=n)) +
+  theme_void(base_size = 12) +
+  labs(x = "", y = "") +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
+  theme(
+        legend.position = "none",
+        axis.text.x = element_text(size = 10 * 0.8, angle = 0, hjust = 0.25, colour = "black"),
+        axis.text.y = element_text(size = 10 * 0.8, angle = 0, hjust = 0, colour = "black"),
+        axis.ticks = element_blank()
+        )
+```
+:::
+
+::: {.panel}
+### Table {.panel-name}
+
+```{r print-tableFreq-gt}
+Region.Freq.tbl <- Region.Freq |>
+  select(region,n,freq) |>
+  arrange(desc(freq)) |>
+  gt() |>
+  tab_header(
+    title = "Region Play Rate",
+    subtitle = "Relative Frequencies by Inclusion Rate of a Region"
+  ) %>%
+  fmt_percent(
+    columns = c(3),
+    decimals = 2
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = 1
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = c(2:3)
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      columns = 1,
+    )
+  ) %>%
+  cols_label(
+    region   = md("**Region**"),
+    n        = md("**N**"),
+    freq     = md("**Freq**")
+  ) %>%
+   tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+Region.Freq.tbl
+
+# Region.Freq.tbl <- gtsave(
+#     "images/reg_freq.png",
+# )
+```
+:::
+:::::
+:::
+
+```{r twitter-meta, echo = FALSE}
+# library(metathis)
+metathis::meta() |>
+  metathis::meta_description(
+    "Mastering Runeterra - EU edition #04 - 2021-10-02"
+  ) |> 
+  metathis::meta_viewport() |> 
+  metathis::meta_social(
+    title = "THE SNEAKY TOURNAMENT REPORT (n°1)",
+    url = "https://www.llorr-stats.com",
+    image = "images/MREU04.png",
+    image_alt = "MREU04-LMI.png",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
+
+# Legal bla bla {.unnumbered}
+
+This content was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
