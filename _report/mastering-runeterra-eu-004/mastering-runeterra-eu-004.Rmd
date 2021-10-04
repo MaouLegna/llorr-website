@@ -408,31 +408,43 @@ As some decks have not being played I don't have complete information
 
 ```{r table-LineUps}
 LineUp.DT %>%
-  select(player,LU,deck_1,deck_2,deck_3 ) %>%
-  reactable(.,
-            # wrap = FALSE,
-            bordered = TRUE,
-            highlight = TRUE,
-            striped = TRUE,
-            searchable = TRUE,
-            compact = TRUE, # compact the table
-            # fullWidth = FALSE, # don't fill the page
-            defaultPageSize = 30,
-            defaultColDef = colDef(
-               style = list(fontWeight = 500, color = "black",
-                       fontFamily = "Work Sans, sans-serif", fontSize = "12px"),
-               # header = function(value) str_to_title(value),
-               #  cell = function(value) format(value, nsmall = 1),
-               align = "center",
-               headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
-            ),
-            columns = list(
-              deck_1 = colDef(name = "Deck 1", style = list(color = "red", fontFamily = "Work Sans, sans-serif", fontSize = "12px"  ) ),
-              deck_2 = colDef(name = "Deck 2", style = list(color = "green", fontFamily = "Work Sans, sans-serif", fontSize = "12px") ),
-              deck_3 = colDef(name = "Deck 3", style = list(color = "blue", fontFamily = "Work Sans, sans-serif", fontSize = "12px" ) ),
-              LU = colDef(name = "Line Up", style = list(fontWeight = "bold", fontFamily = "Work Sans, sans-serif", fontSize = "12px" ) )
-              )
-          ) |>
+  select(player,LU,contains("deck_"),contains("code_") ) %>%
+  # pivot_longer( cols = c(contains("deck_"),contains("code_")) ) |>
+  pivot_longer(cols = c(contains("deck_"),contains("code_")),
+               names_to=c(".value", "index"),
+               names_sep = "_") |>
+  relocate(LU,.after = code) |>
+  select(-index) |>
+  reactable(
+    # wrap = FALSE,
+    bordered = TRUE,
+    highlight = TRUE,
+    striped = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 30,
+    defaultColDef = colDef(
+      style = list(fontWeight = 500, color = "black",
+                   fontFamily = "Helvetica", fontSize = "12px"),
+      align = "center",
+      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+      ),
+    columns = list(
+      # deck_1 = colDef(name = "Deck 1", style = list(color = "red", fontFamily = "Work Sans, sans-serif", fontSize = "12px"  ) ),
+      # deck_2 = colDef(name = "Deck 2", style = list(color = "green", fontFamily = "Work Sans, sans-serif", fontSize = "12px") ),
+      # deck_3 = colDef(name = "Deck 3", style = list(color = "blue", fontFamily = "Work Sans, sans-serif", fontSize = "12px" ) ),
+      LU = colDef( show = F ),
+      # LU = colDef(name = "Line Up",minWidth = 200 ),
+      deck = colDef(name = "Deck",minWidth = 200 ),
+      code = colDef(name = "DeckCode", cell = function(value, index) {
+        # Render as a link
+        if (!is.na(value) ) {
+          url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
+          htmltools::tags$a(href = url, target = "_blank", as.character(value))
+        } } ,minWidth = 400, style = list(fontSize = "10px") )
+      )
+    ) |>
   reactablefmtr::add_title("Player's LineUps", background_color = "transparent" ) |>
   reactablefmtr::add_subtitle("from Mastering Runeterra - EU04", background_color = "transparent") |>
   reactablefmtr::add_source("Decks for each player who took part at the tournament.
@@ -621,18 +633,6 @@ plot.LMIbasic
 ggsave("./images/MREU04-LMI-basic.png")
 ```
 
-```{r}
-downloadthis::download_this(
-  plot.LMIbasic,
-  button_label = "Download Top10 LMI plot as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
-
-
 - **Tier0** with LMI >= 97.5
 
 - **Tier1** with LMI $\in$ [85,97.5)
@@ -698,17 +698,6 @@ plot.corPR
 ggsave("images/MREU04-PRcor.png")
 ```
 
-```{r}
-downloadthis::download_this(
-  plot.corPR,
-  button_label = "Download Top10 LMI plot as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
-
 :::
 
 ::: {.panel}
@@ -753,17 +742,6 @@ plot.corWR <- WR.DT |>
 plot.corWR
 
 ggsave("images/cor.ladder.png")
-```
-
-```{r}
-downloadthis::download_this(
-  plot.corWR,
-  button_label = "Download Top10 LMI plot as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
 ```
 
 :::
@@ -818,14 +796,14 @@ ggsave("./images/MREU04-LMI-full.png")
 ```
 
 ```{r}
-downloadthis::download_this(
-  plot.LMIfull,
-  button_label = "Download (full) LMI plot as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+# downloadthis::download_this(
+#   plot.LMIfull,
+#   button_label = "Download (full) LMI plot as .png",
+#   button_type = "primary",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
 ```
 
 
@@ -925,17 +903,6 @@ RegionByRegion <- Region.Freq |>
          )
   
 RegionByRegion
-```
-
-```{r}
-# downloadthis::download_this(
-#   RegionByRegion,
-#   button_label = "Download (full) LMI plot as .png",
-#   button_type = "primary",
-#   has_icon = TRUE,
-#   icon = "fa fa-save",
-#   self_contained = FALSE
-# )
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
