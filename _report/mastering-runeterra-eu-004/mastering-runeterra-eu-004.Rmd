@@ -607,7 +607,7 @@ plot.LMIbasic <- LMI.DT |>
   slice_max(LMI,n = 10,with_ties = F) %>%
   mutate_if(is.numeric, funs(round(., 4)) ) |>
   mutate( LMI = LMI*100 ) |>
-  ggplot( aes(x=playrate, y=WR, size = LMI, color = tier, text=tooltip_mini)) +
+  ggplot( aes(x=WR, y=playrate, size = LMI, color = tier, text=tooltip_mini)) +
   geom_point(alpha=0.6) +
   scale_size(range = c(1, 15), name="LMI") +
   theme_539() + 
@@ -629,14 +629,14 @@ plot.LMIbasic <- LMI.DT |>
          ) +
   labs(
     title = "Top10 Decks at the Mastering Runeterra Tournament EU #04",
-    x = "PlayRate",
-    y = "WinRate",
+    x = "WinRate",
+    y = "PlayRate",
     caption = element_text(glue::glue("LMI computed with the improved version which included banrate and ladder win rates
                                       Metadata of games collected with RiotGames API
                                       by Legna"))
-    ) +
-  xlim(0, 0.40) +
-  ylim(0.30, 0.70)
+    )
+  # xlim(0, 0.40) +
+  # ylim(0.30, 0.70)
 
 plot.LMIbasic
   
@@ -765,7 +765,7 @@ plot.LMIfull <- LMI.DT |>
   mutate_if(is.numeric, funs(round(., 4)) ) |>
   mutate( LMI = LMI*100 ) |>
   ungroup() |>
-  ggplot( aes(x=PR_ind, y=WR_ind, size = LMI, color = tier, text=tooltip)) +
+  ggplot( aes(x=WR_ind, y=PR_ind, size = LMI, color = tier, text=tooltip)) +
   geom_point(alpha=0.6) +
   scale_size(range = c(1, 15), name="LMI") +
   theme_539() +

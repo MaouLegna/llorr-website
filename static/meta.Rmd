@@ -41,9 +41,9 @@ options(digits.secs = 6)
 options(scipen=999)
 
 #' R Option
-# pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
-#                flextable,officer,scales,htmltools,
-#                downloadthis)
+pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
+               flextable,officer,scales,htmltools,
+               downloadthis)
 ```
 
 ```{r load-data}
@@ -58,7 +58,7 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 #'#############
 LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"), header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
   mutate( RiotID = glue::glue("{gameName}#{tagLine}"))
-s
+
 #' load DeckDT
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
@@ -408,20 +408,13 @@ flexdashboard::valueBox(Sys.Date(),
 ### Filters
 
 ```{r filters-deck-structure}
-deckStrctures_meta  <- map_df(.x = c(fct_meta), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD,archetype =.x,minN = 5) ) |>
+deckStrctures_meta  <- map_df(.x = c(fct_meta), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD, archetype =.x, minN = 5) ) |>
   as_tibble() |>
   add_column(popularity = "Meta")
-
-# deckStrctures_meta <- deckStrctures_meta |>
-#   as_tibble() |>
-#   add_column(popularity = "Meta")
 
 deckStrctures_underdog <- map_df(.x = c(fct_underdog), ~get_deck_structure_2_meta(DT = LoR.Melt.Matches.RMD,archetype =.x,minN = 5) ) |>
   as_tibble() |>
   add_column(popularity = "Underdog")
-# deckStrctures_underdog <- deckStrctures_underdog |>
-#   as_tibble() |>
-#   add_column(popularity = "Underdog")
 
 shared_data <- crosstalk::SharedData$new(rbind(deckStrctures_meta,deckStrctures_underdog))
 crosstalk::filter_select(id = "popularity", label = "Meta/Underdog", sharedData = shared_data, group = ~popularity)

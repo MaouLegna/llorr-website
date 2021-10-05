@@ -138,7 +138,7 @@ nfilter <- 10
 
 MUtbl.tot <- sum(MUtbl$muGames)
 
-data <- SharedData$new(
+data <- crosstalk::SharedData$new(
   MUtbl |>
     filter(muGames >= nfilter)
 )
@@ -171,20 +171,20 @@ crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
 # Render a bar chart with positive and negative values
 bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
   
-  base_chart <- div(style = list(flex = "1 1"))
-  # pos_chart <- div(style = list(flex = "1 1"))
+  base_chart <- htmltools::div(style = list(flex = "1 1"))
+  # pos_chart <- htmltools::div(style = list(flex = "1 1"))
   width <- paste0((value / max_value) * 100, "%")
 
   if (value >= 0.5) {
-    bar <- div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
-    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- tagAppendChild(base_chart, chart)
-    div(style = list(display = "flex"), base_chart)
+    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
+    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- htmltools::tagAppendChild(base_chart, chart)
+    htmltools::div(style = list(display = "flex"), base_chart)
   } else {
-    bar <- div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
-    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- tagAppendChild(base_chart, chart)
-    div(style = list(display = "flex"), base_chart)
+    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
+    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- htmltools::tagAppendChild(base_chart, chart)
+    htmltools::div(style = list(display = "flex"), base_chart)
   }
 }
 
@@ -279,8 +279,8 @@ WRTopCC <- tibble::tibble(
 <!-- The win rates on the grid are among the `r mu` most played champion combination. -->
 
 ```{r prepare-flex}
-big_border   = fp_border(color="darkgray", width = 2)
-small_border = fp_border(color="gray", width = 1)
+big_border   = officer::fp_border(color="darkgray", width = 2)
+small_border = officer::fp_border(color="gray", width = 1)
 
 dummy_fun <- function(x){
   ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
@@ -292,7 +292,7 @@ grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
 
 colnames(grid) <- TopCC
-colourer <- col_numeric(
+colourer <- scales::col_numeric(
   palette = c("#D73027", # red
           # "#f9ccac", # red/orange
           "white",
@@ -311,29 +311,29 @@ ft <- grid |>
   add_column(TopCC,.before = TopCC[1]) |>
   rename("MatchUps"="TopCC") |>
   flextable::flextable( ) |> 
-  theme_vanilla( ) |>
+  flextable::theme_vanilla( ) |>
   # theme_booktabs(bold_header = TRUE) |> 
   flextable::align(align = "center", part = "all") |>
   flextable::bg(
     bg = colourer,
     j = ~ . -MatchUps,
     part = "body") |>
-  {\(x) border_remove(x = x)}() |>
-  border_outer(part="all", border = big_border ) |>
-  border_inner_h(part="all", border = small_border ) |>
-  border_inner_v(part="all", border = small_border ) |>
-  set_formatter(values = funs) |>
-  fontsize(size = 8, part = "header") |>
-  fontsize(j=1, size = 8) |>
-  bg(part = "header", bg = "white"  ) |>
-  bg(j = 1, bg = "white"  ) |>
-  autofit()
+  {\(x) flextable::border_remove(x = x)}() |>
+  flextable::border_outer(part="all", border = big_border ) |>
+  flextable::border_inner_h(part="all", border = small_border ) |>
+  flextable::border_inner_v(part="all", border = small_border ) |>
+  flextable::set_formatter(values = funs) |>
+  flextable::fontsize(size = 8, part = "header") |>
+  flextable::fontsize(j=1, size = 8) |>
+  flextable::bg(part = "header", bg = "white"  ) |>
+  flextable::bg(j = 1, bg = "white"  ) |>
+  flextable::autofit()
 
 ft
 ```
 
 ```{r print-flex, fig.width=12, fig.height=8}
-save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
+flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ft
 ```
 
@@ -357,7 +357,7 @@ ft
 MUtbl |>
   filter( muGames > 10 ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
-  download_this(
+  downloadthis::download_this(
     button_label = "Download MU data as .csv",
     output_name = "mutable",
     button_type = "success",
@@ -391,7 +391,7 @@ MUtbl |>
 ### Match Ups Grid
 
 ```{r}
-download_file(
+downloadthis::download_file(
   path = file.path("images/mugrid.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download MU grid as .png",
@@ -456,6 +456,6 @@ MUtbl |>
   filter(playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle01-MUtbl.csv"))
 
-save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
+flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ```
 
