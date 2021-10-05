@@ -56,10 +56,9 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 
 #' load Account
 #'#############
-file.Account <- file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv")
-LoR.Account.RMD <- fread(file.Account, header=T, na.strings = c("",NA), encoding = 'UTF-8') %>%
+LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"), header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
   mutate( RiotID = glue::glue("{gameName}#{tagLine}"))
-
+s
 #' load DeckDT
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
@@ -98,8 +97,8 @@ get_deck_structure_2_meta <- function(DT = LoR.Melt.Matches.RMD, archetype, minN
   
   #' freq Table of deckcodes for an archetype
   codeTbl <- LoR.Melt.Matches.RMD |>
-    filter( player == archetype ) |>
-    # filter( player == "Nami / Zoe" ) |> 
+    filter( playerDeck == archetype ) |>
+    # filter( playerDeck == "Nami / Zoe" ) |> 
     tabyl(deck_code) |>
     arrange(desc(n)) |>
     filter( n >= minN & percent >= minP )
@@ -113,7 +112,7 @@ get_deck_structure_2_meta <- function(DT = LoR.Melt.Matches.RMD, archetype, minN
     as_tibble() |>
     #' the first column of tabyl takes the value of the "tabled" variable
     #' from the table it takes the deckcode, create the get_decklist_from_code as table and repeat the result n times as in the tbl
-    summarise( map2_df( .x = deck_code, .y = n , ~rep(list(lordecks::get_decklist_from_code(.x)),.y) %>% rbindlist()) ) |>
+    summarise( map2_df( .x = deck_code, .y = n , ~rep(list(lordecks::get_decklist_from_code(.x)),.y) |> rbindlist()) ) |>
     select(count,cardcode) |>
     rename_all(~c("copies","cardCode"))
   
@@ -125,7 +124,7 @@ get_deck_structure_2_meta <- function(DT = LoR.Melt.Matches.RMD, archetype, minN
     select(playrate)
   
   copies.cards %>% 
-    rename_all(~str_to_title(.)) |>
+    {\(x) rename_all(~str_to_title(x)) }() |>
     mutate( Copies = factor(Copies, levels = c(1,2,3)) ) |> 
     #' To the 'Nx3' table of cards and copies
     tabyl(Cardcode,Copies) |>
@@ -155,44 +154,30 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 #' Metl tbl
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
-  #' Base filters
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  # filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-  #' 'process' data
-  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
-  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
-  #' melt data
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-    str_sub(
-      names(select(.,ends_with("_1")))
-      ,end = -3)
-  ),
-  value.name = str_sub(
-    names(select(.,ends_with("_1")))
-    ,end = -3)
-  ) %>%
+  select( -ends_with("_3"),-ends_with("_4")  ) |>
+  left_join(LoR.Deck[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               ) |>
   #' finish 'process' data
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-  left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions"))
+  left_join(LoR.Account.RMD[,.(puuid,playerDeckID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
+  left_join(LoR.Account.RMD[,.(puuid,opponentDeckID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
+  left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions"))
 ```
 
 ```{r decks}
 n = 20 # if I want to select a fixed number of decks
 p = 0.01 # if I want to use the standard meta deck threshold
 
-# fct_meta <- LoR.Melt.Matches.RMD |>
-#  mutate( topN = fct_lump(player, prop = p) |> fct_infreq() ) |>
-#  pull(topN) |> levels()
-
 WR.DT <- LoR.Melt.Matches.RMD |>
   filter(game_outcome!="tie") |>
-  # select( player,opponent,game_outcome ) |>
-  group_by(player) |>
+  group_by(playerDeck) |>
   summarise( nWin   = sum(game_outcome=="win"),
              nGames = n(),
              WR=mean(game_outcome=="win")
@@ -203,29 +188,29 @@ WR.DT <- LoR.Melt.Matches.RMD |>
 fct_meta <- WR.DT |>
   filter(playrate > p) |>
   arrange(desc(nGames)) |>
-  pull(player)
+  pull(playerDeck)
 
 fct_underdog <- WR.DT |>
   filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
   arrange(desc(n)) |>
-  pull(player)
+  pull(playerDeck)
 ```
 
 ```{r shared-data}
 Champion.deck.daily.byserver <- LoR.Melt.Matches.RMD |>
-  rename("Archetype"="player") |>
+  rename("playerDeck"="playerDeck") |>
   arrange(game_start_time_utc) |>
   group_by(server) |>
-  select(game_start_time_utc,Archetype,server) |>
-  mutate( num_cc = factor(Archetype) |> as.numeric() ) |>
+  select(game_start_time_utc,playerDeck,server) |>
+  mutate( num_cc = factor(playerDeck) |> as.numeric() ) |>
     ungroup() |> as.data.table() %>%
-  .[ , playRate := (cumsum(num_cc)/num_cc)/.I , by=Archetype ] |>
+  .[ , playRate := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ] |>
   select(!num_cc) |>
-  mutate( Archetype = factor(Archetype) |> fct_infreq() )
+  mutate( playerDeck = factor(playerDeck) |> fct_infreq() )
 
 #' Get last value for PR
 maxFreq <- Champion.deck.daily.byserver |>
-  filter( Archetype %in% fct_meta &
+  filter( playerDeck %in% fct_meta &
             game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
   summarise( maxfreq = max(playRate) ) |>
   signif.ceiling(1) |> pull()
@@ -233,10 +218,10 @@ maxFreq <- Champion.deck.daily.byserver |>
 # options(digits.secs = 0)
 Champion.deck.daily.byserver <- Champion.deck.daily.byserver |>
   mutate( game_start_time_utc = floor_date(game_start_time_utc, unit = "hours") ) |>
-  group_by(game_start_time_utc,server,Archetype) |>
+  group_by(game_start_time_utc,server,playerDeck) |>
   slice_head(n=1) |>
   ungroup() |>
-  group_by(server,Archetype) |>
+  group_by(server,playerDeck) |>
   filter(row_number() %% params$hrs == 1) %>%
   ungroup() %>%
   filter(complete.cases(.)) |>
@@ -246,9 +231,10 @@ Champion.deck.daily.byserver <- Champion.deck.daily.byserver |>
 
 keyDeckDaily <- Champion.deck.daily.byserver |>
   # filter( game_start_time_utc %in% hrs_filter  ) |>
-  filter( Archetype %in% fct_meta &
+  filter( playerDeck %in% fct_meta &
             game_start_time_utc >= min(LoR.Melt.Matches.RMD$game_start_time_utc)|>as.Date()+hours(24) ) |>
   mutate( server = str_to_title(server), playRate = round(playRate,3) ) |>
+  rename(Archetype=playerDeck)
   highlight_key(~Archetype)
 ```
 
@@ -257,12 +243,13 @@ keyDeckDaily <- Champion.deck.daily.byserver |>
 ```{r process-winRate}
 WR.DT <- LoR.Melt.Matches.RMD |>
   filter(game_outcome!="tie") |>
-  select( player,opponent,game_outcome ) |>
-  group_by(player) |>
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win")
-            ) |>
+  select(playerDeck,opponentDeck,game_outcome ) |>
+  group_by(playerDeck) |>
+  summarise( 
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR=mean(game_outcome=="win")
+    ) |>
   ungroup() |>
   mutate( playrate = nGames/sum(nGames) )
 
@@ -270,16 +257,17 @@ WR.DT <- LoR.Melt.Matches.RMD |>
 
 WR.DT.Reg <- LoR.Melt.Matches.RMD |>
   filter(game_outcome!="tie") |>
-  select( player,opponent,game_outcome,server ) |>
-  group_by(server,player) |>
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win"),
-            ) |>
+  select( playerDeck,opponentDeck,game_outcome,server ) |>
+  group_by(server,playerDeck) |>
+  summarise( 
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR=mean(game_outcome=="win")
+    ) |>
   ungroup() |>
   group_by(server) |>
   mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) |>
-  left_join(WR.DT[,c("player","playrate")],by="player") 
+  left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") 
 ```
 
 ## Row
@@ -290,10 +278,10 @@ WR.DT.Reg <- LoR.Melt.Matches.RMD |>
 WR.DT.Reg %>%
   arrange(desc(playrate)) %>%
   filter(playrate >= 0.01) %>%
-  # slice_max(player,n = 10, with_ties = T) %>%
+  # slice_max(playerDeck,n = 10, with_ties = T) %>%
   arrange(desc(playrate)) %>%
-  relocate(player,WR,nWin,nGames,regPlayrate,server) %>%
-  reactable(., groupBy = "player",
+  relocate(playerDeck,WR,nWin,nGames,regPlayrate,server) %>%
+  reactable(., groupBy = "playerDeck",
             # searchable = TRUE,
             bordered = TRUE,
             # wrap = FALSE,
@@ -309,7 +297,7 @@ WR.DT.Reg %>%
               # headerStyle = list(background = "steelblue",color="white")
             ),
             columns = list(
-              player = colDef(name = "Champions",minWidth = 150),
+              playerDeck = colDef(name = "Champions",minWidth = 150),
               server = colDef(name = "Server", aggregate = "unique"),
               nWin   = colDef(name = "#Win", aggregate = "sum"),
               nGames = colDef(name = "#Games", aggregate = "sum"),
@@ -348,7 +336,7 @@ WR.DT.Reg %>%
 WR.DT %>%
   filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) %>%
   # slice_max(WR,n = 10) %>%
-  relocate(player,WR,nWin,nGames,playrate) %>%
+  relocate(playerDeck,WR,nWin,nGames,playrate) %>%
   arrange(desc(WR)) %>%
   reactable(.,
             # searchable = TRUE,
@@ -366,7 +354,7 @@ WR.DT %>%
               headerStyle = list(background = "steelblue",color="white")
             ),
             columns = list(
-              player = colDef(name = "Champions",minWidth = 150),
+              playerDeck = colDef(name = "Champions",minWidth = 150),
               nWin   = colDef(name = "#Win"),
               nGames = colDef(name = "#Games"),
               WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
@@ -502,11 +490,11 @@ shared_data %>%
 ```{r create-deck-code-tbl}
 # https://lor.runeterra.ar/decks/code/CECQCAIDCQAQGBASAECAIEADAUBQCCINAQAQIJRHFU2AIAIBAMXACAIEAEAQGBALAECQGBACAEAQGOABAMBQ6
 deckCodeTbl  <- LoR.Melt.Matches.RMD |>
-  filter( player %in% c(fct_meta,fct_underdog) ) |>
-  mutate( player = factor(player, ordered = TRUE, 
+  filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
+  mutate( playerDeck = factor(playerDeck, ordered = TRUE, 
                                 levels = c(fct_meta,fct_underdog) ),
           server = str_to_title(server) ) |>
-  group_by(server,player,deck_code ) |>
+  group_by(server,playerDeck,deck_code ) |>
   summarise( n = n() ) |>
   slice_max(n, n = 5) |>
   ungroup()
@@ -519,7 +507,7 @@ deckCodeTbl  <- LoR.Melt.Matches.RMD |>
 ```{r filter-deck-code-tbl}
 shared_code <- crosstalk::SharedData$new(deckCodeTbl)
 crosstalk::filter_select(id = "server", label = "Server", sharedData = shared_code, group = ~server)
-crosstalk::filter_select(id = "player", label = "Archetype", sharedData = shared_code, group = ~player)
+crosstalk::filter_select(id = "playerDeck", label = "Archetype", sharedData = shared_code, group = ~playerDeck)
 ```
 
 ## Row
@@ -528,7 +516,7 @@ crosstalk::filter_select(id = "player", label = "Archetype", sharedData = shared
 ```{r print-deck-code-tbl}
 shared_code %>%
   reactable(.,
-            groupBy = c("player","server"),
+            groupBy = c("playerDeck","server"),
             bordered = TRUE,
             highlight = TRUE,
             searchable = TRUE,
@@ -551,7 +539,7 @@ shared_code %>%
                 htmltools::tags$a(href = url, target = "_blank", as.character(value))
                 }),
               server = colDef(name = "Server",minWidth = 150),
-              player = colDef(name = "Archetype",minWidth = 150),
+              playerDeck = colDef(name = "Archetype",minWidth = 150),
               n     = colDef(name = "Games" )
               ),
              rowStyle = JS("function(rowInfo) {
@@ -572,7 +560,7 @@ shared_code %>%
 ### Filters
 
 ```{r filters-meta-evo}
-crosstalk::filter_select("Archetype", "Deck's Archetype", keyDeckDaily, ~Archetype)
+crosstalk::filter_select("playerDeck", "Deck's Archetype", keyDeckDaily, ~playerDeck)
 ```
 
 By clicking on the plot (both the ones on the left or the one on the right) you can highlight a deck in all regions, hover over them and it will display their values. By double clicking on the plots restore it to default.
@@ -585,38 +573,29 @@ By clicking on the plot (both the ones on the left or the one on the right) you 
 ```{r create-plot-meta-evo}
 #' Grouped line plots for PR over time
 meta_evo <- keyDeckDaily %>% {
-   ggplot(., aes(game_start_time_utc, playRate, group = Archetype,color = Archetype)) +
+   ggplot(., aes(game_start_time_utc, playRate, group = playerDeck,color = playerDeck)) +
       geom_line() +
-      # geom_text(aes(label=Archetype,color = Archetype))
-      # geom_line(aes(linetype = server)) +
       facet_wrap(~server, ncol = 2) +
-      # ylim(0,maxFreq ) +
       scale_colour_viridis_d(option = "turbo") +
-      # scale_colour_brewer(palette = "Set1",) +
       theme_Publication() +
       theme(legend.position = "none") +
-      # plot_layout(guides = "collect") +
       scale_y_continuous(limits = c(0, maxFreq),
                      breaks = seq(0,maxFreq,0.05),
                      # expand = c(-0.001,0.02),
                      labels = scales::percent_format(accuracy = 1),
                      position = "right") +
       labs(x= "",y = "")
-    # expand_limits(y = 0)
    } %>%
   ggplotly(tooltip=c("group","playRate"),hovertemplate = paste("%{xaxis.title.text}: %{playRate:.0%}<br>") )
 
 #' Dot Plot of PR
 dot_plot <- keyDeckDaily |>
-  # plot_ly(color = I("black") ) |>
   plot_ly( ) |>
-  group_by(Archetype) |>
+  group_by(playerDeck) |>
   summarise(playRate = last(playRate)) |>
-  # plot_ly(color = I("gray25")) %>%
-  # group_by(Archetype) |>
   add_markers(
     x = ~round(playRate,3),
-    y = ~forcats::fct_reorder(Archetype, playRate),
+    y = ~forcats::fct_reorder(playerDeck, playRate),
     hoverinfo = "x+y"
   ) %>%
   layout(
@@ -650,7 +629,7 @@ plotly::subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
 
 #### Deck-Codes
 
-* Currently showing only the top5 most played deckcodes for each archetype. Planning to add the top5 most played deckcodes for each archetype by the player with the highest amount of games with it. Both case (top5 and top5 by a player) for each server.
+* Currently showing only the top5 most played deckcodes for each archetype. Planning to add the top5 most played deckcodes for each archetype by the playerDeck with the highest amount of games with it. Both case (top5 and top5 by a playerDeck) for each server.
 
 #### Meta-Evolution
 
@@ -666,4 +645,4 @@ plotly::subplot(meta_evo, dot_plot, widths = c(.8, .2)) |>
 
 #### General info
 
-When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
+When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games.

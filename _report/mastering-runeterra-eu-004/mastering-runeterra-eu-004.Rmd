@@ -458,6 +458,12 @@ LineUp.DT %>%
 
 # Deck
 
+PingCity (TF/GP Bandle) and Nami/Zoe both performed way worse compared to the ladder. In the case of Fizz/Nami it may be because the results are split with Fizz/Nami (BW/MT) which is pretty much the same deck. (Simposon Paradox?)
+
+Other notable results are BandleCity-Poppy/Demacia decks that performed better better than the Noxus version and even if the data is small and sparse among several decks the direction remain the same.
+
+Akshan/Sivir (Demacia) and Lee/Zoe are confirmed as usual staple tournament decks with the first still being tier1 choice
+
 ::: {.l-page}
 ::::: {.panelset}
 
@@ -584,7 +590,11 @@ by="Deck"
 
 # Deck Performance
 
-This section 
+Usually the play-rates and win-rates on the ladder are highly predictable of performances on a tournament, yet this time the correlation among tournament play-rate and ladder play-rates. There is a change part of it is because of the smaller sample pool of decks or also high likely that people aren't confident if abusing the most popular deck this time as they could be more easily handled with bans and counter-lineUps.
+
+The correlation of play-rates is also interesting as there is almost none of it, while all the win-rates are indeed more unstable the data seems to suggest that certain decks are to be re-evaluated for a Bo3 setting meaning there may be more dark horses and some "overhyped" decks (like Ping City)
+
+Please be aware that I use several variable to compute the LMI and not just the win-rate, this is because the LMI wants to evaluate the "overall" performance and while J4/Poppy for example has the highest win-rate the other values like ban-rate and play-rate are among the worst.
 
 ::: {.l-page}
 ::::: {.panelset}
