@@ -22,25 +22,29 @@ params:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
+  eval = TRUE,
   warning = FALSE,
   error = FALSE,
   message = FALSE,
-  dev.args = list(bg = 'transparent'),
-  # dev='svglite',
-  fig.align='center',
-  #out.width='75%', fig.asp=.75,
-  cache.rebuild = F,
-  cache = F
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=12,
+  fig.height=8,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
 )
 
-source(file.path("C:","LlorR","scripts","lor_main.R" ))
-options(digits.secs = 6)
-options(scipen=999)
-
 #' R Option
-pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
-               flextable,officer,scales,htmltools,
-               downloadthis)
+options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+xaringanExtra::use_panelset()
 ```
 
 ```{r load-data}
@@ -73,74 +77,62 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
 ```
 
 ```{r process-data}
-#' Metl tbl
+#' Melt tbl
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
-  #' Base filters
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  # filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) %>%
-  #' 'process' data
-  left_join(LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck[,.(deck_code,archetype)] %>% setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) %>%
-  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
-  #' melt data
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-    str_sub(
-      names(select(.,ends_with("_1")))
-      ,end = -3)
-  ),
-  value.name = str_sub(
-    names(select(.,ends_with("_1")))
-    ,end = -3)
-  )
-  # ) %>%
-  #' finish 'process' data
-  # left_join(. , LoR.Account.RMD[,c("puuid","RiotID","refID")] %>% setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) %>%
-  # left_join(. , LoR.Account.RMD[,c("puuid","RiotID")] %>% setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) %>%
-  # left_join(.,LoR.Deck %>% select(!archetype),by=c("deck_code","factions")) %>%
-  # # select(-ends_with("puuid"),-refID,-contains("puuid"))
-  # select(-ends_with("puuid"),-contains("puuid"))
+  select( -ends_with("_3"),-ends_with("_4")  ) |>
+  left_join(LoR.Deck[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               )
 ```
 
 ```{r process-MU}
 #' WR tbl
 #'#######
-WR.DT <- LoR.Melt.Matches.RMD %>%
-  filter(game_outcome!="tie") %>%
-  select( player,opponent,game_outcome ) %>%
-  group_by(player) %>%
+WR.DT <- LoR.Melt.Matches.RMD |>
+  filter(game_outcome!="tie") |>
+  select( playerDeck,opponentDeck,game_outcome ) |>
+  group_by(playerDeck) |>
   summarise( nWin   = sum(game_outcome=="win"),
              nGames = n(),
              WR=mean(game_outcome=="win")
-  ) %>%
-  ungroup() %>%
+  ) |>
+  ungroup() |>
   mutate( playrate = nGames/sum(nGames) )
 
 #' MU tbl the date is already filtered
 #'####################################
-MUtbl <- LoR.Melt.Matches.RMD %>%
-  filter( game_outcome != "tie" ) %>%
-  select( player,opponent,game_outcome,server,game_version,factions ) %>%
-  # mutate( factions = str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") %>% factor() ) %>%
-  group_by(player,opponent) %>%
-  summarise( muWin   = sum(game_outcome=="win"),
-             muGames = n(),
-             muWR=mean(game_outcome=="win"),
-             factions = unique(str_replace_all(factions, pattern="faction_",replacement = "") %>% str_replace_all(.,pattern="_Name",replacement = "") ) ) %>%
-  ungroup() %>%
-  mutate( CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] ) ) %>%
-  chop(CI) %>%
-  unnest(CI) %>%
-  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) %>%
-  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) %>%
-  mutate( direction = replace(direction,direction==0.50,"TIE") ) %>%
-  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) %>%
+MUtbl <- LoR.Melt.Matches.RMD |>
+  filter( game_outcome != "tie" ) |>
+  select( playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
+  group_by(playerDeck,opponentDeck,factions) |>
+  summarise( 
+    muWin   = sum(game_outcome=="win"),
+    muGames = n(),
+    muWR=mean(game_outcome=="win")
+    ) |>
+  ungroup() |>
+  mutate(
+    factions = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
+    CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] )
+    ) |>
+  chop(CI) |>
+  unnest(CI) |>
+  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) |>
+  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) |>
+  mutate( direction = replace(direction,direction==0.50,"TIE") ) |>
+  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) |>
   # removing ~extra variables
-  select(-lower,-upper) %>%
-  left_join(.,WR.DT[,c("player","playrate")],by="player")
+  select(-lower,-upper) |>
+  left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") |>
+  relocate(factions,.after = muWR)
 ```
 
 # Table {data-icon="fa-table"}
@@ -150,8 +142,9 @@ nfilter <- 10
 
 MUtbl.tot <- sum(MUtbl$muGames)
 
-data <- SharedData$new(MUtbl %>%
-   filter(muGames >= nfilter)
+data <- crosstalk::SharedData$new(
+  MUtbl |>
+    filter(muGames >= nfilter)
 )
 ```
 
@@ -160,8 +153,8 @@ data <- SharedData$new(MUtbl %>%
 ### Filters
 
 ```{r filters}
-crosstalk::filter_select("player", "Player's Deck", data, ~player)
-crosstalk::filter_select("opponent", "Opponent's Deck", data, ~opponent)
+crosstalk::filter_select("playerDeck", "Player's Deck", data, ~playerDeck)
+crosstalk::filter_select("opponentDeck", "Opponent's Deck", data, ~opponentDeck)
 
 crosstalk::filter_slider("muWin",   "#Win",  data, ~muWin,   step = 50 ,min = 0)
 crosstalk::filter_slider("muGames", "#Games",data, ~muGames, step = 100,min = 0)
@@ -170,11 +163,6 @@ crosstalk::filter_slider("muWR", "WinRate", data, ~muWR,step=0.01,min = 0,max = 
 crosstalk::filter_slider("playrate", "PlayRate", data, ~playrate,step=0.01,min = 0,max = round(max(MUtbl$playrate),4) )
 
 crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
-
-# bscols(
-#   crosstalk::filter_select("player", "Player", data, ~player),
-#   crosstalk::filter_select("opponent", "Opponent", data, ~opponent)
-# )
 ```
 
 ## Row {data-heigth="750"}
@@ -187,69 +175,62 @@ crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
 # Render a bar chart with positive and negative values
 bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
   
-  base_chart <- div(style = list(flex = "1 1"))
-  # pos_chart <- div(style = list(flex = "1 1"))
+  base_chart <- htmltools::div(style = list(flex = "1 1"))
+  # pos_chart <- htmltools::div(style = list(flex = "1 1"))
   width <- paste0((value / max_value) * 100, "%")
 
   if (value >= 0.5) {
-    bar <- div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
-    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- tagAppendChild(base_chart, chart)
-    div(style = list(display = "flex"), base_chart)
+    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
+    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- htmltools::tagAppendChild(base_chart, chart)
+    htmltools::div(style = list(display = "flex"), base_chart)
   } else {
-    bar <- div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
-    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- tagAppendChild(base_chart, chart)
-    div(style = list(display = "flex"), base_chart)
+    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
+    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- htmltools::tagAppendChild(base_chart, chart)
+    htmltools::div(style = list(display = "flex"), base_chart)
   }
 }
 
-data %>%
-reactable(.,
-          bordered = TRUE,
-          highlight = TRUE,
-          striped = TRUE,
-          searchable = TRUE,
-          compact = TRUE, # compact the table height
-          fullWidth = T, # don't fill the page
-          defaultPageSize = 20,
-          wrap = TRUE,
-          defaultSorted = list(muGames = "desc"),
-            # filterable = TRUE,
-            defaultColDef = colDef(
-              style = list(fontFamily = "Roboto", fontSize = "13px"), align = "center"
-              # minWidth = 120,
-            ),
-            columns = list(
-              player   = colDef(name = "Player",minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black") ),
-              opponent = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black")),
-              
-              muWin    = colDef(name = "#Win" ), # , style = list( fontSize = "13px")
-              muGames  = colDef(name = "#Games",defaultSortOrder = "desc"),
-              
-              # muWR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
-              
-              muWR  = colDef(
-                name = "Win Rate",
-                # defaultSortOrder = "desc",
-                cell = function(value) {
-                  label <- paste0(round(value * 100,1), "%")
-                  bar_chart_pos_neg(label, value)
-                  },
-                align = "center",
-                minWidth = 200
-                ),
-              
-              playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
-              
-              factions = colDef(name = "Regions"),
-              
-              CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
-              LCI       = colDef(show=F), # lower
-              UCI       = colDef(show=F), # lower
-              direction = colDef(show=F),
-              okCI      = colDef(show=F)
-              )
+data |>
+  reactable(
+    bordered = TRUE,
+    highlight = TRUE,
+    striped = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table height
+    fullWidth = T, # don't fill the page
+    defaultPageSize = 20,
+    wrap = TRUE,
+    defaultSorted = list(muGames = "desc"),
+    # filterable = TRUE,
+    defaultColDef = colDef(
+      style = list(fontFamily = "Roboto", fontSize = "13px"), align = "center"
+      # minWidth = 120,
+      ),
+    columns = list(
+      playerDeck   = colDef(name = "Player",minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black") ),
+      opponentDeck = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black")),
+      muWin    = colDef(name = "#Win" ), # , style = list( fontSize = "13px")
+      muGames  = colDef(name = "#Games",defaultSortOrder = "desc"),
+      muWR  = colDef(
+        name = "Win Rate",
+        # defaultSortOrder = "desc",
+        cell = function(value) {
+          label <- paste0(round(value * 100,1), "%")
+          bar_chart_pos_neg(label, value)
+          },
+        align = "center",
+        minWidth = 200
+        ),
+      playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
+      factions = colDef(name = "Regions"),
+      CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
+      LCI       = colDef(show=F), # lower
+      UCI       = colDef(show=F), # lower
+      direction = colDef(show=F),
+      okCI      = colDef(show=F)
+      )
     )
 ```
 
@@ -258,9 +239,9 @@ reactable(.,
 ### Number of Games (min 10 games for each MU)
 
 ```{r value-nGames}
-nGames = MUtbl %>% 
-  filter( muGames > nfilter ) %>%
-  summarise(n = sum(muGames)) %>%
+nGames = MUtbl |> 
+  filter( muGames > nfilter ) |>
+  summarise(n = sum(muGames)) |>
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
@@ -284,26 +265,26 @@ flexdashboard::valueBox(Sys.Date(),
 mu <- 20
 
 TopCC <- MUtbl |>
-  group_by(player) |>
+  group_by(playerDeck) |>
   summarise(nGames = sum(muGames)) |> 
   arrange(desc(nGames)) |>
   slice_head(n = mu) |> 
-  select(player) |>
+  select(playerDeck) |>
   pull() # |> sort()
 
 
 WRTopCC <- tibble::tibble( 
-  player = rep(TopCC,each=mu),
-  opponent = rep(TopCC,mu)
-  ) %>%
-  left_join(MUtbl, by = c("player","opponent"))
+  playerDeck = rep(TopCC,each=mu),
+  opponentDeck = rep(TopCC,mu)
+  ) |>
+  left_join(MUtbl, by = c("playerDeck","opponentDeck"))
 ```
 
 <!-- The win rates on the grid are among the `r mu` most played champion combination. -->
 
 ```{r prepare-flex}
-big_border   = fp_border(color="darkgray", width = 2)
-small_border = fp_border(color="gray", width = 1)
+big_border   = officer::fp_border(color="darkgray", width = 2)
+small_border = officer::fp_border(color="gray", width = 1)
 
 dummy_fun <- function(x){
   ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
@@ -315,7 +296,7 @@ grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
 
 colnames(grid) <- TopCC
-colourer <- col_numeric(
+colourer <- scales::col_numeric(
   palette = c("#D73027", # red
           # "#f9ccac", # red/orange
           "white",
@@ -328,35 +309,35 @@ funs <- setNames(rep(list(dummy_fun), mu), TopCC)
 ```
 
 ```{r create-flex}
-ft <- grid %>% 
-  as_tibble() %>%
-  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) %>%
-  add_column(.,TopCC,.before = TopCC[1]) %>%
-  rename("MatchUps"="TopCC") %>%
-  flextable::flextable(.) %>% 
-  theme_vanilla( ) %>%
-  # theme_booktabs(bold_header = TRUE) %>% 
-  flextable::align(.,align = "center", part = "all") %>%
-  flextable::bg(.,
+ft <- grid |> 
+  as_tibble() |>
+  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
+  add_column(TopCC,.before = TopCC[1]) |>
+  rename("MatchUps"="TopCC") |>
+  flextable::flextable( ) |> 
+  flextable::theme_vanilla( ) |>
+  # theme_booktabs(bold_header = TRUE) |> 
+  flextable::align(align = "center", part = "all") |>
+  flextable::bg(
     bg = colourer,
     j = ~ . -MatchUps,
-    part = "body") %>% 
-  border_remove(x = .) %>%
-  border_outer(., part="all", border = big_border ) %>%
-  border_inner_h(., part="all", border = small_border ) %>%
-  border_inner_v(., part="all", border = small_border ) %>%
-  set_formatter(values = funs) %>%
-  fontsize(., size = 8, part = "header") %>%
-  fontsize(., j=1, size = 8) %>%
-  bg(., part = "header", bg = "white"  ) %>%
-  bg(., j = 1, bg = "white"  ) %>%
-  autofit() 
-  # bold(., j=1, bold = TRUE) %>%
-  # width(., width = 1.5)
+    part = "body") |>
+  {\(x) flextable::border_remove(x = x)}() |>
+  flextable::border_outer(part="all", border = big_border ) |>
+  flextable::border_inner_h(part="all", border = small_border ) |>
+  flextable::border_inner_v(part="all", border = small_border ) |>
+  flextable::set_formatter(values = funs) |>
+  flextable::fontsize(size = 8, part = "header") |>
+  flextable::fontsize(j=1, size = 8) |>
+  flextable::bg(part = "header", bg = "white"  ) |>
+  flextable::bg(j = 1, bg = "white"  ) |>
+  flextable::autofit()
+
+# ft
 ```
 
 ```{r print-flex, fig.width=12, fig.height=8}
-save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
+flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ft
 ```
 
@@ -377,31 +358,31 @@ ft
 ### Match Ups Data
 
 ```{r}
-MUtbl %>%
-  filter( muGames > 10 ) %>%
-  select(player,opponent,muWin,muGames,muWR) %>%
-  download_this(.,
-              button_label = "Download MU data as .csv",
-              output_name = "mutable",
-              button_type = "success",
-              has_icon = TRUE,
-              icon = "fa fa-save"
-              )
+MUtbl |>
+  filter( muGames > 10 ) |>
+  select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
+  downloadthis::download_this(
+    button_label = "Download MU data as .csv",
+    output_name = "mutable",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+    )
 
-MUtbl %>%
-  filter( muGames > 10 ) %>%
-  select(player,opponent,muWin,muGames,muWR) |>
+MUtbl |>
+  filter( muGames > 10 ) |>
+  select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   jsonlite::write_json("MU.json")
 ```
 
 <!-- ### Match Ups Data (2.12/2.13) -->
 
 <!-- ```{r} -->
-<!-- # MUtbl %>% -->
-<!-- #   filter( muGames > 10 ) %>% -->
+<!-- # MUtbl |> -->
+<!-- #   filter( muGames > 10 ) |> -->
 <!-- #   fwrite( "data/mutbl_patch_2_12to13.csv" ) -->
-<!-- fread("data/mutbl_patch_2_12to13.csv") %>% -->
-<!--   select(player,opponent,muWin,muGames,muWR) %>% -->
+<!-- fread("data/mutbl_patch_2_12to13.csv") |> -->
+<!--   select(playerDeck,opponentDeck,muWin,muGames,muWR) |> -->
 <!--   download_this(., -->
 <!--               button_label = "Download MU data (2.12/2.13) as .csv", -->
 <!--               output_name = "mutable", -->
@@ -414,7 +395,7 @@ MUtbl %>%
 ### Match Ups Grid
 
 ```{r}
-download_file(
+downloadthis::download_file(
   path = file.path("images/mugrid.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download MU grid as .png",
@@ -447,9 +428,9 @@ download_file(
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
--   **Player's Deck** - deck's archetype of the player
+-   **Player's Deck** - deck's archetype of the playerDeck
 
--   **Opponent's Deck** - deck's archetype of the opponent
+-   **Opponent's Deck** - deck's archetype of the opponentDeck
 
 -   **\#Win** - min number of wins for a match-up
 
@@ -471,14 +452,14 @@ The format of the table is the usual way I display the match-ups data but I also
 
 #### General info
 
-When I refer to games it's always refering a single player. So, if I have the information of 1 match it's equivalent to 2 games.
+When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games.
 
 
 ```{r update-Shiny}
 MUtbl |>
-  filter(player %in% TopCC & opponent %in% TopCC ) |>
+  filter(playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle01-MUtbl.csv"))
 
-save_as_image(x = ft, path = "images/mugrid.png") %>% invisible()
+flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ```
 

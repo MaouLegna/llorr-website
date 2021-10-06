@@ -29,20 +29,19 @@ knitr::opts_chunk$set(
                    digits.secs=6),
   dev.args = list(bg = 'transparent'), # make graphics with transparent background
   fig.align = 'center',
-  fig.width=9,
-  fig.height=6,
+  fig.width=12,
+  fig.height=8,
   engine.path = list(
     python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
   ),
   #'distill options
-  layout="l-page",
+  layout="l-body-outset",
   preview=FALSE
 )
 
 #' R Option
+options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-
-# require(Hmisc)    # provides knitrSet and other functions
 xaringanExtra::use_panelset()
 ```
 

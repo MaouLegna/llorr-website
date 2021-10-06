@@ -23,8 +23,6 @@ params:
 ---
 
 ```{r setup, include=FALSE}
-options(scipen = 999)
-
 knitr::opts_chunk$set(
   echo = FALSE,
   eval = TRUE,
@@ -36,8 +34,8 @@ knitr::opts_chunk$set(
                    digits.secs=6),
   dev.args = list(bg = 'transparent'), # make graphics with transparent background
   fig.align = 'center',
-  fig.width=9,
-  fig.height=6,
+  fig.width=12,
+  fig.height=8,
   engine.path = list(
     python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
   ),
@@ -47,9 +45,8 @@ knitr::opts_chunk$set(
 )
 
 #' R Option
+options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-
-# require(Hmisc)    # provides knitrSet and other functions
 xaringanExtra::use_panelset()
 ```
 
@@ -845,6 +842,7 @@ WR.DT.Reg |>
     highlight = TRUE,
     striped = TRUE,
     # filterable = TRUE,
+    defaultSorted = list(muGames = "desc"),
     defaultColDef = colDef(
       # header = function(value) str_to_title(value),
       #  cell = function(value) format(value, nsmall = 1),
@@ -854,7 +852,7 @@ WR.DT.Reg |>
       ),
     columns = list(
       playerDeck = colDef(name = "Champions",minWidth = 250),
-      server = colDef(name = "Server", aggregate = "unique",minWidth = 200),
+      server = colDef(name = "Server", aggregate = "unique",minWidth = 120),
       nWin   = colDef(name = "#Win", aggregate = "sum"),
       nGames = colDef(name = "#Games", aggregate = "sum"),
       WR     = colDef(name = "WinRate", aggregate = JS(
