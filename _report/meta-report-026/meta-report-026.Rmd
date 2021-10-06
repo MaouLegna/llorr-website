@@ -6,7 +6,7 @@ base_url: https://www.llorr-stats.com
 preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC133T1-full.png"
 author:
   - name: Valentino (Legna) Vazzoler
-date: 10-05-2021
+date: 10-06-2021
 output:
  distill::distill_article:
     toc: true
@@ -842,7 +842,7 @@ WR.DT.Reg |>
     highlight = TRUE,
     striped = TRUE,
     # filterable = TRUE,
-    defaultSorted = list(muGames = "desc"),
+    defaultSorted = list(nGames = "desc"),
     defaultColDef = colDef(
       # header = function(value) str_to_title(value),
       #  cell = function(value) format(value, nsmall = 1),
