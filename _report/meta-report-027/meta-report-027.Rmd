@@ -1,9 +1,22 @@
 ---
-title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°27)"
+params:
+  ind: "027"
+  patch: "Patch 2.17 - Week 1"
+  title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°27)"
+  description: "Patch next week. So that Sion won't dominate anymore... So that Sion won't dominate anymore, right?"
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116.png"
+  prev:  "2021-09-29 21:00:00" #UTC tz / 'current' previous week start
+  start: "2021-10-06 21:00:00" #UTC tz / 'current' week start
+  end:   "2021-10-13 21:00:00" #UTC tz / 'current' week end
+  skip:  3000000  # ~ Patch 2.16
+
+title: | 
+  `r params$title`
 description: |
-  Patch 2.17 - Week 1 - Patch next week. So that Sion won't dominate anymore... So that Sion won't dominate anymore, right?
+  `r params$patch` - `r params$description`
 base_url: https://www.llorr-stats.com
-preview: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116.png"
+preview: |
+  `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
 date: 10-06-2021
@@ -15,11 +28,6 @@ output:
     self_contained: false
 citation: false
 draft: TRUE
-params:
-  prev:  "2021-09-29 21:00:00" #UTC tz / 'current' previous week start
-  start: "2021-10-05 21:00:00" #UTC tz / 'current' week start
-  end:   "2021-10-13 21:00:00" #UTC tz / 'current' week end
-  skip:  3000000  # ~ Patch 2.16
 ---
 
 ```{r setup, include=FALSE}
@@ -214,11 +222,7 @@ nGames_tbl <- tbl_merge(
   bold_labels() |>
   as_gt() |>
   tab_header(
-    title = "by the Numbers",
-    subtitle = "Patch 2.16 second week / Master playerDecks"
-    #'**************************************************************************** *
-    # Update che patch-week!
-    #'**************************************************************************** *
+    title = glue::glue("{params$patch} - by the Numbers")
   ) |>
   tab_footnote(
     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
@@ -303,7 +307,8 @@ RegionByRegion <- Region.Freq |>
     y = "Play Rate",
     title = "Regions Play Rate",
     subtitle = "number of times a region is included in a deck",
-    caption = glue::glue("Ranked games from {params$start} UTC to {params$end} UTC.
+    caption = glue::glue("{params$patch}
+                         Ranked games from {params$start} UTC to {params$end} UTC.
                          Metadata of games collected with RiotGames API")
     ) +
   annotate(
@@ -385,7 +390,12 @@ Region.Freq.tbl <- Region.Freq |>
     table.background.color = "transparent",
     table.font.color = "black",
     table.font.color.light = "black"
-   )
+   ) |>
+  tab_source_note(
+    source_note = glue::glue("{params$patch}
+                             Ranked games from {params$start} UTC to {params$end} UTC.
+                             Metadata of games collected with RiotGames API")
+    )
 
 Region.Freq.tbl
 
@@ -474,7 +484,8 @@ RegionByCards <- Regions.Freq.byCards |>
     y = "Play Rate",
     title = "Regions Play Rate",
     subtitle = "number of times a card within a region is included in a deck",
-    caption = glue::glue("Ranked games from {params$start} UTC to {params$end} UTC.
+    caption = glue::glue("{params$patch}
+                         Ranked games from {params$start} UTC to {params$end} UTC.
                          Metadata of games collected with RiotGames API")
   ) +
   annotate(
@@ -555,6 +566,11 @@ Region.Freq.byCards.tbl <- Regions.Freq.byCards[,c("region","freq")] |>
     asia     = md("**Asia**"),
     europe   = md("**Europe**")
   ) |>
+  tab_source_note(
+    source_note = glue::glue("{params$patch}
+                             Ranked games from {params$start} UTC to {params$end} UTC.
+                             Metadata of games collected with RiotGames API")
+    ) |>
    tab_options(
     table.background.color = "transparent",
     table.font.color = "black",
@@ -632,8 +648,8 @@ ChampionCombo.plot <- CC.table |>
        y = "Play Rate",
        title = "Champions Combination Play Rates",
        subtitle = glue::glue("Play-Rates of the top {nrowPlot} most played combination of champions/regions"),
-       caption = glue::glue("Ranked games from {params$start} UTC to {params$end} UTC
-                            
+       caption = glue::glue("{params$patch}
+                            Ranked games from {params$start} UTC to {params$end} UTC.
                             Metadata of games collected with RiotGames API")
        ) +
   theme( 
@@ -762,9 +778,11 @@ meta_evo <- ggplot(
     values = c(rcartocolor::carto_pal(n = 10, name = "Vivid")[1:10-1], "grey50")
   ) +
   labs(x = "Date",
-       y = "Percent",
-       title = "Evolution of Play Rate over time"
-       # caption = glue::glue("Data from Riot API • Ranked games from Master playerDecks • ... ")
+       y = "PlayRate",
+       title = "Evolution of Play Rate over time",
+       caption = glue::glue("{params$patch}
+                            Ranked games from {params$start} UTC to {params$end} UTC.
+                            Metadata of games collected with RiotGames API")
   ) +
   theme_539() +
   theme( legend.position = "none",
@@ -772,6 +790,8 @@ meta_evo <- ggplot(
          )
 
 meta_evo
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png"))
 ```
 
 ## Win Rates
@@ -1090,10 +1110,10 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 
 ::::: {.panelset}
 ::: {.panel}
-## Sivir / Tristana (BC/SH)
+## Sivir/Tristana (BC/SH)
 
 ```{r deckweek, layout="l-page"}
-deck.of.week <- "Sivir / Tristana (BC/SH)"
+deck.of.week <- "Sivir/Tristana (BC/SH)"
 
 SubDeck_deck_code <- LoR.Melt.Matches.RMD |>
   filter(playerDeck == deck.of.week ) |>
@@ -1226,12 +1246,12 @@ This method will be improved in the next weeks, maybe adding the ban rate which 
 
 [^4]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
 
-```{r data-aggregation}
-DT.Aggreation <- WR.DT |>
-  filter( nGames > 100 ) |>
+```{r lmi, fig.width=12, fig.height=8, layout="l-page"}
+LMI.DT <- WR.DT |>
+  filter( nGames > 200 ) |>
   # filter( playrate > 0.01 ) |>
-  mutate( freq_ind    = scale_quantile(playrate) ) |>
-  mutate( wr_ind      = scale_quantile(WR) ) |>
+  mutate( PR_ind    = scale_quantile(playrate) ) |>
+  mutate( WR_ind    = scale_quantile(WR) ) |>
   rowwise() |>
   mutate( LMI = harm.mean(c_across(ends_with("ind")) ),
           tooltip = glue("Deck {playerDeck}
@@ -1241,7 +1261,6 @@ DT.Aggreation <- WR.DT |>
   ungroup() |> 
   mutate(tier = case_when( 
      LMI >= 0.975 ~ "Tier0",
-     # LMI >= 0.9 ~ "Tier1",
      0.85 <= LMI & LMI < 0.975 ~ "Tier1",
      0.60 <= LMI & LMI < 0.85 ~ "Tier2",
      LMI < 0.60 ~ "Tier3 or lower"
@@ -1249,11 +1268,64 @@ DT.Aggreation <- WR.DT |>
   )
 ```
 
-```{r ggplotly-LMI,echo=FALSE, fig.width=12, fig.height=8, layout="l-body-outset"}
-fig <- DT.Aggreation |>
+
+```{r lmi-png, fig.height=8, fig.width=12, include=FALSE, layout="l-page"}
+LMI.DT |>
+  slice_max(LMI,n = 15,with_ties = F) |>
+  mutate( tooltip = glue("{playerDeck}
+                         LMI {round(LMI*100,1)}
+                         WinRate {scales::percent(WR,accuracy = 0.1)}
+                         PlayRate {scales::percent(playrate,accuracy = 0.1)}
+                         #Games {nGames}") ) |>
+  mutate_if(is.numeric, funs(round(., 4)) ) |>
+  mutate( LMI = LMI*100 ) |>
+  ungroup() |>
+  ggplot( aes(x=WR_ind, y=PR_ind, size = LMI, color = tier, text=tooltip)) +
+  geom_point(alpha=0.6) +
+  scale_size(range = c(1, 15), name="LMI") +
+  theme_539() +
+  geom_label_repel( 
+    aes(label=tooltip),
+    family = "Roboto",
+    color = "grey40",
+    fontface = "bold",
+    size = 3,
+    fill = NA,
+    vjust = "outward",
+    label.padding = unit(0.8, "mm"),
+    label.size = unit(0.25, "mm"),
+    label.r = unit(0.5, "mm"),
+    min.segment.length = 0,
+    segment.linetype = 2,
+    segment.color = 'grey50'
+  ) + 
+  guides(colour = guide_legend(override.aes = list(size=10)),
+         size = FALSE ) +
+  theme( legend.position = "top",
+         legend.background = element_blank(),
+         legend.title = element_text(size=9, lineheight = 1.3),
+         legend.justification = "right"
+         ) +
+  labs(
+    title = "Top15 Deck Peformances",
+    subtitle = "HighTop15 Deck Peformances",
+    x = "Win Index",
+    y = "Freq Index",
+    caption = element_text(glue::glue("{params$patch}
+                                      Ranked games from {params$start} UTC to {params$end} UTC.
+                                      Metadata of games collected with RiotGames API
+                                      LMI computed with the basic version which use PlayRate and WinRate. Additional Decks performances in the metareport"))
+  )
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-LMI.png"))
+```
+
+
+```{r lmi-plotly, fig.width=12, fig.height=8, layout="l-page"}
+fig <- LMI.DT |>
   slice_max(LMI,n = 50,with_ties = F) %>%
   mutate_if(is.numeric, funs(round(., 4)) ) |>
-  ggplot( aes(x=wr_ind, y=freq_ind, size = LMI^2, color = tier, text=tooltip)) +
+  ggplot( aes(x=WR_ind, y=PR_ind, size = LMI^2, color = tier, text=tooltip)) +
   geom_point(alpha=0.6) +
   scale_size(range = c(1, 15), name="LMI") + 
   theme_minimal() +
@@ -1267,15 +1339,12 @@ fig <- DT.Aggreation |>
 ggplotly(fig, tooltip="text")
 ```
 
-
 # Win Marathons Leaders
 
 `r kableExtra::text_spec("New:", color = "red")` Top3 Players (or more in case of ties) from each server that had the highest amount of consecutive wins with the same archetype. The provided deckcode is the one played in the last win found.
 
 ```{r win-marathon, layout="l-page"}
-require(reactablefmtr)
-
-setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter := rowid(rleid(game_outcome)), by=c("playerID","playerDeck") ][ game_outcome == "win" ] |>
+gtWinning <- setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter := rowid(rleid(game_outcome)), by=c("playerID","playerDeck") ][ game_outcome == "win" ] |>
   # filter( server=="asia" & playerID == "Ryo 6192" & playerDeck ==	"Senna / Veigar (BC/SI)" )
   group_by(playerID) |>
   slice_max(counter,n=1) |>
@@ -1355,7 +1424,11 @@ setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter := rowid(rleid
         "playerDeck","link"
         )
       )
-    )
+    ) |>
+  gtsave(
+    glue::glue("./images/meta-report/{params$ind}-topWin.png")
+    # path = tempdir()
+  )
 ```
 
 # Cards Presence
@@ -1468,13 +1541,13 @@ missingTable
 ```{r twitter-meta, echo = FALSE}
 metathis::meta() |>
   metathis::meta_description(
-    "Patch 2.17 - Week 1 - Patch next week. So that Sion won't dominate anymore... So that Sion won't dominate anymore, right?"
+    glue::glue("{params$patch} - {params$description}")
   ) |> 
   metathis::meta_viewport() |> 
   metathis::meta_social(
-    title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°27)",
+    title = params$title,
     url = "https://www.llorr-stats.com/",
-    image = "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116.png",
+    image = params$cardurl,
     image_alt = "BandleMayor",
     og_type = "website",
     og_author = "Legna",
