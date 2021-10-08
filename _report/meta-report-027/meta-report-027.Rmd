@@ -276,7 +276,7 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
 
 ### Plot {.panel-name}
 
-```{r plot-Region, fig.width=12, fig.height=8}
+```{r plot-Region}
 # remotes::install_github("olihawkins/pilot")
 # library(pilot)
 
@@ -456,7 +456,7 @@ Card.tableByRegPlot <- LoR.Melt.Matches.RMD |>
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plotRegion_byCards, fig.width=12, fig.height=8}
+```{r plotRegion_byCards}
 sxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
 dxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
 sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
@@ -609,7 +609,7 @@ CC.table <- LoR.Melt.Matches.RMD |>
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plot-Champion-PR, fig.width=12, fig.height=8}
+```{r plot-Champion-PR}
 nrowPlot <- 20
 
 ChampionCombo.plot <- CC.table |>
@@ -721,7 +721,7 @@ fct_values <- LoR.Melt.Matches.RMD |>
  pull(top5) |> levels()
 ```
 
-```{r plot-date-by-date, fig.width=12, fig.height=8}
+```{r plot-date-by-date}
 meta_evo <- ggplot(
    # The ggplot object has associated the data for the highlighted countries
   data = Champion.deck.daily |> filter(champions %in% fct_values[-1]),
@@ -1002,7 +1002,7 @@ colourer <- col_numeric(
 funs <- setNames(rep(list(dummy_fun), mu), TopCC)
 ```
 
-```{r print-flex, fig.width=12, fig.height=8}
+```{r print-flex}
 ft <- grid |> 
   as_tibble() |>
   # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
@@ -1246,7 +1246,7 @@ This method will be improved in the next weeks, maybe adding the ban rate which 
 
 [^4]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
 
-```{r lmi, fig.width=12, fig.height=8, layout="l-page"}
+```{r lmi, layout="l-page"}
 LMI.DT <- WR.DT |>
   filter( nGames > 200 ) |>
   # filter( playrate > 0.01 ) |>
@@ -1321,7 +1321,7 @@ ggsave(glue::glue("./images/meta-report/{params$ind}-LMI.png"))
 ```
 
 
-```{r lmi-plotly, fig.width=12, fig.height=8, layout="l-page"}
+```{r lmi-plotly, layout="l-page"}
 fig <- LMI.DT |>
   slice_max(LMI,n = 50,with_ties = F) %>%
   mutate_if(is.numeric, funs(round(., 4)) ) |>
