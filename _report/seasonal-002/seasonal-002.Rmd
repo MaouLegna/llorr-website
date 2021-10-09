@@ -4,7 +4,7 @@ params:
   # patch: "Patch 2.17 - Week 1"
   title: "THE SEASONAL REPORT IS VAST (n°2)"
   description: "Seasonal Tournament - Beyond the Bandlewood - Open Rounds"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116.png"
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116-full.png"
   seasonalDate: "2021-10-09"
   # prev:  "2021-10-02 21:00:00" #UTC tz / 'current' previous week start
   # start: "2021-10-09 21:00:00" #UTC tz / 'current' week start
@@ -195,14 +195,19 @@ LineUp.DT <- LoR.Melt.Seasonal |>
   ungroup()
 
 LineUp.DT <- LineUp.DT |>
-  cbind(map_df(.x = LineUp.DT$listCode, .f = ~assignLineUp(.x) )) |>
+  group_by( playerID ) |>
+  summarise( map_df(.x = listCode, .f = ~assignLineUp(.x) )) |>
+  ungroup() |>
+  right_join(LineUp.DT, by = "playerID") |>
+  #' quality filter
+  filter( !is.na(deck_1) ) |>
   rename("code_1"="deck_1","code_2"="deck_2","code_3"="deck_3" ) |>
   left_join( LoR.Deck |>select(deck_code,deck_1=archetype),by=c("code_1"="deck_code") ) |>
   left_join( LoR.Deck |>select(deck_code,deck_2=archetype),by=c("code_2"="deck_code") ) |>
   left_join( LoR.Deck |>select(deck_code,deck_3=archetype),by=c("code_3"="deck_code") ) |>
-  filter( !is.na(playergameName) ) |>
-  dplyr::mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  ) |>
-  ungroup()
+  #' quality filter
+  filter( !is.na(deck_1) ) |>
+  mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  )
 ```
 
 ```{r ompute-MU-ladder}
@@ -343,15 +348,21 @@ gtSeasonal <- tibble( server = c("asia","europe","americas"),
   tab_source_note(
     source_note = glue::glue("Source: Source: Metadata of games collected with RiotGames API")
     ) |>
-  gtExtras::gt_theme_538() 
+  gtExtras::gt_theme_538() |>
+  tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
 
+gtsave(gtSeasonal,glue::glue("./images/seasonal/{params$ind}-coverage-player.png") ) |> invisible()
+ 
 gtSeasonal |>
  tab_options(
     table.background.color = "transparent",
     table.font.color = "black",
     table.font.color.light = "black"
-   ) |>
-  gtsave( glue::glue("./images/seasonal/{params$ind}-coverage-player.png") )
+   )
 
 # gtSeasonal
 ```
@@ -420,14 +431,14 @@ Game.Result.EU <- LoR.Melt.Seasonal |>
     # JST = UTC - 9hrs
     timeBlock > with_tz(force_tz(timeBlock.1.start,"CET"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"CET"),"UTC") ~ 1, # 11:55
     timeBlock > (with_tz(force_tz(timeBlock.2.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.2.end,"CET"),"UTC")+minutes(90)) ~ 2, # 13:00
-    timeBlock > (with_tz(force_tz(timeBlock.3.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.3.end,"CET"),"UTC")+minutes(90)) ~ 3, # 14:05
-    timeBlock > (with_tz(force_tz(timeBlock.4.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.4.end,"CET"),"UTC")+minutes(90)) ~ 4, # 15:10
-    timeBlock > (with_tz(force_tz(timeBlock.5.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.5.end,"CET"),"UTC")+minutes(90)) ~ 5, # 16:15
+    timeBlock > (with_tz(force_tz(timeBlock.3.start,"CET"),"UTC")+minutes(105)) & timeBlock <= (with_tz(force_tz(timeBlock.3.end,"CET"),"UTC")+minutes(105)) ~ 3, # 14:05
+    timeBlock > (with_tz(force_tz(timeBlock.4.start,"CET"),"UTC")+minutes(105)) & timeBlock <= (with_tz(force_tz(timeBlock.4.end,"CET"),"UTC")+minutes(105)) ~ 4, # 15:10
+    timeBlock > (with_tz(force_tz(timeBlock.5.start,"CET"),"UTC")+minutes(105)) & timeBlock <= (with_tz(force_tz(timeBlock.5.end,"CET"),"UTC")+minutes(105)) ~ 5, # 16:15
     
-    timeBlock > (with_tz(force_tz(timeBlock.6.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.6.end,"CET"),"UTC")+minutes(90)) ~ 6, # 17:45
-    timeBlock > (with_tz(force_tz(timeBlock.7.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.7.end,"CET"),"UTC")+minutes(90)) ~ 7, # 18:50
-    timeBlock > (with_tz(force_tz(timeBlock.8.start,"CET"),"UTC")+minutes(90)) & timeBlock <= (with_tz(force_tz(timeBlock.8.end,"CET"),"UTC")+minutes(90)) ~ 8, # 19:55
-    timeBlock > (with_tz(force_tz(timeBlock.9.start,"CET"),"UTC")+minutes(90)) ~ 9, # 21:00
+    timeBlock > (with_tz(force_tz(timeBlock.6.start,"CET"),"UTC")+minutes(105)) & timeBlock <= (with_tz(force_tz(timeBlock.6.end,"CET"),"UTC")+minutes(105)) ~ 6, # 17:45
+    timeBlock > (with_tz(force_tz(timeBlock.7.start,"CET"),"UTC")+minutes(105)) & timeBlock <= (with_tz(force_tz(timeBlock.7.end,"CET"),"UTC")+minutes(105)) ~ 7, # 18:50
+    timeBlock > (with_tz(force_tz(timeBlock.8.start,"CET"),"UTC")+minutes(105)) & timeBlock <= (with_tz(force_tz(timeBlock.8.end,"CET"),"UTC")+minutes(105)) ~ 8, # 19:55
+    timeBlock > (with_tz(force_tz(timeBlock.9.start,"CET"),"UTC")+minutes(105)) ~ 9, # 21:00
     )
   ) |>
   # number of won games in the match
@@ -604,28 +615,36 @@ LMI.DT <- WR.DT |>
 
 The following data is related to the the number of games missing to recreate a match.So when I could only collect either a win or a loss or both a win and a loss but not the remaining game. **It is not** the total number of missing games as it doesn't account for the cases where I lack all games but that value can't be known as it's impossible to know whenever the round was played or not.
 
-Surprisingly enough it seems I recovered almost all information for individual matches. So, the missing cases are matches were I lack all games.
+During the partial results is the graph is lacking I recovered all games I could up until that moment.
 
 ```{r plot-missing-match-games, fig.cap="Uncomplete Matches Distribution", fig.subcap="Absolute frequencies"}
-# Game.Result.all |>
-#   filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |> # | is.na(result)
-#   # group_by(server) |>
-#   tabyl(round,server) |>
-#   pivot_longer(cols = -round,
-#                names_to = "server"
-#                ) |>
-#   mutate(round = factor(round)) |>
-#   mutate( server = str_to_title(server) ) |>
-#   # rename_all(~str_to_title(.)) |>
-#   ggplot(aes(round,value,fill=server)) +
-#     geom_bar(position="dodge",stat = "identity") +
-#     labs(x = "Round",
-#          y = "#Games",
-#          title = "Incomplete Matched Distribution by Round",
-#          subtitle = "number of games missing for the complete information of a match by server",
-#          caption = element_text(glue::glue("{params$description}
-#                                            The number refer to the number of games missing to recreate a match so when I could only collect either a win or a loss or both a win and a loss but not the remaining game") )) +
-#   theme_539()
+if ( 
+  Game.Result.all |>
+    filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |>
+  count() > 0
+  ) {
+
+Game.Result.all |>
+  filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |> # | is.na(result)
+  # group_by(server) |>
+  tabyl(round,server) |>
+  pivot_longer(cols = -round,
+               names_to = "server"
+               ) |>
+  mutate(round = factor(round)) |>
+  mutate( server = str_to_title(server) ) |>
+  # rename_all(~str_to_title(.)) |>
+  ggplot(aes(round,value,fill=server)) +
+    geom_bar(position="dodge",stat = "identity") +
+    labs(x = "Round",
+         y = "#Games",
+         title = "Incomplete Matched Distribution by Round",
+         subtitle = "number of games missing for the complete information of a match by server",
+         caption = element_text(glue::glue("{params$description}
+                                           The number refer to the number of games missing to recreate a match so when I could only collect either a win or a loss or both a win and a loss but not the remaining game") )) +
+  theme_539()
+  
+}
 ```
 :::
 
@@ -633,18 +652,6 @@ Surprisingly enough it seems I recovered almost all information for individual m
 ### Missing Games {.panel-name}
 
 ```{r}
-# Game.Result.all |>
-#   filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |>
-#   select(round,server) |>
-#   rename_all(~str_to_title(.)) |>
-#   gtsummary::tbl_summary(by = "Server") |>
-#   as_gt() |>
-#   tab_options(
-#     table.background.color = "transparent",
-#     table.font.color = "black",
-#     table.font.color.light = "black"
-#    )
-
 gtMatch <- Game.Result.all |>
   filter( !is.na(opponentID) ) |>
   count(round,server) |>
@@ -653,7 +660,7 @@ gtMatch <- Game.Result.all |>
   cols_label(
     round   = md("**Round**"),
     # server   = md("**Server**"),
-    n = md("**Games**")
+    n = md("**Matches**")
   ) |>
   tab_header(
     title = "Seasonal Open Rounds - by the Numbers",
@@ -668,13 +675,14 @@ gtMatch <- Game.Result.all |>
     columns = everything()
   )
 
+gtsave(gtMatch, glue::glue("./images/seasonal/{params$ind}-coverage-match.png") ) |> invisible()
+
 gtMatch |>
  tab_options(
     table.background.color = "transparent",
     table.font.color = "black",
     table.font.color.light = "black"
-   ) |>
-  gtsave( glue::glue("./images/seasonal/{params$ind}-coverage-match.png") )
+   )
 
 # gtMatch
 ```
@@ -690,7 +698,7 @@ As this is the Seasonal Tournament let's start with the decks/archetype informat
 
 This is also the moment of the meta where the classification *Archetype = Champion+Region* shows its biggest limitation as there are an increase in *tech champions* (usually in single copy)
 
-::: {.l-body-outset}
+::: {.l-page}
 ::::: {.panelset}
 ::: {.panel}
 ### Single Decks Stats {.panel-name}
@@ -902,9 +910,9 @@ LMI.DT |>
     caption = element_text(glue::glue("{params$description}
                                       LMI computed with the improved version which included banrate and ladder win rates
                                       Source: Source: Metadata of games collected with RiotGames API"))
-  ) + 
-  xlim( 0,1 ) +
-  ylim( 0,1 )
+  )
+  # xlim( 0,1 ) +
+  # ylim( 0,1 )
 
 ggsave(glue::glue("./images/seasonal/{params$ind}-LMI.png"))
 ```
@@ -966,7 +974,7 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region") |>
     )
 ```
 
-::: l-body-outset
+::: l-page
 ::::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
@@ -1157,55 +1165,58 @@ top32tbl.CC <- top32tbl |>
 ::: {.panel}
 ### ASIA {.panel-name}
 
-```{r create-top32-ASIA, fig.height=12, fig.width=16}
+```{r create-top32-ASIA, fig.height=8, fig.width=12}
 #' flextable for the champions which were used a single time
-# ft.top32tbl.CC.ASIA <- top32tbl.CC |>
-#   filter(server == "asia")  |>
-#   filter(n %in% 1:2) |>
-#   select(-server) |>
-#   rename_all(~c("Champion","N")) |>
-#   flextable::flextable() |>
-#   flextable::as_raster()
-# 
-# #' base plot
-# ggtop32.ASIA <- top32tbl.CC  |>
-#   filter(server=="asia") |>
-#   filter(n > 2) |>
-#   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |>
-#   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
-#   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=T) )) |>
-#   left_join( data_regions, by = c("regionRef") ) |>
-#   ggplot(aes(reorder(name, n),n,fill=regionRef)) +
-#   geom_bar(position="dodge",stat = "identity", color = "black") +
-#   scale_y_continuous(breaks = seq(0,12,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="asia",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-#   ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
-#   coord_flip() +
-#   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
-#   theme_539() +
-#   labs( x = "Champion",
-#         y = "#Decks",
-#         title = "Champions' Play Rate - ASIA",
-#         subtitle = "Champions presence based by the number of decks that included them / playrate",
-#         caption = element_text(
-#           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='asia',N]}
-#                      The top players are selected from those with the score scores in Matchss wins.
-#                      The list doesn't include all top32 so obtained without Riot official data
-#                      Source: Source: Metadata of games collected with RiotGames API" )
-#           )) +
-#   theme( 
-#     legend.position = "none",
-#     axis.text = element_text(face = "bold", color = "grey50"),
-#     panel.grid.major.y = element_blank()
-#   ) 
-# 
-# # ggtop32.ASIA
-# 
-# #' unite the plot and table
-# cowplot::plot_grid(
-#   ggtop32.ASIA, 
-#   ggplot() + 
-#     theme_539() + 
-#     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
+ft.top32tbl.CC.ASIA <- top32tbl.CC |>
+  filter(server == "asia")  |>
+  filter(n %in% 1:2) |>
+  select(-server) |>
+  rename_all(~c("Champion","N")) |>
+  flextable::flextable() |>
+  flextable::as_raster()
+
+#' base plot
+ggtop32.ASIA <- top32tbl.CC  |>
+  filter(server=="asia") |>
+  filter(n > 2) |>
+  left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |>
+  mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
+  mutate(img = map_chr(.x = img, ~card_url_path(.x,full=T) )) |>
+  left_join( data_regions, by = c("regionRef") ) |>
+  ggplot(aes(reorder(name, n),n,fill=regionRef)) +
+  geom_bar(position="dodge",stat = "identity", color = "black") +
+  scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="asia",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
+  coord_flip() +
+  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
+  theme_539() +
+  labs( x = "Champion",
+        y = "#Decks",
+        title = "Champions' Play Rate - ASIA",
+        subtitle = "Champions presence based by the number of decks that included them / playrate",
+        caption = element_text(
+          glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='asia',N]}
+                     The top players are selected from those with the score scores in Matchss wins.
+                     The list doesn't include all top32 so obtained without Riot official data
+                     Source: Source: Metadata of games collected with RiotGames API" )
+          )) +
+  theme(
+    legend.position = "none",
+    axis.text = element_text(face = "bold", color = "grey50"),
+    panel.grid.major.y = element_blank()
+  )
+
+# ggtop32.ASIA
+# ft.top32tbl.CC.ASIA
+
+# ggtop32.ASIA
+
+#' unite the plot and table
+cowplot::plot_grid(
+  ggtop32.ASIA,
+  ggplot() +
+    theme_539() +
+    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
 ```
 :::
 
@@ -1329,9 +1340,11 @@ top32tbl.CC <- top32tbl |>
 ::: {.panel}
 ### Table - All Server & Deckcodes {.panel-name}
 
+Remember that as I can't collect "bye" the true top list may differ buy a lot.
+
 ```{r react-top32}
 react.LU.top32 <- top32tbl |>
-  filter( server == "asia" ) |>
+  # filter( server == "asia" ) |>
   select(gameName,cumMatchWin,LU,contains("deck_"),contains("code_") ) |>
   pivot_longer(
     cols = c(contains("deck_"),contains("code_")),
@@ -1341,13 +1354,15 @@ react.LU.top32 <- top32tbl |>
   select(-index) |>
   reactable(
     theme = reactablefmtr::fivethirtyeight(),
-    groupBy = c("server","gameName"),
+    groupBy = c("server","cumMatchWin","gameName"),
     bordered = TRUE,
     highlight = TRUE,
     searchable = TRUE,
     compact = TRUE, # compact the table
     # fullWidth = FALSE, # don't fill the page
     defaultPageSize = 10,
+    defaultSorted = c("cumMatchWin"),
+    defaultSortOrder = "desc",
     defaultColDef = colDef(
       style = list(fontWeight = 500, color = "black",
                    fontFamily = "Helvetica", fontSize = "12px"),
@@ -1364,7 +1379,7 @@ react.LU.top32 <- top32tbl |>
       #     url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
       #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
       #   } } ,minWidth = 600, style = list(fontSize = "9px") ),
-      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique")
+      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
       ),
     rowStyle = JS("function(rowInfo) {
                   if (rowInfo.level > 0) {
@@ -1526,6 +1541,23 @@ CC.table.S |>
 :::::
 :::
 
+```{r twitter-meta, echo = FALSE}
+metathis::meta() |>
+  metathis::meta_description(
+    glue::glue("{params$description}")
+  ) |> 
+  metathis::meta_viewport() |> 
+  metathis::meta_social(
+    title = params$title,
+    url = "https://www.llorr-stats.com/",
+    image = params$cardurl,
+    image_alt = "BandleMayor",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
 
 # Legal bla bla
 
