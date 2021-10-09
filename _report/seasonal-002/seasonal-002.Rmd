@@ -1372,13 +1372,13 @@ react.LU.top32 <- top32tbl |>
     columns = list(
       LU = colDef( show = F ),
       deck = colDef(name = "Deck",minWidth = 200 ),
-      code = colDef( show = F ),
-      # code = colDef(name = "DeckCode", cell = function(value, index) {
-      #   # Render as a link
-      #   if (!is.na(value) ) {
-      #     url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
-      #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
-      #   } } ,minWidth = 600, style = list(fontSize = "9px") ),
+      # code = colDef( show = F ),
+      code = colDef(name = "DeckCode", cell = function(value, index) {
+        # Render as a link
+        if (!is.na(value) ) {
+          url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
+          htmltools::tags$a(href = url, target = "_blank", as.character(value))
+        } } ,minWidth = 600, style = list(fontSize = "9px") ),
       cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
       ),
     rowStyle = JS("function(rowInfo) {
