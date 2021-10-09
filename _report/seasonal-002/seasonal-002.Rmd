@@ -1132,7 +1132,7 @@ When partial results are being published, it's not limited to the top32 but the 
 top32tbl <- Game.Result.all |>
   select(playerID,cumMatchWin,server) |>
   group_by(server) |>
-  filter( cumMatchWin >= 6 ) |>
+  filter( (server == "asia" & cumMatchWin >= 7) | (server != "asia" & cumMatchWin >= 8) ) |>
   # slice_max(cumMatchWin, n = 3,with_ties = T) |>
   left_join( LoR.Account.RMD[,c("gameName","RiotID")],
              by=c("playerID"="RiotID")
@@ -1180,9 +1180,11 @@ ggtop32.ASIA <- top32tbl.CC  |>
   filter(server=="asia") |>
   filter(n > 2) |>
   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |>
+  
   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=T) )) |>
   left_join( data_regions, by = c("regionRef") ) |>
+  
   ggplot(aes(reorder(name, n),n,fill=regionRef)) +
   geom_bar(position="dodge",stat = "identity", color = "black") +
   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="asia",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
@@ -1225,57 +1227,51 @@ cowplot::plot_grid(
 
 ```{r plot-top32-EU}
 #' flextable for the champions which were used a single time
-# ft.top32tbl.CC.EU <- top32tbl.CC |>
-#   filter(server == "europe")  |>
-#   filter(n == 1) |>
-#   select(-server) |>
-#   rename_all(~c("Champion","N")) |>
-#   flextable::flextable() |>
-#   flextable::as_raster()
-# 
-# #' base plot
-# ggtop32.EU <- top32tbl.CC  |>
-#   filter(server=="europe") |>
-#   filter(n > 1) |>
-#   left_join(.,LoR.Set|>select(name,region),by=c("CC"="name")) |>
-#   mutate(img = map_chr(.x = CC, ~getCardCode(.x) )) |>
-#   mutate(img = map_chr(.x = img, ~card_url_path_full(.x) )) |>
-#   ggplot(aes(reorder(CC, n),n,fill=region)) +
-#   geom_bar(position="dodge",stat = "identity", color = "black") +
-#   scale_y_continuous(sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="europe",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-#   ggimage::geom_image(aes(x = CC, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
-#   coord_flip() +
-#   scale_fill_manual("legend", values = c("Bilgewater" = "#d2894e",
-#                                        "Demacia"    = "#e8debf",
-#                                        "Freljord"   = "#baebf8" ,
-#                                        "Ionia"      = "#e0afbf",
-#                                        "Targon"     = "#a29cee",
-#                                        "Noxus"      = "#ce6e6c",
-#                                        "Piltover & Zaun" = "#f6b983",
-#                                        "Shadow Isles" = "#369b7d",
-#                                        "Shurima"    = "#f2e858",
-#                                        "BandleCity" = "#d6df5d") ) +
-#   labs( x = "Champion",
-#         y = "#Decks",
-#         title = "Champions' Play Rate - NA",
-#         subtitle = "Champions presence based by the number of decks that included them / playrate",
-#         caption = glue::glue("The top players are selected from those with either 8 or 9 round wins (7,8 in the asian shard).
-#                              The list doesn't include all top32 so obtained without Riot official data
-#                              number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]}" )) +
-#   theme_bw() +
-#   theme( plot.title    = element_text(face = "bold", size = 15),
-#          plot.subtitle = element_text(size = 12),
-#          axis.title.x  = element_text(face = "bold", size = 12),
-#          axis.title.y  = element_text(face = "bold", size = 12),
-#          axis.text.x   = element_text(face = "bold", size = 10),
-#          axis.text.y   = element_text(size = 8),
-#          legend.position = "none"
-#          )
-# 
-# #' unite the plot and table
-# cowplot::plot_grid(ggtop32.EU, ggplot() + 
-#                      theme_void() + 
-#                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
+ft.top32tbl.CC.EU <- top32tbl.CC |>
+  filter(server == "europe")  |>
+  filter(n %in% 1:2) |>
+  select(-server) |>
+  rename_all(~c("Champion","N")) |>
+  flextable::flextable() |>
+  flextable::as_raster()
+
+#' base plot
+ggtop32.EU <- top32tbl.CC  |>
+  filter(server=="europe") |>
+  filter(n > 1) |>
+  left_join(LoR.Set|>select(name,region),by="name") |>
+
+  mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
+  mutate(img = map_chr(.x = img, ~card_url_path(.x,full=T) )) |>
+  left_join( data_regions, by = c("regionRef") ) |>
+
+  ggplot(aes(reorder(name, n),n,fill=regionRef)) +
+  geom_bar(position="dodge",stat = "identity", color = "black") +
+  scale_y_continuous(sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="europe",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.075,inherit.aes = FALSE) +
+  coord_flip() +
+  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
+  theme_539() +
+  labs( x = "Champion",
+        y = "#Decks",
+        title = "Champions' Play Rate - ASIA",
+        subtitle = "Champions presence based by the number of decks that included them / playrate",
+        caption = element_text(
+          glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]}
+                     The top players are selected from those with the score scores in Matchss wins.
+                     The list doesn't include all top32 so obtained without Riot official data
+                     Source: Source: Metadata of games collected with RiotGames API" )
+          )) +
+  theme(
+    legend.position = "none",
+    axis.text = element_text(face = "bold", color = "grey50"),
+    panel.grid.major.y = element_blank()
+  )
+
+#' unite the plot and table
+cowplot::plot_grid(ggtop32.EU, ggplot() +
+                     theme_void() +
+                     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
 ```
 :::
 
