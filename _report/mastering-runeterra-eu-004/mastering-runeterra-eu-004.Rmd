@@ -337,8 +337,8 @@ LMI.DT <- full.ban.DT %>%
   mutate( tooltip_mini = glue::glue("{deck}
                                LMI {round(LMI*100,1)}") ) |>
   mutate(tier = case_when( 
-     LMI >= 0.9 ~ "Tier1",
-     # 0.90 <= LMI & LMI < 0.975 ~ "Tier1",
+     LMI >= 0.975 ~ "Tier0",
+     0.85 <= LMI & LMI < 0.975 ~ "Tier1",
      0.60 <= LMI & LMI < 0.90 ~ "Tier2",
      0.30 <= LMI & LMI < 0.60 ~ "Tier3",
      LMI < 03.0 ~ "Tier4 or lower",

@@ -17,8 +17,6 @@ params:
   start: "2021-09-01 21:00:00" #UTC tz / 'current' patch start
   end:   "2021-10-30 21:00:00" #UTC tz / 'current' patch end
   skip:  2800000  # Patch 2.14
-  # date: |
-  #   `r Sys.Date()`
 ---
 
 ```{r setup, include=FALSE}
@@ -253,7 +251,6 @@ flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
 ```
 
 ### Last Update
-
 
 ```{r value-update}
 flexdashboard::valueBox(Sys.Date(),

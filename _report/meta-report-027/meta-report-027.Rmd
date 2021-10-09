@@ -83,7 +83,7 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 #'#############
 LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
                          header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate( RiotID = glue("{gameName}#{tagLine}") )
+  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
 
 #' load DeckDT
 #'############
@@ -277,9 +277,6 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
 ### Plot {.panel-name}
 
 ```{r plot-Region}
-# remotes::install_github("olihawkins/pilot")
-# library(pilot)
-
 sxLabel_card <- format(Region.Freq$freq*100,2)
 dxLabel_card <- format(Region.Freq$freq*100,2)
 sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
@@ -1226,8 +1223,6 @@ deckCodeTbl |>
 
 # LoR-Meta Index (LMI)
 
-`r kableExtra::text_spec("New:", color = "red")` added a Tier classification of decks based on their LMI value. This is more experimental and not as strict as a result of one of my analysis (in this case it's a first glimpse to the distribution of the LMI values). The classification is as follows:
-
 - **Tier0** with LMI >= 97.5
 
 - **Tier1** with LMI $\in$ [85,97.5)
@@ -1236,9 +1231,7 @@ deckCodeTbl |>
 
 - **Tier3 or lower** with LMI < 60
 
-This method will be improved in the next weeks, maybe adding the ban rate which can be extracted from Gauntlet and Bo3 Friendly Matches.
-
-`r kableExtra::text_spec("Note:", color = "red")`Hovering over a circle will display a deck values.
+`r kableExtra::text_spec("Note:", color = "red")` Hovering over a circle will display a deck values.
 
 > The LMI [^3] [^4] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
@@ -1308,7 +1301,7 @@ LMI.DT |>
          ) +
   labs(
     title = "Top15 Deck Peformances",
-    subtitle = "HighTop15 Deck Peformances",
+    subtitle = "Deck's Peformances by highest value of LMI",
     x = "Win Index",
     y = "Freq Index",
     caption = element_text(glue::glue("{params$patch}
@@ -1556,6 +1549,6 @@ metathis::meta() |>
   )
 ```
 
-# Legal bla bla {.unnumbered}
+# Legal bla bla
 
-This content was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+This content was created under Riot Games 'Legal Jibber Jabber' policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
