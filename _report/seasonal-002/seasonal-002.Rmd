@@ -1,6 +1,6 @@
 ---
 params:
-  ind: "S2021-08-14"
+  ind: "S2021-10-09"
   # patch: "Patch 2.17 - Week 1"
   title: "THE SEASONAL REPORT IS VAST (n°2)"
   description: "Seasonal Tournament - Beyond the Bandlewood - Open Rounds"
@@ -113,7 +113,8 @@ colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 LoR.Seasonal <- fread(file.path("C:","LlorR","data","raw","LoR_SeasonalDT.csv"), header = T, na.strings = c("",NA) ) |>
   filter( game_mode == "SeasonalTournamentLobby"  ) |>
   filter( game_start_time_utc >= with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC") &
-            game_start_time_utc < (with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC")+lubridate::days(2)) )
+            game_start_time_utc < (with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC")+lubridate::days(2)) ) |>
+  distinct( match_key,.keep_all = T )
 
 #' load Account
 #'#############
@@ -216,7 +217,7 @@ LineUp.DT <- LineUp.DT |>
   mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  )
 ```
 
-```{r ompute-MU-ladder}
+```{r compute-MU-ladder}
 #' playrates by presence in a LineUp, not games played
 playRates.byLU <- LineUp.DT |>
   select(contains("deck_")) |>
@@ -525,19 +526,11 @@ Game.Result.NA <- LoR.Melt.Seasonal |>
   ., by = c("playerID","round","server")) |>
   relocate(round, .after = server) |>
   left_join(LineUp.DT,by=c("server","playerID")) |>
-  mutate( ban = map2_chr(.x = listDeck, .y = ldeck, ~(setdiff(unlist(.x),unlist(.y) )) |> {\(x) ifelse(length(x)==1,x,NA)}() )  ) 
+  mutate( ban = map2_chr(.x = listDeck, .y = ldeck, ~(setdiff(unlist(.x),unlist(.y) )) |> {\(x) ifelse(length(x)==1,x,NA)}() )  )
 ```
 
 ```{r create-file}
 Game.Result.all  <- rbind(Game.Result.ASIA,Game.Result.EU,Game.Result.NA)
-
-# Game.Result.all |>
-#   filter( !is.na(opponentID) ) |>
-#   tabyl(round)
-
-# Game.Result.all |>
-#   .[, sapply(., class) != "list"] |>
-#   fwrite(file.path("C:","LlorR","data","clean","Seasonal_2021_xx.csv"))
 ```
 
 ```{r table-ban}
@@ -622,12 +615,85 @@ LMI.DT <- WR.DT |>
   mutate(tier = case_when( 
      LMI >= 0.975 ~ "Tier0",
      0.85 <= LMI & LMI < 0.975 ~ "Tier1",
-     0.60 <= LMI & LMI < 0.90 ~ "Tier2",
+     0.60 <= LMI & LMI < 0.85 ~ "Tier2",
      LMI < 0.60 ~ "Tier3"
      # LMI < 03.0 ~ "Tier4 or lower",
     ) 
   )
 ```
+
+```{r }
+gtLMI <- LMI.DT |>
+  select(deck,LMI,tier,WR,playrate,meanBan,lWR) |>
+  mutate( 
+    # diffWR = WR-lWR,
+    tier = case_when( 
+          LMI >= 0.975 ~ 4,
+          0.85 <= LMI & LMI < 0.975 ~ 3,
+          0.60 <= LMI & LMI < 0.85 ~ 2,
+          LMI < 0.60 ~ 1
+        ),
+    LMI = round(LMI *100,0)
+    # tier = case_when( 
+    #       x >= 0.975 ~ "Tier0",
+    #       0.85 <= x & x < 0.975 ~ "Tier1",
+    #       0.60 <= x & x < 0.85 ~ "Tier2",
+    #       x < 0.60 ~ "Tier3"
+    #     )
+    # tier = factor(tier, levels = c("Tier3","Tier2","Tier1","Tier0"), ordered = T),
+    # nTier = as.numeric(tier)
+    ) |>
+  # relocate(diffWR, .after = meanBan) |>
+  relocate(tier,.after = "deck") |>
+  arrange(desc(LMI)) |>
+  gt() |>
+  # gtExtras::gt_color_rows(WR:lplayrate) |>
+  gtExtras::gt_color_rows(
+    c(LMI,WR:lWR),
+    palette = "ggsci::blue_material") |>
+  gtExtras::gt_hulk_col_numeric(
+    tier,
+    # type = "discrete",
+    # palette = c("#ffffff", "##00FF00", "##00FFFF", "##FFFF00")
+    # domain = c(1:4)
+   ) |>
+  text_transform(
+    locations = cells_body(
+      columns = tier
+    ),
+    fn = function(x) {
+      case_when(
+        x == 4 ~ "Tier0",
+        x == 3 ~ "Tier1",
+        x == 2 ~ "Tier2",
+        x == 1 ~ "Tier3"
+      )
+    }) |>
+  gtExtras::gt_theme_538() |>
+  fmt_percent(
+    columns = WR:lWR,
+    decimals = 1
+  ) |>
+  cols_label(
+    WR   = md("WinRate"),
+    meanBan  = md("BanRate"),
+    lWR = md("Ladder\nWinRate")
+  ) |>
+  cols_width(
+    lWR ~ px(50)
+  ) |>
+  tab_header(
+    title = "Best Performing Decks at the Seasonal",
+    subtitle = glue::glue("LMI of best performing decks at Seasonal tournament - Beyond the Bandlewood")
+  ) |>
+  tab_source_note(
+    source_note = md(glue::glue("Decks with at least 50 games being played\n
+                             Source: Source: Metadata of games collected with RiotGames API"))
+    )
+  
+gtsave(gtLMI,glue::glue("./images/seasonal/S2021-10-09-LMI-table.png") ) |> invisible()
+```
+
 
 ::: {.l-page}
 ::::: {.panelset}
