@@ -127,7 +127,6 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 ```
 
 ```{r archetype-fix}
-
 # Game.Result.EU |>
 #   filter( str_detect(playerID,"Balco") )
 
