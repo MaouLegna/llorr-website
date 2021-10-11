@@ -1,6 +1,5 @@
 rmarkdown::render("static/mu.Rmd")
 rmarkdown::render("static/meta.Rmd")
-
 rmarkdown::render("index.Rmd")
 
 # rmarkdown::render("static/meta.Rmd", "html_document")

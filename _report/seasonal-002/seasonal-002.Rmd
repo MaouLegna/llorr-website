@@ -622,44 +622,82 @@ LMI.DT <- WR.DT |>
   )
 ```
 
-```{r }
+```{r gt-LMI}
 gtLMI <- LMI.DT |>
-  select(deck,LMI,tier,WR,playrate,meanBan,lWR) |>
-  mutate( 
-    # diffWR = WR-lWR,
-    tier = case_when( 
-          LMI >= 0.975 ~ 4,
-          0.85 <= LMI & LMI < 0.975 ~ 3,
-          0.60 <= LMI & LMI < 0.85 ~ 2,
-          LMI < 0.60 ~ 1
-        ),
-    LMI = round(LMI *100,0)
-    # tier = case_when( 
-    #       x >= 0.975 ~ "Tier0",
-    #       0.85 <= x & x < 0.975 ~ "Tier1",
-    #       0.60 <= x & x < 0.85 ~ "Tier2",
-    #       x < 0.60 ~ "Tier3"
-    #     )
-    # tier = factor(tier, levels = c("Tier3","Tier2","Tier1","Tier0"), ordered = T),
-    # nTier = as.numeric(tier)
-    ) |>
-  # relocate(diffWR, .after = meanBan) |>
-  relocate(tier,.after = "deck") |>
+  select(deck,LMI,rankTier,nWin,nGames,WR,nBan,maxBan,meanBan,n,playrate,lWR) |>
+  mutate( LMI = round(LMI *100,0) ) |>
+  relocate(rankTier,.after = "LMI") |>
   arrange(desc(LMI)) |>
   gt() |>
-  # gtExtras::gt_color_rows(WR:lplayrate) |>
   gtExtras::gt_color_rows(
-    c(LMI,WR:lWR),
+    c(LMI,nWin:lWR),
     palette = "ggsci::blue_material") |>
-  gtExtras::gt_hulk_col_numeric(
-    tier,
-    # type = "discrete",
-    # palette = c("#ffffff", "##00FF00", "##00FFFF", "##FFFF00")
-    # domain = c(1:4)
-   ) |>
+  fmt_percent(
+    columns = vars(WR,meanBan,playrate,lWR),
+    decimals = 1
+  ) |>
+  cols_merge(
+    columns = vars(nWin, nGames),
+    pattern = "{1}/{2}"
+  ) |>
+  cols_merge(
+    columns = vars(WR, nWin)
+  ) |> 
   text_transform(
     locations = cells_body(
-      columns = tier
+      columns = vars(WR)
+    ),
+    fn = function(x){
+      percent <- word(x, 1)
+      frac <- word(x, -1)
+      glue::glue(
+        "<div style='line-height:10px'><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
+        <div style='line-height:12px'><span style ='font-weight:bold;font-size:10px'>({frac})</span></div>"
+        # "<div><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
+        # <div><span style ='font-weight:bold;color:grey;font-size:10px'>({frac})</span></div>"
+      )
+    }
+  ) |>
+  cols_merge(
+    columns = vars(nBan, maxBan),
+    pattern = "{1}/{2}"
+  ) |>
+  cols_merge(
+    columns = vars(meanBan, nBan)
+  ) |> 
+  text_transform(
+    locations = cells_body(
+      columns = vars(meanBan)
+    ),
+    fn = function(x){
+      percent <- word(x, 1)
+      frac <- word(x, -1)
+      glue::glue(
+        "<div style='line-height:10px'><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
+        <div style='line-height:12px'><span style ='font-weight:bold;font-size:10px'>({frac})</span></div>"
+      )
+    }
+  ) |>
+  cols_merge(
+    columns = vars(n, playrate)
+  ) |> 
+  text_transform(
+    locations = cells_body(
+      columns = vars(n)
+    ),
+    fn = function(x){
+      percent <- word(x, 1)
+      n <- word(x, -1)
+      glue::glue(
+        "<div style='line-height:10px'><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
+        <div style='line-height:12px'><span style ='font-weight:bold;font-size:10px'>({n})</span></div>"
+      )
+    }
+  ) |>
+  gtExtras::gt_hulk_col_numeric( rankTier ) |>
+  text_transform(
+    locations = cells_body(
+      columns = rankTier
     ),
     fn = function(x) {
       case_when(
@@ -667,16 +705,16 @@ gtLMI <- LMI.DT |>
         x == 3 ~ "Tier1",
         x == 2 ~ "Tier2",
         x == 1 ~ "Tier3"
-      )
+      ) 
     }) |>
   gtExtras::gt_theme_538() |>
-  fmt_percent(
-    columns = WR:lWR,
-    decimals = 1
-  ) |>
+  # gtExtras::gt_hulk_col_numeric( LMI, domain = c(0,60,85,97.5,100) ) |>
+  gtExtras::gt_color_rows(LMI,reverse = T) |>
   cols_label(
+    rankTier = md("Tier"),
     WR   = md("WinRate"),
     meanBan  = md("BanRate"),
+    n = md("PlayRate"),
     lWR = md("Ladder\nWinRate")
   ) |>
   cols_width(
@@ -688,10 +726,17 @@ gtLMI <- LMI.DT |>
   ) |>
   tab_source_note(
     source_note = md(glue::glue("Decks with at least 50 games being played\n
-                             Source: Source: Metadata of games collected with RiotGames API"))
-    )
-  
-gtsave(gtLMI,glue::glue("./images/seasonal/S2021-10-09-LMI-table.png") ) |> invisible()
+                             **Playrate**: 3*(times a deck is being played)/#Decks in all lineUps.
+                             Example: Assuming I only have complete information of all lineUps - if there are 6 copies of Tahm Soraka in 24 Decks the playrate is 75% (18/24) as there can't be duplicates in LineUps. The value here includes incomplete lineUps.
+                             **WinRate**: Among the games in which a deck is being played, how many times it won.
+                             **BanRate**: How many times a deck has been banned among all the ban phases of all lineUps which included such deck.
+                             Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and Teemo/Ezreal was banned respectively 3 and 6 times; the ban rate would be (3+6)/(9+9) = 50%
+                             Source: Source: Metadata of games collected with RiotGames API")
+    ))
+
+# gtLMI
+
+gtsave(gtLMI,glue::glue("./images/seasonal/S2021-10-09-LMI-table-v2.png") ) |> invisible()
 ```
 
 
