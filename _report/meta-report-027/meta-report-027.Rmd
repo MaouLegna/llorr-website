@@ -1107,10 +1107,10 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 
 ::::: {.panelset}
 ::: {.panel}
-## Sivir/Tristana (BC/SH)
+## Sentinel Control - Elise/Vi
 
 ```{r deckweek, layout="l-page"}
-deck.of.week <- "Sivir/Tristana (BC/SH)"
+deck.of.week <- "Elise/Vi"
 
 SubDeck_deck_code <- LoR.Melt.Matches.RMD |>
   filter(playerDeck == deck.of.week ) |>
