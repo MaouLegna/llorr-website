@@ -4,7 +4,7 @@ params:
   patch: "Patch 2.17 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°27)"
   description: "Patch next week. So that Sion won't dominate anymore... So that Sion won't dominate anymore, right?"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116.png"
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05SI015-full.png"
   prev:  "2021-09-29 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-10-06 21:00:00" #UTC tz / 'current' week start
   end:   "2021-10-13 21:00:00" #UTC tz / 'current' week end
@@ -19,7 +19,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 10-06-2021
+date: 10-13-2021
 output:
  distill::distill_article:
     toc: true
@@ -1537,8 +1537,8 @@ metathis::meta() |>
   metathis::meta_social(
     title = params$title,
     url = "https://www.llorr-stats.com/",
-    image = params$cardurl,
-    image_alt = "BandleMayor",
+    image = params$cardlurl,
+    image_alt = "PinkaLove",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",
