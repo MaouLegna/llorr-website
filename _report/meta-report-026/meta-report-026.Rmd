@@ -87,7 +87,7 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 deck_filter <- LoR.Match.RMD |>
   #' Base filters
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
   select(deck_code_1,deck_code_2) |>
   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
   filter(decks!="") |>

@@ -1,20 +1,33 @@
 ---
-title: "Defining Archetypes #2: Application of Hierarchical clustering algorithms to decklist"
-description: | 
-  . Second entry on my exploration about how to define archetypes in Legends of Runeterra
+params:
+  ind: "02"
+  patch: "Patch 2.17 - Week 1"
+  title: "Defining Archetypes #2: xxx xxx xxx"
+  description: "xxx xxx xxx xxx"
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC116.png"
+  # prev:  "2021-09-29 21:00:00" #UTC tz / 'current' previous week start
+  start: "2021-09-01 21:00:00" #UTC tz / 'current' week start
+  end:   "2021-09-15 21:00:00" #UTC tz / 'current' week end
+  skip:  2800000  # ~ Patch 2.16
+
+title: | 
+  `r params$title`
+description: |
+  `r params$patch` - `r params$description`
 base_url: https://www.llorr-stats.com
-preview:
+preview: |
+  `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 09-23-2021
+date: 10-06-2021
 output:
  distill::distill_article:
     toc: true
-    toc_float: true    
+    toc_float: true
     toc_depth: 3
     self_contained: false
 citation: false
-draft: FALSE
+draft: TRUE
 ---
 
 ```{r setup, include=FALSE}
@@ -29,8 +42,8 @@ knitr::opts_chunk$set(
                    digits.secs=6),
   dev.args = list(bg = 'transparent'), # make graphics with transparent background
   fig.align = 'center',
-  fig.width=9,
-  fig.height=6,
+  fig.width=12,
+  fig.height=8,
   engine.path = list(
     python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
   ),
@@ -40,48 +53,47 @@ knitr::opts_chunk$set(
 )
 
 #' R Option
+options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-require("factoextra")
-
-# require(Hmisc)    # provides knitrSet and other functions
 xaringanExtra::use_panelset()
 ```
 
 ```{r panelset-style}
-xaringanExtra::style_panelset_tabs(font_family = "Roboto",
-                                   active_foreground = "white",
-                                   hover_foreground = "black",
-                                   hover_border_color = "black",
-                                   active_background = "#007fff"
-                                   )
-```
-
-```{r twitter-meta, echo = FALSE}
-library(metathis)
-meta() %>%
-  meta_description(
-    "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
-  ) %>% 
-  meta_viewport() %>% 
-  meta_social(
-    title = "Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes",
-    url = "https://llorr-stats.netlify.app/",
-    image = "images/archetypes/A01-ASZSZ.png",
-    image_alt = "ASZSZ",
-    og_type = "website",
-    og_author = "Legna",
-    twitter_card_type = "summary",
-    twitter_creator = "@Maou_Legna"
+xaringanExtra::style_panelset_tabs(
+  font_family = "Helvetica",
+  active_foreground = "white",
+  hover_foreground = "black",
+  hover_border_color = "black",
+  active_background = "#007fff"
   )
 ```
+
 ```{r functions}
 #' extract the top n most played list for 'archetypes provided'
-top_n_codes <- \(DT = LoR.Melt.Matches.RMD,archetypes,n,dopull=T) DT|>filter(player%in%{{archetypes}})|>group_by(player)|>count(deck_code)|>slice_max(deck_code,n=n,with_ties=F)|>ungroup()%>%{if( dopull==T ) pull(.,deck_code) else .}
+top_n_codes <- \(DT = LoR.Melt.Matches.RMD,archetypes,n,dopull=T) DT |>
+  dplyr::filter(player%in%{{archetypes}}) |>
+  dplyr::group_by(player) |>
+  dplyr::count(deck_code) |>
+  dplyr::slice_max(deck_code,n=n,with_ties=F) |>
+  ungroup()|>{\(x) if( dopull==T ) dplyr::pull(x,deck_code) else x}()
+
+
+#' distance Matrix given deck_codes
+dsimMatrix <- function( codes ) {
+  deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
+  for (i in 1:length(codes)) {
+    if (i%%100==0) glue::glue("Fill parse matrix #{i} - {Sys.time()}") |> message()
+    decklist <- codes[i] |> lordecks::get_decklist_from_code()
+    deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
+  }
+  deck.matrix |> mutate( across(everything(), ~replace_na(.x, 0)) ) 
+}
 
 #' distance Matrix given deck_codes
 cos.dsimMatrix <- function( codes ) {
   deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
   for (i in 1:length(codes)) {
+    if (i%%500==0) glue::glue("Fill parse matrix #{i} - {Sys.time()}") |> message()
     decklist <- codes[i] |> lordecks::get_decklist_from_code()
     deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
   }
@@ -91,161 +103,104 @@ cos.dsimMatrix <- function( codes ) {
 ```
 
 
-```{r raw-data}
+```{r raw-data-all}
+skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
+skip.dt
+
+#' load gameDT
+#'############
+file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+patch215216code <- LoR.Match.RMD |>
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+  select( -ends_with("_3"),-ends_with("_4")  ) |>
+  select( starts_with("deck_code") ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               )
+
+#' load Account
+#'#############
+LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
+                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
+
 #' load DeckDT
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
-```{r Rubin-fix}
-LoR.Deck |>
-  filter(factions =="faction_MtTargon_Name,faction_ShadowIsles_Name") |>
-  rowwise() |>
-  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Mistwraith")),na.rm = T)) |>
-  filter(key_search==3) |>
-  mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Pale Cascade")),na.rm = T)) |>
-  filter(key_search==3) |>
-  pull(deck_code)
-```
-
-
-```{r Rubin-fix}
-deck_filter <- LoR.Match.RMD |>
-  #' Base filters
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  select(deck_code_1,deck_code_2) |>
-  pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
-  filter(decks!="") |>
-  distinct(decks)
-
-LoR.Deck <- LoR.Deck[ deck_code %in% deck_filter$decks  ]
-
-#' ASZ
-LoR.Deck[ archetype %in% c("Akshan / Sivir (IO/SH)","Sivir / Zed","Akshan / Sivir / Zed"), archetype := "ASZ - Sivir Ionia"  ] 
-
-#' Sion
-RubinBait_deckCode_1 <- LoR.Deck %>%
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
-  filter(archetype %in% c("Draven / Sion (NX/PZ)") ) %>%
-  rowwise() %>%
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
-  filter(nCard==3) %>%
-  pull(deck_code)
-
-LoR.Deck[deck_code %in% RubinBait_deckCode_1, archetype:="RubinBait - Draven / Sion" ]
-
-#' Ezreal
-RubinBait_deckCode_2 <- LoR.Deck %>%
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
-  filter(archetype %in% c("Draven / Ezreal") ) %>%
-  rowwise() %>%
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
-  filter(nCard==3) %>%
-  pull(deck_code)
-
-LoR.Deck[deck_code %in% RubinBait_deckCode_2, archetype:="RubinBait - Draven / Ezreal" ]
-
-#' Cait 
-RubinBait_deckCode_3 <- LoR.Deck %>%
-  filter(factions == "faction_Noxus_Name,faction_Piltover_Name") %>%
-  filter(archetype %in% c("Caitlyn / Draven") ) %>%
-  rowwise() %>%
-  mutate(nCard = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) %>% # "04FR018" # Abominable Guardian
-  filter(nCard==3) %>%
-  pull(deck_code)
-
-LoR.Deck[deck_code %in% RubinBait_deckCode_3, archetype:="RubinBait - Caitlyn / Draven" ]
-
-#' Bandle
-# RubinBait_deckCode_4 <- LoR.Deck |>
-#   filter(factions =="faction_BandleCity_Name,faction_Noxus_Name") |>
-#   rowwise() |>
-#   mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Decimate")),na.rm = T)) |>
-#   filter(key_search==3) |>
-#   mutate(key_search = sum(str_detect(c_across(contains("Card")), getCardCode("Noxian Fervor")),na.rm = T)) |>
-#   filter(key_search==3) |>
-#   pull(deck_code)
-# 
-# LoR.Deck[deck_code %in% RubinBait_deckCode_4, archetype:="RubinBait - BandleBurn" ]
-```
-
-```{r prepare-data}
-LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
-  #' Base filters
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-  #' 'process' data
-  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "player_1")   ,by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck[,.(deck_code,archetype)] |> setnames(old = "archetype", new = "opponent_1") ,by=c("deck_code_2"="deck_code")) |>
-  mutate( player_2 = opponent_1, opponent_2 = player_1, oppoppuid_1 = puuid_2, oppoppuid_2 = puuid_1 ) |>
-  select( match_key,server,game_start_time_utc,game_version,total_turn_count,
-          ends_with("_1"),ends_with("_2"),-ends_with("_3"),-ends_with("_4"),-contains("deck_id"),-contains("participants") ) %>%
-  #' melt data
-  melt(id.vars=c("match_key","server","game_start_time_utc","game_version","total_turn_count"), measure.vars=patterns(
-    str_sub(
-      names(select(.,ends_with("_1")))
-      ,end = -3)
-  ),
-  value.name = str_sub(
-    names(select(.,ends_with("_1")))
-    ,end = -3)
-  ) |>
-  #' finish 'process' data
-  left_join(LoR.Account.RMD[,c("puuid","RiotID","refID")] |> setnames(old = "RiotID", new = "userID")     ,by=c("puuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,c("puuid","RiotID")] |> setnames(old = "RiotID", new = "opponentID") ,by=c("oppoppuid"="puuid")) |>
-  left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions")) |>
-  select(-ends_with("puuid"),-refID)
-```
 
 ```{r distances}
-
 # example <- matrix( c(3,1,0,0,0,
 #                      0,2,0,0,0,
 #                      3,0,0,0,0), ncol = 5, byrow=T )
 # 
 # dist(example, method = "manhattan")
-
 ```
 
 
 ```{r prepare-examples}
 #' archetypes names
-archetypes1 <- c( "Draven / Sion (NX/PZ)",
-                  "Nami / Zoe",
-                  "Senna / Veigar (BC/SI)",
-                  "Gangplank / Twisted Fate (BC/BW)",
-                  "Poppy / Ziggs (BC/NX)" )
+archetypes1 <- c( 
+  "Draven/Sion (NX/PZ)",
+  "Nami/Zoe",
+  "Senna/Veigar (BC/SI)",
+  "Miss Fortune/Quinn",
+  "Poppy/Ziggs (BC/NX)"
+  )
+# getCardCode("Quinn")
 
-archetypes2 <- c( "Draven / Sion (NX/PZ)",
-                  "Poppy / Ziggs (BC/NX)",
-                  "Braum / Vladimir",
-                  # "Caitlyn / Draven",
-                  "Gangplank / Miss Fortune (BW/NX)",
-                  "Swain / Twisted Fate" )
+archetypes2 <- c(
+  "Draven/Sion (NX/PZ)",
+  "Poppy/Ziggs (BC/NX)",
+  "Braum/Vladimir",
+  "Gangplank/Miss Fortune (BW/NX)",
+  "Swain/Twisted Fate"
+)
 
-archetypes3 <- c( "Draven / Sion (NX/PZ)",
-                  "RubinBait - Draven / Sion",
-                  "RubinBait - Caitlyn / Draven",
-                  "RubinBait - BandleBurn" )
+archetypes3 <- c(
+  "Draven/Sion (NX/PZ)",
+  "RubinBait - Draven/Sion",
+  "RubinBait - Caitlyn/Draven",
+  "RubinBait - Draven/Ezreal"
+  # "RubinBait - BandleBurn"
+)
 
-set.seed(7998)
-archetypes4 <- LoR.Melt.Matches.RMD |>
-  tabyl(player) |>
+# LoR.Deck[ !is.na(archetype_pretty), archetype:=archetype_pretty  ]
+
+set.seed(123)
+archetypes4 <- LoR.Deck |>
+  tabyl(archetype) |>
   arrange(desc(n)) |>
   filter(n >= 100) |>
-  select(player) |>
+  select(archetype) |>
   slice_sample(n = 15) |>
   pull()
 
 #' codes
-exCodes1 <- top_n_codes(archetypes = archetypes1,n = 10,dopull = T)
-exCodes2 <- top_n_codes(archetypes = archetypes2,n = 10,dopull = T)
-exCodes3 <- top_n_codes(archetypes = archetypes3,n = 10,dopull = T)
+# exCodes1 <- top_n_codes(archetypes = archetypes1,n = 10,dopull = T)
+# exCodes2 <- top_n_codes(archetypes = archetypes2,n = 10,dopull = T)
+# exCodes3 <- top_n_codes(archetypes = archetypes3,n = 10,dopull = T)
+
+set.seed(123)
+exCodes1 <- LoR.Deck[ archetype %in% archetypes1, sample(deck_code,size = 20), by=archetype ]
+exCodes2 <- LoR.Deck[ archetype %in% archetypes2, sample(deck_code,size = 20), by=archetype ]
+exCodes3 <- LoR.Deck[ archetype %in% archetypes3, sample(deck_code,size = 20), by=archetype ]
 
 #' distance matrix
-DSim_ex1 <- dsimMatrix(exCodes1)
-DSim_ex2 <- dsimMatrix(exCodes2)
-DSim_ex3 <- dsimMatrix(exCodes3)
+DSim_ex1 <- cos.dsimMatrix(exCodes1$V1)
+DSim_ex2 <- cos.dsimMatrix(exCodes2$V1)
+DSim_ex3 <- cos.dsimMatrix(exCodes3$V1)
+
+# DSim_patch215216 <- unique(patch215216code$deck_code) |> dsimMatrix()
+# fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
+
+DSim <- DSim_patch215216 |> eisen_cos.sim()
 ```
 
 # Introduction
@@ -257,60 +212,6 @@ On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defi
 # Data
 
 The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
-
-```{r}
-# tbl1 <- LoR.Match.RMD |>
-#   #' Stay only 'among' the row with the games in the time-frame I want
-#   ####################################################################
-#   slice(minrow_live:maxrow_live) |>
-#   #' Extrapolate Friendly and 'to Scrap' matches
-#   ##############################################
-#   mutate( game_type = case_when(
-#     status==404   ~ "Friendly",
-#     is.na(status) ~ "to Scrap",
-#     TRUE ~ as.character(game_type)
-#     )) |>
-#   #' Give to the new game_types a game_start_time_utc among the timeframe on interest
-#   #' so it can be used a filter without worrying about other parameter like status and so on
-#   ##########################################################################################
-#   mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% c("Friendly","to Scrap"),  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) |>
-#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-#   mutate( game_type = fct_other(factor(game_type),keep = c("Ranked","Friendly","to Scrap")) |> fct_infreq() ) |>
-#   select(Status=game_type,Server=server) |>
-#   #' Create tbl
-#   #############
-#   tbl_summary()
-# 
-# 
-# LoR.Melt.Matches.RMD |>
-#   gt() |>
-#   tab_header(
-#     title = "by the Numbers",
-#     subtitle = "Ranked Games - Patch 2.15 second week / Master players"
-#     #'**************************************************************************** *
-#     # Update che patch-week!
-#     #'**************************************************************************** *
-#   ) |>
-#   tab_footnote(
-#     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
-#     locations = cells_title(groups = c("subtitle"))
-#     ) |>
-#   tab_footnote(
-#     footnote = md(glue::glue("EU Master players in the ladder: {length(namesList.EU.RMD)} while number of possible Master players recovered is: {masterEU} \n
-#                               NA Master players in the ladder: {length(namesList.NA.RMD)} while number of possible Master players recovered is: {masterNA} \n
-#                               ASIA Master players in the ladder: {length(namesList.ASIA.RMD)} while number of possible Master players recovered is: {masterASIA}" )),
-#     locations = cells_title(groups = c("subtitle"))
-#   ) |>
-#   tab_options(data_row.padding = px(1.2))
-#   
-# nGames_tbl |>
-#  tab_options(
-#     table.background.color = "transparent",
-#     table.font.color = "black",
-#     table.font.color.light = "black"
-#    )
-```
-
 
 ## Complete Data
 
@@ -342,30 +243,6 @@ In this article we will use 4 different examples:
 4. Random selection of 15 archetypes
   
 [^1]: much different from the other burn 3 burn decks but has the role of highlightiun
-
-```{r}
-archetypes1 <- c( "Draven / Sion (NX/PZ)",
-                  "Nami / Zoe",
-                  "Senna / Veigar (BC/SI)",
-                  "Gangplank / Twisted Fate (BC/BW)",
-                  "Poppy / Ziggs (BC/NX)" )
-
-archetypes2 <- c( "Draven / Sion (NX/PZ)",
-                  "Poppy / Ziggs (BC/NX)",
-                  "Braum / Vladimir",
-                  # "Caitlyn / Draven",
-                  "Gangplank / Miss Fortune (BW/NX)",
-                  "Swain / Twisted Fate" )
-
-archetypes3 <- c( "Draven / Sion (NX/PZ)",
-                  "RubinBait - Draven / Sion",
-                  "RubinBait - Caitlyn / Draven",
-                  "RubinBait - BandleBurn" )
-
-
-
-```
-
 
 ```{r microbenchark }
 set.seed(123)
@@ -411,16 +288,30 @@ It is good to find small subgroups
 
 ```{r Example1}
 ex1.hc.complete <- hclust(DSim_ex1, method = "complete")
+set.seed(123)
+ex1.hc.complete.n <- hclust(DSim_ex1, method = "complete", members = sample(1:5000,100))
+
 ex1.hc.single   <- hclust(DSim_ex1, method = "single")
+
 ex1.hc.average  <- hclust(DSim_ex1, method = "average")
+set.seed(123)
+ex1.hc.average.n  <- hclust(DSim_ex1, method = "average", members = sample(1:5000,100))
+
 ex1.hc.centroid <- hclust(DSim_ex1, method = "centroid")
+set.seed(123)
+ex1.hc.centroid.n <- hclust(DSim_ex1, method = "centroid", members = sample(1:5000,100))
 
+ex1.hc.complete$labels <- rep(archetypes1,each=20)
+fviz_dend(ex1.hc.complete, cex = 0.5 )
+fviz_dend(ex1.hc.complete.n, cex = 0.5 )
 
+fviz_dend(ex1.hc.average, cex = 0.5 )
+fviz_dend(ex1.hc.average.n, cex = 0.5 )
 
-hc.complete$labels <- ExampleDT1$player
-fviz_dend(hc.complete, cex = 0.5,
-          label_cols =  ExampleDT1$origin )
+fviz_dend(ex1.hc.centroid, cex = 0.5 )
+fviz_dend(ex1.hc.centroid.n, cex = 0.5 )
 
+# label_cols =  rep(1:5,each=5)
 
 # plot(hc.complete)
 
@@ -446,6 +337,9 @@ fviz_dend(res.hc, rect = TRUE) # dendrogam
 
 
 fviz_dend(hc, cex = 0.5)
+
+
+
        
 ```
 
@@ -700,6 +594,24 @@ all(res.fpc$cluster == res.db)
 fviz_cluster(res.fpc, iris, geom = "point")
 ```
 
+```{r twitter-meta, echo = FALSE}
+library(metathis)
+meta() %>%
+  meta_description(
+    "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
+  ) %>% 
+  meta_viewport() %>% 
+  meta_social(
+    title = "Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes",
+    url = "https://llorr-stats.netlify.app/",
+    image = "images/archetypes/A01-ASZSZ.png",
+    image_alt = "ASZSZ",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
 
 # Legal bla bla {.unnumbered}
 
