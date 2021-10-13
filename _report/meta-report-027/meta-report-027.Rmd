@@ -27,7 +27,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -766,7 +766,7 @@ meta_evo <- ggplot(
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0,0.15),
+    limits = c(0,0.20),
     breaks = seq(0,0.15,0.02),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   ) +
@@ -1333,7 +1333,7 @@ ggplotly(fig, tooltip="text")
 
 # Win Marathons Leaders
 
-`r kableExtra::text_spec("New:", color = "red")` Top3 Players (or more in case of ties) from each server that had the highest amount of consecutive wins with the same archetype. The provided deckcode is the one played in the last win found.
+Top3 Players (or more in case of ties) from each server that had the highest amount of consecutive wins with the same archetype. The provided deckcode is the one played in the last win found.
 
 ```{r win-marathon, layout="l-page"}
 gtWinning <- setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter := rowid(rleid(game_outcome)), by=c("playerID","playerDeck") ][ game_outcome == "win" ] |>
@@ -1416,11 +1416,9 @@ gtWinning <- setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter :
         "playerDeck","link"
         )
       )
-    ) |>
-  gtsave(
-    glue::glue("./images/meta-report/{params$ind}-topWin.png")
-    # path = tempdir()
-  )
+    )
+
+gtsave(gtWinning, glue::glue("./images/meta-report/{params$ind}-topWin.png")   )
 ```
 
 # Cards Presence

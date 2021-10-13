@@ -104,8 +104,8 @@ cos.dsimMatrix <- function( codes ) {
 
 
 ```{r raw-data-all}
-skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
-skip.dt
+# skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
+# skip.dt
 
 #' load gameDT
 #'############
@@ -133,6 +133,17 @@ LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
 #' load DeckDT
 #'############
 LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+#' load parse Matrix
+#'##################
+DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
+cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"), header=T) |> as.matrix()
+# fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
+
+# cos.DSim_patch214215[1:10,1:10]
+# DSim_patch214215[1:10] |> eisen_cos.sim()
+
+NROW(cos.DSim_patch214215)
 ```
 
 ```{r distances}
@@ -173,34 +184,40 @@ archetypes3 <- c(
 
 # LoR.Deck[ !is.na(archetype_pretty), archetype:=archetype_pretty  ]
 
-set.seed(123)
-archetypes4 <- LoR.Deck |>
-  tabyl(archetype) |>
-  arrange(desc(n)) |>
-  filter(n >= 100) |>
-  select(archetype) |>
-  slice_sample(n = 15) |>
-  pull()
+# set.seed(123)
+# archetypes4 <- LoR.Deck |>
+#   tabyl(archetype) |>
+#   arrange(desc(n)) |>
+#   filter(n >= 100) |>
+#   select(archetype) |>
+#   slice_sample(n = 15) |>
+#   pull()
 
 #' codes
 # exCodes1 <- top_n_codes(archetypes = archetypes1,n = 10,dopull = T)
 # exCodes2 <- top_n_codes(archetypes = archetypes2,n = 10,dopull = T)
 # exCodes3 <- top_n_codes(archetypes = archetypes3,n = 10,dopull = T)
 
-set.seed(123)
-exCodes1 <- LoR.Deck[ archetype %in% archetypes1, sample(deck_code,size = 20), by=archetype ]
-exCodes2 <- LoR.Deck[ archetype %in% archetypes2, sample(deck_code,size = 20), by=archetype ]
-exCodes3 <- LoR.Deck[ archetype %in% archetypes3, sample(deck_code,size = 20), by=archetype ]
-
-#' distance matrix
-DSim_ex1 <- cos.dsimMatrix(exCodes1$V1)
-DSim_ex2 <- cos.dsimMatrix(exCodes2$V1)
-DSim_ex3 <- cos.dsimMatrix(exCodes3$V1)
+# set.seed(123)
+# exCodes1 <- LoR.Deck[ archetype %in% archetypes1, sample(deck_code,size = 20), by=archetype ]
+# exCodes2 <- LoR.Deck[ archetype %in% archetypes2, sample(deck_code,size = 20), by=archetype ]
+# exCodes3 <- LoR.Deck[ archetype %in% archetypes3, sample(deck_code,size = 20), by=archetype ]
+# 
+# #' distance matrix
+# DSim_ex1 <- cos.dsimMatrix(exCodes1$V1)
+# DSim_ex2 <- cos.dsimMatrix(exCodes2$V1)
+# DSim_ex3 <- cos.dsimMatrix(exCodes3$V1)
 
 # DSim_patch215216 <- unique(patch215216code$deck_code) |> dsimMatrix()
 # fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
 
 DSim <- DSim_patch215216 |> eisen_cos.sim()
+
+# fwrite(as.matrix(DSim),file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"))
+
+
+
+head(DSim)
 ```
 
 # Introduction
