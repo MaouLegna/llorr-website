@@ -1,6 +1,6 @@
 ---
 params:
-  ind: "027"
+  ind: "MR027"
   patch: "Patch 2.17 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°27)"
   description: "Patch next week. So that Sion won't dominate anymore... So that Sion won't dominate anymore, right?"
@@ -1017,13 +1017,13 @@ ft <- grid |>
   border_inner_h(part="all", border = small_border ) |>
   border_inner_v(part="all", border = small_border ) |>
   set_formatter(values = funs) |>
-  fontsize(size = 5, part = "header") |>
-  fontsize(j=1, size = 5) |>
+  fontsize(size = 8, part = "header") |>
+  fontsize(j=1, size = 8) |>
   bg(part = "header", bg = "white"  ) |>
   bg(j = 1, bg = "white"  ) |>
-  height(height = .07) %>% 
+  height(height = .1) %>% 
   hrule(rule = "exact", part = "body") %>% 
-  width(width =  .07) %>% 
+  width(width =  .1) %>% 
   set_table_properties(layout = "fixed")
   # autofit()
 
@@ -1035,7 +1035,7 @@ save_as_image(ft,
               # vheight = 800,
               zoom = 3,
               expand = 10,
-              webshot = "webshot2")
+              webshot = "webshot2") |> invisible()
 ```
 
 :::
