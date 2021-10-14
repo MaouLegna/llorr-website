@@ -960,7 +960,7 @@ WRTop10 <- MUtbl[ playerDeck %in% TopCC & opponentDeck %in% TopCC, ]
 WRTop10 <- setorderv(WRTop10, c("playerDeck","opponentDeck"), c(1,1))
 ```
 
-::: l-page
+::: l-screen-inset shaded
 ::::: {.panelset}
 ::: {.panel}
 
@@ -998,7 +998,7 @@ colourer <- col_numeric(
 funs <- setNames(rep(list(dummy_fun), mu), TopCC)
 ```
 
-```{r print-flex}
+```{r print-flex, fig.width=12, fig.height=8}
 ft <- grid |> 
   as_tibble() |>
   # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
@@ -1020,8 +1020,8 @@ ft <- grid |>
   fontsize(size = 8, part = "header") |>
   fontsize(j=1, size = 8) |>
   bg(part = "header", bg = "white"  ) |>
-  bg(j = 1, bg = "white"  ) |>
-  autofit()
+  bg(j = 1, bg = "white"  )
+  # autofit()
 
 ft
 ```
