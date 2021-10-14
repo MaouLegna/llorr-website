@@ -112,7 +112,7 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
   left_join(LoR.Deck[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
@@ -957,10 +957,10 @@ TopCC <- CC.table |>
   pull()
 
 WRTop10 <- MUtbl[ playerDeck %in% TopCC & opponentDeck %in% TopCC, ]
-WRTop10 <- setorderv(WRTop10, c("playerDeck","opponentDeck"), c(1,1))
+# WRTop10 <- setorderv(WRTop10, c("playerDeck","opponentDeck"), c(1,1))
 ```
 
-::: l-screen-inset shaded
+::: l-page
 ::::: {.panelset}
 ::: {.panel}
 
@@ -998,7 +998,7 @@ colourer <- col_numeric(
 funs <- setNames(rep(list(dummy_fun), mu), TopCC)
 ```
 
-```{r print-flex, fig.width=12, fig.height=8}
+```{r print-flex}
 ft <- grid |> 
   as_tibble() |>
   # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
@@ -1017,14 +1017,27 @@ ft <- grid |>
   border_inner_h(part="all", border = small_border ) |>
   border_inner_v(part="all", border = small_border ) |>
   set_formatter(values = funs) |>
-  fontsize(size = 8, part = "header") |>
-  fontsize(j=1, size = 8) |>
+  fontsize(size = 5, part = "header") |>
+  fontsize(j=1, size = 5) |>
   bg(part = "header", bg = "white"  ) |>
-  bg(j = 1, bg = "white"  )
+  bg(j = 1, bg = "white"  ) |>
+  height(height = .07) %>% 
+  hrule(rule = "exact", part = "body") %>% 
+  width(width =  .07) %>% 
+  set_table_properties(layout = "fixed")
   # autofit()
 
 ft
+
+save_as_image(ft,
+              path = glue::glue("./images/meta-report/{params$ind}-MU.png"),
+              # vwidth = 1200,
+              # vheight = 800,
+              zoom = 3,
+              expand = 10,
+              webshot = "webshot2")
 ```
+
 :::
 
 ::: {.panel}

@@ -105,7 +105,7 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
   left_join(LoR.Deck[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
