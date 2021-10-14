@@ -956,8 +956,11 @@ TopCC <- CC.table |>
   select(playerDeck) |> 
   pull()
 
-WRTop10 <- MUtbl[ playerDeck %in% TopCC & opponentDeck %in% TopCC, ]
-# WRTop10 <- setorderv(WRTop10, c("playerDeck","opponentDeck"), c(1,1))
+WRTopCC <- tibble::tibble( 
+  playerDeck = rep(TopCC,each=mu),
+  opponentDeck = rep(TopCC,mu)
+  ) |>
+  left_join(MUtbl, by = c("playerDeck","opponentDeck"))
 ```
 
 ::: l-page
@@ -981,7 +984,7 @@ dummy_fun <- function(x){
 ```
 
 ```{r prepare-flex-grid}
-grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
+grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
 
 colnames(grid) <- TopCC

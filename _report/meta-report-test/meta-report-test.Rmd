@@ -20,14 +20,27 @@ twitter:
   creator: "@Maou_Legna"
 ---
 
-![](images/LMI%20table.png)
+
 
 ```{r}
 xaringanExtra::use_panelset()
+
+
+# ![](images/LMI%20table.png)
+# ![](images/MR027-MU.png){width="100%"}
 ```
 
-::: l-page
+::: {.l-page}
 
-![](images/MR027-MU.png){width="100%"}
+```{r}
+ft = flextable::flextable(dplyr::full_join(mtcars,mtcars, by ="disp"))
+
+# flextable::save_as_image(x = ft, path = "images/test.png") |> invisible()
+
+ft
+```
+
 
 :::
+
+

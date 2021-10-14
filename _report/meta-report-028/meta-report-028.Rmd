@@ -44,9 +44,9 @@ knitr::opts_chunk$set(
   fig.align = 'center',
   fig.width=12,
   fig.height=8,
-  engine.path = list(
-    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
-  ),
+  # engine.path = list(
+  #   python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  # ),
   #'distill options
   layout="l-body-outset",
   preview=FALSE
@@ -69,116 +69,21 @@ xaringanExtra::style_panelset_tabs(
 ```
 
 ```{r raw-data}
-# skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
-# skip.dt
-
-#' load gameDT
-#'############
-file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
-
-#' load Account
-#'#############
-LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
-                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
-
-#' load DeckDT
-#'############
-LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+MUtbl <- fread("./data/mutbl_patch_2_12to13.csv",na.strings = c("",NA))
 ```
 
-```{r prepare-data}
-#' Melt tbl
-#'#########
-LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-  select( -ends_with("_3"),-ends_with("_4")  ) |>
-  left_join(LoR.Deck[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
-  #' finish 'process' data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions"))
-```
-
-```{r get-muWR}
-MUtbl <- LoR.Melt.Matches.RMD |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise( muWin   = sum(game_outcome=="win"),
-             muGames = n(),
-             muWR=mean(game_outcome=="win") ) |>
-  as.data.table()
-
-MUtbl[, c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ]
-MUtbl[, okCI:=(!between(0.50,LCI,UCI)) ]
-MUtbl[, direction:=ifelse(muWR>0.50,"POS","NEG")  ]
-
-MUtbl <- MUtbl |>
-  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
-```
-
-```{r process-winRate}
-WR.DT <- LoR.Melt.Matches.RMD |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome ) |>
-  group_by(playerDeck) |>
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win")
-            ) |>
-  ungroup() |>
-  mutate( playrate = nGames/sum(nGames) )
-
-WR.DT.Reg <- LoR.Melt.Matches.RMD |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
-  group_by(server,playerDeck) |>
-  summarise(
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win"),
-    ) |>
-  ungroup() |>
-  group_by(server) |>
-  mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) |>
-  left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") 
-```
 
 # Match Ups
 
-```{r process-tableChampion}
-CC.tableByReg <- LoR.Melt.Matches.RMD |>
-  tabyl(playerDeck,server) |>
-  adorn_percentages("col")
-
-CC.table <- LoR.Melt.Matches.RMD |>
-  tabyl(playerDeck, show_na = F) |>
-  rename_all(~c("playerDeck","n","freq")) |>
-  left_join(CC.tableByReg,by="playerDeck")
-```
-
 ```{r get-WR-Top10}
-mu <- 15
+mu <- 25
 
-TopCC <- CC.table |> 
-  arrange(desc(freq)) |> 
-  {\(x) slice_head(x,n = mu)}() |> 
-  select(playerDeck) |> 
-  pull()
+TopCC <- MUtbl |>
+  distinct(player,.keep_all = T) |>
+  slice_max(playrate,n=mu,with_ties = F) |>
+  pull(player)
 
-WRTop10 <- MUtbl[ playerDeck %in% TopCC & opponentDeck %in% TopCC, ]
+WRTop10 <- MUtbl[ player %in% TopCC & opponent %in% TopCC, ]
 # WRTop10 <- setorderv(WRTop10, c("playerDeck","opponentDeck"), c(1,1))
 ```
 
@@ -220,7 +125,7 @@ colourer <- col_numeric(
 funs <- setNames(rep(list(dummy_fun), mu), TopCC)
 ```
 
-```{r print-flex, fig.width=24, fig.height=16}
+```{r print-flex, fig.width=24, fig.height=16, align = "center"}
 ft <- grid |> 
   as_tibble() |>
   # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
@@ -251,11 +156,9 @@ ft <- grid |>
 
 ft
 
-save_as_image(ft,
-              path = glue::glue("./images/meta-report/{params$ind}-MU.png"),
-              zoom = 5,
-              expand = 20,
-              webshot = "webshot2") |> invisible()
+# save_as_image(ft,path = glue::glue("./images/meta-report/{params$ind}-MU.png"), zoom = 2,expand = 10)
 ```
 
+:::
+:::::
 :::
