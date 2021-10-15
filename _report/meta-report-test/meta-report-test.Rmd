@@ -21,26 +21,148 @@ twitter:
 ---
 
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=12,
+  fig.height=8,
+  # engine.path = list(
+  #   python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  # ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
+)
 
-```{r}
+#' R Option
+options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
 xaringanExtra::use_panelset()
-
-
-# ![](images/LMI%20table.png)
-# ![](images/MR027-MU.png){width="100%"}
 ```
 
-::: {.l-page}
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(
+  font_family = "Helvetica",
+  active_foreground = "white",
+  hover_foreground = "black",
+  hover_border_color = "black",
+  active_background = "#007fff"
+  )
+```
 
-```{r}
-ft = flextable::flextable(dplyr::full_join(mtcars,mtcars, by ="disp"))
+```{r raw-data}
+MUtbl <- fread("./data/mutbl_patch_2_12to13.csv",na.strings = c("",NA))
+```
 
-# flextable::save_as_image(x = ft, path = "images/test.png") |> invisible()
+
+# Match Ups
+
+```{r get-WR-Top10}
+mu <- 15
+
+# TopCC <- CC.table |> 
+#   arrange(desc(freq)) |> 
+#   {\(x) slice_head(x,n = mu)}() |> 
+#   select(playerDeck) |> 
+#   pull()
+
+TopCC <- MUtbl |> 
+  distinct(player,.keep_all = T) |>
+  # arrange(desc(freq)) |> 
+  # {\(x) slice_head(x,n = mu)}() |> 
+  # select(playerDeck) |>
+  slice_max(playrate,n = mu) |>
+  pull(player)
+
+
+WRTopCC <- tibble::tibble( 
+  player = rep(TopCC,each=mu),
+  opponent = rep(TopCC,mu)
+  ) |>
+  left_join(MUtbl, by = c("player","opponent"))
+```
+
+::: l-page
+::::: {.panelset}
+::: {.panel}
+
+## Match-up Grid {.panel-name}
+
+The win rates on the grid are among the `r mu` most played champion combination.
+
+```{r prepare-flex}
+require(flextable)
+require(officer)
+
+big_border   = fp_border(color="darkgray", width = 2)
+small_border = fp_border(color="gray", width = 1)
+
+dummy_fun <- function(x){
+  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
+}
+```
+
+```{r prepare-flex-grid}
+grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
+diag(grid) <- NA
+
+colnames(grid) <- TopCC
+colourer <- col_numeric(
+  palette = c(
+    "#D73027", # red
+    # "#f9ccac", # red/orange
+    "white",
+    # "#e3eaa7", # green
+    "#1A9850" # darker green
+    ),
+  domain = c(0, 1))
+
+funs <- setNames(rep(list(dummy_fun), mu), TopCC)
+```
+
+```{r print-flex, fig.width=24, fig.height=16, align = "center"}
+ft <- grid |> 
+  as_tibble() |>
+  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
+  add_column(TopCC,.before = TopCC[1]) |>
+  rename("MatchUps"="TopCC") |>
+  flextable::flextable( ) |> 
+  theme_vanilla( ) |>
+  # theme_booktabs(bold_header = TRUE) |> 
+  flextable::align(align = "center", part = "all") |>
+  flextable::bg(
+    bg = colourer,
+    j = ~ . -MatchUps,
+    part = "body") |>
+  {\(x) border_remove(x = x)}() |>
+  border_outer(part="all", border = big_border ) |>
+  border_inner_h(part="all", border = small_border ) |>
+  border_inner_v(part="all", border = small_border ) |>
+  set_formatter(values = funs) |>
+  fontsize(size = 8, part = "header") |>
+  fontsize(j=1, size = 8) |>
+  bg(part = "header", bg = "white"  ) |>
+  bg(j = 1, bg = "white"  ) |>
+  height(height = .08) %>% 
+  hrule(rule = "exact", part = "body") %>% 
+  width(width =  .08)
+  # set_table_properties(layout = "fixed")
+  # autofit()
 
 ft
+
+# save_as_image(ft,path = glue::glue("./images/meta-report/{params$ind}-MU.png"), zoom = 2,expand = 10)
 ```
 
-
 :::
-
-
+:::::
+:::

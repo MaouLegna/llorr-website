@@ -76,15 +76,28 @@ MUtbl <- fread("./data/mutbl_patch_2_12to13.csv",na.strings = c("",NA))
 # Match Ups
 
 ```{r get-WR-Top10}
-mu <- 25
+mu <- 15
 
-TopCC <- MUtbl |>
+# TopCC <- CC.table |> 
+#   arrange(desc(freq)) |> 
+#   {\(x) slice_head(x,n = mu)}() |> 
+#   select(playerDeck) |> 
+#   pull()
+
+TopCC <- MUtbl |> 
   distinct(player,.keep_all = T) |>
-  slice_max(playrate,n=mu,with_ties = F) |>
+  # arrange(desc(freq)) |> 
+  # {\(x) slice_head(x,n = mu)}() |> 
+  # select(playerDeck) |>
+  slice_max(playrate,n = mu) |>
   pull(player)
 
-WRTop10 <- MUtbl[ player %in% TopCC & opponent %in% TopCC, ]
-# WRTop10 <- setorderv(WRTop10, c("playerDeck","opponentDeck"), c(1,1))
+
+WRTopCC <- tibble::tibble( 
+  player = rep(TopCC,each=mu),
+  opponent = rep(TopCC,mu)
+  ) |>
+  left_join(MUtbl, by = c("player","opponent"))
 ```
 
 ::: l-page
@@ -108,7 +121,7 @@ dummy_fun <- function(x){
 ```
 
 ```{r prepare-flex-grid}
-grid <- matrix(WRTop10$muWR, nrow = mu, ncol = mu, byrow = T)
+grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
 
 colnames(grid) <- TopCC
