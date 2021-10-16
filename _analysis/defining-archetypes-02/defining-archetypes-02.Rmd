@@ -114,7 +114,9 @@ header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1
 LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 
-patch215216code <- LoR.Match.RMD |>
+#' patch 2.14 to 2.15
+#'###################
+patch214215code <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
@@ -123,6 +125,12 @@ patch215216code <- LoR.Match.RMD |>
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
                )
+
+# NROW(patch214215code) # 155214
+# patch214215code |> fwrite(file.path("C:","LlorR","data","clean","deckcode_patch214215.csv")  )
+
+# length(unique(patch214215code$deck_code)) # 17772
+# NROW(DSim_patch214215) # 17772
 
 #' load Account
 #'#############
@@ -136,14 +144,12 @@ LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.
 
 #' load parse Matrix
 #'##################
-DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
+DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","DSimMatrix_0214to0215.csv"))
 cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"), header=T) |> as.matrix()
 # fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
 
 # cos.DSim_patch214215[1:10,1:10]
 # DSim_patch214215[1:10] |> eisen_cos.sim()
-
-NROW(cos.DSim_patch214215)
 ```
 
 ```{r distances}
