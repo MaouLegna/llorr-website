@@ -8,7 +8,7 @@ params:
   prev:  "2021-10-06 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-10-13 21:00:00" #UTC tz / 'current' week start
   end:   "2021-10-20 21:00:00" #UTC tz / 'current' week end
-  skip:  3400000  # ~ Patch 2.16
+  skip:  3300000  # ~ Patch 2.16
 
 title: | 
   `r params$title`
@@ -19,7 +19,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 10-13-2021
+date: 10-20-2021
 output:
  distill::distill_article:
     toc: true
@@ -27,7 +27,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -117,7 +117,7 @@ LoR.Deck[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```{r prepare-data}
 #' Melt tbl
 #'#########
-LoR.Melt.Seasonal <- LoR.Match.RMD |>
+LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type == "Ranked"  ) |>
   filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
@@ -138,9 +138,11 @@ LoR.Melt.Seasonal <- LoR.Match.RMD |>
 ```{r prepare-seasonal-data}
 #' Melt tbl
 #'#########
-LoR.Melt.Seasonal <- LoR.Match.RMD |>
-  filter( game_mode == "SeasonalTournamentLobby"  ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$end,"UTC")-days(5) & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
+LoR.Melt.Seasonal <- fread(file.path("C:","LlorR","data","raw","LoR_SeasonalDT.csv"),na.strings = c("",NA)) |>
+  filter( game_start_time_utc >= as.POSIXct("2021-10-16 00:00:00","UTC") & game_start_time_utc < as.POSIXct("2021-10-18 00:00:00","UTC") ) |>
+  # LoR.Match.RMD |>
+  # filter( game_mode == "SeasonalTournamentLobby"  ) |>
+  # filter( game_start_time_utc >= as.POSIXct("2021-10-16 00:00:00","UTC") & game_start_time_utc < as.POSIXct("2021-10-18 00:00:00","UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
   left_join(LoR.Deck[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
@@ -155,6 +157,64 @@ LoR.Melt.Seasonal <- LoR.Match.RMD |>
   left_join(LoR.Account.RMD[,.(puuid,opponentgameName=gameName,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
   left_join(LoR.Deck |> select(!archetype),by=c("deck_code","factions")) |>
   as.data.table()
+```
+
+# Top32 Seasonal Decks
+
+Before starting the report let us end the Seasonal Data starting with the top32 decks. Some data are sadly missing because of games I couldn't collect
+
+```{r react-top32}
+react.LU.top32 <- LoR.Melt.Seasonal |>
+  group_by(server) |>
+  distinct(name=playergameName,deck_code,playerDeck) |>
+  relocate( deck_code,.after = playerDeck ) |>
+  ungroup() |>
+  arrange(server,name) |>
+  reactable(
+    theme = reactablefmtr::fivethirtyeight(),
+    groupBy = c("server","name"),
+    bordered = TRUE,
+    highlight = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 10,
+    defaultSortOrder = "desc",
+    defaultColDef = colDef(
+      style = list(fontWeight = 500, color = "black",
+                   fontFamily = "Helvetica", fontSize = "12px"),
+      align = "left",
+      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+      ),
+    columns = list(
+      # LU = colDef( show = F ),
+      playerDeck = colDef(name = "Deck",minWidth = 200 ),
+      # code = colDef( show = F ),
+      deck_code = colDef(name = "DeckCode", cell = function(value, index) {
+        # Render as a link
+        if (!is.na(value) ) {
+          url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
+          htmltools::tags$a(href = url, target = "_blank", as.character(value))
+        } } ,minWidth = 600, style = list(fontSize = "9px") ),
+      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
+      ),
+    rowStyle = JS("function(rowInfo) {
+                  if (rowInfo.level > 0) {
+                  return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
+                  } else {
+                  return { borderLeft: '2px solid transparent' }
+                  }
+                  }")
+    # defaultExpanded = T
+    ) |>
+  reactablefmtr::add_title("Top 32 Players' Deckcodes", background_color = "transparent", font_family = "Helvetica") |>
+  # reactablefmtr::add_subtitle(params$description, background_color = "transparent", font_family = "Roboto") |>
+  reactablefmtr::add_source(glue::glue("Source: Source: Metadata of games collected with RiotGames API"), background_color = "transparent", font_family = "Chivo")
+
+react.LU.top32 |>
+  reactablefmtr::save_reactable(glue::glue("./images/seasonal/{params$ind}-top32.png"))
+
+react.LU.top32
 ```
 
 # Data
@@ -190,25 +250,25 @@ Number of (Ranked) matches analyzed **`r format(nGames,scientific = F)`** or **`
 
 Insert *Dead Game Memes* here. With the previous season too we had a huge drop in the last weak before the new ranked season/set, no reasons to be a dog who barks at the shadows.
 
-Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")` 
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
 `r kableExtra::text_spec("Note :", color = "red")` following my recent analysis the following decks:
 
-* Akshan / Sivir (IO/SH)
+-   Akshan / Sivir (IO/SH)
 
-* Sivir / Zed
+-   Sivir / Zed
 
-* Akshan / Sivir / Zed
+-   Akshan / Sivir / Zed
 
 Have been aggregated into a single archetype: "ASZ - Sivir Ionia"
 
 In addition a quick fix to account for the Rubin-baits (burn decks that pretend to be other archetypes) decks have been applied and they are called:
 
-* RubinBait - Draven / Ezreal
+-   RubinBait - Draven / Ezreal
 
-* RubinBait - Draven / Sion
+-   RubinBait - Draven / Sion
 
-* RubinBait - Caitlyn / Draven - not make from Rubin but same logic
+-   RubinBait - Caitlyn / Draven - not make from Rubin but same logic
 
 ```{r table-nGames-data, layout="l-body"}
 tbl1 <- LoR.Match.RMD |>
@@ -279,8 +339,8 @@ nGames_tbl |>
 # Regions
 
 ## Play Rate
-::: l-body-outset
 
+::: {.l-body-outset}
 ```{r process-tableFreq}
 Region.Freq <- LoR.Melt.Matches.RMD |>
   select(factions) |>
@@ -301,9 +361,8 @@ Region.Freq.Server <- LoR.Melt.Matches.RMD |>
 Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
 ```
 
-::::: {.panelset}
+::: {.panelset}
 ::: {.panel}
-
 ### Plot {.panel-name}
 
 ```{r plot-Region}
@@ -369,7 +428,6 @@ RegionByRegion
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
-
 :::
 
 ::: {.panel}
@@ -431,7 +489,8 @@ Region.Freq.tbl
 # )
 ```
 :::
-:::::
+:::
+
 <!-- Close Region 1 panelset -->
 :::
 
@@ -439,8 +498,7 @@ Region.Freq.tbl
 
 `r kableExtra::text_spec("Note:", color = "red")` currently all dual region cards have only their main region as possible value assigned. The same problem also apply to the card's inclusion rates, with Lulu being the most notable case affected by this.
 
-::: l-body-outset
-
+::: {.l-body-outset}
 ```{r process-tableFreq_byCard}
 Regions.Freq.byCards <- LoR.Melt.Matches.RMD |>
   select( starts_with( "Card") ) %>%
@@ -476,7 +534,7 @@ Card.tableByRegPlot <- LoR.Melt.Matches.RMD |>
   select(value,server) |> table() %>% prop.table(.,margin = 2) |> as.data.table()
 ```
 
-::::: {.panelset}
+::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
 
@@ -546,7 +604,6 @@ RegionByCards <- Regions.Freq.byCards |>
 
 RegionByCards
 ```
-
 :::
 
 ::: {.panel}
@@ -608,7 +665,8 @@ Region.Freq.byCards.tbl
 # )
 ```
 :::
-:::::
+:::
+
 <!-- Close Region 2 panelset -->
 :::
 
@@ -627,9 +685,8 @@ CC.table <- LoR.Melt.Matches.RMD |>
 
 ## Play Rates
 
-::: l-body-outset
-
-::::: {.panelset}
+::: {.l-body-outset}
+::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
 
@@ -718,7 +775,8 @@ CC.table |>
 
 ```
 :::
-:::::
+:::
+
 <!-- Close CC lay Rate panelset -->
 :::
 
@@ -866,9 +924,9 @@ WR.DT.Reg <- LoR.Melt.Matches.RMD |>
   mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) |>
   left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") 
 ```
-::: l-body-outset
 
-::::: {.panelset}
+::: {.l-body-outset}
+::: {.panelset}
 ::: {.panel}
 ### Meta Decks {.panel-name}
 
@@ -933,9 +991,7 @@ WR.DT.Reg |>
 ::: {.panel}
 ### Underdog {.panel-name}
 
-Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^2]
-
-[^2]: Min number of games 50, during the times a meta/ladder just changed.
+Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^1]
 
 ```{r print-under-tableWinRate}
 WR.DT |>
@@ -967,13 +1023,30 @@ WR.DT |>
     )
 ```
 :::
-:::::
+:::
+
 <!-- Close Win Rate panelset -->
 :::
 
+[^1]: Min number of games 50, during the times a meta/ladder just changed.
+
 # Match Ups
 
-`r kableExtra::text_spec("Note :", color = "red")` Regarding MU, this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the dedicated MU-page where I use all "Ranked" games with the current sets of buffs and nerfs. While one may object I don't account for optimizations and differences in skills acquired during the weeks, the overall number of games / sample size makes them a better source of information. So, in case, pls refer to the [MU - page](https://www.llorr-stats.com/static/mu.html) for a better "meta-investigation".
+`r kableExtra::text_spec("Important:", color = "red")` Since Dragons are probably going to be meta again I'm leaving the last MU grid of when they were meta to let anyone check what *could* be still strong into them. I wanted to display the image but I always have trouble with loading images so to avoid display just an hard to read picture I'm going to leave this button to easily download the grid.
+
+```{r}
+downloadthis::download_file(
+  path = file.path("images/mugrid_patch_2_09to10.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid (2.9/2.10) as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+`r kableExtra::text_spec("Note:", color = "red")` Regarding MU, this is not the most accurate estimation you can get from my data. If you want a better picture of the current meta it would be better to look at the dedicated MU-page where I use all "Ranked" games with the current sets of buffs and nerfs. While one may object I don't account for optimizations and differences in skills acquired during the weeks, the overall number of games / sample size makes them a better source of information. So, in case, pls refer to the [MU - page](https://www.llorr-stats.com/static/mu.html) for a better "meta-investigation".
 
 ```{r get-WR-Top10}
 mu <- 15
@@ -991,10 +1064,9 @@ WRTopCC <- tibble::tibble(
   left_join(MUtbl, by = c("playerDeck","opponentDeck"))
 ```
 
-::: l-page
-::::: {.panelset}
+::: {.l-page}
+::: {.panelset}
 ::: {.panel}
-
 ## Match-up Grid {.panel-name}
 
 The win rates on the grid are among the `r mu` most played champion combination.
@@ -1068,6 +1140,17 @@ save_as_image(ft,
               expand = 10) |> invisible()
 ```
 
+```{r}
+downloadthis::download_this(
+  .data = ft,
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
 :::
 
 ::: {.panel}
@@ -1123,7 +1206,8 @@ bscols(
   )
 ```
 :::
-:::::
+:::
+
 <!-- Close MU panelset -->
 :::
 
@@ -1145,9 +1229,8 @@ make_color_pal <- function(colors, bias = 1) {
 good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ```
 
-::: l-page
-
-::::: {.panelset}
+::: {.l-page}
+::: {.panelset}
 ::: {.panel}
 ## Braum/Poppy (BC/FR)
 
@@ -1263,28 +1346,24 @@ deckCodeTbl |>
 :::
 
 > How to read the table: <br> - Play rate: How often a card is included in this class of decks / the table is order by this column. <br> - 3/2/1 is the relative and absolute frequency of the number of copies in the decks that plays them <br> - Frequencies from 50% to 100% are colored from shades of green to white to identify more easily the highest values
+:::
 
-:::::
 <!-- Close Deck Structure panelset -->
 :::
 
 # LoR-Meta Index (LMI)
 
-- **Tier0** with LMI >= 97.5
+-   **Tier0** with LMI \>= 97.5
 
-- **Tier1** with LMI $\in$ [85,97.5)
+-   **Tier1** with LMI $\in$ [85,97.5)
 
-- **Tier2** with LMI $\in$ [60,85)
+-   **Tier2** with LMI $\in$ [60,85)
 
-- **Tier3 or lower** with LMI < 60
+-   **Tier3 or lower** with LMI \< 60
 
 `r kableExtra::text_spec("Note:", color = "red")` Hovering over a circle will display a deck values.
 
-> The LMI [^3] [^4] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
-
-[^3]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
-
-[^4]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
+> The LMI [^2] [^3] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
 ```{r lmi, layout="l-page"}
 LMI.DT <- WR.DT |>
@@ -1306,155 +1385,6 @@ LMI.DT <- WR.DT |>
      LMI < 0.60 ~ "Tier3 or lower"
     ) 
   )
-```
-
-```{r}
-LoR.Melt.Seasonal |>
-  group_by(playerDeck) |>
-  count(game_outcome) |>
-  ungroup() |>
-  filter(game_outcome=="win") |>
-  # arrange(desc(n)) |>
-  rename(sWin=n) |>
-  select(-game_outcome) |>
-  left_join(SLMI.DT, by = c("playerDeck"="deck")) |>
-  select(playerDeck,LMI,WR,sWin) |>
-  summarize(corLMI = cor(LMI, sWin, method = "sp", use = "complete.obs" ),
-            corWR  = cor(WR, sWin, method = "sp", use = "complete.obs" ))
-
-SLMI.DT
-```
-
-```{r gt-LMI}
-# gtLMI <- 
-LoR.Melt.Seasonal |>
-  group_by(playerDeck) |>
-  count(game_outcome) |>
-  ungroup() |>
-  filter(game_outcome=="win") |>
-  # arrange(desc(n)) |>
-  rename(sWin=n,deck=playerDeck) |>
-  select(-game_outcome) |>
-  left_join(LMI.DT, by = "deck") |>
-  mutate( 
-    rankTier = factor(tier, levels = c("Tier3","Tier2","Tier1","Tier0"),ordered = T ),
-    rankTier = as.numeric(rankTier)
-    ) |>
-  select(deck,sWin,LMI,rankTier,nWin,nGames,WR,nBan,maxBan,meanBan,n,playrate,lWR) |>
-  # relocate( sWin,.before = "LMI" ) |>
-  mutate( LMI = round(LMI *100,0) ) |>
-  relocate(rankTier,.after = "LMI") |>
-  # arrange(desc(LMI)) |>
-  arrange(desc(sWin)) |>
-  gt() |>
-  gtExtras::gt_color_rows(
-    c(LMI,nWin:lWR),
-    palette = "ggsci::blue_material") |>
-  fmt_percent(
-    columns = vars(WR,meanBan,playrate,lWR),
-    decimals = 1
-  ) |>
-  cols_merge(
-    columns = vars(nWin, nGames),
-    pattern = "{1}/{2}"
-  ) |>
-  cols_merge(
-    columns = vars(WR, nWin)
-  ) |> 
-  text_transform(
-    locations = cells_body(
-      columns = vars(WR)
-    ),
-    fn = function(x){
-      percent <- word(x, 1)
-      frac <- word(x, -1)
-      glue::glue(
-        "<div style='line-height:10px'><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
-        <div style='line-height:12px'><span style ='font-weight:bold;font-size:10px'>({frac})</span></div>"
-        # "<div><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
-        # <div><span style ='font-weight:bold;color:grey;font-size:10px'>({frac})</span></div>"
-      )
-    }
-  ) |>
-  cols_merge(
-    columns = vars(nBan, maxBan),
-    pattern = "{1}/{2}"
-  ) |>
-  cols_merge(
-    columns = vars(meanBan, nBan)
-  ) |> 
-  text_transform(
-    locations = cells_body(
-      columns = vars(meanBan)
-    ),
-    fn = function(x){
-      percent <- word(x, 1)
-      frac <- word(x, -1)
-      glue::glue(
-        "<div style='line-height:10px'><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{percent}</div>
-        <div style='line-height:12px'><span style ='font-weight:bold;font-size:10px'>({frac})</span></div>"
-      )
-    }
-  ) |>
-  cols_merge(
-    columns = vars(n, playrate)
-  ) |> 
-  text_transform(
-    locations = cells_body(
-      columns = vars(n)
-    ),
-    fn = function(x){
-      percent <- word(x, 1)
-      n <- word(x, -1)
-      glue::glue(
-        "<div style='line-height:10px'><span style='font-weight:bold;font-variant:small-caps;font-size:14px'>{n}</div>
-        <div style='line-height:12px'><span style ='font-weight:bold;font-size:10px'>({percent})</span></div>"
-      )
-    }
-  ) |>
-  gtExtras::gt_hulk_col_numeric( rankTier ) |>
-  text_transform(
-    locations = cells_body(
-      columns = rankTier
-    ),
-    fn = function(x) {
-      case_when(
-        x == 4 ~ "Tier0",
-        x == 3 ~ "Tier1",
-        x == 2 ~ "Tier2",
-        x == 1 ~ "Tier3"
-      ) 
-    }) |>
-  gtExtras::gt_theme_538() |>
-  # gtExtras::gt_hulk_col_numeric( LMI, domain = c(0,60,85,97.5,100) ) |>
-  gtExtras::gt_color_rows(sWin:LMI,reverse = T) |>
-  cols_label(
-    rankTier = md("Tier"),
-    WR   = md("WinRate"),
-    meanBan  = md("BanRate"),
-    n = md("PlayRate"),
-    lWR = md("Ladder\nWinRate")
-  ) |>
-  cols_width(
-    lWR ~ px(50)
-  ) |>
-  tab_header(
-    title = "Best Performing Decks at the Seasonal",
-    subtitle = glue::glue("LMI of best performing decks at Seasonal tournament - Beyond the Bandlewood")
-  ) |>
-  tab_source_note(
-    source_note = md(glue::glue("Decks with at least 50 games being played\n
-                             **Playrate**: 3*(times a deck is being played)/#Decks in all lineUps.
-                             Example: Assuming I only have complete information of all lineUps - if there are 6 copies of Tahm Soraka in 24 Decks the playrate is 75% (18/24) as there can't be duplicates in LineUps. The value here includes incomplete lineUps.
-                             **WinRate**: Among the games in which a deck is being played, how many times it won.
-                             **BanRate**: How many times a deck has been banned among all the ban phases of all lineUps which included such deck.
-                             Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and Teemo/Ezreal was banned respectively 3 and 6 times; the ban rate would be (3+6)/(9+9) = 50%
-                             Source: Source: Metadata of games collected with RiotGames API")
-    ))
-
-# gtLMI
-
-# gtsave(gtLMI,glue::glue("./images/seasonal/S2021-10-09-LMI-table-v2.png") ) |> invisible()
 ```
 
 ```{r lmi-png, fig.height=8, fig.width=12, include=FALSE, layout="l-page"}
@@ -1508,7 +1438,6 @@ LMI.DT |>
 ggsave(glue::glue("./images/meta-report/{params$ind}-LMI.png"))
 ```
 
-
 ```{r lmi-plotly, layout="l-page"}
 fig <- LMI.DT |>
   slice_max(LMI,n = 50,with_ties = F) %>%
@@ -1526,6 +1455,10 @@ fig <- LMI.DT |>
 
 ggplotly(fig, tooltip="text")
 ```
+
+[^2]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
+
+[^3]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
 
 # Win Marathons Leaders
 
@@ -1639,7 +1572,8 @@ TableCardsDT[ ,p.byReg   := round(N/nGamesReg,3) ]
 TableCardsDT[ ,card    := str_replace_all(card, set_names(LoR.Card$name, LoR.Card$cardCode)) ]
 TableCardsDT[ ,region  := str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation)) ]
 ```
-::::: {.panelset}
+
+::: {.panelset}
 ::: {.panel}
 ## Play Rate {.panel-name}
 
@@ -1745,7 +1679,8 @@ data.table(
   )
 ```
 :::
-:::::
+:::
+
 <!-- Close Card Presence panelset -->
 
 ```{r twitter-meta, echo = FALSE}
