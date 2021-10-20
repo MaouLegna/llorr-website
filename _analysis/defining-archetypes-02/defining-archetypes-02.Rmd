@@ -71,8 +71,8 @@ xaringanExtra::style_panelset_tabs(
 ```{r functions}
 #' extract the top n most played list for 'archetypes provided'
 top_n_codes <- \(DT = LoR.Melt.Matches.RMD,archetypes,n,dopull=T) DT |>
-  dplyr::filter(player%in%{{archetypes}}) |>
-  dplyr::group_by(player) |>
+  dplyr::filter(archetype%in%{{archetypes}}) |>
+  dplyr::group_by(archetype) |>
   dplyr::count(deck_code) |>
   dplyr::slice_max(deck_code,n=n,with_ties=F) |>
   ungroup()|>{\(x) if( dopull==T ) dplyr::pull(x,deck_code) else x}()
@@ -114,6 +114,16 @@ header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1
 LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 
+#' load Account
+#'#############
+LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
+                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
+
+#' load DeckDT
+#'############
+LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+
 #' patch 2.14 to 2.15
 #'###################
 patch214215code <- LoR.Match.RMD |>
@@ -124,23 +134,14 @@ patch214215code <- LoR.Match.RMD |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
-               )
+               ) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,archetype)],  by=c("deck_code") )
 
 # NROW(patch214215code) # 155214
 # patch214215code |> fwrite(file.path("C:","LlorR","data","clean","deckcode_patch214215.csv")  )
 
 # length(unique(patch214215code$deck_code)) # 17772
 # NROW(DSim_patch214215) # 17772
-
-#' load Account
-#'#############
-LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
-                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
-
-#' load DeckDT
-#'############
-LoR.Deck        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 #' load parse Matrix
 #'##################
@@ -153,6 +154,16 @@ cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMat
 ```
 
 ```{r distances}
+# install.packages("apcluster")
+# library(apcluster)
+# 
+# data(iris)
+# species <- iris$Species
+# iris <- as.matrix(iris[,1:4])
+# 
+# apres1a <- apcluster(negDistMat(r=2), iris)
+# 
+# 
 # example <- matrix( c(3,1,0,0,0,
 #                      0,2,0,0,0,
 #                      3,0,0,0,0), ncol = 5, byrow=T )
@@ -166,11 +177,11 @@ cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMat
 archetypes1 <- c( 
   "Draven/Sion (NX/PZ)",
   "Nami/Zoe",
-  "Senna/Veigar (BC/SI)",
+  "MistWraith",
   "Miss Fortune/Quinn",
-  "Poppy/Ziggs (BC/NX)"
+  "Pyke/Rek'Sai",
+  "Trundle/Tryndamere (FR/SI)"
   )
-# getCardCode("Quinn")
 
 archetypes2 <- c(
   "Draven/Sion (NX/PZ)",
@@ -185,13 +196,10 @@ archetypes3 <- c(
   "RubinBait - Draven/Sion",
   "RubinBait - Caitlyn/Draven",
   "RubinBait - Draven/Ezreal"
-  # "RubinBait - BandleBurn"
 )
 
-# LoR.Deck[ !is.na(archetype_pretty), archetype:=archetype_pretty  ]
-
 # set.seed(123)
-# archetypes4 <- LoR.Deck |>
+# archetypes4 <- LoR.Deck.RMD |>
 #   tabyl(archetype) |>
 #   arrange(desc(n)) |>
 #   filter(n >= 100) |>
@@ -199,31 +207,31 @@ archetypes3 <- c(
 #   slice_sample(n = 15) |>
 #   pull()
 
+# top_n_codes(DT = patch214215code,
+#             archetypes = archetypes1,
+#             n = 10,dopull = F)
+
 #' codes
-# exCodes1 <- top_n_codes(archetypes = archetypes1,n = 10,dopull = T)
-# exCodes2 <- top_n_codes(archetypes = archetypes2,n = 10,dopull = T)
-# exCodes3 <- top_n_codes(archetypes = archetypes3,n = 10,dopull = T)
+exCodes1 <- top_n_codes(DT = patch214215code,archetypes = archetypes1,n = 10,dopull = T)
+exCodes2 <- top_n_codes(DT = patch214215code,archetypes = archetypes2,n = 10,dopull = T)
+exCodes3 <- top_n_codes(DT = patch214215code,archetypes = archetypes3,n = 10,dopull = T)
 
 # set.seed(123)
-# exCodes1 <- LoR.Deck[ archetype %in% archetypes1, sample(deck_code,size = 20), by=archetype ]
-# exCodes2 <- LoR.Deck[ archetype %in% archetypes2, sample(deck_code,size = 20), by=archetype ]
-# exCodes3 <- LoR.Deck[ archetype %in% archetypes3, sample(deck_code,size = 20), by=archetype ]
+# exCodes1 <- LoR.Deck.RMD[ archetype %in% archetypes1, sample(deck_code,size = 20), by=archetype ]
+# exCodes2 <- LoR.Deck.RMD[ archetype %in% archetypes2, sample(deck_code,size = 20), by=archetype ]
+# exCodes3 <- LoR.Deck.RMD[ archetype %in% archetypes3, sample(deck_code,size = 20), by=archetype ]
 # 
 # #' distance matrix
-# DSim_ex1 <- cos.dsimMatrix(exCodes1$V1)
-# DSim_ex2 <- cos.dsimMatrix(exCodes2$V1)
-# DSim_ex3 <- cos.dsimMatrix(exCodes3$V1)
+DSim_ex1 <- cos.dsimMatrix(exCodes1)
+DSim_ex2 <- cos.dsimMatrix(exCodes2)
+DSim_ex3 <- cos.dsimMatrix(exCodes3)
 
 # DSim_patch215216 <- unique(patch215216code$deck_code) |> dsimMatrix()
 # fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
 
-DSim <- DSim_patch215216 |> eisen_cos.sim()
+# DSim <- DSim_patch215216 |> eisen_cos.sim()
 
 # fwrite(as.matrix(DSim),file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"))
-
-
-
-head(DSim)
 ```
 
 # Introduction
@@ -268,16 +276,16 @@ In this article we will use 4 different examples:
 [^1]: much different from the other burn 3 burn decks but has the role of highlightiun
 
 ```{r microbenchark }
-set.seed(123)
-microTimes <- microbenchmark::microbenchmark(
-  hclust(DSim_ex1, method = "complete"),
-  hclust(DSim_ex1, method = "single"),
-  hclust(DSim_ex1, method = "average"),
-  hclust(DSim_ex1, method = "centroid"),
-  times = 50
-)
-
-microTimes
+# set.seed(123)
+# microTimes <- microbenchmark::microbenchmark(
+#   hclust(DSim_ex1, method = "complete"),
+#   hclust(DSim_ex1, method = "single"),
+#   hclust(DSim_ex1, method = "average"),
+#   hclust(DSim_ex1, method = "centroid"),
+#   times = 50
+# )
+# 
+# microTimes
 ```
 
 # Methods
@@ -312,17 +320,17 @@ It is good to find small subgroups
 ```{r Example1}
 ex1.hc.complete <- hclust(DSim_ex1, method = "complete")
 set.seed(123)
-ex1.hc.complete.n <- hclust(DSim_ex1, method = "complete", members = sample(1:5000,100))
+ex1.hc.complete.n <- hclust(DSim_ex1, method = "complete", members = sample(1:5000,60))
 
 ex1.hc.single   <- hclust(DSim_ex1, method = "single")
 
 ex1.hc.average  <- hclust(DSim_ex1, method = "average")
 set.seed(123)
-ex1.hc.average.n  <- hclust(DSim_ex1, method = "average", members = sample(1:5000,100))
+ex1.hc.average.n  <- hclust(DSim_ex1, method = "average", members = sample(1:5000,60))
 
 ex1.hc.centroid <- hclust(DSim_ex1, method = "centroid")
 set.seed(123)
-ex1.hc.centroid.n <- hclust(DSim_ex1, method = "centroid", members = sample(1:5000,100))
+ex1.hc.centroid.n <- hclust(DSim_ex1, method = "centroid", members = sample(1:5000,60))
 
 ex1.hc.complete$labels <- rep(archetypes1,each=20)
 fviz_dend(ex1.hc.complete, cex = 0.5 )
@@ -333,7 +341,47 @@ fviz_dend(ex1.hc.average.n, cex = 0.5 )
 
 fviz_dend(ex1.hc.centroid, cex = 0.5 )
 fviz_dend(ex1.hc.centroid.n, cex = 0.5 )
+```
 
+```{r Example3}
+ex3.hc.complete   <- hclust(DSim_ex3, method = "complete")
+set.seed(123)
+ex3.hc.complete.n <- hclust(DSim_ex3, method = "complete", members = sample(1:5000,40))
+
+ex3.hc.single     <- hclust(DSim_ex3, method = "single")
+
+ex3.hc.average    <- hclust(DSim_ex3, method = "average")
+set.seed(123)
+ex3.hc.average.n  <- hclust(DSim_ex3, method = "average", members = sample(1:5000,40))
+
+ex3.hc.centroid   <- hclust(DSim_ex3, method = "centroid")
+set.seed(123)
+ex3.hc.centroid.n <- hclust(DSim_ex3, method = "centroid", members = sample(1:5000,40))
+
+abb.archetypes3 <- c(
+  "OG Sion",
+  "Bait1",
+  "Bait2",
+  "Bait3"
+)
+
+ex3.hc.complete$labels <- rep(abb.archetypes3,each=10)
+ex3.hc.complete.n$labels <- rep(abb.archetypes3,each=10)
+ex3.hc.average$labels <- rep(abb.archetypes3,each=10)
+ex3.hc.average.n$labels <- rep(abb.archetypes3,each=10)
+
+fviz_dend(ex3.hc.complete, cex = 0.5 ) +
+fviz_dend(ex3.hc.complete.n, cex = 0.5 )
+
+fviz_dend(ex3.hc.average, cex = 0.5 ) +
+fviz_dend(ex3.hc.average.n, cex = 0.5 )
+
+fviz_dend(ex3.hc.centroid, cex = 0.5 ) +
+fviz_dend(ex3.hc.centroid.n, cex = 0.5 )
+```
+
+
+```{r Example1}
 # label_cols =  rep(1:5,each=5)
 
 # plot(hc.complete)
