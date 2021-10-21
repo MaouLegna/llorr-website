@@ -15,9 +15,9 @@ params:
   # start:   "2021-06-30 21:00:00" #UTC tz / 2.11 <- Rose of the Underworld
   # start: "2021-07-14 21:00:00" #UTC tz / 2.12 <- Ruination Event
   # end: "2021-08-25 21:00:00" #UTC tz / 2.14 <- Bandle Release
-  start: "2021-09-01 21:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
-  end:   "2021-10-20 21:00:00" #UTC tz / 2.18 <- Balance Patch
-  skip:  2800000  # Patch 2.14
+  start: "2021-10-20 21:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
+  end:   "2022-01-01 21:00:00" #UTC tz / 2.18 <- Balance Patch
+  # skip:  2800000  # Patch 2.14
   # skip:  3500000  # Patch 2.18
 ---
 
@@ -62,12 +62,12 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 
 #' load Games DT
 #'##############
-# LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("",NA) )
+LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA) )
 
-file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 ```
 
 ```{r archetype-fix}
@@ -278,7 +278,7 @@ flexdashboard::valueBox(Sys.Date(),
 # Grid {data-icon="fa-file-image"}
 
 ```{r get-WR-Top}
-mu <- 20
+mu <- 10
 
 TopCC <- MUtbl |>
   group_by(playerDeck) |>
@@ -353,8 +353,8 @@ ft <- grid |>
 ```
 
 ```{r print-flex, fig.width=12, fig.height=8}
-flextable::save_as_image(x = ft, path = "images/mugrid_back.png") |> invisible()
 ft
+flextable::save_as_image(x = ft, path = "images/mugrid_temp.png") |> invisible()
 ```
 
 <!-- ![](images/mugrid.png) -->
@@ -424,9 +424,22 @@ MUtbl |>
 
 ```{r}
 downloadthis::download_file(
-  path = file.path("images/mugrid.png"),
+  path = file.path("images/mugrid_temp.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download MU grid as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+### Match Ups Grid (2.14/2.17)
+
+```{r}
+downloadthis::download_file(
+  path = file.path("images/mugrid_patch_2_09to10.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid (2.14/2.17) as .png",
   button_type = "primary",
   has_icon = TRUE,
   icon = "fa fa-save",
