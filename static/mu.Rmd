@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (from Patch 2.14-post patch onward)"
+title: "Match Ups Data (from Patch 2.18 onward)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -354,7 +354,7 @@ ft <- grid |>
 
 ```{r print-flex, fig.width=12, fig.height=8}
 ft
-flextable::save_as_image(x = ft, path = "images/mugrid_temp.png") |> invisible()
+flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ```
 
 <!-- ![](images/mugrid.png) -->
@@ -424,7 +424,7 @@ MUtbl |>
 
 ```{r}
 downloadthis::download_file(
-  path = file.path("images/mugrid_temp.png"),
+  path = file.path("images/mugrid.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download MU grid as .png",
   button_type = "primary",
