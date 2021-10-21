@@ -11,14 +11,21 @@ output:
     orientation: row
 # date: "`r Sys.Date()`"
 params:
-  # start: "2021-07-14 21:00:00" #UTC tz / 'previous' patch start
-  # end:   "2021-08-25 21:00:00" #UTC tz / 'previous' patch end
-  # start: "2021-08-25 21:00:00" #UTC tz / 'current' patch start
-  start: "2021-09-01 21:00:00" #UTC tz / 'current' patch start
-  end:   "2021-10-30 21:00:00" #UTC tz / 'current' patch end
-  skip:  2800000  # Patch 2.14
-  # skip:  3350000  # Patch 2.14
+  # start: "2021-06-02 21:00:00" #UTC tz / 2.09 <- Balance Patch
+  # start:   "2021-06-30 21:00:00" #UTC tz / 2.11 <- Rose of the Underworld
+  # start: "2021-07-14 21:00:00" #UTC tz / 2.12 <- Ruination Event
+  # end: "2021-08-25 21:00:00" #UTC tz / 2.14 <- Bandle Release
+  start: "2021-10-20 21:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
+  end:   "2022-01-01 21:00:00" #UTC tz / 2.18 <- Balance Patch
+  # skip:  2800000  # Patch 2.14
+  # skip:  3500000  # Patch 2.18
 ---
+
+```{r}
+# 6/1/21 07:00 PM Game Updates PATCH 2.9.0 NOTES
+# 6/29/21 07:00 PM Game Updates PATCH 2.11.0 NOTES <- Rise Underworld
+# 7/13/21 07:00 PM Game Updates PATCH 2.12.0 NOTES <- Ruination # Viego & Akshan arrive in patch 2.12.0, which will be playable at approximately 11AM PT, July 14.
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -53,10 +60,14 @@ xaringanExtra::use_panelset()
 #'############
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
-file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+#' load Games DT
+#'##############
+LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA) )
+
+# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 ```
 
 ```{r archetype-fix}
@@ -75,6 +86,10 @@ LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 #' Archetype-Fix
 #'##############
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
+
+#' Archetype names fix
+######################
+LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r process-data}
@@ -82,7 +97,8 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  # filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
@@ -262,7 +278,7 @@ flexdashboard::valueBox(Sys.Date(),
 # Grid {data-icon="fa-file-image"}
 
 ```{r get-WR-Top}
-mu <- 20
+mu <- 10
 
 TopCC <- MUtbl |>
   group_by(playerDeck) |>
@@ -337,8 +353,8 @@ ft <- grid |>
 ```
 
 ```{r print-flex, fig.width=12, fig.height=8}
-flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ft
+flextable::save_as_image(x = ft, path = "images/mugrid_temp.png") |> invisible()
 ```
 
 <!-- ![](images/mugrid.png) -->
@@ -347,15 +363,27 @@ ft
 # knitr::include_graphics(path = "./images/mugrid.png")
 ```
 
-<!-- # Grid 2.12/2.13 {data-icon="fa-file-image"} -->
+# Grid 2.14/2.17 (Bandle Release) {data-icon="fa-file-image"}
 
-<!-- ![](images/mugrid_patch_2_12to13.png) -->
+![](images/mugrid_patch_2_14to17.png)
+
+# Grid 2.9/2.10 (Dragon) {data-icon="fa-file-image"}
+
+![](images/mugrid_patch_2_09to10.png)
 
 # Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 
 ## Download {data-width="200"}
 
 ### Match Ups Data
+
+```{r}
+# MUtbl |>
+#   filter( muGames > 10 ) |>
+#   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
+#   fwrite("mutbl_patch_2_12to13.csv")
+```
+
 
 ```{r}
 MUtbl |>
@@ -396,7 +424,7 @@ MUtbl |>
 
 ```{r}
 downloadthis::download_file(
-  path = file.path("images/mugrid.png"),
+  path = file.path("images/mugrid_temp.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download MU grid as .png",
   button_type = "primary",
@@ -405,20 +433,33 @@ downloadthis::download_file(
   self_contained = FALSE
 )
 ```
+### Match Ups Grid (2.14/2.17)
 
-<!-- ### Match Ups Grid (2.12/2.13) -->
+```{r}
+downloadthis::download_file(
+  path = file.path("images/mugrid_patch_2_09to10.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid (2.14/2.17) as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
 
-<!-- ```{r} -->
-<!-- download_file( -->
-<!--   path = file.path("images/mugrid_patch_2_12to13.png"), -->
-<!--   # path = system.file("assets/css/all.min.css", package = "downloadthis"), -->
-<!--   button_label = "Download MU grid (2.12/2.13) as .png", -->
-<!--   button_type = "primary", -->
-<!--   has_icon = TRUE, -->
-<!--   icon = "fa fa-save", -->
-<!--   self_contained = FALSE -->
-<!-- ) -->
-<!-- ``` -->
+### Match Ups Grid (2.09/2.10)
+
+```{r}
+downloadthis::download_file(
+  path = file.path("images/mugrid_patch_2_09to10.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download MU grid (2.9/2.10) as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
 
 ## Column {data-width="800"}
 
