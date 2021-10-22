@@ -89,7 +89,7 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 
 #' Archetype names fix
 ######################
-LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+# LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r process-data}
@@ -151,7 +151,6 @@ MUtbl <- LoR.Melt.Matches.RMD |>
   left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") |>
   relocate(factions,.after = muWR)
 ```
-
 # Table {data-icon="fa-table"}
 
 ```{r}
@@ -277,6 +276,10 @@ flexdashboard::valueBox(Sys.Date(),
 
 # Grid {data-icon="fa-file-image"}
 
+## Row {data-heigth="850"}
+
+### MU Grid
+
 ```{r get-WR-Top}
 mu <- 10
 
@@ -303,7 +306,16 @@ big_border   = officer::fp_border(color="darkgray", width = 2)
 small_border = officer::fp_border(color="gray", width = 1)
 
 dummy_fun <- function(x){
-  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
+  # case_when(
+  #   is.na(x) ~ NA,
+  #   x > 0.15 & x < 0.85 ~ sprintf( "%.0f%%", x*100 ),
+  #   x <= 0.15 & x >= 0.85 ~ sprintf( "%.0f%%*", x*100 )
+  # )
+  ifelse( !is.na(x),
+          ifelse(x > 0.15 & x < 0.85,
+                 sprintf( "%.0f%%",  x*100 ),
+                 sprintf( "%.0f%%*", x*100 )
+                ),NA )
 }
 ```
 
@@ -325,6 +337,8 @@ funs <- setNames(rep(list(dummy_fun), mu), TopCC)
 ```
 
 ```{r create-flex}
+require(flextable)
+
 ft <- grid |> 
   as_tibble() |>
   # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
@@ -339,6 +353,12 @@ ft <- grid |>
     j = ~ . -MatchUps,
     part = "body") |>
   {\(x) flextable::border_remove(x = x)}() |>
+  # flextable::bold( bold = function(x)   )
+  flextable::color(
+    i = 1:ncol(grid),
+    j = 2:ncol(grid)+1, 
+    color = function(x) ifelse(x <= .15 | x >= .85 , "grey75", "grey25")
+    ) |>
   flextable::border_outer(part="all", border = big_border ) |>
   flextable::border_inner_h(part="all", border = small_border ) |>
   flextable::border_inner_v(part="all", border = small_border ) |>
@@ -346,8 +366,10 @@ ft <- grid |>
   flextable::fontsize(size = 8, part = "header") |>
   flextable::fontsize(j=1, size = 8) |>
   flextable::bg(part = "header", bg = "white"  ) |>
+  flextable::bg(part = "footer", bg = "white"  ) |>
   flextable::bg(j = 1, bg = "white"  ) |>
-  flextable::autofit()
+  flextable::autofit() |>
+  flextable::add_footer_lines("Values with * and grayed are win rates below 15% or higher then 85%. Those MU may be unreliable because of Sample Size.")
 
 # ft
 ```
@@ -355,6 +377,30 @@ ft <- grid |>
 ```{r print-flex, fig.width=12, fig.height=8}
 ft
 flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
+```
+
+## Row
+
+### Number of Games (min 10 games for each MU)
+
+```{r value-nGames-2}
+nGames = MUtbl |> 
+  filter( muGames > nfilter ) |>
+  summarise(n = sum(muGames)) |>
+  pull()
+
+flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
+                        caption = glue::glue("out of a total of {MUtbl.tot} - min 10 games"),
+                        icon = "fa-table",
+                        color = "#FA7404")
+```
+
+### Last Update
+
+```{r value-update-2}
+flexdashboard::valueBox(Sys.Date(),
+         icon = "fa-clock",
+         color = "lightgreen")
 ```
 
 <!-- ![](images/mugrid.png) -->
