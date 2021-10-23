@@ -236,57 +236,31 @@ DSim_ex3 <- cos.dsimMatrix(exCodes3)
 
 # Introduction
 
-Defining archetypes on Legends of Runeterra is both a complex and simple problem. It's simple if we consider that it's possible to define decks by the combination of champions and regions of choice but it's also complex by the fact that such definition is limited 
+Defining archetypes on Legends of Runeterra is both a complex and simple problem. It's simple if we consider that it's possible to define decks by the combination of champions and regions of choice but it's also complex by the fact that such definition is quite limited.
 
 On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-01/) we gave a possible method about how to compare archetypes and see if they can be considered from a shared common archetype or not. The proposed method makes use of inferential statistical analysis to reach a conclusion and so giving the results a certain robustness (not in the statistical meaning) with precise decision parameters. Sadly, it's also a methodology that's more fitting a posterior analysis, when hypothetical archetypes are already defined, a tool more fitted to refine the results.
+
+A more fitting methodology to find archetype is a form of exploratory data analysis (EDA) known as *Clustering Analysis* (CA). Its aim is to find subgroups (or clusters) in our data without relying on a *response variable* which is fitting to our problem.
+
+As it's not possible check out the quality of the results of a CA there is no clear pathway to solve a problem and it's no stretch to say a CA is more akin to a form of art than a strict inferential analysis.
+This also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not really perfectly possible. Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article.
+
 
 # Data
 
 The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
 
-## Complete Data
-
 ## Examples
 
-In this article we will use 4 different examples:
-
-1. Five archetypes with Different regions & different play style
-  - Draven / Sion (NX/PZ)
-  - Starfish - Nami / Zoe
-  - Darkness - Senna / Veigar (BC/SI)
-  - Ping City - Gangplank / Twisted Fate (BC/BW)
-  - Poppy / Ziggs (BC/NX)
+* Five archetypes with Different regions & different play style
+  1. Alligiance Mistwraith
+  2. Dragons (DE/MT)
+  3. Draven / Sion (NX/PZ)
+  4. Azir/Irelia
+  5. Ashe/LeBlanc
   
-2. Five archetypes with a common regions & different play style
-  - Draven / Sion (NX/PZ)
-  - Poppy / Ziggs (BC/NX)
-  - Braum / Vladimir
-  - Ping City - Gangplank / Twisted Fate (BC/BW)
-  - Poppy / Ziggs (BC/NX)
+* xxx Decks played from xxx to xxx
 
-
-3. Four Similar regions & similar play style
-  - RubinBait - Draven / Sion
-  - RubinBait - Caitlyn / Draven
-  - RubinBait - BandleBurn
-  - Draven / Sion (NX/PZ)[^1]
-  
-4. Random selection of 15 archetypes
-  
-[^1]: much different from the other burn 3 burn decks but has the role of highlightiun
-
-```{r microbenchark }
-# set.seed(123)
-# microTimes <- microbenchmark::microbenchmark(
-#   hclust(DSim_ex1, method = "complete"),
-#   hclust(DSim_ex1, method = "single"),
-#   hclust(DSim_ex1, method = "average"),
-#   hclust(DSim_ex1, method = "centroid"),
-#   times = 50
-# )
-# 
-# microTimes
-```
 
 # Methods
 
@@ -296,25 +270,7 @@ In this article we will use 4 different examples:
 
 It is good to find small subgroups
 
-#### Complete
 
-#### Single
-
-### DBSCAN
-
-# Analysis
-
-## Hierchical Clustering
-
-### Example 1 - Different regions & different win conditions
-
-### Example 2 - Similar regions & different win conditions
-
-### Example 3 - Similar regions & similar win conditions
-
-## DBSCAN
-
-# Conclusion
 
 
 ```{r Example1}

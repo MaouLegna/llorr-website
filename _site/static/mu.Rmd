@@ -15,8 +15,9 @@ params:
   # start:   "2021-06-30 21:00:00" #UTC tz / 2.11 <- Rose of the Underworld
   # start: "2021-07-14 21:00:00" #UTC tz / 2.12 <- Ruination Event
   # end: "2021-08-25 21:00:00" #UTC tz / 2.14 <- Bandle Release
-  start: "2021-10-20 21:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
-  end:   "2022-01-01 21:00:00" #UTC tz / 2.18 <- Balance Patch
+  # start: "2021-09-01 21:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
+  start:   "2021-10-20 21:00:00" #UTC tz / 2.18 <- Balance Patch
+  end:   "2022-01-01 21:00:00" #UTC tz /
   # skip:  2800000  # Patch 2.14
   # skip:  3500000  # Patch 2.18
 ---
@@ -64,7 +65,7 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 #'##############
 LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA) )
 
-# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT_patch_2_04_to_17final.csv")
 # header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
 # LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 # colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
@@ -87,6 +88,8 @@ LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 #'##############
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 
+# LoR.Deck.RMD[ ,tabyl(archetype_pretty) ]
+
 #' Archetype names fix
 ######################
 # LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
@@ -107,7 +110,10 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
-               )
+               ) |>
+  as.data.table()
+
+# LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
 ```
 
 ```{r process-MU}
@@ -536,6 +542,8 @@ The format of the table is the usual way I display the match-ups data but I also
   - Draven / Sion
   - Caitlyn / Draven
   - Draven / Ezreal
+  
+3. **"Dragons (DE/MT)** All decks with at least both Shyvana and Aurelion Sol. A Shyvana/Zoe which was popularizes by Alanz as it doesn't contains ASol is not included because of this.
 
 #### General info
 
