@@ -152,80 +152,96 @@ cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMat
 # cos.DSim_patch214215[1:10,1:10]
 # DSim_patch214215[1:10] |> eisen_cos.sim()
 ```
+```{r}
+# how I selecter the decks, it is reproducible as more decks will be inserted in the DB
 
-```{r distances}
-# install.packages("apcluster")
-# library(apcluster)
+# set.seed(123)
+# Mist1 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
+#   slice_sample(n = 50) |>
+#   pull(deck_code)
 # 
-# data(iris)
-# species <- iris$Species
-# iris <- as.matrix(iris[,1:4])
+# set.seed(123)
+# Mist2 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
+#   slice_sample(n = 50) |>
+#   pull(deck_code)
 # 
-# apres1a <- apcluster(negDistMat(r=2), iris)
+# set.seed(123)
+# Dragon1 <- LoR.Deck.RMD |>
+#   filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
+#   slice_sample(n = 30) |>
+#   pull(deck_code)
 # 
+# set.seed(123)
+# Dragon2 <- LoR.Deck.RMD |>
+#   filter( archetype == "Aurelion Sol/Shyvana" ) |>
+#   slice_sample(n = 70) |>
+#   pull(deck_code)
 # 
-# example <- matrix( c(3,1,0,0,0,
-#                      0,2,0,0,0,
-#                      3,0,0,0,0), ncol = 5, byrow=T )
+# set.seed(123)
+# Sion1 <- LoR.Deck.RMD |>
+#   filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
+#   slice_sample(n = 80) |>
+#   pull(deck_code)
 # 
-# dist(example, method = "manhattan")
+# set.seed(123)
+# Sion2 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
+#   slice_sample(n = 20) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# AI <- LoR.Deck.RMD |>
+#   filter( archetype == "Azir/Irelia", ) |>
+#   slice_sample(n = 100) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Rep1 <- LoR.Deck.RMD |>
+#   filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
+#   slice_sample(n = 75) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Rep2 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "Marauder" ) |>
+#   slice_sample(n = 25) |>
+#   pull(deck_code)
 ```
-
 
 ```{r prepare-examples}
 #' archetypes names
-archetypes1 <- c( 
-  "Draven/Sion (NX/PZ)",
-  "Nami/Zoe",
-  "MistWraith",
-  "Miss Fortune/Quinn",
-  "Pyke/Rek'Sai",
-  "Trundle/Tryndamere (FR/SI)"
-  )
-
-archetypes2 <- c(
-  "Draven/Sion (NX/PZ)",
-  "Poppy/Ziggs (BC/NX)",
-  "Braum/Vladimir",
-  "Gangplank/Miss Fortune (BW/NX)",
-  "Swain/Twisted Fate"
+archetypes <- c( 
+  "Ashe/LeBlanc",           # 75/25 noMarauder/Marauder
+  "Azir/Irelia",            # 100
+  "Dragons (DE/MT)",        # 30/70 J4/PureDrake "Aurelion Sol/Jarvan IV/Shyvana",  "Aurelion Sol/Shyvana",
+  "Draven/Sion (NX/PZ)",    # 80/20 DravenSion/RubinBait
+  "Mistwraith Allegiance"   # 50/50 Targon/Piltover
 )
 
-archetypes3 <- c(
-  "Draven/Sion (NX/PZ)",
-  "RubinBait - Draven/Sion",
-  "RubinBait - Caitlyn/Draven",
-  "RubinBait - Draven/Ezreal"
-)
+LoR.Archetype.Exe[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+LoR.Archetype.Exe[ archetype == "RubinBait - Draven/Sion" , archetype:="Draven/Sion (NX/PZ)" ]
+LoR.Archetype.Exe[ archetype == "Marauder" , archetype:="Ashe/LeBlanc" ]
 
-# set.seed(123)
-# archetypes4 <- LoR.Deck.RMD |>
-#   tabyl(archetype) |>
-#   arrange(desc(n)) |>
-#   filter(n >= 100) |>
-#   select(archetype) |>
-#   slice_sample(n = 15) |>
-#   pull()
+mini.ex <- c(Rep1[1:7],Rep2[1:3],AI[1:10],Dragon1[1:3],Dragon2[1:7],Sion1[1:8],Sion2[1:2],Mist1[1:5],Mist2[1:5])
 
-# top_n_codes(DT = patch214215code,
-#             archetypes = archetypes1,
-#             n = 10,dopull = F)
+LoR.Archetype.Mini <- LoR.Archetype.Exe |>
+  filter(deck_code %in% mini.ex )
 
-#' codes
-exCodes1 <- top_n_codes(DT = patch214215code,archetypes = archetypes1,n = 10,dopull = T)
-exCodes2 <- top_n_codes(DT = patch214215code,archetypes = archetypes2,n = 10,dopull = T)
-exCodes3 <- top_n_codes(DT = patch214215code,archetypes = archetypes3,n = 10,dopull = T)
-
-# set.seed(123)
-# exCodes1 <- LoR.Deck.RMD[ archetype %in% archetypes1, sample(deck_code,size = 20), by=archetype ]
-# exCodes2 <- LoR.Deck.RMD[ archetype %in% archetypes2, sample(deck_code,size = 20), by=archetype ]
-# exCodes3 <- LoR.Deck.RMD[ archetype %in% archetypes3, sample(deck_code,size = 20), by=archetype ]
+# LoR.Archetype.Exe |>
+#   filter(deck_code %in% mini.ex ) |>
+#   fwrite("example_archetye_mini.csv")
 # 
-# #' distance matrix
-DSim_ex1 <- cos.dsimMatrix(exCodes1)
-DSim_ex2 <- cos.dsimMatrix(exCodes2)
-DSim_ex3 <- cos.dsimMatrix(exCodes3)
+# LoR.Archetype.Exe |>
+#   fwrite("example_archetye.csv")
 
+# #' distance matrix
+DSim_ex   <- cos.dsimMatrix(LoR.Archetype.Exe$deck_code)
+DSim_mini <- cos.dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
+```
+
+```{r}
 # DSim_patch215216 <- unique(patch215216code$deck_code) |> dsimMatrix()
 # fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
 
@@ -253,14 +269,13 @@ The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
 ## Examples
 
 * Five archetypes with Different regions & different play style
-  1. Alligiance Mistwraith
-  2. Dragons (DE/MT)
-  3. Draven / Sion (NX/PZ)
-  4. Azir/Irelia
-  5. Ashe/LeBlanc
+  1. Azir/Irelia
+  2. Ashe/LeBlanc
+  3. Dragons (DE/MT)
+  4. Draven/Sion (NX/PZ)
+  5. Mistwraith Alligiance
   
 * xxx Decks played from xxx to xxx
-
 
 # Methods
 
@@ -274,29 +289,29 @@ It is good to find small subgroups
 
 
 ```{r Example1}
-ex1.hc.complete <- hclust(DSim_ex1, method = "complete")
+ex.hc.complete <- hclust(DSim_mini, method = "complete")
 set.seed(123)
-ex1.hc.complete.n <- hclust(DSim_ex1, method = "complete", members = sample(1:5000,60))
+ex.hc.complete.n <- hclust(DSim_mini, method = "complete", members = sample(1:5000,NROW(DSim_mini) ))
 
-ex1.hc.single   <- hclust(DSim_ex1, method = "single")
+ex.hc.single   <- hclust(DSim_mini, method = "single")
 
-ex1.hc.average  <- hclust(DSim_ex1, method = "average")
+ex.hc.average  <- hclust(DSim_mini, method = "average")
 set.seed(123)
-ex1.hc.average.n  <- hclust(DSim_ex1, method = "average", members = sample(1:5000,60))
+ex.hc.average.n  <- hclust(DSim_mini, method = "average", members = sample(1:5000,NROW(DSim_mini)))
 
-ex1.hc.centroid <- hclust(DSim_ex1, method = "centroid")
+ex.hc.centroid <- hclust(DSim_mini, method = "centroid")
 set.seed(123)
-ex1.hc.centroid.n <- hclust(DSim_ex1, method = "centroid", members = sample(1:5000,60))
+ex.hc.centroid.n <- hclust(DSim_mini, method = "centroid", members = sample(1:5000,NROW(DSim_mini)))
 
-ex1.hc.complete$labels <- rep(archetypes1,each=20)
-fviz_dend(ex1.hc.complete, cex = 0.5 )
-fviz_dend(ex1.hc.complete.n, cex = 0.5 )
+ex.hc.complete$labels <- LoR.Archetype.Mini$archetype
+fviz_dend(ex.hc.complete, cex = 0.5 ) +
+fviz_dend(ex.hc.complete.n, cex = 0.5 )
 
-fviz_dend(ex1.hc.average, cex = 0.5 )
-fviz_dend(ex1.hc.average.n, cex = 0.5 )
+fviz_dend(ex.hc.average, cex = 0.5 ) +
+fviz_dend(ex.hc.average.n, cex = 0.5 )
 
-fviz_dend(ex1.hc.centroid, cex = 0.5 )
-fviz_dend(ex1.hc.centroid.n, cex = 0.5 )
+fviz_dend(ex.hc.centroid, cex = 0.5 ) +
+fviz_dend(ex.hc.centroid.n, cex = 0.5 )
 ```
 
 ```{r Example3}
@@ -342,7 +357,7 @@ fviz_dend(ex3.hc.centroid.n, cex = 0.5 )
 
 # plot(hc.complete)
 
-fviz_dist(DSim_ex1,
+fviz_dist(DSim_ex,
           gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")) +
   labs(title = "Distance Matrix")
 
@@ -392,10 +407,10 @@ rect_border = 2:5, rect_lty = 1)
 ex1DT <- top_n_codes(archetypes = archetypes1,n = 10,dopull = F) |>
   mutate( origin = as.numeric(as.factor(player)) )
 
-hc.complete <- hclust(DSim_ex1, method = "average")
+hc.complete <- hclust(DSim_ex, method = "average")
 # plot(hc.complete)
 
-fviz_dist(DSim_ex1,
+fviz_dist(DSim_ex,
           gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")
           ) +
   labs(title = "Distance Matrix")
@@ -419,13 +434,13 @@ plot(hc.complete, labels = ExampleDT1$player)
 library("factoextra")
 
 
-# ggplot(DSim_ex1)+
+# ggplot(DSim_ex)+
 #       geom_tile()
 # 
 # # Compute cophentic distance
 # res.coph <- cophenetic(hc.complete)
 # # Correlation between cophenetic distance and the original distance
-# cor(DSim_ex1, res.coph)
+# cor(DSim_ex, res.coph)
 
 data(USArrests)
 df <- scale(USArrests)
@@ -436,22 +451,22 @@ fviz_dend(res.hc)
 
 
 archetypes1.pretty <- c("Draven/Sion","StarFish","Darkness","Ping City","Poppy/Ziggs")
-ex1.hc.complete$labels <- rep(archetypes1.pretty,each=10)
-ex1.hc.single$labels <- rep(archetypes1.pretty,each=10)
+ex.hc.complete$labels <- rep(archetypes1.pretty,each=10)
+ex.hc.single$labels <- rep(archetypes1.pretty,each=10)
 
-fviz_dend(ex1.hc.complete, cex = 0.5,
+fviz_dend(ex.hc.complete, cex = 0.5,
           label_cols = rep(1:5,each=10) ) + 
   labs(title = "Complete") +
   
-fviz_dend(ex1.hc.single, cex = 0.5,
+fviz_dend(ex.hc.single, cex = 0.5,
         label_cols = rep(1:5,each=10) ) + 
   labs(title = "Single") +
   
-fviz_dend(ex1.hc.average, cex = 0.5,
+fviz_dend(ex.hc.average, cex = 0.5,
         label_cols = rep(1:5,each=10) ) + 
   labs(title = "Average") +
   
-fviz_dend(ex1.hc.centroid, cex = 0.5,
+fviz_dend(ex.hc.centroid, cex = 0.5,
         label_cols = rep(1:5,each=10) ) + 
   labs(title = "Centroid")  
   
