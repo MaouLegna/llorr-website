@@ -92,7 +92,7 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 
 #' Archetype names fix
 ######################
-# LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r process-data}

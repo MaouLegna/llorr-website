@@ -95,6 +95,10 @@ LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 #' Archetype-Fix
 #'##############
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
+
+#' Archetype names fix
+######################
+LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r functions}
