@@ -152,6 +152,7 @@ cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMat
 # cos.DSim_patch214215[1:10,1:10]
 # DSim_patch214215[1:10] |> eisen_cos.sim()
 ```
+
 ```{r}
 # how I selecter the decks, it is reproducible as more decks will be inserted in the DB
 
@@ -224,10 +225,21 @@ LoR.Archetype.Exe[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 LoR.Archetype.Exe[ archetype == "RubinBait - Draven/Sion" , archetype:="Draven/Sion (NX/PZ)" ]
 LoR.Archetype.Exe[ archetype == "Marauder" , archetype:="Ashe/LeBlanc" ]
 
-mini.ex <- c(Rep1[1:7],Rep2[1:3],AI[1:10],Dragon1[1:3],Dragon2[1:7],Sion1[1:8],Sion2[1:2],Mist1[1:5],Mist2[1:5])
+# mini.ex <- c(Rep1[1:7], # Ashe/LB
+#              Rep2[1:3], # Marauder
+#              AI[1:10],  # AI
+#              Dragon1[1:3], # with J4
+#              Dragon2[1:7], # no J4
+#              Sion1[1:8],   # OG
+#              Sion2[1:2],   # fake-burn
+#              Mist1[1:5],   # MT
+#              Mist2[1:5])   # PnZ
 
 LoR.Archetype.Mini <- LoR.Archetype.Exe |>
   filter(deck_code %in% mini.ex )
+
+LoR.Archetype.Ex   <- fread("./data/example_archetye.csv")
+LoR.Archetype.Mini <- fread("./data/example_archetye_mini.csv")
 
 # LoR.Archetype.Exe |>
 #   filter(deck_code %in% mini.ex ) |>
@@ -237,8 +249,9 @@ LoR.Archetype.Mini <- LoR.Archetype.Exe |>
 #   fwrite("example_archetye.csv")
 
 # #' distance matrix
-DSim_ex   <- cos.dsimMatrix(LoR.Archetype.Exe$deck_code)
+DSim_ex   <- cos.dsimMatrix(LoR.Archetype.Ex$deck_code)
 DSim_mini <- cos.dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
+DSim_mini <- dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
 ```
 
 ```{r}
@@ -259,14 +272,12 @@ On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defi
 A more fitting methodology to find archetype is a form of exploratory data analysis (EDA) known as *Clustering Analysis* (CA). Its aim is to find subgroups (or clusters) in our data without relying on a *response variable* which is fitting to our problem.
 
 As it's not possible check out the quality of the results of a CA there is no clear pathway to solve a problem and it's no stretch to say a CA is more akin to a form of art than a strict inferential analysis.
-This also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not really perfectly possible. Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article.
+This also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not really perfectly possible. Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article. In the end this article is a small dive into the cluster analysis . While written with the intent of giving a few persons I have in mind  fbubfuidsbfiudsfiubdsu
 
 
 # Data
 
-The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
-
-## Examples
+The example used in this article is made out of 50 decks. More details will be described 
 
 * Five archetypes with Different regions & different play style
   1. Azir/Irelia
@@ -275,9 +286,15 @@ The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
   4. Draven/Sion (NX/PZ)
   5. Mistwraith Alligiance
   
-* xxx Decks played from xxx to xxx
+More details about how they were chosen will be written later as results are shown
+
+# Clustering 
 
 # Methods
+
+Clustering refers to a very broad set of techniques for findings subgroups or *clusters*, in a data set. When we cluster the observations of a data set, we seek partition then into distinct groups so that the observations within each group are quite similar to each other, while observation in a different groups are quite different from each other. Of course, to make this concrete, we must define what it means for two or more observations to be *similar or different*
+
+Since clustering is popular in many fields, there exist a great number of clustering methods. And this is already a problem for the archetype problem
 
 ## Aggregating Data - Clustering
 
@@ -286,6 +303,25 @@ The sample is reduced to `r NROW(LoR.Melt.Matches.RMD)` games
 It is good to find small subgroups
 
 
+```{r}
+library("apcluster")
+s1 <- negDistMat(iris, r=2)
+
+apres1a <- apcluster(negDistMat(DSim_mini,r=1))
+
+table(apres1a@idx,LoR.Archetype.Mini$archetype)
+
+apcluster::heatmap(apres1a,negDistMat(DSim_mini,r=1))
+
+heatmap(apres1a,as.data.frame(DSim_mini))
+
+apcluster::linSimMat
+
+apcluster::corSimMat(DSim_mini,signed = F,r=1)
+linKernel(DSim_mini,normalize = T)
+
+eisen_cos.sim(DSim_mini)
+```
 
 
 ```{r Example1}
