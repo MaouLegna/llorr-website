@@ -215,7 +215,12 @@ Champion.deck.daily <- tibble(
       ungroup(),
     by = c("game_start_time_utc","playerDeck") ) |>
   mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
+```
 
+
+```{r print-date-by-date, fig.width=12, fig.height=8}
+# require("ggsci")
+set.seed(1234)
 meta_evo <- Champion.deck.daily |>
   mutate( game_start_time_utc = as.Date(game_start_time_utc) ) |>
   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
@@ -226,6 +231,8 @@ meta_evo <- Champion.deck.daily |>
       filter( game_start_time_utc >= now()-days(2) ),
     # data = Champion.deck.daily |> distinct(playerDeck),
     aes(label=str_to_upper(playerDeck),color = playerDeck),
+    # aes(label=str_to_upper(playerDeck)),
+    # color = "black",
     # aes(color = champions, label = champions),
     family = "Helvetica",
     # fontface = "bold",
@@ -251,13 +258,10 @@ meta_evo <- Champion.deck.daily |>
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0,0.15),
-    breaks = seq(0,0.15,0.02),
+    limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)),
+    breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
-  ) +
-  scale_color_manual(
-    values = c(rcartocolor::carto_pal(n = ntopPR, name = "Vivid")[1:ntopPR-1], "grey50")
-  ) +
+  )  +
   labs(x = "Date",
        y = "PlayRate",
        title = "Evolution of Play Rate over time",
@@ -268,7 +272,8 @@ meta_evo <- Champion.deck.daily |>
   theme_539() +
   theme( legend.position = "none",
          axis.text = element_text(size = 10, face = "bold", color = "grey50")
-  )
+  ) +
+  scale_color_manual( values = sample(colorRampPalette(brewer.pal(8, "Dark2"))(30),15) )
 ```
 
 ```{r decks}
@@ -636,9 +641,9 @@ shared_code |>
 
 ## Meta Decks PlayRate over time
 
-```{r create-plot-meta-evo}
+```{r create-plot-meta-evo, fig.width=12, fig.height=8}
 meta_evo
-# ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png"))
+ggsave("./images/meta-evo.png",width = 12,height = 8)
 ```
 
 # Informations {data-orientation="columns" data-icon="fa-info-circle"}
@@ -646,11 +651,11 @@ meta_evo
 ## Column
 <!-- ## Column {data-width="800"} -->
   
-  ### How to read/use
+### How to read/use
+
+#### Deck-Structure
   
-  #### Deck-Structure
-  
-  * The filter Meta/Underdog allows to restrict to decks that I define as 'MetaDeck' or 'UnderdogDeck'. Meta decks are in my case defined as decks with at least 1% PlayRate. Underdog decks are in my case defined as decks with at least 0.1% but no more than 1% PlayRate and a mean WR more or equal to 50%.
+* The filter Meta/Underdog allows to restrict to decks that I define as 'MetaDeck' or 'UnderdogDeck'. Meta decks are in my case defined as decks with at least 1% PlayRate. Underdog decks are in my case defined as decks with at least 0.1% but no more than 1% PlayRate and a mean WR more or equal to 50%.
 
 * The filter Archetypes allows to restrict to specific/s deck archetypes.
 

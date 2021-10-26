@@ -27,7 +27,32 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
+bibliography: biblio.yaml
 draft: TRUE
+
+references:
+- type: article-journal
+  id: WatsonCrick1953
+  author:
+  - family: Watson
+    given: J. D.
+  - family: Crick
+    given: F. H. C.
+  issued:
+    date-parts:
+    - - 1953
+      - 4
+      - 25
+  title: 'Molecular structure of nucleic acids: a structure for
+    deoxyribose nucleic acid'
+  title-short: Molecular structure of nucleic acids
+  container-title: Nature
+  volume: 171
+  issue: 4356
+  page: 737-738
+  DOI: 10.1038/171737a0
+  URL: https://www.nature.com/articles/171737a0
+  language: en-GB
 ---
 
 ```{r setup, include=FALSE}
@@ -109,33 +134,33 @@ cos.dsimMatrix <- function( codes ) {
 
 #' load gameDT
 #'############
-file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
-
-#' load Account
-#'#############
-LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
-                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
-
-#' load DeckDT
-#'############
+# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+# 
+# #' load Account
+# #'#############
+# LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
+#                          header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+#   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
+# 
+# #' load DeckDT
+# #'############
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-
-#' patch 2.14 to 2.15
-#'###################
-patch214215code <- LoR.Match.RMD |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-  select( -ends_with("_3"),-ends_with("_4")  ) |>
-  select( starts_with("deck_code") ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,archetype)],  by=c("deck_code") )
+ 
+# #' patch 2.14 to 2.15
+# #'###################
+# patch214215code <- LoR.Match.RMD |>
+#   filter( game_type=="Ranked" ) |>
+#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+#   select( -ends_with("_3"),-ends_with("_4")  ) |>
+#   select( starts_with("deck_code") ) |>
+#   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+#                names_to = c(".value"),
+#                names_pattern = "(.*)_[0-9]"
+#                ) |>
+#   left_join(LoR.Deck.RMD[,.(deck_code,archetype)],  by=c("deck_code") )
 
 # NROW(patch214215code) # 155214
 # patch214215code |> fwrite(file.path("C:","LlorR","data","clean","deckcode_patch214215.csv")  )
@@ -145,70 +170,77 @@ patch214215code <- LoR.Match.RMD |>
 
 #' load parse Matrix
 #'##################
-DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","DSimMatrix_0214to0215.csv"))
-cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"), header=T) |> as.matrix()
+# DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","DSimMatrix_0214to0215.csv"))
+# cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"), header=T) |> as.matrix()
 # fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
 
 # cos.DSim_patch214215[1:10,1:10]
 # DSim_patch214215[1:10] |> eisen_cos.sim()
-```
 
+#' Archetype-Fix
+#'##############
+source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
+```
 ```{r}
 # how I selecter the decks, it is reproducible as more decks will be inserted in the DB
 
-# set.seed(123)
-# Mist1 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
-#   slice_sample(n = 50) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Mist2 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
-#   slice_sample(n = 50) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Dragon1 <- LoR.Deck.RMD |>
-#   filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
-#   slice_sample(n = 30) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Dragon2 <- LoR.Deck.RMD |>
-#   filter( archetype == "Aurelion Sol/Shyvana" ) |>
-#   slice_sample(n = 70) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Sion1 <- LoR.Deck.RMD |>
-#   filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
-#   slice_sample(n = 80) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Sion2 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
-#   slice_sample(n = 20) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# AI <- LoR.Deck.RMD |>
-#   filter( archetype == "Azir/Irelia", ) |>
-#   slice_sample(n = 100) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Rep1 <- LoR.Deck.RMD |>
-#   filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
-#   slice_sample(n = 75) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Rep2 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "Marauder" ) |>
-#   slice_sample(n = 25) |>
-#   pull(deck_code)
+set.seed(123)
+Rep1 <- LoR.Deck.RMD |>
+  filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
+  slice_sample(n = 75) |>
+  pull(deck_code)
+
+set.seed(123)
+Rep2 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "Marauder" ) |>
+  slice_sample(n = 25) |>
+  pull(deck_code)
+
+set.seed(123)
+AI <- LoR.Deck.RMD |>
+  filter( archetype == "Azir/Irelia", ) |>
+  slice_sample(n = 100) |>
+  pull(deck_code)
+
+set.seed(123)
+Dragon1 <- LoR.Deck.RMD |>
+  filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
+  slice_sample(n = 30) |>
+  pull(deck_code)
+
+set.seed(123)
+Dragon2 <- LoR.Deck.RMD |>
+  filter( archetype == "Aurelion Sol/Shyvana" ) |>
+  slice_sample(n = 70) |>
+  pull(deck_code)
+
+set.seed(123)
+Sion1 <- LoR.Deck.RMD |>
+  filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
+  slice_sample(n = 80) |>
+  pull(deck_code)
+
+set.seed(123)
+Sion2 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
+  slice_sample(n = 20) |>
+  pull(deck_code)
+
+set.seed(123)
+Mist1 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
+  slice_sample(n = 50) |>
+  pull(deck_code)
+
+set.seed(123)
+Mist2 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
+  slice_sample(n = 50) |>
+  pull(deck_code)
+
+#' Archetype names fix
+######################
+LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r prepare-examples}
@@ -221,37 +253,54 @@ archetypes <- c(
   "Mistwraith Allegiance"   # 50/50 Targon/Piltover
 )
 
-LoR.Archetype.Exe[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-LoR.Archetype.Exe[ archetype == "RubinBait - Draven/Sion" , archetype:="Draven/Sion (NX/PZ)" ]
-LoR.Archetype.Exe[ archetype == "Marauder" , archetype:="Ashe/LeBlanc" ]
+LoR.Archetype.Ex <- rbind(
+  LoR.Deck.RMD[ deck_code %in% Rep1, ],
+  LoR.Deck.RMD[ deck_code %in% Rep2, ],
+  LoR.Deck.RMD[ deck_code %in% AI, ],
+  LoR.Deck.RMD[ deck_code %in% Dragon1, ],
+  LoR.Deck.RMD[ deck_code %in% Dragon2, ],
+  LoR.Deck.RMD[ deck_code %in% Sion1, ],
+  LoR.Deck.RMD[ deck_code %in% Sion2, ],
+  LoR.Deck.RMD[ deck_code %in% Mist1, ],
+  LoR.Deck.RMD[ deck_code %in% Mist2, ]
+)
+  
 
-# mini.ex <- c(Rep1[1:7], # Ashe/LB
-#              Rep2[1:3], # Marauder
-#              AI[1:10],  # AI
-#              Dragon1[1:3], # with J4
-#              Dragon2[1:7], # no J4
-#              Sion1[1:8],   # OG
-#              Sion2[1:2],   # fake-burn
-#              Mist1[1:5],   # MT
-#              Mist2[1:5])   # PnZ
 
-LoR.Archetype.Mini <- LoR.Archetype.Exe |>
+# LoR.Archetype.Exe[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+# LoR.Archetype.Exe[ archetype == "RubinBait - Draven/Sion" , archetype:="Draven/Sion (NX/PZ)" ]
+# LoR.Archetype.Exe[ archetype == "Marauder" , archetype:="Ashe/LeBlanc" ]
+
+mini.ex <- c(Rep1[1:7], # Ashe/LB
+             Rep2[1:3], # Marauder
+             AI[1:10],  # AI
+             Dragon1[1:3], # with J4
+             Dragon2[1:7], # no J4
+             Sion1[1:8],   # OG
+             Sion2[1:2],   # fake-burn
+             Mist1[1:5],   # MT
+             Mist2[1:5])   # PnZ
+
+LoR.Archetype.Mini <- LoR.Archetype.Ex |>
   filter(deck_code %in% mini.ex )
 
-LoR.Archetype.Ex   <- fread("./data/example_archetye.csv")
-LoR.Archetype.Mini <- fread("./data/example_archetye_mini.csv")
+# fwrite(LoR.Archetype.Ex, "./data/example_archetye.csv")
+# fwrite(LoR.Archetype.Mini, "./data/example_archetye_mini.csv")
 
-# LoR.Archetype.Exe |>
-#   filter(deck_code %in% mini.ex ) |>
-#   fwrite("example_archetye_mini.csv")
-# 
-# LoR.Archetype.Exe |>
-#   fwrite("example_archetye.csv")
+# LoR.Archetype.Ex   <- fread("./data/example_archetye.csv")
+# LoR.Archetype.Mini <- fread("./data/example_archetye_mini.csv")
 
 # #' distance matrix
-DSim_ex   <- cos.dsimMatrix(LoR.Archetype.Ex$deck_code)
-DSim_mini <- cos.dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
-DSim_mini <- dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
+sparseMatrix.Ex   <- dsimMatrix(codes =  LoR.Archetype.Ex$deck_code )
+sparseMatrix.mini <- dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
+
+rownames.archetype <- lapply(archetypes, function(x) sprintf("%s.%s",x,c(1:10))) |> unlist()
+
+sparseMatrix.mini <- as.data.frame(sparseMatrix.mini)
+rownames(sparseMatrix.mini) <- rownames.archetype
+
+DSim_ex   <- eisen_cos.sim(sparseMatrix.Ex)
+DSim_mini <- eisen_cos.sim(sparseMatrix.mini)
 ```
 
 ```{r}
@@ -267,13 +316,11 @@ DSim_mini <- dsimMatrix(codes =  LoR.Archetype.Mini$deck_code )
 
 Defining archetypes on Legends of Runeterra is both a complex and simple problem. It's simple if we consider that it's possible to define decks by the combination of champions and regions of choice but it's also complex by the fact that such definition is quite limited.
 
-On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-01/) we gave a possible method about how to compare archetypes and see if they can be considered from a shared common archetype or not. The proposed method makes use of inferential statistical analysis to reach a conclusion and so giving the results a certain robustness (not in the statistical meaning) with precise decision parameters. Sadly, it's also a methodology that's more fitting a posterior analysis, when hypothetical archetypes are already defined, a tool more fitted to refine the results.
+On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-01/) we gave a possible method about how to compare archetypes and see if they can be considered from a shared common archetype or not. The proposed method makes use of inferential statistical analysis to reach a conclusion. Sadly, it's also a methodology that's more fitting a posterior analysis, when hypothetical archetypes are already defined, a tool more fitted to refine the results and not to define archetypes.
 
-A more fitting methodology to find archetype is a form of exploratory data analysis (EDA) known as *Clustering Analysis* (CA). Its aim is to find subgroups (or clusters) in our data without relying on a *response variable* which is fitting to our problem.
+A more fitting methodology to find archetype is a form of exploratory data analysis (EDA) known as *Clustering Analysis* (CA). Its aim is to find subgroups (or clusters) in our data without relying on a *response variable*, also the reason why it's called *unsupervised learning*.
 
-As it's not possible check out the quality of the results of a CA there is no clear pathway to solve a problem and it's no stretch to say a CA is more akin to a form of art than a strict inferential analysis.
-This also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not really perfectly possible. Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article. In the end this article is a small dive into the cluster analysis . While written with the intent of giving a few persons I have in mind  fbubfuidsbfiudsfiubdsu
-
+As useful as it is a CA suffer from a fundamental problem of not being able to check out the quality of the results. With a vast array of different algorithms and hyper-parameters this also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not only impossible, it's also seeing the CA in the wrong way. Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article. The result, or maybe compromise was to reduce the scale on this article which will be small dive into the cluster analysis. While I want to provide some food for thought for others in the end the main recipient of the article is myself, to provide me a more solid foundation on the topic and how to approach it knowing the basic limitations of what I'm planning to use.
 
 # Data
 
@@ -290,39 +337,42 @@ More details about how they were chosen will be written later as results are sho
 
 # Clustering 
 
-# Methods
+Clustering is a basic data mining task with a wide variety of applications. not surprisingly, there exist many clustering algorithms. However, clustering is an ill defined problem - given a data set, it is not clear what a "correct" clustering for that set is. Indeed, different algorithms may yield dramatically different outputs for the same input sets.
+In spite of the wide use of clustering in many practical applications, currently, there exist no principled method to guide the selection of a clustering algorithm.
+Currently, such decisions are often made in a very ad hoc, if not completely random, manner. Users are aware of the cost involved in employing different clustering algorithms, such as running times, memory requirement, and software.
+
+Clustering is applied in a wide range of disciplines, from astronomy to zoology, yet its theoretical underpinnings are still poorly understood. Even the fairy basic problem of which algorithm to select for a given application (known as "the user dilemma") is left to ad hoc solutions, as theory is only starting to address fundamental differences between clustering methods.
 
 Clustering refers to a very broad set of techniques for findings subgroups or *clusters*, in a data set. When we cluster the observations of a data set, we seek partition then into distinct groups so that the observations within each group are quite similar to each other, while observation in a different groups are quite different from each other. Of course, to make this concrete, we must define what it means for two or more observations to be *similar or different*
 
-Since clustering is popular in many fields, there exist a great number of clustering methods. And this is already a problem for the archetype problem
+Since clustering is popular in many fields, there exist a great number of clustering methods 
 
-## Aggregating Data - Clustering
-
-### Hierarchical Clustering
-
-It is good to find small subgroups
-
+## K-Mean
 
 ```{r}
-library("apcluster")
-s1 <- negDistMat(iris, r=2)
+km.out <- kmeans(sparseMatrix.mini, 3, nstart = 10)
+km.out <- kmeans(sparseMatrix.mini, 5, nstart = 10)
 
-apres1a <- apcluster(negDistMat(DSim_mini,r=1))
+k5 <- kmeans(sparseMatrix.mini, centers = 5, nstart = 25)
 
-table(apres1a@idx,LoR.Archetype.Mini$archetype)
+fviz_cluster(k5, data = sparseMatrix.mini)
 
-apcluster::heatmap(apres1a,negDistMat(DSim_mini,r=1))
+df <- USArrests
+df <- na.omit(df)
 
-heatmap(apres1a,as.data.frame(DSim_mini))
+k2 <- kmeans(df, centers = 2, nstart = 25)
+fviz_cluster(k2, data = df)
 
-apcluster::linSimMat
+setDT(sparseMatrix.mini)
 
-apcluster::corSimMat(DSim_mini,signed = F,r=1)
-linKernel(DSim_mini,normalize = T)
+rownames(sparseMatrix.mini) <- LoR.Archetype.Mini$archetype
 
-eisen_cos.sim(DSim_mini)
+
+
 ```
 
+
+## Hierarchical Clustering
 
 ```{r Example1}
 ex.hc.complete <- hclust(DSim_mini, method = "complete")
@@ -339,6 +389,8 @@ ex.hc.centroid <- hclust(DSim_mini, method = "centroid")
 set.seed(123)
 ex.hc.centroid.n <- hclust(DSim_mini, method = "centroid", members = sample(1:5000,NROW(DSim_mini)))
 
+paste 
+
 ex.hc.complete$labels <- LoR.Archetype.Mini$archetype
 fviz_dend(ex.hc.complete, cex = 0.5 ) +
 fviz_dend(ex.hc.complete.n, cex = 0.5 )
@@ -350,345 +402,154 @@ fviz_dend(ex.hc.centroid, cex = 0.5 ) +
 fviz_dend(ex.hc.centroid.n, cex = 0.5 )
 ```
 
-```{r Example3}
-ex3.hc.complete   <- hclust(DSim_ex3, method = "complete")
-set.seed(123)
-ex3.hc.complete.n <- hclust(DSim_ex3, method = "complete", members = sample(1:5000,40))
-
-ex3.hc.single     <- hclust(DSim_ex3, method = "single")
-
-ex3.hc.average    <- hclust(DSim_ex3, method = "average")
-set.seed(123)
-ex3.hc.average.n  <- hclust(DSim_ex3, method = "average", members = sample(1:5000,40))
-
-ex3.hc.centroid   <- hclust(DSim_ex3, method = "centroid")
-set.seed(123)
-ex3.hc.centroid.n <- hclust(DSim_ex3, method = "centroid", members = sample(1:5000,40))
-
-abb.archetypes3 <- c(
-  "OG Sion",
-  "Bait1",
-  "Bait2",
-  "Bait3"
-)
-
-ex3.hc.complete$labels <- rep(abb.archetypes3,each=10)
-ex3.hc.complete.n$labels <- rep(abb.archetypes3,each=10)
-ex3.hc.average$labels <- rep(abb.archetypes3,each=10)
-ex3.hc.average.n$labels <- rep(abb.archetypes3,each=10)
-
-fviz_dend(ex3.hc.complete, cex = 0.5 ) +
-fviz_dend(ex3.hc.complete.n, cex = 0.5 )
-
-fviz_dend(ex3.hc.average, cex = 0.5 ) +
-fviz_dend(ex3.hc.average.n, cex = 0.5 )
-
-fviz_dend(ex3.hc.centroid, cex = 0.5 ) +
-fviz_dend(ex3.hc.centroid.n, cex = 0.5 )
-```
-
-
-```{r Example1}
-# label_cols =  rep(1:5,each=5)
-
-# plot(hc.complete)
-
-fviz_dist(DSim_ex,
-          gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")) +
-  labs(title = "Distance Matrix")
-
-
-# Gap statistic plot
-fviz_gap_stat(res.km$gap_stat)
-# Optimal number of clusters using gap statistics
-res.km$nbclust
-
-# Silhouette plot
-fviz_silhouette(res.km)
-
-# Print result
-res.km
-
-# Enhanced hierarchical clustering
-res.hc <- eclust(df, "hclust") # compute hclust
-fviz_dend(res.hc, rect = TRUE) # dendrogam
-
-
-fviz_dend(hc, cex = 0.5)
-
-
-
-       
-```
-
-
-
 ```{r}
-# Cut the tree
-fviz_dend(res.hc, cex = 0.5, k = 4, color_labels_by_k = TRUE)
-
-
-# Don't color labels, add rectangles
-fviz_dend(res.hc, cex = 0.5, k = 4,
- color_labels_by_k = FALSE, rect = TRUE)
-
-# Change the color of tree using black color for all groups
-# Change rectangle border colors
-fviz_dend(res.hc, rect = TRUE, k_colors ="black",
-rect_border = 2:5, rect_lty = 1)
-```
-
-
-```{r fig.width=12, fig.height=8 }
-ex1DT <- top_n_codes(archetypes = archetypes1,n = 10,dopull = F) |>
-  mutate( origin = as.numeric(as.factor(player)) )
-
-hc.complete <- hclust(DSim_ex, method = "average")
-# plot(hc.complete)
-
-fviz_dist(DSim_ex,
-          gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07")
-          ) +
-  labs(title = "Distance Matrix")
-  
-# Customized color for groups
-fviz_dend(res.hc, k = 4,
- k_colors = c("#1B9E77", "#D95F02", "#7570B3", "#E7298A"))
-
-# Color labels using k-means clusters
-km.clust <- kmeans(df, 4)$cluster
-fviz_dend(res.hc, k = 4,
- k_colors = c("blue", "green3", "red", "black"),
- label_cols =  km.clust[res.hc$order], cex = 0.6)
-
-
-ExampleDT1 |>
-  distinct(player,.keep_all = T) >
-  select(player,origin)
-plot(hc.complete, labels = ExampleDT1$player)
-
-library("factoextra")
-
-
-# ggplot(DSim_ex)+
-#       geom_tile()
+# library("apcluster")
+# s1 <- negDistMat(iris, r=2)
 # 
-# # Compute cophentic distance
-# res.coph <- cophenetic(hc.complete)
-# # Correlation between cophenetic distance and the original distance
-# cor(DSim_ex, res.coph)
-
-data(USArrests)
-df <- scale(USArrests)
-# Hierarchical clustering
-res.hc <- hclust(dist(df))
-# Default plot
-fviz_dend(res.hc)
-
-
-archetypes1.pretty <- c("Draven/Sion","StarFish","Darkness","Ping City","Poppy/Ziggs")
-ex.hc.complete$labels <- rep(archetypes1.pretty,each=10)
-ex.hc.single$labels <- rep(archetypes1.pretty,each=10)
-
-fviz_dend(ex.hc.complete, cex = 0.5,
-          label_cols = rep(1:5,each=10) ) + 
-  labs(title = "Complete") +
-  
-fviz_dend(ex.hc.single, cex = 0.5,
-        label_cols = rep(1:5,each=10) ) + 
-  labs(title = "Single") +
-  
-fviz_dend(ex.hc.average, cex = 0.5,
-        label_cols = rep(1:5,each=10) ) + 
-  labs(title = "Average") +
-  
-fviz_dend(ex.hc.centroid, cex = 0.5,
-        label_cols = rep(1:5,each=10) ) + 
-  labs(title = "Centroid")  
-  
-
-
-iris0 <- iris %>%  
-  group_by(Species) %>%  
-  nest() %>%  
-  mutate(
-    gg1 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Sepal.Width)) + geom_point()),
-    gg2 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Width)) + geom_point()),
-    gg3 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Length)) + geom_point()),
-    g = purrr::pmap(list(gg1, gg2, gg3), ~ gridExtra::grid.arrange(..1, ..2, ..3))
-  )
-
-
-
-
-  
-
-# Color labels using k-means clusters
-km.clust <- kmeans(df, 4)$cluster
-fviz_dend(res.hc, k = 4,
- k_colors = c("blue", "green3", "red", "black"),
- label_cols =  km.clust[res.hc$order], cex = 0.6)
-
-
-
-#' distance Matrix given deck_codes
-cos.dsimMatrix <- function( codes ) {
-  deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
-  for (i in 1:length(codes)) {
-    decklist <- codes[i] |> lordecks::get_decklist_from_code()
-    deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
-  }
-  deck.matrix <- deck.matrix |> mutate( across(everything(), ~replace_na(.x, 0)) ) 
-  eisen_cos.sim(deck.matrix)
-}
-
-
-
+# apres1a <- apcluster(negDistMat(DSim_mini,r=1))
+# 
+# table(apres1a@idx,LoR.Archetype.Mini$archetype)
+# 
+# apcluster::heatmap(apres1a,negDistMat(DSim_mini,r=1))
+# 
+# heatmap(apres1a,as.data.frame(DSim_mini))
+# 
+# apcluster::linSimMat
+# 
+# apcluster::corSimMat(DSim_mini,signed = F,r=1)
+# linKernel(DSim_mini,normalize = T)
+# 
+# eisen_cos.sim(DSim_mini)
 ```
 
 
 
-```{r}
-library(dbscan)
 
-data(iris)
-iris <- as.matrix(iris[,1:4])
+```{r}
+# library(dbscan)
+# 
+# data(iris)
+# iris <- as.matrix(iris[,1:4])
 ```
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(ggplot2)
-iris0 <- iris %>%  
-  group_by(Species) %>%  
-  nest() %>%  
-  mutate(
-    gg1 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Sepal.Width)) + geom_point()),
-    gg2 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Width)) + geom_point()),
-    gg3 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Length)) + geom_point()),
-    g = purrr::pmap(list(gg1, gg2, gg3), ~ gridExtra::grid.arrange(..1, ..2, ..3))
-  )
+# library(dplyr)
+# library(tidyr)
+# library(purrr)
+# library(ggplot2)
+# iris0 <- iris %>%  
+#   group_by(Species) %>%  
+#   nest() %>%  
+#   mutate(
+#     gg1 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Sepal.Width)) + geom_point()),
+#     gg2 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Width)) + geom_point()),
+#     gg3 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Length)) + geom_point()),
+#     g = purrr::pmap(list(gg1, gg2, gg3), ~ gridExtra::grid.arrange(..1, ..2, ..3))
+#   )
 ```
 
 
 ```{r}
-kNNdistplot(iris, k = 5)
-abline(h=.5, col = "red", lty=2)
-```
-```{r}
-res <- dbscan(iris, eps = .5, minPts = 5)
-res
-```
-```{r}
-pairs(iris, col = res$cluster + 1L)
-```
+# kNNdistplot(iris, k = 5)
+# abline(h=.5, col = "red", lty=2)
+# 
+# res <- dbscan(iris, eps = .5, minPts = 5)
+# res
+# 
+# pairs(iris, col = res$cluster + 1L)
+# 
+# hullplot(x = iris, cl = res) # grafico delle aree convesse
 
-```{r}
-hullplot(x = iris, cl = res) # grafico delle aree convesse
-```
-
-```{r}
 # if(!require(devtools)) install.packages("devtools")
 # devtools::install_github("kassambara/factoextra")
 
-library(factoextra)
-data("multishapes")
-df <- multishapes[, 1:2]
-set.seed(123)
-km.res <- kmeans(df, 5, nstart = 25)
-fviz_cluster(km.res, df, frame = FALSE, geom = "point")
+# library(factoextra)
+# data("multishapes")
+# df <- multishapes[, 1:2]
+# set.seed(123)
+# km.res <- kmeans(df, 5, nstart = 25)
+# fviz_cluster(km.res, df, frame = FALSE, geom = "point")
 
 # install.packages("fpc")
 # install.packages("dbscan")
-```
 
-```{r}
 # Load the data 
 # Make sure that the package factoextra is installed
-data("multishapes", package = "factoextra")
-df <- multishapes[, 1:2]
-```
+# data("multishapes", package = "factoextra")
+# df <- multishapes[, 1:2]
+# 
+# library("fpc")
+# # Compute DBSCAN using fpc package
+# set.seed(123)
+# db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
+# # Plot DBSCAN results
+# plot(db, df, main = "DBSCAN", frame = FALSE)
+# 
+# library("factoextra")
+# fviz_cluster(db, df, stand = FALSE, frame = FALSE, geom = "point")
 
-```{r}
-library("fpc")
-# Compute DBSCAN using fpc package
-set.seed(123)
-db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
-# Plot DBSCAN results
-plot(db, df, main = "DBSCAN", frame = FALSE)
-```
-```{r}
-library("factoextra")
-fviz_cluster(db, df, stand = FALSE, frame = FALSE, geom = "point")
-```
-
-```{r}
 # Print DBSCAN
-print(db)
-```
+# print(db)
 
-```{r}
 # Cluster membership. Noise/outlier observations are coded as 0
 # A random subset is shown
-db$cluster[sample(1:1089, 50)]
+# db$cluster[sample(1:1089, 50)]
+
+# dbscan::kNNdistplot(df, k =  5)
+# abline(h = 0.15, lty = 2)
 ```
-```{r}
-dbscan::kNNdistplot(df, k =  5)
-abline(h = 0.15, lty = 2)
-```
 
 ```{r}
-#The iris dataset is used:
-
-# Load the data
-data("iris")
-iris <- as.matrix(iris[, 1:4])
-#The optimal value of “eps” parameter can be determined as follow:
-
-dbscan::kNNdistplot(iris, k =  4)
-abline(h = 0.4, lty = 2)
-# Compute DBSCAN using fpc::dbscan() and dbscan::dbscan(). Make sure that the 2 packages are installed:
-
-set.seed(123)
-# fpc package
-res.fpc <- fpc::dbscan(iris, eps = 0.4, MinPts = 4)
-# dbscan package
-res.db <- dbscan::dbscan(iris, 0.4, 4)
-# The result of the function fpc::dbscan() provides an object of class ‘dbscan’ containing the following components:
-# cluster: integer vector coding cluster membership with noise observations (singletons) coded as 0
-# isseed: logical vector indicating whether a point is a seed (not border, not noise)
-# eps: parameter eps
-# MinPts: parameter MinPts
-# The result of the function dbscan::dbscan() is an integer vector with cluster assignments. Zero indicates noise points.
-# Note that the function dbscan:dbscan() is a fast re-implementation of DBSCAN algorithm. The implementation is significantly faster and can work with larger data sets than the function fpc:dbscan().
-
-# Make sure that both version produce the same results:
-
-all(res.fpc$cluster == res.db)
-## [1] TRUE
-#The result can be visualized as follow:
-
-fviz_cluster(res.fpc, iris, geom = "point")
+# #The iris dataset is used:
+# 
+# # Load the data
+# data("iris")
+# iris <- as.matrix(iris[, 1:4])
+# #The optimal value of “eps” parameter can be determined as follow:
+# 
+# dbscan::kNNdistplot(iris, k =  4)
+# abline(h = 0.4, lty = 2)
+# # Compute DBSCAN using fpc::dbscan() and dbscan::dbscan(). Make sure that the 2 packages are installed:
+# 
+# set.seed(123)
+# # fpc package
+# res.fpc <- fpc::dbscan(iris, eps = 0.4, MinPts = 4)
+# # dbscan package
+# res.db <- dbscan::dbscan(iris, 0.4, 4)
+# # The result of the function fpc::dbscan() provides an object of class ‘dbscan’ containing the following components:
+# # cluster: integer vector coding cluster membership with noise observations (singletons) coded as 0
+# # isseed: logical vector indicating whether a point is a seed (not border, not noise)
+# # eps: parameter eps
+# # MinPts: parameter MinPts
+# # The result of the function dbscan::dbscan() is an integer vector with cluster assignments. Zero indicates noise points.
+# # Note that the function dbscan:dbscan() is a fast re-implementation of DBSCAN algorithm. The implementation is significantly faster and can work with larger data sets than the function fpc:dbscan().
+# 
+# # Make sure that both version produce the same results:
+# 
+# all(res.fpc$cluster == res.db)
+# ## [1] TRUE
+# #The result can be visualized as follow:
+# 
+# fviz_cluster(res.fpc, iris, geom = "point")
 ```
 
 ```{r twitter-meta, echo = FALSE}
-library(metathis)
-meta() %>%
-  meta_description(
-    "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
-  ) %>% 
-  meta_viewport() %>% 
-  meta_social(
-    title = "Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes",
-    url = "https://llorr-stats.netlify.app/",
-    image = "images/archetypes/A01-ASZSZ.png",
-    image_alt = "ASZSZ",
-    og_type = "website",
-    og_author = "Legna",
-    twitter_card_type = "summary",
-    twitter_creator = "@Maou_Legna"
-  )
+# library(metathis)
+# meta() %>%
+#   meta_description(
+#     "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
+#   ) %>% 
+#   meta_viewport() %>% 
+#   meta_social(
+#     title = "Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes",
+#     url = "https://llorr-stats.netlify.app/",
+#     image = "images/archetypes/A01-ASZSZ.png",
+#     image_alt = "ASZSZ",
+#     og_type = "website",
+#     og_author = "Legna",
+#     twitter_card_type = "summary",
+#     twitter_creator = "@Maou_Legna"
+#   )
 ```
 
 # Legal bla bla {.unnumbered}
