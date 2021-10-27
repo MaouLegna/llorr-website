@@ -191,7 +191,7 @@ LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD[ !(is.na(playerDeck) | is.na(oppone
 ```
 
 ```{r create date-by-date}
-ntopPR <- 15
+ntopPR <- 12
 
 top7days <- LoR.Melt.Matches.RMD |>
   filter( game_start_time_utc >= now()-days(7) ) |>
@@ -215,12 +215,14 @@ Champion.deck.daily <- tibble(
       ungroup(),
     by = c("game_start_time_utc","playerDeck") ) |>
   mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
+
+# pal <- c("#000000","#004949","#009292","#ff6db6","#ffb6db",
+#  "#490092","#006ddb","#b66dff","#6db6ff","#b6dbff",
+#  "#920000","#924900","#db6d00","#24ff24","#ffff6d")
 ```
 
 
 ```{r print-date-by-date, fig.width=12, fig.height=8}
-# require("ggsci")
-set.seed(1234)
 meta_evo <- Champion.deck.daily |>
   mutate( game_start_time_utc = as.Date(game_start_time_utc) ) |>
   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
@@ -230,10 +232,12 @@ meta_evo <- Champion.deck.daily |>
     data = Champion.deck.daily |>
       filter( game_start_time_utc >= now()-days(2) ),
     # data = Champion.deck.daily |> distinct(playerDeck),
-    aes(label=str_to_upper(playerDeck),color = playerDeck),
+    # aes(label=str_to_upper(playerDeck),fill = unique(Champion.deck.daily$playerDeck) ),
+    aes(label=str_to_upper(playerDeck),color = playerDeck ),
     # aes(label=str_to_upper(playerDeck)),
-    # color = "black",
+    # color = "white",
     # aes(color = champions, label = champions),
+    fontface = "bold",
     family = "Helvetica",
     # fontface = "bold",
     size = 3,
@@ -247,7 +251,7 @@ meta_evo <- Champion.deck.daily |>
     segment.curvature = -0.1,
     segment.ncp = 3,
     segment.angle = 15,
-    bg.color = "grey50",
+    bg.color = "grey",
     xlim = c(as.Date(now()), as.Date(now()+days(2)) ),
   ) +
   scale_x_date(
@@ -273,7 +277,18 @@ meta_evo <- Champion.deck.daily |>
   theme( legend.position = "none",
          axis.text = element_text(size = 10, face = "bold", color = "grey50")
   ) +
-  scale_color_manual( values = sample(colorRampPalette(brewer.pal(8, "Dark2"))(30),15) )
+  # scale_color_manual( values = sample(colorRampPalette(brewer.pal(8, "Dark2"))(30),15) )
+  # scale_color_manual( values = safe_colorblind_palette )
+  scale_color_manual( values = rcartocolor::carto_pal(12, "Safe") ) +
+  scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily$playerDeck)  ) )
+  # scale_color_manual( values = pal )
+
+# safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
+#                              "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
+# scales::show_col(safe_colorblind_palette)
+
+meta_evo
+# ggsave("./images/meta-evo.png",width = 12,height = 8)
 ```
 
 ```{r decks}
@@ -641,7 +656,7 @@ shared_code |>
 
 ## Meta Decks PlayRate over time
 
-```{r create-plot-meta-evo, fig.width=12, fig.height=8}
+```{r create-plot-meta-evo}
 meta_evo
 ggsave("./images/meta-evo.png",width = 12,height = 8)
 ```
@@ -651,7 +666,7 @@ ggsave("./images/meta-evo.png",width = 12,height = 8)
 ## Column
 <!-- ## Column {data-width="800"} -->
   
-### How to read/use
+  ### How to read/use
 
 #### Deck-Structure
   

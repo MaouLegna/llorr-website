@@ -316,7 +316,7 @@ nGames_tbl <- tbl_merge(
   ) |>
   tab_footnote(
     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
-    locations = cells_title(groups = c("subtitle"))
+    locations = cells_title(groups = c("title"))
     ) |>
   tab_footnote(
     footnote = md(glue::glue("EU Master playerDecks in the ladder: {length(namesList.EU.RMD)} while number of possible Master playerDecks recovered is: {masterEU} \n

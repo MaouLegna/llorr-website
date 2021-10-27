@@ -253,42 +253,40 @@ archetypes <- c(
   "Mistwraith Allegiance"   # 50/50 Targon/Piltover
 )
 
-LoR.Archetype.Ex <- rbind(
-  LoR.Deck.RMD[ deck_code %in% Rep1, ],
-  LoR.Deck.RMD[ deck_code %in% Rep2, ],
-  LoR.Deck.RMD[ deck_code %in% AI, ],
-  LoR.Deck.RMD[ deck_code %in% Dragon1, ],
-  LoR.Deck.RMD[ deck_code %in% Dragon2, ],
-  LoR.Deck.RMD[ deck_code %in% Sion1, ],
-  LoR.Deck.RMD[ deck_code %in% Sion2, ],
-  LoR.Deck.RMD[ deck_code %in% Mist1, ],
-  LoR.Deck.RMD[ deck_code %in% Mist2, ]
-)
+# LoR.Archetype.Ex <- rbind(
+#   LoR.Deck.RMD[ deck_code %in% Rep1, ],
+#   LoR.Deck.RMD[ deck_code %in% Rep2, ],
+#   LoR.Deck.RMD[ deck_code %in% AI, ],
+#   LoR.Deck.RMD[ deck_code %in% Dragon1, ],
+#   LoR.Deck.RMD[ deck_code %in% Dragon2, ],
+#   LoR.Deck.RMD[ deck_code %in% Sion1, ],
+#   LoR.Deck.RMD[ deck_code %in% Sion2, ],
+#   LoR.Deck.RMD[ deck_code %in% Mist1, ],
+#   LoR.Deck.RMD[ deck_code %in% Mist2, ]
+# )
   
-
-
 # LoR.Archetype.Exe[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 # LoR.Archetype.Exe[ archetype == "RubinBait - Draven/Sion" , archetype:="Draven/Sion (NX/PZ)" ]
 # LoR.Archetype.Exe[ archetype == "Marauder" , archetype:="Ashe/LeBlanc" ]
 
-mini.ex <- c(Rep1[1:7], # Ashe/LB
-             Rep2[1:3], # Marauder
-             AI[1:10],  # AI
-             Dragon1[1:3], # with J4
-             Dragon2[1:7], # no J4
-             Sion1[1:8],   # OG
-             Sion2[1:2],   # fake-burn
-             Mist1[1:5],   # MT
-             Mist2[1:5])   # PnZ
-
-LoR.Archetype.Mini <- LoR.Archetype.Ex |>
-  filter(deck_code %in% mini.ex )
+# mini.ex <- c(Rep1[1:7], # Ashe/LB
+#              Rep2[1:3], # Marauder
+#              AI[1:10],  # AI
+#              Dragon1[1:3], # with J4
+#              Dragon2[1:7], # no J4
+#              Sion1[1:8],   # OG
+#              Sion2[1:2],   # fake-burn
+#              Mist1[1:5],   # MT
+#              Mist2[1:5])   # PnZ
+# 
+# LoR.Archetype.Mini <- LoR.Archetype.Ex |>
+#   filter(deck_code %in% mini.ex )
 
 # fwrite(LoR.Archetype.Ex, "./data/example_archetye.csv")
 # fwrite(LoR.Archetype.Mini, "./data/example_archetye_mini.csv")
 
-# LoR.Archetype.Ex   <- fread("./data/example_archetye.csv")
-# LoR.Archetype.Mini <- fread("./data/example_archetye_mini.csv")
+LoR.Archetype.Ex   <- fread("./data/example_archetye.csv")
+LoR.Archetype.Mini <- fread("./data/example_archetye_mini.csv")
 
 # #' distance matrix
 sparseMatrix.Ex   <- dsimMatrix(codes =  LoR.Archetype.Ex$deck_code )
@@ -349,30 +347,58 @@ Since clustering is popular in many fields, there exist a great number of cluste
 
 ## K-Mean
 
-```{r}
-km.out <- kmeans(sparseMatrix.mini, 3, nstart = 10)
-km.out <- kmeans(sparseMatrix.mini, 5, nstart = 10)
+K-means clustering is a simple and elegant approach for partitioning a data set into K distinct, non-overlapping clusters. To perform K-means clustering, we must first specify the desired number of clusters K; then the K-means algorithm will assign each observation to exactly one of the K clusters. After the initialization step, the algorithm iterate until cluster assignments stop changing:
 
-k5 <- kmeans(sparseMatrix.mini, centers = 5, nstart = 25)
+* For each of the K clusters, compute the *cluster centroid*. The kth cluster centroid is the vector of the p-feature means for the observations in the kth cluster
 
-fviz_cluster(k5, data = sparseMatrix.mini)
+* Assign each observation to the cluster whose centroid is closest (where closest is defined using Euclidean distance)
 
-df <- USArrests
-df <- na.omit(df)
+As we have seen, to perform K-means clustering, we must decide how many clusters we expect in the data. The problem of selecting K is far from simple. This issue, along with other practical considerations that arise performing K-means clustering like is variables should be first be standardized in some way?
 
-k2 <- kmeans(df, centers = 2, nstart = 25)
-fviz_cluster(k2, data = df)
+As you may recall the analyst specifies the number of clusters to use; preferably the analyst would like to use the optimal number of clusters. To aid the analyst, the following explains the three popular methods for determining the optimal clusters, which includes
 
-setDT(sparseMatrix.mini)
+* Elbow method
 
-rownames(sparseMatrix.mini) <- LoR.Archetype.Mini$archetype
+Recall that, the basic idea behind cluster partitioning methods, such as K-means clustrering, is to define clusters such that the total intra-cluster variation (known as total within-cluster variation or total within-cluster sum of square is minimized:)
 
+$minimize(\sum_k=1^kW(C_k))$
 
+The total within-cluster sum of squares (wss) measures the compactness of the clustering and we want it to be as small as possible. Thus, we can use the following algorithm to define the optimal clusters
 
+Plot the curve of wss  according to the number of clusters k
+The location of a bend (knee) in the plot is generally considered as an indicator of the appropriate number of clusters
+
+This is because normally the wss is related to the number of cluster by a monotone decreasing function, meaning that is the aim is simply to minimise wss then having k = n clusters each of them corresponding to a single element would give the min-wss. One must search the optimal value we are searching for  is in 1 < k < |X| finding a comprise bewtween the reduction of the objective function wss and the dimension of the hyper-parameter n. The common practise is to use the *Elbow method* as it tells us when increasing n is less "worth" compared to the reduction in wss.
+
+```{r elbow, fig.width=6, fig.height=4}
+#| fig.width=6
+#| fig.height=4
+fviz_nbclust(sparseMatrix.mini, kmeans,  method = "wss") +
+  theme_Publication()
 ```
 
 
+* Silhouette method
+
+Prior to this article I'm not sure I even heard about this metric: From Wikipedia, the silhouette is defined as:
+
+> The silhouette value is a measure of how similar an object is to its own cluster (cohesion) compared to other clusters (separation). The silhouette ranges from −1 to +1, where a high value indicates that the object is well matched to its own cluster and poorly matched to neighboring clusters. If most objects have a high value, then the clustering configuration is appropriate. If many points have a low or negative value, then the clustering configuration may have too many or too few clusters.
+
+```{r silhouette, fig.width=6, fig.height=4}
+fviz_nbclust(sparseMatrix.mini, kmeans, method = "silhouette") +
+  theme_Publication()
+```
+
+---
+
+Using K-means the algorithm is suggesting us around 6 or 7 clusters. We will discuss later the quality of these choices, for now we will focus on the algorithm per se.
+
+K-means while a powerful tool in many fields doesn't seems to be the best choice for the archetype problem. First of all, is requires the user to define a priori the number of cluster it needs to find. This is almost the opposite of what we would like from our algorithm. Ideally by clustering we would prefer some indication regarding which deck to aggregate into a single archetype, or even division of sub-archetypes if the region+champion combination is not enough to distinguish archetypes.
+In addition, K-means present other problems like having to start with a randomized assignment of clusters, this, of course can be controlled by having fixed seeds, rng but it still hinder the reproducibility of our results. The choice of k is also too much subjective, especially if n is very large and the knee is not as clear as in this example. Lastly but not less important, there is less flexibility regarding the *measure/distance* to compare decks. While we are not limited to the Euclidean distance we can't use any distance of choice as possible with other class of cluster algorithm.
+
 ## Hierarchical Clustering
+
+One potential disadvantage of K-means clustering is that it requires us to pre-specify the number of clusters K. Hierarchical clustering is an alternative approach which does not require that we commit to a particular choice of K. Hierarchical clustering has an added advantage over K-means clustering in that it results in an attractove tree-based representation of the obsersations, called a dendogram.
 
 ```{r Example1}
 ex.hc.complete <- hclust(DSim_mini, method = "complete")
