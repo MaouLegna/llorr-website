@@ -1698,7 +1698,14 @@ gtWinning <- setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter :
       )
     )
 
-gtsave(gtWinning, glue::glue("./images/meta-report/{params$ind}-topWin.png")   )
+gtWinning |>
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+
+gtsave(gtWinning, glue::glue("./images/meta-report/{params$ind}-topWin.png")   ) |> invisible()
 ```
 
 # Cards Presence
