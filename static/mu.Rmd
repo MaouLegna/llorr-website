@@ -452,12 +452,12 @@ gtsave(data = MUgrid.gt.final,
        vwidth = 1500, vheight = 1000
        ) |> invisible()
 
-# gtsave(data = MUgrid.gt.final,
-#        filename = "mugrid.png",
-#        path = file.path("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/images/"),
-#        # path = "images",
-#        vwidth = 1500, vheight = 1000
-#        ) |> invisible()
+gtsave(data = MUgrid.gt.final,
+       filename = "mugrid.png",
+       path = file.path("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/images/"),
+       # path = "images",
+       vwidth = 1500, vheight = 1000
+       ) |> invisible()
 
 
 # flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
