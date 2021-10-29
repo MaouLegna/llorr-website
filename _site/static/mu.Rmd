@@ -287,7 +287,7 @@ flexdashboard::valueBox(Sys.Date(),
 ### MU Grid
 
 ```{r get-WR-Top}
-mu <- 10
+mu <- 15
 
 TopCC <- MUtbl |>
   group_by(playerDeck) |>
@@ -308,82 +308,181 @@ WRTopCC <- tibble::tibble(
 <!-- The win rates on the grid are among the `r mu` most played champion combination. -->
 
 ```{r prepare-flex}
-big_border   = officer::fp_border(color="darkgray", width = 2)
-small_border = officer::fp_border(color="gray", width = 1)
-
-dummy_fun <- function(x){
-  # case_when(
-  #   is.na(x) ~ NA,
-  #   x > 0.15 & x < 0.85 ~ sprintf( "%.0f%%", x*100 ),
-  #   x <= 0.15 & x >= 0.85 ~ sprintf( "%.0f%%*", x*100 )
-  # )
-  ifelse( !is.na(x),
-          ifelse(x > 0.15 & x < 0.85,
-                 sprintf( "%.0f%%",  x*100 ),
-                 sprintf( "%.0f%%*", x*100 )
-                ),NA )
-}
+# big_border   = officer::fp_border(color="darkgray", width = 2)
+# small_border = officer::fp_border(color="gray", width = 1)
+# 
+# dummy_fun <- function(x){
+#   # case_when(
+#   #   is.na(x) ~ NA,
+#   #   x > 0.15 & x < 0.85 ~ sprintf( "%.0f%%", x*100 ),
+#   #   x <= 0.15 & x >= 0.85 ~ sprintf( "%.0f%%*", x*100 )
+#   # )
+#   ifelse( !is.na(x),
+#           ifelse(x > 0.15 & x < 0.85,
+#                  sprintf( "%.0f%%",  x*100 ),
+#                  sprintf( "%.0f%%*", x*100 )
+#                 ),NA )
+# }
+# 
+# grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
+# diag(grid) <- NA
+# 
+# colnames(grid) <- TopCC
+# colourer <- scales::col_numeric(
+#   palette = c("#D73027", # red
+#           # "#f9ccac", # red/orange
+#           "white",
+#           # "#e3eaa7", # green
+#           "#1A9850" # darker green
+#           ),
+#   domain = c(0, 1))
+# 
+# funs <- setNames(rep(list(dummy_fun), mu), TopCC)
+# 
+# require(flextable)
+# 
+# ft <- grid |> 
+#   as_tibble() |>
+#   # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
+#   add_column(TopCC,.before = TopCC[1]) |>
+#   rename("MatchUps"="TopCC") |>
+#   flextable::flextable( ) |> 
+#   flextable::theme_vanilla( ) |>
+#   # theme_booktabs(bold_header = TRUE) |> 
+#   flextable::align(align = "center", part = "all") |>
+#   flextable::bg(
+#     bg = colourer,
+#     j = ~ . -MatchUps,
+#     part = "body") |>
+#   {\(x) flextable::border_remove(x = x)}() |>
+#   # flextable::bold( bold = function(x)   )
+#   flextable::color(
+#     i = 1:ncol(grid),
+#     j = 2:ncol(grid)+1, 
+#     color = function(x) ifelse(x <= .15 | x >= .85 , "grey75", "grey25")
+#     ) |>
+#   flextable::border_outer(part="all", border = big_border ) |>
+#   flextable::border_inner_h(part="all", border = small_border ) |>
+#   flextable::border_inner_v(part="all", border = small_border ) |>
+#   flextable::set_formatter(values = funs) |>
+#   flextable::fontsize(size = 8, part = "header") |>
+#   flextable::fontsize(j=1, size = 8) |>
+#   flextable::bg(part = "header", bg = "white"  ) |>
+#   flextable::bg(part = "footer", bg = "white"  ) |>
+#   flextable::bg(j = 1, bg = "white"  ) |>
+#   flextable::autofit() |>
+#   flextable::add_footer_lines("Values with * and grayed are win rates below 15% or higher then 85%. Those MU may be unreliable because of Sample Size.")
+# 
+# # ft
+# 
+# 
+# ft
+# flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ```
 
-```{r prepare-flex-grid}
+```{r gt-grid, fig.width=12, fig.height=8}
 grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
 diag(grid) <- NA
-
 colnames(grid) <- TopCC
-colourer <- scales::col_numeric(
-  palette = c("#D73027", # red
-          # "#f9ccac", # red/orange
-          "white",
-          # "#e3eaa7", # green
-          "#1A9850" # darker green
-          ),
-  domain = c(0, 1))
 
-funs <- setNames(rep(list(dummy_fun), mu), TopCC)
+MUgrid.gt <- grid |>
+  as.data.table() |>
+  add_column( name = colnames(grid),.before = 1 ) |>
+  rename(" "=1) |>
+  gt() |>
+  gtExtras::gt_color_rows(2:(mu+1),
+                palette = c("red", "white", "green"),
+                use_paletteer = F,
+                domain = c(0,1) ) |>
+  fmt_percent(
+    columns = -1,
+    decimals = 1
+  )
+
+# for (i in 1:mu ) {
+#   # p <- p + geom_line(
+#   #   aes(x[[i]], y[[i]]))
+#   
+#   # i = 1
+#   # cat(i)
+#   
+#   MUgrid.gt <- MUgrid.gt |>
+#     cols_merge(
+#       columns = c(i+1,mu+i+1),
+#       hide_columns = (mu+i+1),
+#       # pattern = "{1}&mdash;{2}"
+#       ) |> 
+#     text_transform(
+#       locations = cells_body(
+#         columns = (i+1)
+#         ),
+#       fn = function(x){
+#         percent <- word(x, 1)
+#         frac <- word(x, -1)
+#         glue::glue(
+#           #595959 #grey35
+#           #7f7f7f #grey50
+#           "<div style='line-height:10px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{percent}</div>
+#            <div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-size:10px'>({frac})</span></div>"
+#         )
+#         }
+#       )
+#   
+# }
+
+MUgrid.gt.final <- MUgrid.gt |>
+  cols_align(
+    align = "center",
+    columns = everything()
+  ) |>
+  tab_options(
+    heading.title.font.size = "smaller",
+    heading.subtitle.font.size = "smaller",
+    table.font.size = "small"
+  ) |>
+  # tab_source_note(
+  #   source_note = md(glue::glue("MU from Last-Season and Current Masters.
+  #                               The upper value is from Old Masters as they have many more games while the bottom value is from New Masters as they have many more games.
+  #                               MU with less than 30 games are not included. 
+  #                               Source: Metadata of games collected with RiotGames API")
+  #   ))
+  # gtExtras::gt_theme_538() |>
+  cols_width(
+    # -1 ~ px(100),
+    # 1 ~ px(150),
+    everything() ~ px(100)
+  ) 
+  # text_transform(
+  #   locations = cells_body( columns = 1 ),
+  #   fn = function(x){
+  #     # percent <- word(x, 1)
+  #     # frac <- word(x, -1)
+  #     glue::glue(
+  #       #595959 #grey35
+  #       #7f7f7f #grey50
+  #       "<div style='line-height:9px'><span style='color:black;font-variant:small-caps;font-size:13px'>{x}</div>"
+  #     )
+  #     }
+  #   )
+
+MUgrid.gt.final
+
+gtsave(data = MUgrid.gt.final,
+       filename = "mugrid.png",
+       path = file.path("images/mugrid.png"),
+       # path = "images",
+       vwidth = 1650, vheight = 1024) |> invisible()
+
+gtsave(data = MUgrid.gt.final,
+       filename = "mugrid.png",
+       path = file.path("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/images/"),
+       # path = "images",
+       vwidth = 1650, vheight = 1024) |> invisible()
+
+
+# flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ```
 
-```{r create-flex}
-require(flextable)
-
-ft <- grid |> 
-  as_tibble() |>
-  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
-  add_column(TopCC,.before = TopCC[1]) |>
-  rename("MatchUps"="TopCC") |>
-  flextable::flextable( ) |> 
-  flextable::theme_vanilla( ) |>
-  # theme_booktabs(bold_header = TRUE) |> 
-  flextable::align(align = "center", part = "all") |>
-  flextable::bg(
-    bg = colourer,
-    j = ~ . -MatchUps,
-    part = "body") |>
-  {\(x) flextable::border_remove(x = x)}() |>
-  # flextable::bold( bold = function(x)   )
-  flextable::color(
-    i = 1:ncol(grid),
-    j = 2:ncol(grid)+1, 
-    color = function(x) ifelse(x <= .15 | x >= .85 , "grey75", "grey25")
-    ) |>
-  flextable::border_outer(part="all", border = big_border ) |>
-  flextable::border_inner_h(part="all", border = small_border ) |>
-  flextable::border_inner_v(part="all", border = small_border ) |>
-  flextable::set_formatter(values = funs) |>
-  flextable::fontsize(size = 8, part = "header") |>
-  flextable::fontsize(j=1, size = 8) |>
-  flextable::bg(part = "header", bg = "white"  ) |>
-  flextable::bg(part = "footer", bg = "white"  ) |>
-  flextable::bg(j = 1, bg = "white"  ) |>
-  flextable::autofit() |>
-  flextable::add_footer_lines("Values with * and grayed are win rates below 15% or higher then 85%. Those MU may be unreliable because of Sample Size.")
-
-# ft
-```
-
-```{r print-flex, fig.width=12, fig.height=8}
-ft
-flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
-```
 
 ## Row
 
@@ -555,6 +654,7 @@ MUtbl |>
   filter(playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle01-MUtbl.csv"))
 
-flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
+# flextable::save_as_image(x = MUgrid.gt.final, path = "images/mugrid.png") |> invisible()
+# gtsave(MUgrid.gt.final,path = "images/mugrid.png", vwidth = 1500, vheight = 1024) |> invisible()
 ```
 

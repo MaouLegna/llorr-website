@@ -473,6 +473,13 @@ gtsave(data = MUgrid.gt.final,
        # path = "images",
        vwidth = 1650, vheight = 1024) |> invisible()
 
+gtsave(data = MUgrid.gt.final,
+       filename = "mugrid.png",
+       path = file.path("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/images/"),
+       # path = "images",
+       vwidth = 1650, vheight = 1024) |> invisible()
+
+
 # flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
 ```
 

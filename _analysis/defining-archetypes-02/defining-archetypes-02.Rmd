@@ -9,7 +9,6 @@ params:
   start: "2021-09-01 21:00:00" #UTC tz / 'current' week start
   end:   "2021-09-15 21:00:00" #UTC tz / 'current' week end
   skip:  2800000  # ~ Patch 2.16
-
 title: | 
   `r params$title`
 description: |
@@ -29,30 +28,30 @@ output:
 citation: false
 bibliography: biblio.yaml
 draft: TRUE
-
 references:
+  
 - type: article-journal
-  id: WatsonCrick1953
+  id: ackerman2011discerning
   author:
-  - family: Watson
-    given: J. D.
-  - family: Crick
-    given: F. H. C.
+  - family: Ackerman
+  - family: Margareta
+  - family: Ben-David
+  - family: Shai
   issued:
     date-parts:
-    - - 1953
-      - 4
-      - 25
-  title: 'Molecular structure of nucleic acids: a structure for
-    deoxyribose nucleic acid'
-  title-short: Molecular structure of nucleic acids
-  container-title: Nature
-  volume: 171
-  issue: 4356
-  page: 737-738
-  DOI: 10.1038/171737a0
-  URL: https://www.nature.com/articles/171737a0
-  language: en-GB
+    - - 2011
+      - 6
+      - 28
+  title: 'Discerning linkage-based algorithms among hierarchical clustering methods'
+  container-title: Twenty-Second International Joint Conference on Artificial Intelligence
+  page: 1140-1145
+  DOI: 10.1007/s00357-018-9266-x
+  URL: https://www.aaai.org/ocs/index.php/IJCAI/IJCAI11/paper/view/3116/3410
+  language: en-GB  
+# Van Ness, John W. “Admissible Clustering Procedures.” Biometrika, vol. 60, no. 2, [Oxford University Press, Biometrika Trust], 1973, pp. 422–24, https://doi.org/10.2307/2334558.
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r setup, include=FALSE}
@@ -127,7 +126,6 @@ cos.dsimMatrix <- function( codes ) {
 }
 ```
 
-
 ```{r raw-data-all}
 # skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
 # skip.dt
@@ -147,7 +145,7 @@ cos.dsimMatrix <- function( codes ) {
 # 
 # #' load DeckDT
 # #'############
-LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+# LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
  
 # #' patch 2.14 to 2.15
 # #'###################
@@ -179,68 +177,69 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 
 #' Archetype-Fix
 #'##############
-source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
+# source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 ```
+
 ```{r}
 # how I selecter the decks, it is reproducible as more decks will be inserted in the DB
 
-set.seed(123)
-Rep1 <- LoR.Deck.RMD |>
-  filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
-  slice_sample(n = 75) |>
-  pull(deck_code)
-
-set.seed(123)
-Rep2 <- LoR.Deck.RMD |>
-  filter( archetype_pretty == "Marauder" ) |>
-  slice_sample(n = 25) |>
-  pull(deck_code)
-
-set.seed(123)
-AI <- LoR.Deck.RMD |>
-  filter( archetype == "Azir/Irelia", ) |>
-  slice_sample(n = 100) |>
-  pull(deck_code)
-
-set.seed(123)
-Dragon1 <- LoR.Deck.RMD |>
-  filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
-  slice_sample(n = 30) |>
-  pull(deck_code)
-
-set.seed(123)
-Dragon2 <- LoR.Deck.RMD |>
-  filter( archetype == "Aurelion Sol/Shyvana" ) |>
-  slice_sample(n = 70) |>
-  pull(deck_code)
-
-set.seed(123)
-Sion1 <- LoR.Deck.RMD |>
-  filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
-  slice_sample(n = 80) |>
-  pull(deck_code)
-
-set.seed(123)
-Sion2 <- LoR.Deck.RMD |>
-  filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
-  slice_sample(n = 20) |>
-  pull(deck_code)
-
-set.seed(123)
-Mist1 <- LoR.Deck.RMD |>
-  filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
-  slice_sample(n = 50) |>
-  pull(deck_code)
-
-set.seed(123)
-Mist2 <- LoR.Deck.RMD |>
-  filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
-  slice_sample(n = 50) |>
-  pull(deck_code)
-
-#' Archetype names fix
-######################
-LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+# set.seed(123)
+# Rep1 <- LoR.Deck.RMD |>
+#   filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
+#   slice_sample(n = 75) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Rep2 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "Marauder" ) |>
+#   slice_sample(n = 25) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# AI <- LoR.Deck.RMD |>
+#   filter( archetype == "Azir/Irelia", ) |>
+#   slice_sample(n = 100) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Dragon1 <- LoR.Deck.RMD |>
+#   filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
+#   slice_sample(n = 30) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Dragon2 <- LoR.Deck.RMD |>
+#   filter( archetype == "Aurelion Sol/Shyvana" ) |>
+#   slice_sample(n = 70) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Sion1 <- LoR.Deck.RMD |>
+#   filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
+#   slice_sample(n = 80) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Sion2 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
+#   slice_sample(n = 20) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Mist1 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
+#   slice_sample(n = 50) |>
+#   pull(deck_code)
+# 
+# set.seed(123)
+# Mist2 <- LoR.Deck.RMD |>
+#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
+#   slice_sample(n = 50) |>
+#   pull(deck_code)
+# 
+# #' Archetype names fix
+# ######################
+# LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r prepare-examples}
@@ -312,106 +311,301 @@ DSim_mini <- eisen_cos.sim(sparseMatrix.mini)
 
 # Introduction
 
-Defining archetypes on Legends of Runeterra is both a complex and simple problem. It's simple if we consider that it's possible to define decks by the combination of champions and regions of choice but it's also complex by the fact that such definition is quite limited.
+Defining archetypes on Legends of Runeterra is both a complex and simple problem.
+It's simple if we consider that it's possible to define decks by the combination of champions and regions of choice but it's also complex by the fact that such definition is quite limited.
 
-On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-01/) we gave a possible method about how to compare archetypes and see if they can be considered from a shared common archetype or not. The proposed method makes use of inferential statistical analysis to reach a conclusion. Sadly, it's also a methodology that's more fitting a posterior analysis, when hypothetical archetypes are already defined, a tool more fitted to refine the results and not to define archetypes.
+On our [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-01/) we gave a possible method about how to compare archetypes and see if they can be considered from a shared common archetype or not.
+The proposed method makes use of inferential statistical analysis to reach a conclusion.
+Sadly, it's also a methodology that's more fitting a posterior analysis, when hypothetical archetypes are already defined, a tool more fitted to refine the results and not to define archetypes.
 
-A more fitting methodology to find archetype is a form of exploratory data analysis (EDA) known as *Clustering Analysis* (CA). Its aim is to find subgroups (or clusters) in our data without relying on a *response variable*, also the reason why it's called *unsupervised learning*.
+A more fitting methodology to find archetype is a form of exploratory data analysis (EDA) known as *Clustering Analysis* (CA).
+Its aim is to find subgroups (or clusters) in our data without relying on a *response variable*, also the reason why it's called *unsupervised learning*.
 
-As useful as it is a CA suffer from a fundamental problem of not being able to check out the quality of the results. With a vast array of different algorithms and hyper-parameters this also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not only impossible, it's also seeing the CA in the wrong way. Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article. The result, or maybe compromise was to reduce the scale on this article which will be small dive into the cluster analysis. While I want to provide some food for thought for others in the end the main recipient of the article is myself, to provide me a more solid foundation on the topic and how to approach it knowing the basic limitations of what I'm planning to use.
+As useful as it is a CA suffer from a fundamental problem of not being able to check out the quality of the results.
+With a vast array of different algorithms and hyper-parameters this also means that finding the the "correct" way to use a CA to define archetypes (which was supposed to be the aim of this article) is not only impossible, it's also seeing the CA in the wrong way.
+Surely some choices are better than others but there is no perfect answer and to be fair, this was making us, was making me, procrastinating the writing of this article.
+The result, or maybe compromise was to reduce the scale on this article which will be small dive into the cluster analysis.
+While I want to provide some food for thought for others in the end the main recipient of the article is myself, to provide me a more solid foundation on the topic and how to approach it knowing the basic limitations of what I'm planning to use.
 
-# Data
+# Clustering
 
-The example used in this article is made out of 50 decks. More details will be described 
-
-* Five archetypes with Different regions & different play style
-  1. Azir/Irelia
-  2. Ashe/LeBlanc
-  3. Dragons (DE/MT)
-  4. Draven/Sion (NX/PZ)
-  5. Mistwraith Alligiance
-  
-More details about how they were chosen will be written later as results are shown
-
-# Clustering 
-
-Clustering is a basic data mining task with a wide variety of applications. not surprisingly, there exist many clustering algorithms. However, clustering is an ill defined problem - given a data set, it is not clear what a "correct" clustering for that set is. Indeed, different algorithms may yield dramatically different outputs for the same input sets.
+Clustering is a basic data mining task with a wide variety of applications.
+not surprisingly, there exist many clustering algorithms.
+However, clustering is an ill defined problem - given a data set, it is not clear what a "correct" clustering for that set is.
+Indeed, different algorithms may yield dramatically different outputs for the same input sets.
 In spite of the wide use of clustering in many practical applications, currently, there exist no principled method to guide the selection of a clustering algorithm.
-Currently, such decisions are often made in a very ad hoc, if not completely random, manner. Users are aware of the cost involved in employing different clustering algorithms, such as running times, memory requirement, and software.
+Currently, such decisions are often made in a very ad hoc, if not completely random, manner.
+Users are aware of the cost involved in employing different clustering algorithms, such as running times, memory requirement, and software.
 
-Clustering is applied in a wide range of disciplines, from astronomy to zoology, yet its theoretical underpinnings are still poorly understood. Even the fairy basic problem of which algorithm to select for a given application (known as "the user dilemma") is left to ad hoc solutions, as theory is only starting to address fundamental differences between clustering methods.
+Clustering is applied in a wide range of disciplines, from astronomy to zoology, yet its theoretical underpinnings are still poorly understood.
+Even the fairy basic problem of which algorithm to select for a given application (known as "the user dilemma") is left to ad hoc solutions, as theory is only starting to address fundamental differences between clustering methods.
 
-Clustering refers to a very broad set of techniques for findings subgroups or *clusters*, in a data set. When we cluster the observations of a data set, we seek partition then into distinct groups so that the observations within each group are quite similar to each other, while observation in a different groups are quite different from each other. Of course, to make this concrete, we must define what it means for two or more observations to be *similar or different*
+Clustering refers to a very broad set of techniques for findings subgroups or *clusters*, in a data set.
+When we cluster the observations of a data set, we seek partition then into distinct groups so that the observations within each group are quite similar to each other, while observation in a different groups are quite different from each other.
+Of course, to make this concrete, we must define what it means for two or more observations to be *similar or different*
 
-Since clustering is popular in many fields, there exist a great number of clustering methods 
+Since clustering is popular in many fields, there exist a great number of clustering methods
 
 ## K-Mean
 
-K-means clustering is a simple and elegant approach for partitioning a data set into K distinct, non-overlapping clusters. To perform K-means clustering, we must first specify the desired number of clusters K; then the K-means algorithm will assign each observation to exactly one of the K clusters. After the initialization step, the algorithm iterate until cluster assignments stop changing:
+K-means clustering is a simple and elegant approach for partitioning a data set into K distinct, non-overlapping clusters.
+To perform K-means clustering, we must first specify the desired number of clusters K; then the K-means algorithm will assign each observation to exactly one of the K clusters.
+After the initialization step, the algorithm iterate until cluster assignments stop changing:
 
-* For each of the K clusters, compute the *cluster centroid*. The kth cluster centroid is the vector of the p-feature means for the observations in the kth cluster
+-   For each of the K clusters, compute the *cluster centroid*.
+    The kth cluster centroid is the vector of the p-feature means for the observations in the kth cluster
 
-* Assign each observation to the cluster whose centroid is closest (where closest is defined using Euclidean distance)
+-   Assign each observation to the cluster whose centroid is closest (where closest is defined using Euclidean distance)
 
-As we have seen, to perform K-means clustering, we must decide how many clusters we expect in the data. The problem of selecting K is far from simple. This issue, along with other practical considerations that arise performing K-means clustering like is variables should be first be standardized in some way?
+As we have seen, to perform K-means clustering, we must decide how many clusters we expect in the data.
+The problem of selecting K is far from simple.
+This issue, along with other practical considerations that arise performing K-means clustering like is variables should be first be standardized in some way?
 
-As you may recall the analyst specifies the number of clusters to use; preferably the analyst would like to use the optimal number of clusters. To aid the analyst, the following explains the three popular methods for determining the optimal clusters, which includes
+As you may recall the analyst specifies the number of clusters to use; preferably the analyst would like to use the optimal number of clusters.
+To aid the analyst, the following explains the three popular methods for determining the optimal clusters, which includes
 
-* Elbow method
+-   Elbow method
 
 Recall that, the basic idea behind cluster partitioning methods, such as K-means clustrering, is to define clusters such that the total intra-cluster variation (known as total within-cluster variation or total within-cluster sum of square is minimized:)
 
-$minimize(\sum_k=1^kW(C_k))$
+$minimize(\sum_{k=1}^KW(C_k))$
 
-The total within-cluster sum of squares (wss) measures the compactness of the clustering and we want it to be as small as possible. Thus, we can use the following algorithm to define the optimal clusters
+The total within-cluster sum of squares (wss) measures the compactness of the clustering and we want it to be as small as possible.
+Thus, we can use the following algorithm to define the optimal clusters
 
-Plot the curve of wss  according to the number of clusters k
-The location of a bend (knee) in the plot is generally considered as an indicator of the appropriate number of clusters
+Plot the curve of wss according to the number of clusters k The location of a bend (knee) in the plot is generally considered as an indicator of the appropriate number of clusters
 
-This is because normally the wss is related to the number of cluster by a monotone decreasing function, meaning that is the aim is simply to minimise wss then having k = n clusters each of them corresponding to a single element would give the min-wss. One must search the optimal value we are searching for  is in 1 < k < |X| finding a comprise bewtween the reduction of the objective function wss and the dimension of the hyper-parameter n. The common practise is to use the *Elbow method* as it tells us when increasing n is less "worth" compared to the reduction in wss.
+This is because normally the wss is related to the number of cluster by a monotone decreasing function, meaning that is the aim is simply to minimise wss then having k = n clusters each of them corresponding to a single element would give the min-wss.
+One must search the optimal value we are searching for is in 1 \< k \< \|X\| finding a comprise bewtween the reduction of the objective function wss and the dimension of the hyper-parameter n.
+The common practise is to use the *Elbow method* as it tells us when increasing n is less "worth" compared to the reduction in wss.
 
-```{r elbow, fig.width=6, fig.height=4}
+```{r elbow, fig.width=6, fig.height=4, fig.cap="within sum of squares as a fnction of number of clusters obtained with K-means applyed to the example data set"}
 #| fig.width=6
 #| fig.height=4
 fviz_nbclust(sparseMatrix.mini, kmeans,  method = "wss") +
   theme_Publication()
 ```
 
-
-* Silhouette method
+-   Silhouette method
 
 Prior to this article I'm not sure I even heard about this metric: From Wikipedia, the silhouette is defined as:
 
-> The silhouette value is a measure of how similar an object is to its own cluster (cohesion) compared to other clusters (separation). The silhouette ranges from −1 to +1, where a high value indicates that the object is well matched to its own cluster and poorly matched to neighboring clusters. If most objects have a high value, then the clustering configuration is appropriate. If many points have a low or negative value, then the clustering configuration may have too many or too few clusters.
+> The silhouette value is a measure of how similar an object is to its own cluster (cohesion) compared to other clusters (separation).
+> The silhouette ranges from −1 to +1, where a high value indicates that the object is well matched to its own cluster and poorly matched to neighboring clusters.
+> If most objects have a high value, then the clustering configuration is appropriate.
+> If many points have a low or negative value, then the clustering configuration may have too many or too few clusters.
 
-```{r silhouette, fig.width=6, fig.height=4}
+```{r silhouette, fig.width=6, fig.height=4, fig.cap="Silhouette as a fnction of number of clusters obtained with K-means applyed to the example data set"}
 fviz_nbclust(sparseMatrix.mini, kmeans, method = "silhouette") +
   theme_Publication()
 ```
 
----
+Fig:\@ref(fig:elbow) and Fig:\@ref(fig:silhouette) shows the results from the described methods.
+Using K-means the algorithm is suggesting us around 6 or 7 clusters.
+We will discuss later the quality of these choices, for now we will focus on the algorithm per se.
 
-Using K-means the algorithm is suggesting us around 6 or 7 clusters. We will discuss later the quality of these choices, for now we will focus on the algorithm per se.
-
-K-means while a powerful tool in many fields doesn't seems to be the best choice for the archetype problem. First of all, is requires the user to define a priori the number of cluster it needs to find. This is almost the opposite of what we would like from our algorithm. Ideally by clustering we would prefer some indication regarding which deck to aggregate into a single archetype, or even division of sub-archetypes if the region+champion combination is not enough to distinguish archetypes.
-In addition, K-means present other problems like having to start with a randomized assignment of clusters, this, of course can be controlled by having fixed seeds, rng but it still hinder the reproducibility of our results. The choice of k is also too much subjective, especially if n is very large and the knee is not as clear as in this example. Lastly but not less important, there is less flexibility regarding the *measure/distance* to compare decks. While we are not limited to the Euclidean distance we can't use any distance of choice as possible with other class of cluster algorithm.
+K-means while a powerful tool in many fields doesn't seems to be the best choice for the archetype problem.
+First of all, is requires the user to define a priori the number of cluster it needs to find.
+This is almost the opposite of what we would like from our algorithm.
+Ideally by clustering we would prefer some indication regarding which deck to aggregate into a single archetype, or even division of sub-archetypes if the region+champion combination is not enough to distinguish archetypes.
+In addition, K-means present other problems like having to start with a randomized assignment of clusters, this, of course can be controlled by having fixed seeds, rng but it still hinder the reproducibility of our results.
+The choice of k is also too much subjective, especially if n is very large and the knee is not as clear as in this example.
+Lastly but not less important, there is less flexibility regarding the *measure/distance* to compare decks.
+While we are not limited to the Euclidean distance we can't use any distance of choice as possible with other class of cluster algorithm.
 
 ## Hierarchical Clustering
 
-One potential disadvantage of K-means clustering is that it requires us to pre-specify the number of clusters K. Hierarchical clustering is an alternative approach which does not require that we commit to a particular choice of K. Hierarchical clustering has an added advantage over K-means clustering in that it results in an attractove tree-based representation of the obsersations, called a dendogram.
+One potential disadvantage of K-means clustering is that it requires us to pre-specify the number of clusters K.
+Hierarchical clustering is an alternative approach which does not require that we commit to a particular choice of K.
+Hierarchical clustering has an added advantage over K-means clustering in that it results in an attractive tree-based representation of the observations, called a dendogram.
+
+The hierarchical clustering dendogram is obtained via an extremely simple algorithm.
+We begin by defining some sort of dissimilarity measure between each pair of observations.
+Most often, Euclidean distance is used; The algorithm proceeds iteratively.
+Starting out at the bottom of the dendogram, each of the n observations is treated as its own cluster, The two clusters that are most *similar* to each other are then fused so that there are now n-1 clusters.
+The algorithm proceeds in this fashion until all of the observations belong to one single cluster, and the dendogram is complete.
+
+This agorithm seems simple enough, but one issue has not been addressed.
+Consider the aggregation step, how did we determine which a cluster should be fused with another cluster.
+We have a concept of the dissimilarity between pairs of observations, but how do we define the dissimilarity between two clusters if one or both of the clusters contains multiple observations?
+The concept of dissimilarity between a pair of observations needs to be extended to a pair of groups of groups of observations.
+This extensions is archieved by developing the notion of linkage, which defines the dissimilarity between two groups of observations.
+
+The five most common types of linkage are:
+
+1.  **Single Linkage**: In single linkage, we define the distance between two clusters as the minimum distance between any single data point in the first cluster and any single data point in the second cluster. On the basis of this definition of distance between clusters, at each stage of the process we combine the two clusters with the smallest single linkage distance.
+
+<!-- $\textit{l}_{SL}(A,B,d)=min_{a\in A,b\in B}d(a,b)$ -->
+
+With d is a distance function
+
+```{=tex}
+\begin{equation}
+
+\textit{l}_{SL}=min_{a\in A,b\in B}d(a,b) (\#eq:single)
+
+\end{equation}
+```
+The resulting dendogram is;
+
+```{r single, fig.width=6, fig.height=4, fig.cap="Dendogram obtained by applying Single linkage to the example data set"}
+hc.single   <- hclust(DSim_mini, method = "single") 
+fviz_dend( hc.single, show_labels = F ) +
+  labs( title = "Single Linkage", y = element_blank() )
+```
+
+From Fig:\@ref(fig:single) it's possible to notice how Single linkage can result in extended, trailing clusters in which single observations are fused one-at-a-time.
+
+2.  **Complete Linkage**: In complete linkage, we define the distance between two clusters to the maximum distance between any single data point in the first cluster and any single data point in the second cluster. On the basis of this definition of distance between clusters, at each stage of the process we combine the two clusters that have the smallest/complete linkage distance.
+
+<!-- $\textit{l}_{CL}(A,B,d)=max_{a\in A,b\in B}d(a,b)$ -->
+
+```{=tex}
+\begin{equation}
+
+\textit{l}_{CL}(A,B,d)=max_{a\in A,b\in B}d(a,b) (\#eq:complete)
+
+\end{equation}
+```
+The resulting dendogram is;
+
+```{r complete, fig.width=6, fig.height=4, fig.cap="Dendogram obtained by applying Complete linkage to the example data set"}
+hc.complete <- hclust(DSim_mini, method = "complete")
+fviz_dend( hc.complete, show_labels = F ) +
+  labs( title = "Complete Linkage", y = element_blank() )
+```
+
+Clusters resulting from Complete linkage tend to have a spherical structure and are usually more compact.
+
+3.  **Average Linkage**: In average linkage, we define the distance between two clusters to be the average distance between data points in the first cluster and data points in the second cluster. On the basis of this definition of distance between clusters, at each stage of the process we combine the two clusters that have the smallest average linkage distance.
+
+$\textit{l}_{CL}(A,B,d)=\frac{\sum_{a\in A,b\in B}d(a,b)}{|A| \cdot |B| }$
+
+```{=tex}
+\begin{equation}
+
+\textit{l}_{CL}(A,B,d)=\frac{\sum_{a\in A,b\in B}d(a,b)}{|A| \cdot |B| } (\#eq:average)
+
+\end{equation}
+```
+The resulting dendogram is;
+
+```{r average, fig.width=6, fig.height=4, fig.cap="Dendogram obtained by applying Average linkage to the example data set"}
+hc.average  <- hclust(DSim_mini, method = "average")
+fviz_dend( hc.average, show_labels = F ) +
+  labs( title = "Average Linkage", y = element_blank() )
+```
+
+As intuitively as it is, clusters resulting from Average linkage is a less "extreme" version of both Single and Complete linkage
+
+4.  **Centroid Linkage**: In centroid linkage, the distance between two clusters is the distance between the two mean vectors of the clusters also kown centroid, also kown as barycentre. At each stage of the process we combine the two clusters that have the smallest centroid distance. Centroid linkage can result in undesirable inversions, whereby two clusters are fused at a height below either of the individual clusters in the dendogram.
+
+<!-- $\textit{l}_{Centroid}(A,B,d)= d(\overline{x},\overline{y})$ -->
+
+```{=tex}
+\begin{equation}
+
+\textit{l}_{Centroid}(A,B,d)= d(\overline{x},\overline{y}) (\#eq:centroid)
+
+\end{equation}
+```
+The resulting dendogram is;
+
+```{r centroid, fig.width=6, fig.height=4, fig.cap="Dendogram obtained by applying Centroid linkage to the example data set"}
+hc.centroid <- hclust(DSim_mini, method = "centroid")
+fviz_dend( hc.centroid, show_labels = F ) +
+  labs( title = "Centroid Linkage", y = element_blank() )
+```
+
+From Fig:\@ref(fig:centroid) it's possible to notice the inversion phenomenon that can occurs with Centroid linkage as the clusters are fused at a height below either of the individuals clusters in the dendogram.
+
+5.  **Ward's Method**: This method does not directly define a measure of distance between two points or clusters. It is an ANOVA based approach. One-way univariate ANOVAs are done for each variable with groups defined by the clusters at the stage of the process. At each stage, two clusters merge that provide the smallest increase in the combined error sum of squares. ( We won't try this method )
+
+To choose the number of clusters with hierarchical clusters can be done with the methods described with K-means so by looking at the wss or silhouette, but the strength of hierarchical clustering is being guided by the dendogram.
+
+The height of the fusion, provided on the vertical axis, indicates the (dis)similarity between two observations.
+The higher the height of the fusion, the less similar the observations are.
+
+Similarly it's possible to cut the dendogram and define k clusters.
+The height of the cut to the dendogram controls the number of clusters obtained.
+It plays the same role as the k in k-means clustering.
+In order to identify sub-groups (i.e. clusters).
+
+From all dendograms it's easy to see that there is evidence of choosing around 5 or 6 clusters.
+Again, we will discuss later the 'quality' of this choice.
+
+# Defining the problem
+
+## Upping the game
+
+Up until now what has being described is the basic of the basic on clustering which could be found in any article/guide/course on the subject.
+What will follows is more akin as a self-explanation of points that could be worth to evaluate in order to approach the algorithm problem.
+Additional algorithms will be introduced with both their pro and cons, in this section we will explain the example used in this article to highlight what seems to be more interesting to explore for future analysis in the search of a way to define archetypes.
+
+Let us introduce a couple of point from a discussion with <a href="https://twitter.com/drisoth/">Drisoth</a> and its effect:
+
+> My philosophy is its not very helpful to have a cluster if I don't have the data to say anything about it and these low play rate clusters don't have many games, so even if I included them it wouldn't be helpful I would like to include a way for users to self define an archetype, saying include x y z card, so if someone wants to go looking they could yeah, I cluster unique decklists weighted by games on each unique decklist
+
+From this approach two question comes to mind
+
+1.  Should the data be weighted?
+
+While being developed only recently, the concept of weighted clustering framework can be traced back into the '70 [@Fisher&VanNess(1971)].
+A more formal definition has has been developed [@Ackerman2016] while also introducing a series of mathematical properties related to the weights.
+The use of weights can be seen as a more generalized definition of centroid if not even just its description as barycentre also called centre of mass.
+
+It is easy to see that using unweighed data can be seen as having the same weight 1 on all data.
+Applying weight would than be the same as having duplicates as multiple points with mass would correspond to a single point with weight equal to the sum of masses.
+Similarly a point of zero mass can be seen as non-existent.
+From this an algorithm would be equivalent to start in the middle of its steps in the middle of the cluster definition and so not starting to work with the leaf but clusters with different masses.
+
+Following the definition of weighted clustering, one may ask what effect does this have on the clustering algorithms?
+
+[@Ackerman2016] introduced the properties related to the response to weighted data
+
+Be it $(X,d)$ a dissimilarity function
+
+And $|range(A(X,d,k))|$ the range of a partitional algorithm on a data set defined as the number of clusterings it outputs on that data over **all weights functions**
+
+- **Weight Robust Algorithm** A partitional algorithm $A$ is weight-robust if for (X,d) and $1 < k < |X|$ $|range(A(X,d,k))|=1$.
+  This means that the output of a weight robust algorithm is unaffected by the choice of weights
+
+- **Weight Sensitive Algorithm** A partitional algorithm $A$ is weight-sensitive if for (X,d) and $1 < k < |X|$ $|range(A(X,d,k))|>1$.
+  This case imply that no matter the original data, the result can be changed in response of the use of weights.
+  Even if we would like to use weights to guide our output this properties doesn't seems desirables as we may want to not be too subjected to the weights.
+  Of course it's not like we can't have the same results when applying different weights, and in most cases it can even be the same if the geometry of out data helps us.
+  Yet, no matter the case we can't be sure that the algorithm won't be affected by the weights.
+
+- **Weight Considering Algorithm** A partitional algorithm $A$ is weight-considering if
+  * $\exists$ (X,d) and $1 < k < |X|$ so that $|range(A(X,d,k))| = 1$ and
+  * $\exists$ (X,d) and $1 < k < |X|$ so that $|range(A(X,d,k))| > 1$
+
+  With weight-considering we can have both the previous definition meaning cases where the algorithm will be influenced by weights and cases where it will ignore them.
+  
+Now that we defined the properties what does they mean in the practical use? The next figure gives an idea of what to expect for robust and sensitive cases.
+
+![Different cluster structures based from the same data. All weight-sensitive methods select the clustering on the right while weight-robust methods select the one on the left](images/A02-weight-robust-sensitive.png)
+
+
+
+
+2.  Should there exist outliers that's best no to assign to a cluster?
+
+Many cluster algorithm are sensitive to noise and outliers.
+AHC for example is able to identify smaller clusters.
+If an outlier is wrongly assigned to a cluster in some cases this error will be propageted on all the following steps with no way to intervene.
+
+3.  
 
 ```{r Example1}
-ex.hc.complete <- hclust(DSim_mini, method = "complete")
 set.seed(123)
 ex.hc.complete.n <- hclust(DSim_mini, method = "complete", members = sample(1:5000,NROW(DSim_mini) ))
 
-ex.hc.single   <- hclust(DSim_mini, method = "single")
 
-ex.hc.average  <- hclust(DSim_mini, method = "average")
 set.seed(123)
 ex.hc.average.n  <- hclust(DSim_mini, method = "average", members = sample(1:5000,NROW(DSim_mini)))
 
-ex.hc.centroid <- hclust(DSim_mini, method = "centroid")
+
 set.seed(123)
 ex.hc.centroid.n <- hclust(DSim_mini, method = "centroid", members = sample(1:5000,NROW(DSim_mini)))
 
@@ -426,6 +620,42 @@ fviz_dend(ex.hc.average.n, cex = 0.5 )
 
 fviz_dend(ex.hc.centroid, cex = 0.5 ) +
 fviz_dend(ex.hc.centroid.n, cex = 0.5 )
+```
+
+# DBSCAN
+
+DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
+
+# Affinity Propagation Clustering
+
+```{r, fig.width=12, fig.height=8}
+# Compute hierarchical clustering and cut into 4 clusters
+# hcut(DSim_mini, k = 5, method = "single")
+# hcut(DSim_mini, k = 5, method = "complete")
+# hcut(DSim_mini, k = 5, method = "average")
+# hcut(DSim_mini, k = 5, method = "centroid")
+
+# Visualize
+# fviz_dend(hcut(DSim_mini, k = 5, method = "centroid"),
+#           k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
+#           label_cols =  rep(1:5,each = 10),
+#           rect = TRUE, cex = 0.5 )
+# 
+# linkage = c("single","complete","average","complete")
+# p <- ggplot()
+# 
+# for ( i in 1:length(linkage) ) {
+#    
+#   # i = 1
+#   
+#   
+#   hcluster <- hclust(DSim_mini, method = linkage[i] ) 
+#   
+#   p <- p + fviz_dend(hcluster, cex = 0.5 ) +
+#     labs(title = glue::glue("{str_to_title(linkage[i])} Linkage"),
+#          y = element_blank() )
+#   
+# } 
 ```
 
 ```{r}
@@ -447,33 +677,6 @@ fviz_dend(ex.hc.centroid.n, cex = 0.5 )
 # 
 # eisen_cos.sim(DSim_mini)
 ```
-
-
-
-
-```{r}
-# library(dbscan)
-# 
-# data(iris)
-# iris <- as.matrix(iris[,1:4])
-```
-
-```{r}
-# library(dplyr)
-# library(tidyr)
-# library(purrr)
-# library(ggplot2)
-# iris0 <- iris %>%  
-#   group_by(Species) %>%  
-#   nest() %>%  
-#   mutate(
-#     gg1 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Sepal.Width)) + geom_point()),
-#     gg2 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Width)) + geom_point()),
-#     gg3 = purrr::map(data, ~ ggplot(., aes(Sepal.Length, Petal.Length)) + geom_point()),
-#     g = purrr::pmap(list(gg1, gg2, gg3), ~ gridExtra::grid.arrange(..1, ..2, ..3))
-#   )
-```
-
 
 ```{r}
 # kNNdistplot(iris, k = 5)
@@ -559,6 +762,21 @@ fviz_dend(ex.hc.centroid.n, cex = 0.5 )
 # fviz_cluster(res.fpc, iris, geom = "point")
 ```
 
+# Data
+
+The example used in this article is made out of 50 decks.
+More details will be described
+
+-   Five archetypes with Different regions & different play style
+
+    1.  Azir/Irelia
+    2.  Ashe/LeBlanc
+    3.  Dragons (DE/MT)
+    4.  Draven/Sion (NX/PZ)
+    5.  Mistwraith Alligiance
+
+More details about how they were chosen will be written later as results are shown
+
 ```{r twitter-meta, echo = FALSE}
 # library(metathis)
 # meta() %>%
@@ -580,4 +798,5 @@ fviz_dend(ex.hc.centroid.n, cex = 0.5 )
 
 # Legal bla bla {.unnumbered}
 
-This content was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+This content was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games.
+Riot Games does not endorse or sponsor this project.
