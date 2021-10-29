@@ -29,7 +29,6 @@ citation: false
 bibliography: biblio.yaml
 draft: TRUE
 references:
-  
 - type: article-journal
   id: ackerman2011discerning
   author:
@@ -548,16 +547,28 @@ Let us introduce a couple of point from a discussion with <a href="https://twitt
 
 From this approach two question comes to mind
 
-1.  Should the data be weighted?
+1.  Should there exist outliers that's best no to assign to a cluster?
 
-While being developed only recently, the concept of weighted clustering framework can be traced back into the '70 [@Fisher&VanNess(1971)].
-A more formal definition has has been developed [@Ackerman2016] while also introducing a series of mathematical properties related to the weights.
+If the question is formulated simply like this with no other conditions, then yes, there is deny that outliers and/or noise exists in the archetype problem and the best way to deal with them would be not assigning them to clusters. The reason is obvious a random pile of 40 cards could turn into something resembling a possible archetype, but for the most cases it would likely turn into just that, a random pile of cards.
+
+Their existence is certain, even worse many cluster algorithm are sensitive to noise and outliers and at various degree so are the methods described up until know.
+If K-means starts on an outlier it won't be easily dealt with, also a reason why it's best practise to repeat K-means several times to avoid being too depending on the original random choice at the initialization step.
+In (Agglomerative) Hierarchical Clustering (AHC), the algorithm described before, if an outlier is wrongly assigned to a cluster in some cases this error will be propagated on all the following steps with no way to intervene.[^1]
+
+[^1]: This behaviour allows AHC to more easily identify smaller clusters. In contrast, Divisive Hierarchical clustering is more robust to noise and outliers.
+
+A series of Density-based clustering algorithm are able to deal with outlier and DBSCAN is currently the most popular method which 
+
+2.  Should the data be weighted?
+
+While being developed only recently, the concept of weighted clustering framework can be traced back into the '70 [Fisher&VanNess(1971)].
+A more formal definition has has been developed [Ackerman2016] while also introducing a series of mathematical properties related to the weights.
 The use of weights can be seen as a more generalized definition of centroid if not even just its description as barycentre also called centre of mass.
 
 It is easy to see that using unweighed data can be seen as having the same weight 1 on all data.
 Applying weight would than be the same as having duplicates as multiple points with mass would correspond to a single point with weight equal to the sum of masses.
 Similarly a point of zero mass can be seen as non-existent.
-From this an algorithm would be equivalent to start in the middle of its steps in the middle of the cluster definition and so not starting to work with the leaf but clusters with different masses.
+From this an algorithm would be equivalent to start in the middle of its steps of defining clusters and so not starting to work with the leaf but point-clusters with different masses.
 
 Following the definition of weighted clustering, one may ask what effect does this have on the clustering algorithms?
 
@@ -586,40 +597,56 @@ Now that we defined the properties what does they mean in the practical use? The
 
 ![Different cluster structures based from the same data. All weight-sensitive methods select the clustering on the right while weight-robust methods select the one on the left](images/A02-weight-robust-sensitive.png)
 
+We must remind how there is not correct partitioning, it all depends by the characteristics of each case study.
 
+But let's assume the figure represents deck and the distance between each point is a deck. What should be the correct way to partition into clusters ? The denser region may represent a single archetypes which is further divided in sub-archetypes like the many ways to build a Viego deck with the two outlier-regions being two other completely archetypes so the left case, but it could also be like in the right that we have 3 archetypes that share a lot in common with some exotic build for one of them. it could also be that the right answer in 5 archetypes, or just two. Overall, again there is no pre-determined answer.
 
+Of the algorithms showed up until know Single linkage and Complete linkage are weight robust (and not many others more generally possess this property)
 
-2.  Should there exist outliers that's best no to assign to a cluster?
+Ward and K-means (as many other variant of the 'k-family') are weight sensitive and Average linkage is weight considering.
 
-Many cluster algorithm are sensitive to noise and outliers.
-AHC for example is able to identify smaller clusters.
-If an outlier is wrongly assigned to a cluster in some cases this error will be propageted on all the following steps with no way to intervene.
+> So remember kids, don't try weighted data when applying Single-linkage at home (it's useless)
 
-3.  
+```{r}
+# tribble(
+#   ~` `,                    ~Partional,  ~Hiercarchical,
+#   "Weight\nSensitive",    "k-<family>", "Ward's Method",
+#   "Weight\nConsidering",  NA,           "Average Linkage",
+#   "Weight\nRobust",       NA,           "Single/Complete Linkage"
+# ) |>
+#   gt() |>
+#   tab_footnote(
+#     footnote = md("k-means, k-medroids, k-medians and *almost* all similar algorithm"),
+#     locations = cells_body(
+#       columns = Partional,
+#       rows = 1)
+#   ) 
+```
+2.
 
 ```{r Example1}
 set.seed(123)
-ex.hc.complete.n <- hclust(DSim_mini, method = "complete", members = sample(1:5000,NROW(DSim_mini) ))
+hc.complete.n <- hclust(DSim_mini, method = "complete", members = sample(1:5000,NROW(DSim_mini) ))
 
 
 set.seed(123)
-ex.hc.average.n  <- hclust(DSim_mini, method = "average", members = sample(1:5000,NROW(DSim_mini)))
+hc.average.n  <- hclust(DSim_mini, method = "average", members = sample(1:5000,NROW(DSim_mini)))
 
 
 set.seed(123)
-ex.hc.centroid.n <- hclust(DSim_mini, method = "centroid", members = sample(1:5000,NROW(DSim_mini)))
+hc.centroid.n <- hclust(DSim_mini, method = "centroid", members = sample(1:5000,NROW(DSim_mini)))
 
 paste 
 
-ex.hc.complete$labels <- LoR.Archetype.Mini$archetype
-fviz_dend(ex.hc.complete, cex = 0.5 ) +
-fviz_dend(ex.hc.complete.n, cex = 0.5 )
+hc.complete$labels <- LoR.Archetype.Mini$archetype
+fviz_dend(hc.complete, cex = 0.5 ) +
+fviz_dend(hc.complete.n, cex = 0.5 )
 
-fviz_dend(ex.hc.average, cex = 0.5 ) +
-fviz_dend(ex.hc.average.n, cex = 0.5 )
+fviz_dend(hc.average, cex = 0.5 ) +
+fviz_dend(hc.average.n, cex = 0.5 )
 
-fviz_dend(ex.hc.centroid, cex = 0.5 ) +
-fviz_dend(ex.hc.centroid.n, cex = 0.5 )
+fviz_dend(hc.centroid, cex = 0.5 ) +
+fviz_dend(hc.centroid.n, cex = 0.5 )
 ```
 
 # DBSCAN
@@ -704,15 +731,15 @@ DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
 
 # Load the data 
 # Make sure that the package factoextra is installed
-# data("multishapes", package = "factoextra")
-# df <- multishapes[, 1:2]
+data("multishapes", package = "factoextra")
+df <- multishapes[, 1:2]
 # 
-# library("fpc")
-# # Compute DBSCAN using fpc package
-# set.seed(123)
-# db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
+library("fpc")
+# Compute DBSCAN using fpc package
+set.seed(123)
+db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
 # # Plot DBSCAN results
-# plot(db, df, main = "DBSCAN", frame = FALSE)
+plot(db, df, main = "DBSCAN", frame = FALSE)
 # 
 # library("factoextra")
 # fviz_cluster(db, df, stand = FALSE, frame = FALSE, geom = "point")
@@ -720,6 +747,21 @@ DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
 # Print DBSCAN
 # print(db)
 
+hc.average.5 <- hcut(DSim_mini, k = 5, method = "average")
+
+table(
+  unname(hc.average.5$cluster),
+  res.db$cluster
+) |>
+  kable()
+
+# fviz_dend(hcut(DSim_mini, k = 5, method = "centroid"),
+#           k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
+#           label_cols =  rep(1:5,each = 10),
+#           rect = TRUE, cex = 0.5 )
+
+  
+  
 # Cluster membership. Noise/outlier observations are coded as 0
 # A random subset is shown
 # db$cluster[sample(1:1089, 50)]
@@ -729,36 +771,38 @@ DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
 ```
 
 ```{r}
-# #The iris dataset is used:
-# 
-# # Load the data
-# data("iris")
-# iris <- as.matrix(iris[, 1:4])
-# #The optimal value of “eps” parameter can be determined as follow:
-# 
-# dbscan::kNNdistplot(iris, k =  4)
-# abline(h = 0.4, lty = 2)
-# # Compute DBSCAN using fpc::dbscan() and dbscan::dbscan(). Make sure that the 2 packages are installed:
-# 
-# set.seed(123)
-# # fpc package
-# res.fpc <- fpc::dbscan(iris, eps = 0.4, MinPts = 4)
-# # dbscan package
-# res.db <- dbscan::dbscan(iris, 0.4, 4)
-# # The result of the function fpc::dbscan() provides an object of class ‘dbscan’ containing the following components:
-# # cluster: integer vector coding cluster membership with noise observations (singletons) coded as 0
-# # isseed: logical vector indicating whether a point is a seed (not border, not noise)
-# # eps: parameter eps
-# # MinPts: parameter MinPts
-# # The result of the function dbscan::dbscan() is an integer vector with cluster assignments. Zero indicates noise points.
-# # Note that the function dbscan:dbscan() is a fast re-implementation of DBSCAN algorithm. The implementation is significantly faster and can work with larger data sets than the function fpc:dbscan().
-# 
-# # Make sure that both version produce the same results:
-# 
-# all(res.fpc$cluster == res.db)
-# ## [1] TRUE
-# #The result can be visualized as follow:
-# 
+#The iris dataset is used:
+
+# Load the data
+data("iris")
+iris <- as.matrix(iris[, 1:4])
+#The optimal value of “eps” parameter can be determined as follow:
+
+dbscan::kNNdistplot(DSim_mini, k =  7)
+abline(h = 0.37, lty = 2)
+# Compute DBSCAN using fpc::dbscan() and dbscan::dbscan(). Make sure that the 2 packages are installed:
+
+res.db <- dbscan::dbscan(DSim_mini, 0.37, 5)
+
+set.seed(123)
+# fpc package
+res.fpc <- fpc::dbscan(DSim_mini, eps = 0.37, MinPts = 5)
+# dbscan package
+res.db <- dbscan::dbscan(iris, 0.4, 4)
+# The result of the function fpc::dbscan() provides an object of class ‘dbscan’ containing the following components:
+# cluster: integer vector coding cluster membership with noise observations (singletons) coded as 0
+# isseed: logical vector indicating whether a point is a seed (not border, not noise)
+# eps: parameter eps
+# MinPts: parameter MinPts
+# The result of the function dbscan::dbscan() is an integer vector with cluster assignments. Zero indicates noise points.
+# Note that the function dbscan:dbscan() is a fast re-implementation of DBSCAN algorithm. The implementation is significantly faster and can work with larger data sets than the function fpc:dbscan().
+
+# Make sure that both version produce the same results:
+
+all(res.fpc$cluster == res.db)
+## [1] TRUE
+#The result can be visualized as follow:
+
 # fviz_cluster(res.fpc, iris, geom = "point")
 ```
 
