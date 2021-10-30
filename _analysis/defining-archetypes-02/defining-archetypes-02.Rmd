@@ -795,6 +795,7 @@ table(
   kable(row.names = T) |>
   kable_paper(full_width = F) |>
   row_spec(c(1,6), bold = TRUE, col = "red") |>
+  row_spec(c(2), bold = TRUE,   col = "orange") |>
   row_spec(c(3,4), bold = TRUE, col = "blue") |>
   row_spec(c(7,8), bold = TRUE, col = "darkgreen") |>
   row_spec(c(5,9), bold = TRUE, col = "purple")
@@ -806,6 +807,7 @@ table(
   kable(row.names = T) |>
   kable_paper(full_width = F) |>
   row_spec(c(1,6), bold = TRUE, col = "red") |>
+  row_spec(c(2), bold = TRUE,   col = "orange") |>
   row_spec(c(3,4), bold = TRUE, col = "blue") |>
   row_spec(c(7,8), bold = TRUE, col = "darkgreen") |>
   row_spec(c(5,9), bold = TRUE, col = "purple")
@@ -842,6 +844,7 @@ table(
   kable(row.names = T) |>
   kable_paper(full_width = F) |>
   row_spec(c(1,6), bold = TRUE, col = "red") |>
+  row_spec(c(2), bold = TRUE,   col = "orange") |>
   row_spec(c(3,4), bold = TRUE, col = "blue") |>
   row_spec(c(7,8), bold = TRUE, col = "darkgreen") |>
   row_spec(c(5,9), bold = TRUE, col = "purple")
@@ -888,6 +891,7 @@ table(
   kable_paper(full_width = F) |>
   row_spec(c(1,2), bold = TRUE, col = "red") |>
   row_spec(c(3,4), bold = TRUE, col = "blue") |>
+  row_spec(c(5), bold = TRUE,   col = "orange") |>
   row_spec(c(7:8,10), bold = TRUE, col = "darkgreen") |>
   row_spec(c(9,11), bold = TRUE, col = "cadetblue") |>
   row_spec(c(6), bold = TRUE, col = "purple")
@@ -900,6 +904,7 @@ table(
   kable_paper(full_width = F) |>
   row_spec(c(1,2), bold = TRUE, col = "red") |>
   row_spec(c(3,4), bold = TRUE, col = "blue") |>
+  row_spec(c(5), bold = TRUE,   col = "orange") |>
   row_spec(c(7:10), bold = TRUE, col = "darkgreen") |>
   row_spec(c(11), bold = TRUE, col = "cadetblue") |>
   row_spec(c(6), bold = TRUE, col = "purple")
@@ -919,6 +924,7 @@ table(archetype.v2,
   kable(row.names = T) |>
   kable_paper(full_width = F) |>
   row_spec(c(1,6), bold = TRUE, col = "red") |>
+  row_spec(c(2), bold = TRUE,   col = "orange") |>
   row_spec(c(3,4), bold = TRUE, col = "blue") |>
   row_spec(c(7,8), bold = TRUE, col = "darkgreen") |>
   row_spec(c(5,9), bold = TRUE, col = "purple")
