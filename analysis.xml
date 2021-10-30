@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>LLoRR Stats</title>
+    <link>https://www.llorr-stats.com</link>
+    <atom:link href="https://www.llorr-stats.com/analysis.xml" rel="self" type="application/rss+xml"/>
+    <description>"Statistics, Data, Legends of Runeterra"
+</description>
+    <generator>Distill</generator>
+    <lastBuildDate>Tue, 21 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>LoR Meta Index (LMI) expansion by using Bo3 data</title>
+      <dc:creator>Valentino (Legna) Vazzoler</dc:creator>
+      <link>https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion</link>
+      <description>The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index</description>
+      <guid>https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion</guid>
+      <pubDate>Tue, 21 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/lmi-02-tentative-expansion_files/figure-html5/print-seqCor-1.png" medium="image" type="image/png" width="1728" height="1152"/>
+    </item>
+    <item>
+      <title>Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes</title>
+      <dc:creator>Valentino (Legna) Vazzoler</dc:creator>
+      <link>https://www.llorr-stats.com/analysis/defining-archetypes-01</link>
+      <description>First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra</description>
+      <guid>https://www.llorr-stats.com/analysis/defining-archetypes-01</guid>
+      <pubDate>Mon, 06 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://www.llorr-stats.com/analysis/defining-archetypes-01/defining-archetypes-01_files/figure-html5/plot-ASZ-SZ-1.png" medium="image" type="image/png" width="2304" height="1536"/>
+    </item>
+    <item>
+      <title>An exploratory analysis to Mastery Curve in LoR</title>
+      <dc:creator>Valentino (Legna) Vazzoler</dc:creator>
+      <link>https://www.llorr-stats.com/analysis/esplore-lor-mastery-curve</link>
+      <description>Applying the concept of Learning Curve to Legends of Runeterras' decks.</description>
+      <guid>https://www.llorr-stats.com/analysis/esplore-lor-mastery-curve</guid>
+      <pubDate>Mon, 19 Jul 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://www.llorr-stats.com/analysis/esplore-lor-mastery-curve/esplore-lor-mastery-curve_files/figure-html5/print-plot-Lurk-2-1.png" medium="image" type="image/png" width="1248" height="936"/>
+    </item>
+    <item>
+      <title>Matching games by 'Expected Win Rate'</title>
+      <dc:creator>Valentino (Legna) Vazzoler</dc:creator>
+      <link>https://www.llorr-stats.com/analysis/matching-win-rate</link>
+      <description>Using a Pseudo-Propensity Score Matching to reduce sample bias when comparing win rates between players in LoR.</description>
+      <guid>https://www.llorr-stats.com/analysis/matching-win-rate</guid>
+      <pubDate>Tue, 15 Jun 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://www.llorr-stats.com/analysis/matching-win-rate/matching-win-rate_files/figure-html5/plot-optmatch-1-1.png" medium="image" type="image/png" width="1248" height="936"/>
+    </item>
+    <item>
+      <title>An Irelia's World</title>
+      <dc:creator>Valentino (Legna) Vazzoler</dc:creator>
+      <link>https://www.llorr-stats.com/analysis/an-irelia-s-world</link>
+      <description>Looking at the metagame response to Azir/Irelia's</description>
+      <guid>https://www.llorr-stats.com/analysis/an-irelia-s-world</guid>
+      <pubDate>Wed, 09 Jun 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://www.llorr-stats.com/analysis/an-irelia-s-world/an-irelia-s-world_files/figure-html5/plot-global-1.png" medium="image" type="image/png" width="1248" height="936"/>
+    </item>
+    <item>
+      <title>Developing a LoR-Meta score</title>
+      <dc:creator>Valentino (Legna) Vazzoler</dc:creator>
+      <link>https://www.llorr-stats.com/analysis/lmi</link>
+      <description>Recreating  the viciousSyndicate (vS) - Meta Score for Legends of Runeterras.</description>
+      <guid>https://www.llorr-stats.com/analysis/lmi</guid>
+      <pubDate>Fri, 04 Jun 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://www.llorr-stats.com/analysis/lmi/images/LMI.png" medium="image" type="image/png" width="624" height="384"/>
+    </item>
+  </channel>
+</rss>

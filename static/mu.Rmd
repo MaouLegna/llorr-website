@@ -434,12 +434,13 @@ MUgrid.gt.final <- MUgrid.gt |>
 MUgrid.gt.final |>
   tab_options(
     data_row.padding = px(5),
-    table.font.size = px(13)
+    table.font.size = px(13),
+    column_labels.font.size = px(10)
   ) |>
   cols_width(
-    # -1 ~ px(100),
-    #  1 ~ px(120),
-    everything() ~ px(100)
+    -1 ~ px(90),
+     1 ~ px(150),
+    # everything() ~ px(100)
   )
 ```
 

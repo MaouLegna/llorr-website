@@ -26,31 +26,8 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-bibliography: biblio.yaml
+bibliography: references.bib
 draft: TRUE
-references:
-- type: article-journal
-  id: ackerman2011discerning
-  author:
-  - family: Ackerman
-  - family: Margareta
-  - family: Ben-David
-  - family: Shai
-  issued:
-    date-parts:
-    - - 2011
-      - 6
-      - 28
-  title: 'Discerning linkage-based algorithms among hierarchical clustering methods'
-  container-title: Twenty-Second International Joint Conference on Artificial Intelligence
-  page: 1140-1145
-  DOI: 10.1007/s00357-018-9266-x
-  URL: https://www.aaai.org/ocs/index.php/IJCAI/IJCAI11/paper/view/3116/3410
-  language: en-GB  
-# Van Ness, John W. “Admissible Clustering Procedures.” Biometrika, vol. 60, no. 2, [Oxford University Press, Biometrika Trust], 1973, pp. 422–24, https://doi.org/10.2307/2334558.
-editor_options: 
-  markdown: 
-    wrap: sentence
 ---
 
 ```{r setup, include=FALSE}
@@ -65,8 +42,8 @@ knitr::opts_chunk$set(
                    digits.secs=6),
   dev.args = list(bg = 'transparent'), # make graphics with transparent background
   fig.align = 'center',
-  fig.width=12,
-  fig.height=8,
+  fig.width=6,
+  fig.height=4,
   engine.path = list(
     python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
   ),
@@ -79,6 +56,8 @@ knitr::opts_chunk$set(
 options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
 xaringanExtra::use_panelset()
+
+pacman::p_load(apcluster,dbscan,fpc,factoextra)
 ```
 
 ```{r panelset-style}
@@ -105,7 +84,7 @@ top_n_codes <- \(DT = LoR.Melt.Matches.RMD,archetypes,n,dopull=T) DT |>
 dsimMatrix <- function( codes ) {
   deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
   for (i in 1:length(codes)) {
-    if (i%%100==0) glue::glue("Fill parse matrix #{i} - {Sys.time()}") |> message()
+    # if (i%%100==0) glue::glue("Fill parse matrix #{i} - {Sys.time()}") |> message()
     decklist <- codes[i] |> lordecks::get_decklist_from_code()
     deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
   }
@@ -116,7 +95,7 @@ dsimMatrix <- function( codes ) {
 cos.dsimMatrix <- function( codes ) {
   deck.matrix <- LoR.Card$cardCode |> purrr::map_dfc(setNames, object = list(numeric()))
   for (i in 1:length(codes)) {
-    if (i%%500==0) glue::glue("Fill parse matrix #{i} - {Sys.time()}") |> message()
+    # if (i%%500==0) glue::glue("Fill parse matrix #{i} - {Sys.time()}") |> message()
     decklist <- codes[i] |> lordecks::get_decklist_from_code()
     deck.matrix[NROW(deck.matrix)+1, decklist$cardcode] <- as.list(decklist$count)
   }
@@ -125,124 +104,10 @@ cos.dsimMatrix <- function( codes ) {
 }
 ```
 
-```{r raw-data-all}
-# skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
-# skip.dt
-
-#' load gameDT
-#'############
-# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
-# 
-# #' load Account
-# #'#############
-# LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
-#                          header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-#   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
-# 
-# #' load DeckDT
-# #'############
-# LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
- 
-# #' patch 2.14 to 2.15
-# #'###################
-# patch214215code <- LoR.Match.RMD |>
-#   filter( game_type=="Ranked" ) |>
-#   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-#   select( -ends_with("_3"),-ends_with("_4")  ) |>
-#   select( starts_with("deck_code") ) |>
-#   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-#                names_to = c(".value"),
-#                names_pattern = "(.*)_[0-9]"
-#                ) |>
-#   left_join(LoR.Deck.RMD[,.(deck_code,archetype)],  by=c("deck_code") )
-
-# NROW(patch214215code) # 155214
-# patch214215code |> fwrite(file.path("C:","LlorR","data","clean","deckcode_patch214215.csv")  )
-
-# length(unique(patch214215code$deck_code)) # 17772
-# NROW(DSim_patch214215) # 17772
-
-#' load parse Matrix
-#'##################
-# DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","DSimMatrix_0214to0215.csv"))
-# cos.DSim_patch214215 <- fread(file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"), header=T) |> as.matrix()
-# fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
-
-# cos.DSim_patch214215[1:10,1:10]
-# DSim_patch214215[1:10] |> eisen_cos.sim()
-
-#' Archetype-Fix
-#'##############
-# source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
-```
-
-```{r}
-# how I selecter the decks, it is reproducible as more decks will be inserted in the DB
-
-# set.seed(123)
-# Rep1 <- LoR.Deck.RMD |>
-#   filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
-#   slice_sample(n = 75) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Rep2 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "Marauder" ) |>
-#   slice_sample(n = 25) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# AI <- LoR.Deck.RMD |>
-#   filter( archetype == "Azir/Irelia", ) |>
-#   slice_sample(n = 100) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Dragon1 <- LoR.Deck.RMD |>
-#   filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
-#   slice_sample(n = 30) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Dragon2 <- LoR.Deck.RMD |>
-#   filter( archetype == "Aurelion Sol/Shyvana" ) |>
-#   slice_sample(n = 70) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Sion1 <- LoR.Deck.RMD |>
-#   filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
-#   slice_sample(n = 80) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Sion2 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
-#   slice_sample(n = 20) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Mist1 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
-#   slice_sample(n = 50) |>
-#   pull(deck_code)
-# 
-# set.seed(123)
-# Mist2 <- LoR.Deck.RMD |>
-#   filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
-#   slice_sample(n = 50) |>
-#   pull(deck_code)
-# 
-# #' Archetype names fix
-# ######################
-# LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-```
-
 ```{r prepare-examples}
-#' archetypes names
+# fwrite(LoR.Archetype.Ex, "./data/example_archetye.csv")
+# fwrite(LoR.Archetype.Mini, "./data/example_archetye_mini.csv")
+
 archetypes <- c( 
   "Ashe/LeBlanc",           # 75/25 noMarauder/Marauder
   "Azir/Irelia",            # 100
@@ -251,40 +116,11 @@ archetypes <- c(
   "Mistwraith Allegiance"   # 50/50 Targon/Piltover
 )
 
-# LoR.Archetype.Ex <- rbind(
-#   LoR.Deck.RMD[ deck_code %in% Rep1, ],
-#   LoR.Deck.RMD[ deck_code %in% Rep2, ],
-#   LoR.Deck.RMD[ deck_code %in% AI, ],
-#   LoR.Deck.RMD[ deck_code %in% Dragon1, ],
-#   LoR.Deck.RMD[ deck_code %in% Dragon2, ],
-#   LoR.Deck.RMD[ deck_code %in% Sion1, ],
-#   LoR.Deck.RMD[ deck_code %in% Sion2, ],
-#   LoR.Deck.RMD[ deck_code %in% Mist1, ],
-#   LoR.Deck.RMD[ deck_code %in% Mist2, ]
-# )
-  
-# LoR.Archetype.Exe[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-# LoR.Archetype.Exe[ archetype == "RubinBait - Draven/Sion" , archetype:="Draven/Sion (NX/PZ)" ]
-# LoR.Archetype.Exe[ archetype == "Marauder" , archetype:="Ashe/LeBlanc" ]
-
-# mini.ex <- c(Rep1[1:7], # Ashe/LB
-#              Rep2[1:3], # Marauder
-#              AI[1:10],  # AI
-#              Dragon1[1:3], # with J4
-#              Dragon2[1:7], # no J4
-#              Sion1[1:8],   # OG
-#              Sion2[1:2],   # fake-burn
-#              Mist1[1:5],   # MT
-#              Mist2[1:5])   # PnZ
-# 
-# LoR.Archetype.Mini <- LoR.Archetype.Ex |>
-#   filter(deck_code %in% mini.ex )
-
-# fwrite(LoR.Archetype.Ex, "./data/example_archetye.csv")
-# fwrite(LoR.Archetype.Mini, "./data/example_archetye_mini.csv")
-
 LoR.Archetype.Ex   <- fread("./data/example_archetye.csv")
 LoR.Archetype.Mini <- fread("./data/example_archetye_mini.csv")
+
+# LoR.Archetype.Mini <- LoR.Archetype.Ex |>
+#   filter(deck_code %in% mini.ex )
 
 # #' distance matrix
 sparseMatrix.Ex   <- dsimMatrix(codes =  LoR.Archetype.Ex$deck_code )
@@ -297,15 +133,6 @@ rownames(sparseMatrix.mini) <- rownames.archetype
 
 DSim_ex   <- eisen_cos.sim(sparseMatrix.Ex)
 DSim_mini <- eisen_cos.sim(sparseMatrix.mini)
-```
-
-```{r}
-# DSim_patch215216 <- unique(patch215216code$deck_code) |> dsimMatrix()
-# fwrite(DSim_patch215216,file.path("C:","LlorR","data","clean","DSimMatrix_0215to0216.csv"))
-
-# DSim <- DSim_patch215216 |> eisen_cos.sim()
-
-# fwrite(as.matrix(DSim),file.path("C:","LlorR","data","clean","cos.DSimMatrix_0215to0216.csv"))
 ```
 
 # Introduction
@@ -328,22 +155,17 @@ While I want to provide some food for thought for others in the end the main rec
 
 # Clustering
 
-Clustering is a basic data mining task with a wide variety of applications.
-not surprisingly, there exist many clustering algorithms.
-However, clustering is an ill defined problem - given a data set, it is not clear what a "correct" clustering for that set is.
-Indeed, different algorithms may yield dramatically different outputs for the same input sets.
-In spite of the wide use of clustering in many practical applications, currently, there exist no principled method to guide the selection of a clustering algorithm.
-Currently, such decisions are often made in a very ad hoc, if not completely random, manner.
-Users are aware of the cost involved in employing different clustering algorithms, such as running times, memory requirement, and software.
+Clustering is an heterogeneous domain. applied in a wide range of disciplines with the aim of finding subgroups or clusters, in a data set.
 
-Clustering is applied in a wide range of disciplines, from astronomy to zoology, yet its theoretical underpinnings are still poorly understood.
-Even the fairy basic problem of which algorithm to select for a given application (known as "the user dilemma") is left to ad hoc solutions, as theory is only starting to address fundamental differences between clustering methods.
+Clustering is considered a basic tools of data mining along side the supervised learning domain (clustering is defined as unsupervised learning) but differently from it, clustering suffer from a lack of theoretical understanding of its application.
 
-Clustering refers to a very broad set of techniques for findings subgroups or *clusters*, in a data set.
-When we cluster the observations of a data set, we seek partition then into distinct groups so that the observations within each group are quite similar to each other, while observation in a different groups are quite different from each other.
-Of course, to make this concrete, we must define what it means for two or more observations to be *similar or different*
+Each example, even the most basics face the problem of selecting which algorithm to apply (known as "the user dilemma"), as there is no principled method to guide the selection.
+While the theory is starting identify differences between clustering methods this field is still in it's early phase and the application are left to ad hoc decisions.
+If decision are being are being made usually they are defined by engineering propetrties as run times or memory used.
 
-Since clustering is popular in many fields, there exist a great number of clustering methods
+This is also a consequence of clustering being a problem not well defined. As statistics is all about the question, it's not possible to define the 'correct' clustering if we have no defintion of what it is correct.
+
+Of course, to make this concrete, we must define what it means for two or more observations to be *similar or different*. As a general rule of rule of thumb we try to aggregate similar observations in the same group while making it so that the differences between groups is overall high.
 
 ## K-Mean
 
@@ -381,6 +203,7 @@ The common practise is to use the *Elbow method* as it tells us when increasing 
 ```{r elbow, fig.width=6, fig.height=4, fig.cap="within sum of squares as a fnction of number of clusters obtained with K-means applyed to the example data set"}
 #| fig.width=6
 #| fig.height=4
+set.seed(123)
 fviz_nbclust(sparseMatrix.mini, kmeans,  method = "wss") +
   theme_Publication()
 ```
@@ -395,6 +218,7 @@ Prior to this article I'm not sure I even heard about this metric: From Wikipedi
 > If many points have a low or negative value, then the clustering configuration may have too many or too few clusters.
 
 ```{r silhouette, fig.width=6, fig.height=4, fig.cap="Silhouette as a fnction of number of clusters obtained with K-means applyed to the example data set"}
+set.seed(123)
 fviz_nbclust(sparseMatrix.mini, kmeans, method = "silhouette") +
   theme_Publication()
 ```
@@ -545,9 +369,12 @@ Let us introduce a couple of point from a discussion with <a href="https://twitt
 
 > My philosophy is its not very helpful to have a cluster if I don't have the data to say anything about it and these low play rate clusters don't have many games, so even if I included them it wouldn't be helpful I would like to include a way for users to self define an archetype, saying include x y z card, so if someone wants to go looking they could yeah, I cluster unique decklists weighted by games on each unique decklist
 
+> The point of clustering is to increase sample size by being able to talk about a large section of decks in aggregate rather than each one individually.
+With that goal in mind, clustering  off-meta decks with low sample size as noise is not a large loss of information, since even if we clustered similar decks together the cluster would still have too little data for any meaningful analysis to be done on it.
+
 From this approach two question comes to mind
 
-1.  Should there exist outliers that's best no to assign to a cluster?
+### Should there exist outliers that's best no to assign to a cluster?
 
 If the question is formulated simply like this with no other conditions, then yes, there is deny that outliers and/or noise exists in the archetype problem and the best way to deal with them would be not assigning them to clusters. The reason is obvious a random pile of 40 cards could turn into something resembling a possible archetype, but for the most cases it would likely turn into just that, a random pile of cards.
 
@@ -557,12 +384,12 @@ In (Agglomerative) Hierarchical Clustering (AHC), the algorithm described before
 
 [^1]: This behaviour allows AHC to more easily identify smaller clusters. In contrast, Divisive Hierarchical clustering is more robust to noise and outliers.
 
-A series of Density-based clustering algorithm are able to deal with outlier and DBSCAN is currently the most popular method which 
+Among the class of clustering algorithms that are able to deal with outlier and noise DBSCAN is probably the most popular and cited. The algorithm will be explained in the following paragraph.
 
-2.  Should the data be weighted?
+### Should the data be weighted?
 
-While being developed only recently, the concept of weighted clustering framework can be traced back into the '70 [Fisher&VanNess(1971)].
-A more formal definition has has been developed [Ackerman2016] while also introducing a series of mathematical properties related to the weights.
+While being developed only recently, the concept of weighted clustering framework can be traced back into the '70 [@10.1093/biomet/58.1.91].
+A more formal definition has has been developed while also introducing a series of mathematical properties related to the weights [Ackerman2016].
 The use of weights can be seen as a more generalized definition of centroid if not even just its description as barycentre also called centre of mass.
 
 It is easy to see that using unweighed data can be seen as having the same weight 1 on all data.
@@ -572,7 +399,7 @@ From this an algorithm would be equivalent to start in the middle of its steps o
 
 Following the definition of weighted clustering, one may ask what effect does this have on the clustering algorithms?
 
-[@Ackerman2016] introduced the properties related to the response to weighted data
+@ackerman2016weighted introduced the properties related to the response to weighted data
 
 Be it $(X,d)$ a dissimilarity function
 
@@ -591,253 +418,386 @@ And $|range(A(X,d,k))|$ the range of a partitional algorithm on a data set defin
   * $\exists$ (X,d) and $1 < k < |X|$ so that $|range(A(X,d,k))| = 1$ and
   * $\exists$ (X,d) and $1 < k < |X|$ so that $|range(A(X,d,k))| > 1$
 
-  With weight-considering we can have both the previous definition meaning cases where the algorithm will be influenced by weights and cases where it will ignore them.
-  
-Now that we defined the properties what does they mean in the practical use? The next figure gives an idea of what to expect for robust and sensitive cases.
+We took this detour of explaining how an algorithm can react to the addition of weights as we needed to point out that in some cases their inclusion doesn't bring any difference to the results.
+
+In addition these properties can tell us a bit more of the algorithm in question.
+
+The next figure gives an idea of what to expect for robust and sensitive cases.
 
 ![Different cluster structures based from the same data. All weight-sensitive methods select the clustering on the right while weight-robust methods select the one on the left](images/A02-weight-robust-sensitive.png)
 
 We must remind how there is not correct partitioning, it all depends by the characteristics of each case study.
 
-But let's assume the figure represents deck and the distance between each point is a deck. What should be the correct way to partition into clusters ? The denser region may represent a single archetypes which is further divided in sub-archetypes like the many ways to build a Viego deck with the two outlier-regions being two other completely archetypes so the left case, but it could also be like in the right that we have 3 archetypes that share a lot in common with some exotic build for one of them. it could also be that the right answer in 5 archetypes, or just two. Overall, again there is no pre-determined answer.
+What this example wants to convey is that if we know something of the underlying geometry of our data and what we would like our algorithm to favour, while there is no correct clustering we can still reduce a little "the user's dilemma" of which algorithm to choose from.
 
-Of the algorithms showed up until know Single linkage and Complete linkage are weight robust (and not many others more generally possess this property)
+Of the algorithms showed up until know Single linkage and Complete linkage are weight robust (and not many others more generally possess this property).
+Fig:\@ref(fig:weight-hclust-single) shows an example with Single linkage
 
 Ward and K-means (as many other variant of the 'k-family') are weight sensitive and Average linkage is weight considering.
+Fig:\@ref(fig:weight-hclust-average) shows an example with Average linkage. While the difference is not big it's possible to see on the second 'main' cluster
+
+```{r weight-hclust-single, fig.width=6, fig.height=4, fig.cap="Dendogram obtained with unweighted and weighted using Single linkage with the example data set"}
+set.seed(123)
+hc.single.n <- hclust(DSim_mini, method = "single", members = sample(1:5000,NROW(DSim_mini) ))
+fviz_dend(hc.single, cex = 0.5 , show_labels = F ) +
+  labs( title = "Unweighted Data", y = element_blank() ) +
+  theme_Publication() +
+  theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank() ) +
+fviz_dend(hc.single.n, cex = 0.5, show_labels = F ) +
+  labs( title = "Weighted Data", y = element_blank() ) +
+  theme_Publication() +
+  theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank() )
+```
+
+```{r weight-hclust-average, fig.width=6, fig.height=4, fig.cap="Dendogram obtained with unweighted and weighted using Average linkage with the example data set"}
+set.seed(123)
+hc.average.n  <- hclust(DSim_mini, method = "average", members = sample(1:5000,NROW(DSim_mini)))
+fviz_dend(hc.average, cex = 0.5 , show_labels = F ) +
+  labs( title = "Unweighted Data", y = element_blank() ) +
+  theme_Publication() +
+  theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank() ) +
+fviz_dend(hc.average.n, cex = 0.5, show_labels = F ) +
+  labs( title = "Weighted Data", y = element_blank() ) +
+  theme_Publication() +
+  theme(axis.line.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank() )
+```
 
 > So remember kids, don't try weighted data when applying Single-linkage at home (it's useless)
 
-```{r}
-# tribble(
-#   ~` `,                    ~Partional,  ~Hiercarchical,
-#   "Weight\nSensitive",    "k-<family>", "Ward's Method",
-#   "Weight\nConsidering",  NA,           "Average Linkage",
-#   "Weight\nRobust",       NA,           "Single/Complete Linkage"
-# ) |>
-#   gt() |>
-#   tab_footnote(
-#     footnote = md("k-means, k-medroids, k-medians and *almost* all similar algorithm"),
-#     locations = cells_body(
-#       columns = Partional,
-#       rows = 1)
-#   ) 
+```{r weight-behaviour}
+tribble(
+  ~` `,                    ~Partional,  ~Hiercarchical,
+  "Weight\nSensitive",    "k-means, k-medoids,k-median, Min-sum", "Ward's Method, Bisecting k-means",
+  "Weight\nConsidering",  "Ratio-cut",           "Average Linkage",
+  "Weight\nRobust",       "Min-diameter, k-center",           "Single/Complete Linkage"
+) |>
+  gt() |>
+  tab_source_note("A classification of clustering algorithms based on their response to weighted data.
+                  Source: Ackerman2016")
 ```
-2.
+### Is there any other way to use the metagame data?
 
-```{r Example1}
-set.seed(123)
-hc.complete.n <- hclust(DSim_mini, method = "complete", members = sample(1:5000,NROW(DSim_mini) ))
+This question is more a result of seeing the Drisoth philosophy in a different way. Just because we want to be guided by the metagame in order to define archetypes doesn't mean the weighting of data is the only option.
 
+From out perspective if we want to use the games data the reason is because we have from the games a clear idea about what to expect from certain decks.
+As we have an idea of what can identify a specific archetype, sometimes we may even have what is defined as an *ideal* deck-list, a deck-list that is *exemplar*.
 
-set.seed(123)
-hc.average.n  <- hclust(DSim_mini, method = "average", members = sample(1:5000,NROW(DSim_mini)))
+The easiest way to introduce this concept is by describing how it's possible to use starting from the K-means algorithm.
 
+In K-means a cluster's cente is defined by the centroid obtained from its points but aside for this they have no constraints about their position in space. 
 
-set.seed(123)
-hc.centroid.n <- hclust(DSim_mini, method = "centroid", members = sample(1:5000,NROW(DSim_mini)))
+If we the constraints that the centre is an actual data point, they would be called **examplars**. The algorithm that can be defined from here is called **K-medoids**.
 
-paste 
+K-Medoids only slightly differ from K-Means as:
 
-hc.complete$labels <- LoR.Archetype.Mini$archetype
-fviz_dend(hc.complete, cex = 0.5 ) +
-fviz_dend(hc.complete.n, cex = 0.5 )
+- Instead of just computing the cluster centroid we find the existing data point whose average dissimilarity between it and all other members of the cluster is minimal.
 
-fviz_dend(hc.average, cex = 0.5 ) +
-fviz_dend(hc.average.n, cex = 0.5 )
+- We can use any distance to find the medoid.
 
-fviz_dend(hc.centroid, cex = 0.5 ) +
-fviz_dend(hc.centroid.n, cex = 0.5 )
-```
+An even more interesting approach is applied by a message-based cluster algorithm called **Affinity Propagation**.
+
+What is interesting about these methods is that they can associate a real data point to each cluster.
+
+This open for a variety of option like being able to evaluate the quality of the identified clusters, checking the similarity within-cluster or differences between-clusters with a reduced number of points/references.
+
+As it is more complex, affinity propagation will be both described in the next paragraph.
 
 # DBSCAN
 
-DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
+DBSCAN (Density-Based Spatial Clustering of Applications with Noise) is a fairly recent algorithm as it was introduced in 1996.
+
+It's the most popular density-based method.
+It features a well-defined cluster model called *density reachability*.
+
+This type of clustering techinque connects data points that satisfy particular density criteria (minimum number of objects within a radius). After DBSCAN clustering is complete, there are three types of points: **core,border,and noise**.
+
+Core is a point that has some (m) points within a particular (n) distance from itself.
+The Border is a point that has at least one core point at distance n.
+Noise is a point that is nether border nor core. Data points in sparse area required to separate clusters are considered noise and broader points.
+
+DBSCAN uses two paramters to determine how clusters are defined:
+
+* minPts: for a region to be considered dense, the minimum number of points requires is *minPts*
+* eps: to locate data points in the neighbourhood of any points, *eps $\epsilon$* is used a distance measure
+
+Step by step
+
+* DBSCAN starts with a random data point (not-visited)
+* The neighbourhood of this point is extracted using a distance $\epsilon$
+* The clustering procedure starts if there are sufficient data points within this area and the current data point becomes the first point in the newest cluster, or else the point is marked as noise and visited
+* The point within its $\epsilon$ distance neighborhood also becames a part of the same cluster for the first point in the new cluster. For all the new data points added to the cluster above, the procedure for making all the data points belong to the same cluster is repeated.
+* The above two steps are repeated until all points in the cluster are determined. All points within the $\epsilon$ neighbourhood of the cluster have been visited and labelled. Once we're done with the current cluster, a new unvisited point is retrieved and processed, leading to further discovery of the cluster or noise. The procedure is repeated until all the data points are marked as visited.
+
+[@ackerman2010towards,@ackerman2011discerning]
+
+---
+
+Fundumentally, all clustering methods use the same approach i.e. first we calculate similarities and then we use it to cluster the data points into groups or batches. Here we will focus on Density-based spatal clustering of applications with noise (DBSCAN) clustering methods.
+
+Density-Based Clustering refers to unsupervised learning methods that identify distinctive group/clusters in the data, based on the idea that a cluster in data space in a continguous region of high point density, separated from other such clusters by contiguous regions of low point density.
+
+Density-Based Spatial Clustering of Applications with Noise (DBSCAN) is a base algorithm for density-based clustering. It can discover clusters of different shapes and sizes from a large amount of data, which is containing noise and outliers.
+
+The DBSCAN algorithm uses two paramters: 
+
+* minPts: The minimum number of points (a threshold) clustered toghether for a region to be considered dense.
+
+* eps: A distance measure that will be used to locate the points in the neighbourhood of any point.
+
+These paramters can be understood if we explore two concept called Density Reachability and Density Connectivity
+
+Reachability in terms of density establishes a point to be reachable from another if it lies within a paritcular distance $\epsilon$ from it.
+
+Connectivity, on the other hand involves a transitivity based chaining-approach to determine whether points are located in a particular cluster.
+
+There are three types
+
+Core - a point that has at least m points within distance n from itself
+Border a point that has at least one core point at a distance n
+Noise this is a pointthat is neither core nor a border and it has less than m points within distance n from itself
+
+---
+
+Usually to find the the value for $\epsilon$ we use the a plot of the k-nearest neighbor (kNN) distances for the dataset with all the distances being plotted from the smallest to largest.
+
+In R, for the package 'dbscan' the euristic method to find $\epsilon$ is a follows:
+
+> A suitable neighborhood size parameter eps given a fixed value for minPts can be found visually by inspecting the kNNdistplot of the data using k = minPts -1 (minPts includes the point itself, while the k-nearest neighbors distance does not).
+The k-nearest neighbor distance plot sorts all data points by their k-nearest neighbor distance.
+A sudden increase of the kNN distance (a knee) indicates that the points to the right are most likely outliers.
+Choose eps for DBSCAN where the knee is.
+
+Since the example data set data is quite small we will assign minPts=2  and so using k=1
+
+```{r dbscan-opt, fig.width=6, fig.height=4}
+dbscan::kNNdistplot(DSim_mini, k =  1)
+abline(h = 0.2775, lty = 2, col = "red")
+```
+We will do the clustering with $\epsilon$=0.2775
+
+```{r}
+res.db <- dbscan::dbscan(DSim_mini, 0.2775, 2)
+res.db.Drisoth <- dbscan::dbscan(dist(sparseMatrix.mini, method = "manhattan", diag = FALSE, upper = FALSE), 37, 2)
+```
+
+# K-Medoids (results)
+
+We report the results in seeking the optimal number of clusters using K-medoid using two different metric, the Manhattan distance (or L1 distance) and the Cosine similarity to the example data set.
+
+As with the other methods the results will be discussed at the end of the article.
+
+```{r elbow-medoid, fig.width=12, fig.height=6, fig.cap="within sum of squares as a fnction of number of clusters obtained with K-medoids and manhattan & cosine metric applyed to the example data set"}
+set.seed(123)
+fviz_nbclust(sparseMatrix.mini, pam, method = "wss", metric="manhattan") +
+  labs(subtitle = "Manhattan distance") +
+  theme_Publication() +
+fviz_nbclust(as.matrix(DSim_mini), pam, method = "wss") +
+  labs(subtitle = "Cosine similarity") +
+  theme_Publication()
+```
 
 # Affinity Propagation Clustering
 
-```{r, fig.width=12, fig.height=8}
-# Compute hierarchical clustering and cut into 4 clusters
-# hcut(DSim_mini, k = 5, method = "single")
-# hcut(DSim_mini, k = 5, method = "complete")
-# hcut(DSim_mini, k = 5, method = "average")
-# hcut(DSim_mini, k = 5, method = "centroid")
+```{r apcluster, fig.width=12, fig.height=8}
+# identical(
+#   linKernel(DSim_mini,normalize = T)[1:5,1:5],
+#   1-as.matrix(eisen_cos.sim(DSim_mini))[1:5,1:5]
+# )
 
-# Visualize
-# fviz_dend(hcut(DSim_mini, k = 5, method = "centroid"),
-#           k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
-#           label_cols =  rep(1:5,each = 10),
-#           rect = TRUE, cex = 0.5 )
-# 
-# linkage = c("single","complete","average","complete")
-# p <- ggplot()
-# 
-# for ( i in 1:length(linkage) ) {
-#    
-#   # i = 1
-#   
-#   
-#   hcluster <- hclust(DSim_mini, method = linkage[i] ) 
-#   
-#   p <- p + fviz_dend(hcluster, cex = 0.5 ) +
-#     labs(title = glue::glue("{str_to_title(linkage[i])} Linkage"),
-#          y = element_blank() )
-#   
-# } 
+ap.res <- apcluster(linKernel(DSim_mini,normalize = T))
+
+table(ap.res@idx,LoR.Archetype.Mini$archetype)
+
+apcluster::heatmap(
+  ap.res,linKernel(DSim_mini,normalize = T),
+  # Rowv=NA, Colv=NA,
+  cexRow= 0.75, cexCol = 0.75,
+  # sideColors=c("darkgreen", "yellowgreen"),
+  # col=terrain.colors(12)
+  )
 ```
 
-```{r}
-# library("apcluster")
-# s1 <- negDistMat(iris, r=2)
-# 
-# apres1a <- apcluster(negDistMat(DSim_mini,r=1))
-# 
-# table(apres1a@idx,LoR.Archetype.Mini$archetype)
-# 
-# apcluster::heatmap(apres1a,negDistMat(DSim_mini,r=1))
-# 
-# heatmap(apres1a,as.data.frame(DSim_mini))
-# 
-# apcluster::linSimMat
-# 
-# apcluster::corSimMat(DSim_mini,signed = F,r=1)
-# linKernel(DSim_mini,normalize = T)
-# 
-# eisen_cos.sim(DSim_mini)
-```
 
-```{r}
-# kNNdistplot(iris, k = 5)
-# abline(h=.5, col = "red", lty=2)
-# 
-# res <- dbscan(iris, eps = .5, minPts = 5)
-# res
-# 
-# pairs(iris, col = res$cluster + 1L)
-# 
-# hullplot(x = iris, cl = res) # grafico delle aree convesse
 
-# if(!require(devtools)) install.packages("devtools")
-# devtools::install_github("kassambara/factoextra")
+# Data
 
-# library(factoextra)
-# data("multishapes")
-# df <- multishapes[, 1:2]
-# set.seed(123)
-# km.res <- kmeans(df, 5, nstart = 25)
-# fviz_cluster(km.res, df, frame = FALSE, geom = "point")
+The example used in this article is made out of 50 decks.
 
-# install.packages("fpc")
-# install.packages("dbscan")
+-   Five archetypes with different regions & different play style have been selected as 'core'
 
-# Load the data 
-# Make sure that the package factoextra is installed
-data("multishapes", package = "factoextra")
-df <- multishapes[, 1:2]
-# 
-library("fpc")
-# Compute DBSCAN using fpc package
+    1.  Ashe/LeBlanc
+    2.  Azir/Irelia
+    3.  Dragons (DE/MT)
+    4.  Draven/Sion (NX/PZ)
+    5.  Mistwraith Alligiance
+
+Does this mean that the correct answer of k-cluster we should have expected was 5? Well... not necessarily, there is fact a catch that I didn't mention. Among the 'archetypes' I also selected some of their sub-archetypes.
+
+To help explain what I actually choose I'll also report the code I used to samle the deck_list
+
+```{r select-archetype, echo=TRUE, eval=FALSE}
+# how I selected the decks, it is reproducible as more decks will be inserted in the DB
+
+#' archetypes names
+archetypes <- c( 
+  "Ashe/LeBlanc",           # 75/25 noMarauder/Marauder
+  "Azir/Irelia",            # 100
+  "Dragons (DE/MT)",        # 30/70 J4/PureDrake "Aurelion Sol/Jarvan IV/Shyvana",  "Aurelion Sol/Shyvana",
+  "Draven/Sion (NX/PZ)",    # 80/20 DravenSion/RubinBait
+  "Mistwraith Allegiance"   # 50/50 Targon/Piltover
+)
+
+#' sampling a bigger number of decks for a bigger example I ended up not using
 set.seed(123)
-db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
-# # Plot DBSCAN results
-plot(db, df, main = "DBSCAN", frame = FALSE)
-# 
-# library("factoextra")
-# fviz_cluster(db, df, stand = FALSE, frame = FALSE, geom = "point")
+Rep1 <- LoR.Deck.RMD |>
+  filter( archetype == "Ashe/LeBlanc" & is.na(archetype_pretty) ) |>
+  slice_sample(n = 75) |>
+  pull(deck_code)
 
-# Print DBSCAN
-# print(db)
+set.seed(123)
+Rep2 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "Marauder" ) |>
+  slice_sample(n = 25) |>
+  pull(deck_code)
 
+set.seed(123)
+AI <- LoR.Deck.RMD |>
+  filter( archetype == "Azir/Irelia", ) |>
+  slice_sample(n = 100) |>
+  pull(deck_code)
+
+set.seed(123)
+Dragon1 <- LoR.Deck.RMD |>
+  filter( archetype == "Aurelion Sol/Jarvan IV/Shyvana" ) |>
+  slice_sample(n = 30) |>
+  pull(deck_code)
+
+set.seed(123)
+Dragon2 <- LoR.Deck.RMD |>
+  filter( archetype == "Aurelion Sol/Shyvana" ) |>
+  slice_sample(n = 70) |>
+  pull(deck_code)
+
+set.seed(123)
+Sion1 <- LoR.Deck.RMD |>
+  filter( archetype == "Draven/Sion (NX/PZ)" & is.na(archetype_pretty) ) |>
+  slice_sample(n = 80) |>
+  pull(deck_code)
+
+set.seed(123)
+Sion2 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "RubinBait - Draven/Sion", ) |>
+  slice_sample(n = 20) |>
+  pull(deck_code)
+
+set.seed(123)
+Mist1 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Targon") ) |>
+  slice_sample(n = 50) |>
+  pull(deck_code)
+
+set.seed(123)
+Mist2 <- LoR.Deck.RMD |>
+  filter( archetype_pretty == "Mistwraith Allegiance" & str_detect(factions,"Piltover") ) |>
+  slice_sample(n = 50) |>
+  pull(deck_code)
+
+#' sub-sampling the decks I ended up not using
+LoR.Archetype.Ex <- rbind(
+  LoR.Deck.RMD[ deck_code %in% Rep1, ],
+  LoR.Deck.RMD[ deck_code %in% Rep2, ],
+  LoR.Deck.RMD[ deck_code %in% AI, ],
+  LoR.Deck.RMD[ deck_code %in% Dragon1, ],
+  LoR.Deck.RMD[ deck_code %in% Dragon2, ],
+  LoR.Deck.RMD[ deck_code %in% Sion1, ],
+  LoR.Deck.RMD[ deck_code %in% Sion2, ],
+  LoR.Deck.RMD[ deck_code %in% Mist1, ],
+  LoR.Deck.RMD[ deck_code %in% Mist2, ]
+)
+  
+mini.ex <- c(Rep1[1:7], # Ashe/LB
+             Rep2[1:3], # Marauder
+             AI[1:10],  # AI
+             Dragon1[1:3], # with J4
+             Dragon2[1:7], # no J4
+             Sion1[1:8],   # OG
+             Sion2[1:2],   # fake-burn
+             Mist1[1:5],   # MT
+             Mist2[1:5])   # PnZ
+
+
+```
+
+So if I had to better specify what the sample contains:
+
+-   Five archetypes with different regions & different play style have been selected as 'core'. Almost all archetypes contains some variants of the same decks 
+
+    1.  Ashe/LeBlanc
+      * 7 decks of 'standard' Ashe/LB
+      * 3 decks of the 'marauder' variant which is defined by playing 3 copies of Strength in Numbers in a Freljord/Noxus deck. No Ashe/LB could be sampled from this subgroup
+    2.  Azir/Irelia
+      * 10 decks of Azir/Irelia
+    3.  Dragons (DE/MT)
+      * 3 decks with at least Jarvan IV/Shyvana/Aureion Sol
+      * 7 decks with at least Shyvana/Aureion Sol (but no Jarvan IV)
+    4.  Draven/Sion (NX/PZ)
+      * 8 decks of 'standard' Draven/Sion
+      * 2 decks of the Rubin-Bait variant
+    5.  Mistwraith Alligiance - Mistwraith Alligiance decks are defined by having 3 copies Mistwraith and overall 37 SI cards
+      * 5 decks of a Mistwraith decks with Mount Targon and 3 copies of Pale Cascade
+      * 5 decks of a Mistwraith decks with PnZ and 3 copies of Iterative Improvements
+
+Something that I want to highlight of the Mistwraith decks is that the option for the champions of choice was completely free as they were in the end not relevant for the strategy of the deck and the following table shows how the champions combination was distributed:
+
+```{r}
+LoR.Archetype.Mini[41:50,] |> tabyl(archetype) |> gt()
+```
+
+The Mistwraith example could be said if a key for why and  how I want to approach the archetype problem. SI is probably the region who is less tied by its champions per se. Thresh is more an exception but for example Kallista and Elise were included in a wide variety of decks that couldn't be simply identified by their use.
+
+In addition to the 'champions problem' the Mistwraith has the additional problem of being the first archetype to this is not bound by the regions it use. As of now Bandle expanded this concept with a variety of BandleTree Decks, but Mistwraith was the OG case.
+
+```{r}
+fviz_dend(hcut(DSim_mini, k = 5, method = "average"),
+          k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
+          label_cols =  rep(1:5,each = 10),
+          rect = TRUE, cex = 0.5 )
+```
+
+
+```{r}
 hc.average.5 <- hcut(DSim_mini, k = 5, method = "average")
 
 table(
   unname(hc.average.5$cluster),
   res.db$cluster
 ) |>
-  kable()
-
-# fviz_dend(hcut(DSim_mini, k = 5, method = "centroid"),
-#           k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
-#           label_cols =  rep(1:5,each = 10),
-#           rect = TRUE, cex = 0.5 )
-
-  
-  
-# Cluster membership. Noise/outlier observations are coded as 0
-# A random subset is shown
-# db$cluster[sample(1:1089, 50)]
-
-# dbscan::kNNdistplot(df, k =  5)
-# abline(h = 0.15, lty = 2)
+  kable(row.names = T)
 ```
 
 ```{r}
-#The iris dataset is used:
 
-# Load the data
-data("iris")
-iris <- as.matrix(iris[, 1:4])
-#The optimal value of “eps” parameter can be determined as follow:
-
-dbscan::kNNdistplot(DSim_mini, k =  7)
-abline(h = 0.37, lty = 2)
-# Compute DBSCAN using fpc::dbscan() and dbscan::dbscan(). Make sure that the 2 packages are installed:
-
-res.db <- dbscan::dbscan(DSim_mini, 0.37, 5)
-
-set.seed(123)
-# fpc package
-res.fpc <- fpc::dbscan(DSim_mini, eps = 0.37, MinPts = 5)
-# dbscan package
-res.db <- dbscan::dbscan(iris, 0.4, 4)
-# The result of the function fpc::dbscan() provides an object of class ‘dbscan’ containing the following components:
-# cluster: integer vector coding cluster membership with noise observations (singletons) coded as 0
-# isseed: logical vector indicating whether a point is a seed (not border, not noise)
-# eps: parameter eps
-# MinPts: parameter MinPts
-# The result of the function dbscan::dbscan() is an integer vector with cluster assignments. Zero indicates noise points.
-# Note that the function dbscan:dbscan() is a fast re-implementation of DBSCAN algorithm. The implementation is significantly faster and can work with larger data sets than the function fpc:dbscan().
-
-# Make sure that both version produce the same results:
-
-all(res.fpc$cluster == res.db)
-## [1] TRUE
-#The result can be visualized as follow:
-
-# fviz_cluster(res.fpc, iris, geom = "point")
 ```
 
-# Data
 
-The example used in this article is made out of 50 decks.
-More details will be described
-
--   Five archetypes with Different regions & different play style
-
-    1.  Azir/Irelia
-    2.  Ashe/LeBlanc
-    3.  Dragons (DE/MT)
-    4.  Draven/Sion (NX/PZ)
-    5.  Mistwraith Alligiance
-
-More details about how they were chosen will be written later as results are shown
 
 ```{r twitter-meta, echo = FALSE}
-# library(metathis)
-# meta() %>%
-#   meta_description(
-#     "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
-#   ) %>% 
-#   meta_viewport() %>% 
-#   meta_social(
-#     title = "Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes",
-#     url = "https://llorr-stats.netlify.app/",
-#     image = "images/archetypes/A01-ASZSZ.png",
-#     image_alt = "ASZSZ",
-#     og_type = "website",
-#     og_author = "Legna",
-#     twitter_card_type = "summary",
-#     twitter_creator = "@Maou_Legna"
-#   )
+library(metathis)
+meta() %>%
+  meta_description(
+    "First entry on a series of article that will gather my explorations over different way to define archetypes in Legends of Runeterra"
+  ) %>%
+  meta_viewport() %>%
+  meta_social(
+    title = "Defining Archetypes #1: Looking at the similarity of Akshan/Sivir/Zed with similar archetypes",
+    url = "https://llorr-stats.netlify.app/",
+    image = "images/archetypes/A01-ASZSZ.png",
+    image_alt = "ASZSZ",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
 ```
 
 # Legal bla bla {.unnumbered}
