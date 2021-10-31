@@ -426,7 +426,7 @@ MUgrid.gt.final <- MUgrid.gt |>
     font = "Chivo"
   ) |>
   tab_source_note(
-  source_note = md(glue::glue("The upper value is from Last-Season Masters as they have many more games while the bottom value is from New Masters as they have many more games.
+  source_note = md(glue::glue("The upper value is from Last-Season Masters while the bottom value is from New Masters. 
                               MU with less than 30 games are not included.
                               Source: Metadata of games collected with RiotGames API")
   ))
