@@ -287,7 +287,7 @@ meta_evo <- Champion.deck.daily |>
 #                              "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
 # scales::show_col(safe_colorblind_palette)
 
-meta_evo
+# meta_evo
 # ggsave("./images/meta-evo.png",width = 12,height = 8)
 ```
 
