@@ -137,6 +137,9 @@ LoR.Melt.Master.RMD <- LoR.Master.RMD |>
 ```
 
 ```{r process-MU}
+nfilter <- 10
+MUtbl.tot <- NROW(LoR.Melt.Matches.RMD)
+
 #' WR tbl
 #'#######
 WR.DT <- LoR.Melt.Matches.RMD |>
@@ -148,7 +151,8 @@ WR.DT <- LoR.Melt.Matches.RMD |>
              WR=mean(game_outcome=="win")
   ) |>
   ungroup() |>
-  mutate( playrate = nGames/sum(nGames) )
+  mutate( playrate = nGames/sum(nGames) ) |>
+  as.data.table()
 
 #' MU tbl the date is already filtered
 #'####################################
@@ -162,33 +166,33 @@ MUtbl <- LoR.Melt.Matches.RMD |>
     muWR=mean(game_outcome=="win")
     ) |>
   ungroup() |>
+  filter(muGames >= nfilter) |>
   mutate(
     factions = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
     CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] )
     ) |>
   chop(CI) |>
   unnest(CI) |>
-  mutate( okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ) |>
-  mutate( direction = ifelse(muWR>0.50,"POS","NEG") ) |>
-  mutate( direction = replace(direction,direction==0.50,"TIE") ) |>
-  mutate( CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ) ) |>
+  mutate( 
+    okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ,
+    direction = ifelse(muWR>0.50,"POS","NEG"),
+    direction = replace(direction,direction==0.50,"TIE"),
+    CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ),
+    mirror = ifelse(playerDeck==opponentDeck,"Yes","No" )
+    ) |>
   # removing ~extra variables
   select(-lower,-upper) |>
-  left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") |>
+  left_join(WR.DT[,.(playerDeck,playrate)],by="playerDeck") |>
+  left_join(WR.DT[,.(playerDeck,opponentPR=playrate)],by=c("opponentDeck"="playerDeck") ) |>
   relocate(factions,.after = muWR)
+
+# MUtbl |>
+#   arrange(desc(muGames))
+
+#' crosstalk MUtbl
+data <- crosstalk::SharedData$new( MUtbl )
 ```
 # Table {data-icon="fa-table"}
-
-```{r}
-nfilter <- 10
-
-MUtbl.tot <- sum(MUtbl$muGames)
-
-data <- crosstalk::SharedData$new(
-  MUtbl |>
-    filter(muGames >= nfilter)
-)
-```
 
 ## Inputs {.sidebar}
 
@@ -202,9 +206,11 @@ crosstalk::filter_slider("muWin",   "#Win",  data, ~muWin,   step = 50 ,min = 0)
 crosstalk::filter_slider("muGames", "#Games",data, ~muGames, step = 100,min = 0)
 
 crosstalk::filter_slider("muWR", "WinRate", data, ~muWR,step=0.01,min = 0,max = 1)
-crosstalk::filter_slider("playrate", "PlayRate", data, ~playrate,step=0.01,min = 0,max = round(max(MUtbl$playrate),4) )
+crosstalk::filter_slider("playrate", "Player PlayRate", data, ~playrate,step=0.01,min = 0,max = round(max(MUtbl$playrate),4) )
+crosstalk::filter_slider("opponentPR", "Opponent PlayRate", data, ~opponentPR,step=0.01,min = 0,max = round(max(MUtbl$opponentPR),4) )
 
 crosstalk::filter_select("direction", "MU-Direction", data, ~direction)
+crosstalk::filter_checkbox("mirror", "Mirror", data, ~mirror, inline = TRUE)
 ```
 
 ## Row {data-heigth="750"}
@@ -265,13 +271,15 @@ data |>
         align = "center",
         minWidth = 200
         ),
-      playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
+      playrate = colDef(name = "Player PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
       factions = colDef(name = "Regions"),
       CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
       LCI       = colDef(show=F), # lower
       UCI       = colDef(show=F), # lower
       direction = colDef(show=F),
-      okCI      = colDef(show=F)
+      okCI      = colDef(show=F),
+      mirror    = colDef(show=F),
+      opponentPR = colDef(name = "Opponent PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
       )
     )
 ```
@@ -282,7 +290,7 @@ data |>
 
 ```{r value-nGames}
 nGames = MUtbl |> 
-  filter( muGames > nfilter ) |>
+  # filter( muGames > nfilter ) |>
   summarise(n = sum(muGames)) |>
   pull()
 
@@ -309,21 +317,37 @@ flexdashboard::valueBox(Sys.Date(),
 ```{r get-WR-Top}
 mu <- 15
 
-TopCC <- MUtbl |>
-  group_by(playerDeck) |>
-  summarise(nGames = sum(muGames)) |> 
-  arrange(desc(nGames)) |>
-  slice_head(n = mu) |> 
+# Last 7 days most played
+TopCC <- LoR.Match.RMD |>
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc >= now()-days(7) ) |>
+  select( starts_with("deck_code") ) |>
+  select( -ends_with("_3"),-ends_with("_4")  ) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               ) |>
+  as.data.table() |>
+  count(playerDeck) |>
+  slice_max(n, n = mu) |> 
   select(playerDeck) |>
-  pull() # |> sort()
+  pull()
 
+# TopCC <- WR.DT |>
+#   slice_max(playrate, n = mu) |> 
+#   select(playerDeck) |>
+#   pull() # |> sort()
 
-WRTopCC <- tibble::tibble( 
+WRTopCC <- tibble::tibble(
   playerDeck = rep(TopCC,each=mu),
   opponentDeck = rep(TopCC,mu)
   ) |>
   left_join(MUtbl, by = c("playerDeck","opponentDeck"))
 ```
+
 ```{r mu-master}
 MUtbl.Master <- tibble::tibble( 
   playerDeck = rep(TopCC,each=mu),
@@ -428,6 +452,7 @@ MUgrid.gt.final <- MUgrid.gt |>
   tab_source_note(
   source_note = md(glue::glue("The upper value is from Last-Season Masters while the bottom value is from New Masters. 
                               MU with less than 30 games are not included.
+                              Order of the Archetypes based on the playrate over the last 7 days from the last-update.
                               Source: Metadata of games collected with RiotGames API")
   ))
 
@@ -471,7 +496,7 @@ gtsave(data = MUgrid.gt.final,
 
 ```{r value-nGames-2}
 nGames = MUtbl |> 
-  filter( muGames > nfilter ) |>
+  # filter( muGames > nfilter ) |>
   summarise(n = sum(muGames)) |>
   pull()
 
@@ -519,7 +544,7 @@ flexdashboard::valueBox(Sys.Date(),
 
 ```{r}
 MUtbl |>
-  filter( muGames > 10 ) |>
+  # filter( muGames > 10 ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   downloadthis::download_this(
     button_label = "Download MU data as .csv",
@@ -530,7 +555,7 @@ MUtbl |>
     )
 
 MUtbl |>
-  filter( muGames > 10 ) |>
+  # filter( muGames > 10 ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   jsonlite::write_json("MU.json")
 ```
@@ -601,29 +626,40 @@ downloadthis::download_file(
 
 The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
 
--   **Player's Deck** - deck's archetype of the playerDeck
+-  **Player's Deck** - deck's archetype of the playerDeck
 
--   **Opponent's Deck** - deck's archetype of the opponentDeck
+-  **Opponent's Deck** - deck's archetype of the opponentDeck
 
--   **\#Win** - min number of wins for a match-up
+-  **\#Win** - min number of wins for a match-up
 
--   **\#Games** - min number of games for a match-up
+-  **\#Games** - min number of games for a match-up
 
--   **Regions** - regions of the 'Player' deck.
+-  **Regions** - regions of the 'Player' deck.
 
--   **MU-Direction** - simply if the MU is positive (win rate \> 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%)
+-  **MU-Direction** - simply if the MU is positive (win rate \> 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%)
+
+-  **Mirror**
 
 #### Archetypes Fix
 
-1. **"ASZ - Sivir Ionia** Is the aggregation of (Ionia's) Sivir/Zed, Sivir/Akshan, Sivir/Zoe/Akshan as analysis I did shows they are the same deck.
-
-2. **RubinBait** decks are burn focused bait-variant of decks with certain kind of champion
-
-  - Draven / Sion
-  - Caitlyn / Draven
-  - Draven / Ezreal
-  
-3. **"Dragons (DE/MT)** All decks with at least both Shyvana and Aurelion Sol. A Shyvana/Zoe which was popularizes by Alanz as it doesn't contains ASol is not included because of this.
+```{r}
+tribble( 
+  ~Deck, ~Source,
+  "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
+  "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
+  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol"
+) |>
+  gt() |>
+  tab_header(
+    title = glue::glue("Archetype ~Fix")
+  ) |>
+  gtExtras::gt_theme_nytimes() |>
+ tab_options(
+    table.background.color = "transparent",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+```
 
 #### General info
 
