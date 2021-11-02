@@ -84,6 +84,13 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 ```
 
 ```{r constants}
+# Precalculate user score colors to be used for custom cell rendering
+get_score_color <- function(score) {
+  blue_pal <- function(x) rgb(colorRamp(c("#9fc7df", "#416ea4"))(x), maxColorValue = 255)
+  normalized <- score/100
+  blue_pal(normalized)
+}
+
 LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
                                           icon = "fa-clock",
                                           # color = "lightgreen"
@@ -270,7 +277,8 @@ reactDT <- WR.DT |>
     LMI = round(LMI*100)
   ) |>
   arrange(desc(playrate)) |>
-  select(playerDeck,WR,nWin,nGames,playrate,LMI,tier,CI,type)
+  select(playerDeck,WR,nWin,nGames,playrate,LMI,tier,CI,type) |>
+  mutate(score_color = get_score_color(LMI))
 
 reactDT |> 
   reactable(
@@ -282,6 +290,7 @@ reactDT |>
     striped = TRUE,
     pagination = FALSE,
     fullWidth = T,
+    defaultSorted = list(LMI = "desc"),
     defaultColDef = colDef(
       align = "center",
       minWidth = 100,
@@ -311,9 +320,35 @@ reactDT |>
       nGames = colDef(name = "#Games"),
       playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
       type = colDef(name = "Type"),
-      LMI = colDef(name = "LMI"),
+      # LMI = colDef(name = "LMI"),
       tier = colDef(name = "Tier",minWidth = 200,align = "left"),
       CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"),
+      LMI = colDef(
+        name = "LMI",
+        defaultSortOrder = "desc",
+        # Show the user score in a donut chart like TMDb does. Since donut charts
+        # are hard to compare, apply a color scale as well.
+        cell = JS("function(cellInfo) {
+                  const sliceColor = cellInfo.row['score_color']
+                  const sliceLength = 2 * Math.PI * 24
+                  const sliceOffset = sliceLength * (1 - cellInfo.value / 100)
+                  const donutChart = (
+                  '<svg width=60 height=60 style=\"transform: rotate(-90deg)\" focusable=false>' +
+                  '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=rgba(0,0,0,0.1)></circle>' +
+                  '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=' + sliceColor +
+                  ' stroke-dasharray=' + sliceLength + ' stroke-dashoffset=' + sliceOffset + '></circle>' +
+                  '</svg>'
+                  )
+                  const label = '<div style=\"position: absolute; top: 50%; left: 50%; ' +
+                  'transform: translate(-50%, -50%)\">' + cellInfo.value + '</div>'
+                  return '<div style=\"display: inline-flex; position: relative\">' + donutChart + label + '</div>'
+                  }"),
+        html = TRUE,
+        align = "center",
+        width = 140,
+        class = "user-score"
+        ),
+      score_color = colDef(show = F),
       WR     = colDef(name = "WinRate",
                       format = colFormat(percent = TRUE,digits = 1),
                       details = function(index) {
@@ -339,7 +374,8 @@ reactDT |>
                                          )
                                        ) } )
     )
-  )
+  ) |>
+  reactablefmtr::add_source(glue::glue("Data from Current Master Only. Source: Metadata of games collected with RiotGames API"), background_color = "transparent", font_family = "Chivo")
 ```
 ## Row {data-heigth="150"}
 
@@ -483,7 +519,8 @@ reactDT.d7 <- WR.DT.d7 |>
     LMI = round(LMI*100)
   ) |>
   arrange(desc(playrate)) |>
-  select(playerDeck,WR,nWin,nGames,playrate,LMI,tier,CI,type)
+  select(playerDeck,WR,nWin,nGames,playrate,LMI,tier,CI,type) |>
+  mutate(score_color = get_score_color(LMI))
 
 reactDT.d7 |> 
   reactable(
@@ -495,6 +532,7 @@ reactDT.d7 |>
     striped = TRUE,
     pagination = FALSE,
     fullWidth = T,
+    defaultSorted = list(LMI = "desc"),
     defaultColDef = colDef(
       align = "center",
       minWidth = 100,
@@ -524,9 +562,35 @@ reactDT.d7 |>
       nGames = colDef(name = "#Games"),
       playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
       type = colDef(name = "Type"),
-      LMI = colDef(name = "LMI"),
+      # LMI = colDef(name = "LMI"),
       tier = colDef(name = "Tier",minWidth = 200,align = "left"),
       CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"),
+      LMI = colDef(
+        name = "LMI",
+        defaultSortOrder = "desc",
+        # Show the user score in a donut chart like TMDb does. Since donut charts
+        # are hard to compare, apply a color scale as well.
+        cell = JS("function(cellInfo) {
+                  const sliceColor = cellInfo.row['score_color']
+                  const sliceLength = 2 * Math.PI * 24
+                  const sliceOffset = sliceLength * (1 - cellInfo.value / 100)
+                  const donutChart = (
+                  '<svg width=60 height=60 style=\"transform: rotate(-90deg)\" focusable=false>' +
+                  '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=rgba(0,0,0,0.1)></circle>' +
+                  '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=' + sliceColor +
+                  ' stroke-dasharray=' + sliceLength + ' stroke-dashoffset=' + sliceOffset + '></circle>' +
+                  '</svg>'
+                  )
+                  const label = '<div style=\"position: absolute; top: 50%; left: 50%; ' +
+                  'transform: translate(-50%, -50%)\">' + cellInfo.value + '</div>'
+                  return '<div style=\"display: inline-flex; position: relative\">' + donutChart + label + '</div>'
+                  }"),
+        html = TRUE,
+        align = "center",
+        width = 140,
+        class = "user-score"
+        ),
+      score_color = colDef(show = F),
       WR     = colDef(name = "WinRate",
                       format = colFormat(percent = TRUE,digits = 1),
                       details = function(index) {
@@ -552,7 +616,8 @@ reactDT.d7 |>
                                          )
                                        ) } )
     )
-  )
+  ) |>
+  reactablefmtr::add_source(glue::glue("Data from Current Master Only. Source: Metadata of games collected with RiotGames API"), background_color = "transparent", font_family = "Chivo")
 ```
 ## Row {data-heigth="150"}
 
@@ -593,34 +658,183 @@ flexdashboard::valueBox(glue::glue("{length(fct_underdog.d7)} Underdog Decks"),
 LastUpdate.box
 ```
 
-
 # Fresh-Stats (last 24 hours) {data-icon="fa-table"}
 
-Devo decidere cosa mettere qui
+## Row
+
+### Previous Day
+
+```{r 24hrs-process-winRate}
+LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
+  filter( 
+      game_start_time_utc >= Sys.Date()+hours(21)-days(2) &
+      game_start_time_utc <  Sys.Date()+hours(21)-days(1)
+      ) |>
+  filter(game_outcome!="tie") |>
+  # select(playerDeck,opponentDeck,game_outcome ) |>
+  # filter( playerDeck == "Ezreal/Karma" ) |> tabyl(playerID)
+  group_by(playerDeck) |>
+  summarise(
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate(
+    playrate = nGames/sum(nGames)
+  ) |>
+  as.data.table() |>
+  {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
+  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) |>
+  filter( playerDeck %!in% c(fct_meta,fct_meta.d7,fct_underdog,fct_underdog.d7) ) |>
+  filter( WR > 0.5 & nGames > 10 ) |>
+  select(-LCI,-UCI) 
+
+deckCodeTbl.24hrs  <- LoR.Melt.Matches.RMD |>
+  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(1) ) |>
+  filter( playerDeck %in% c(LoR.Melt.24hrs$playerDeck) ) |>
+  mutate( playerDeck = factor(playerDeck, ordered = TRUE,
+                              levels = c(LoR.Melt.24hrs$playerDeck) )
+          ) |>
+  group_by(server,playerDeck,deck_code ) |>
+  summarise( n = n() ) |>
+  slice_max(n, n = 10) |>
+  ungroup() |>
+  mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
+          server = str_to_title(server) ) |>
+  select(playerDeck,n,link,server)
+```
+
+
+```{r 24hrs-react-winRate}
+with_tooltip <- function(value, tooltip) {
+  htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+            title = tooltip, value)
+}
+
+LoR.Melt.24hrs |>
+  reactable(
+    # groupBy = "playerDeck",
+    searchable = TRUE,
+    bordered = TRUE,
+    # wrap = FALSE,
+    highlight = TRUE,
+    striped = TRUE,
+    pagination = FALSE,
+    fullWidth = T,
+    # defaultSorted = list(LMI = "desc"),
+    defaultColDef = colDef(
+      align = "center",
+      minWidth = 100,
+      # headerStyle = list(background = "steelblue",color="white")
+    ),
+    details = function(index) {
+      # index = 1
+      deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == LoR.Melt.24hrs$playerDeck[index], ]
+      reactable(
+        deckdata,
+        fullWidth = F,
+        defaultColDef = colDef(
+          style = list( fontSize = 13 ),
+          html = TRUE
+          ),
+        theme = reactableTheme( headerStyle = list(background = "red",color="white", fontSize = 13 ) ),
+        columns = list(
+          n = colDef(name = "#Games", minWidth = 75 ),
+          link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ),
+          # playerDeck = colDef(name = "Archetype", minWidth = 150 ),
+          playerDeck = colDef(show = F),
+          server = colDef(name = "Server", minWidth = 100 )
+          ) )},
+    columns = list(
+      playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left",header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")),
+      nWin   = colDef(name = "#Win"),
+      nGames = colDef(name = "#Games"),
+      playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
+      type = colDef(name = "Type"),
+      # LMI = colDef(name = "LMI"),
+      tier = colDef(name = "Tier",minWidth = 200,align = "left"),
+      CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"),
+      # LMI = colDef(
+      #   name = "LMI",
+      #   defaultSortOrder = "desc",
+      #   # Show the user score in a donut chart like TMDb does. Since donut charts
+      #   # are hard to compare, apply a color scale as well.
+      #   cell = JS("function(cellInfo) {
+      #             const sliceColor = cellInfo.row['score_color']
+      #             const sliceLength = 2 * Math.PI * 24
+      #             const sliceOffset = sliceLength * (1 - cellInfo.value / 100)
+      #             const donutChart = (
+      #             '<svg width=60 height=60 style=\"transform: rotate(-90deg)\" focusable=false>' +
+      #             '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=rgba(0,0,0,0.1)></circle>' +
+      #             '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=' + sliceColor +
+      #             ' stroke-dasharray=' + sliceLength + ' stroke-dashoffset=' + sliceOffset + '></circle>' +
+      #             '</svg>'
+      #             )
+      #             const label = '<div style=\"position: absolute; top: 50%; left: 50%; ' +
+      #             'transform: translate(-50%, -50%)\">' + cellInfo.value + '</div>'
+      #             return '<div style=\"display: inline-flex; position: relative\">' + donutChart + label + '</div>'
+      #             }"),
+      #   html = TRUE,
+      #   align = "center",
+      #   width = 140,
+      #   class = "user-score"
+      #   ),
+      # score_color = colDef(show = F),
+      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) )
+      # WR     = colDef(name = "WinRate",
+      #                 format = colFormat(percent = TRUE,digits = 1),
+      #                 details = function(index) {
+      #                   wrdata <- serverWRTbl[ serverWRTbl$playerDeck == reactDT$playerDeck[index], ]
+      #                   htmltools::div(style = "padding: 10px",
+      #                                  reactable(
+      #                                    wrdata,
+      #                                    fullWidth = FALSE,
+      #                                    theme = reactableTheme( headerStyle = list(background = "green",color="white", fontSize = 12 ) ),
+      #                                    defaultColDef = colDef( 
+      #                                      style = list( fontSize = 12, align = "center" )
+      #                                      # html = TRUE
+      #                                      ),
+      #                                    columns = list(
+      #                                      playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left"),
+      #                                      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) ),
+      #                                      nWin   = colDef(name = "#Win"),
+      #                                      nGames = colDef(name = "#Games"),
+      #                                      regPlayrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
+      #                                      CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"),
+      #                                      server = colDef(name = "Server",align = "left")
+      #                                    )
+      #                                    )
+      #                                  ) } )
+    )
+    
+  )
+  # reactablefmtr::add_source(element_text(glue::glue("Data from Last-Season Master Only.
+  #                                                   Source: Source: Metadata of games collected with RiotGames API")), background_color = "transparent", font_family = "Chivo")
+
+```
+
+## Row {data-heigth="150"}
+
+
+### Time Frame
 
 ```{r}
-mtcars |>
-  reactable()
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
+                        caption = glue::glue("from {Sys.Date()+hours(21)-days(2)} to {Sys.Date()+hours(21)-days(1)}"),
+                        icon = "fa-clock",
+                        # color = "lightgreen"
+                        color = "red")
 ```
-```{r 24hrs-process-winRate}
-# LoR.Melt.Matches.RMD |>
-#   filter( game_start_time_utc >= Sys.Date()+hours(21)-days(1) ) |>
-#   filter(game_outcome!="tie") |>
-#   select(playerDeck,opponentDeck,game_outcome ) |>
-#   group_by(playerDeck) |>
-#   summarise( 
-#     nWin   = sum(game_outcome=="win"),
-#     nGames = n(),
-#     WR=mean(game_outcome=="win")
-#   ) |>
-#   ungroup() |>
-#   mutate( 
-#     playrate = nGames/sum(nGames)
-#   ) |>
-#   as.data.table() |>
-#   {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
-#   mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
+
+
+### Last Update
+
+
+```{r}
+LastUpdate.box
 ```
+
 
 # Meta-Evolution {data-icon="fa-chart-line"}
 
@@ -695,8 +909,10 @@ meta_evo.base <- Champion.deck.daily |>
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)),
-    breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5),
+    # limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)),
+    # breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5),
+    limits = c(0,0.25),
+    breaks = seq(0,0.25,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
@@ -757,8 +973,10 @@ meta_evo.extra.base <- Champion.deck.daily.extra |>
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0,signif.ceiling(max(Champion.deck.daily.extra$freq),1)),
-    breaks = seq(0,signif.ceiling(max(Champion.deck.daily.extra$freq),1),signif.ceiling(max(Champion.deck.daily.extra$freq),1)/5),
+    # limits = c(0,signif.ceiling(max(Champion.deck.daily.extra$freq),1)),
+    # breaks = seq(0,signif.ceiling(max(Champion.deck.daily.extra$freq),1),signif.ceiling(max(Champion.deck.daily.extra$freq),1)/5),
+    limits = c(0,0.25),
+    breaks = seq(0,0.25,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
