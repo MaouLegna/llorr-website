@@ -1532,6 +1532,12 @@ LMI.DT <- WR.DT |>
      LMI < 0.60 ~ "Tier3 or lower"
     ) 
   )
+
+# LMI = map2_dbl(.x =PR_ind,.y =WR_ind, ~harm.mean(c(.x,.y) )  ),
+#     tooltip = pmap( list(playerDeck,LMI,WR,playrate), ~glue("Deck {..1}
+#                                                             LMI {round(..2*100,1)}
+#                                                             WinRate {scales::percent(..3,accuracy = 0.1)}
+#                                                             PlayRate {scales::percent(..4,accuracy = 0.1)}"))
 ```
 
 ```{r lmi-png, fig.height=8, fig.width=12}
