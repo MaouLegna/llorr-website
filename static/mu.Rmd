@@ -63,21 +63,53 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 
 #' load Games DT
 #'##############
-LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA) )
+LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
 
 #' Read New Master
 ##################
-LoR.Master.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+LoR.LastMaster.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA))
 
 # file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT_patch_2_04_to_17final.csv")
 # header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
 # LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 # colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 ```
+```{r functions}
+# Render a bar chart with positive and negative values
+bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
+  
+  base_chart <- htmltools::div(style = list(flex = "1 1"))
+  # pos_chart <- htmltools::div(style = list(flex = "1 1"))
+  width <- paste0((value / max_value) * 100, "%")
+
+  if (value >= 0.5) {
+    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
+    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- htmltools::tagAppendChild(base_chart, chart)
+    htmltools::div(style = list(display = "flex"), base_chart)
+  } else {
+    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
+    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
+    base_chart <- htmltools::tagAppendChild(base_chart, chart)
+    htmltools::div(style = list(display = "flex"), base_chart)
+  }
+}
+```
+
+
+```{r constants}
+nfilter <- 10 # min number of games for a MU
+mu <- 15      # how many MU to plot
+
+LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
+                                          icon = "fa-clock",
+                                          # color = "lightgreen"
+                                          color = "#1A9850")
+```
 
 ```{r archetype-fix}
 #' Limit the Deck DT to make the fixes much faster
-deck_filter <- LoR.Match.RMD |>
+deck_filter <- rbind(LoR.Match.RMD,LoR.LastMaster.RMD) |>
   #' Base filters
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
@@ -99,9 +131,12 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
-```{r process-data}
-#' Melt tbl
-#'#########
+# Master-Only {data-icon="fa-table"}
+
+```{r prepara-data}
+#' Usual tbl
+#' contain the Master-only data
+#'#############################
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
   # filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
@@ -119,36 +154,17 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
 
 # LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
 ```
-
-```{r prepare-data-new}
-LoR.Melt.Master.RMD <- LoR.Master.RMD |>
-  filter( game_type == "Ranked"  ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
-  select( -ends_with("_3"),-ends_with("_4")  ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               )
-
-
-```
-
-```{r process-MU}
-nfilter <- 10
-MUtbl.tot <- NROW(LoR.Melt.Matches.RMD)
-
+```{r process-MU-master}
 #' WR tbl
 #'#######
 WR.DT <- LoR.Melt.Matches.RMD |>
   filter(game_outcome!="tie") |>
   select( playerDeck,opponentDeck,game_outcome ) |>
   group_by(playerDeck) |>
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win")
+  summarise( 
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR=mean(game_outcome=="win")
   ) |>
   ungroup() |>
   mutate( playrate = nGames/sum(nGames) ) |>
@@ -185,20 +201,15 @@ MUtbl <- LoR.Melt.Matches.RMD |>
   left_join(WR.DT[,.(playerDeck,playrate)],by="playerDeck") |>
   left_join(WR.DT[,.(playerDeck,opponentPR=playrate)],by=c("opponentDeck"="playerDeck") ) |>
   relocate(factions,.after = muWR)
-
-# MUtbl |>
-#   arrange(desc(muGames))
-
-#' crosstalk MUtbl
-data <- crosstalk::SharedData$new( MUtbl )
 ```
-# Table {data-icon="fa-table"}
 
 ## Inputs {.sidebar}
 
 ### Filters
 
 ```{r filters}
+data <- crosstalk::SharedData$new( MUtbl )
+
 crosstalk::filter_select("playerDeck", "Player's Deck", data, ~playerDeck)
 crosstalk::filter_select("opponentDeck", "Opponent's Deck", data, ~opponentDeck)
 
@@ -218,28 +229,6 @@ crosstalk::filter_checkbox("mirror", "Mirror", data, ~mirror, inline = TRUE)
 ### MU table
 
 ```{r print-react-MU}
-# require(htmltools)
-
-# Render a bar chart with positive and negative values
-bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
-  
-  base_chart <- htmltools::div(style = list(flex = "1 1"))
-  # pos_chart <- htmltools::div(style = list(flex = "1 1"))
-  width <- paste0((value / max_value) * 100, "%")
-
-  if (value >= 0.5) {
-    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
-    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- htmltools::tagAppendChild(base_chart, chart)
-    htmltools::div(style = list(display = "flex"), base_chart)
-  } else {
-    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
-    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- htmltools::tagAppendChild(base_chart, chart)
-    htmltools::div(style = list(display = "flex"), base_chart)
-  }
-}
-
 data |>
   reactable(
     bordered = TRUE,
@@ -286,26 +275,184 @@ data |>
 
 ## Row
 
-### Number of Games (min 10 games for each MU)
+### Box MU
 
-```{r value-nGames}
+```{r}
 nGames = MUtbl |> 
   # filter( muGames > nfilter ) |>
   summarise(n = sum(muGames)) |>
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        caption = glue::glue("out of a total of {MUtbl.tot} - min 10 games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min 10 games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
 
 ### Last Update
 
-```{r value-update}
-flexdashboard::valueBox(Sys.Date(),
-         icon = "fa-clock",
-         color = "lightgreen")
+```{r last-update}
+LastUpdate.box
+```
+
+# Plat+ {data-icon="fa-table"}
+
+```{r prepare-data-2}
+#' Additional tbl
+#' contain the a second DT
+#' can be Plat+, or Diamond depending on my current project
+#'#########################################################
+LoR.Melt.Extra.RMD <- LoR.LastMaster.RMD |>
+  filter( game_type == "Ranked"  ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
+  select( -ends_with("_3"),-ends_with("_4")  ) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               )
+```
+
+```{r process-MU-extra}
+#' WR tbl
+#'#######
+WR.DT.extra <- LoR.Melt.Extra.RMD |>
+  filter(game_outcome!="tie") |>
+  select( playerDeck,opponentDeck,game_outcome ) |>
+  group_by(playerDeck) |>
+  summarise( 
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate( playrate = nGames/sum(nGames) ) |>
+  as.data.table()
+
+#' MU tbl the date is already filtered
+#'####################################
+MUtbl.extra <- LoR.Melt.Extra.RMD |>
+  filter( game_outcome != "tie" ) |>
+  select( playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
+  group_by(playerDeck,opponentDeck,factions) |>
+  summarise( 
+    muWin   = sum(game_outcome=="win"),
+    muGames = n(),
+    muWR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  filter(muGames >= nfilter) |>
+  mutate(
+    factions = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
+    CI   = map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] )
+  ) |>
+  chop(CI) |>
+  unnest(CI) |>
+  mutate( 
+    okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ,
+    direction = ifelse(muWR>0.50,"POS","NEG"),
+    direction = replace(direction,direction==0.50,"TIE"),
+    CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ),
+    mirror = ifelse(playerDeck==opponentDeck,"Yes","No" )
+  ) |>
+  # removing ~extra variables
+  select(-lower,-upper) |>
+  left_join(WR.DT.extra[,.(playerDeck,playrate)],by="playerDeck") |>
+  left_join(WR.DT.extra[,.(playerDeck,opponentPR=playrate)],by=c("opponentDeck"="playerDeck") ) |>
+  relocate(factions,.after = muWR)
+```
+## Inputs {.sidebar}
+
+### Filters
+
+```{r filters-extra}
+data.extra <- crosstalk::SharedData$new( MUtbl.extra )
+
+crosstalk::filter_select("playerDeck", "Player's Deck", data.extra, ~playerDeck)
+crosstalk::filter_select("opponentDeck", "Opponent's Deck", data.extra, ~opponentDeck)
+
+crosstalk::filter_slider("muWin",   "#Win",  data.extra, ~muWin,   step = 50 ,min = 0)
+crosstalk::filter_slider("muGames", "#Games",data.extra, ~muGames, step = 100,min = 0)
+
+crosstalk::filter_slider("muWR", "WinRate", data.extra, ~muWR,step=0.01,min = 0,max = 1)
+crosstalk::filter_slider("playrate", "Player PlayRate", data.extra, ~playrate,step=0.01,min = 0,max = round(max(MUtbl$playrate),4) )
+crosstalk::filter_slider("opponentPR", "Opponent PlayRate", data.extra, ~opponentPR,step=0.01,min = 0,max = round(max(MUtbl$opponentPR),4) )
+
+crosstalk::filter_select("direction", "MU-Direction", data.extra, ~direction)
+crosstalk::filter_checkbox("mirror", "Mirror", data.extra, ~mirror, inline = TRUE)
+```
+
+## Row {data-heigth="750"}
+
+### MU table
+
+```{r print-react-MU-extra}
+data.extra |>
+  reactable(
+    bordered = TRUE,
+    highlight = TRUE,
+    striped = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table height
+    fullWidth = T, # don't fill the page
+    defaultPageSize = 20,
+    wrap = TRUE,
+    defaultSorted = list(muGames = "desc"),
+    # filterable = TRUE,
+    defaultColDef = colDef(
+      style = list(fontFamily = "Roboto", fontSize = "13px"), align = "center"
+      # minWidth = 120,
+      ),
+    columns = list(
+      playerDeck   = colDef(name = "Player",minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black") ),
+      opponentDeck = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black")),
+      muWin    = colDef(name = "#Win" ), # , style = list( fontSize = "13px")
+      muGames  = colDef(name = "#Games",defaultSortOrder = "desc"),
+      muWR  = colDef(
+        name = "Win Rate",
+        # defaultSortOrder = "desc",
+        cell = function(value) {
+          label <- paste0(round(value * 100,1), "%")
+          bar_chart_pos_neg(label, value)
+          },
+        align = "center",
+        minWidth = 200
+        ),
+      playrate = colDef(name = "Player PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
+      factions = colDef(name = "Regions"),
+      CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
+      LCI       = colDef(show=F), # lower
+      UCI       = colDef(show=F), # lower
+      direction = colDef(show=F),
+      okCI      = colDef(show=F),
+      mirror    = colDef(show=F),
+      opponentPR = colDef(name = "Opponent PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
+      )
+    )
+```
+
+## Row
+
+### Box MU
+
+```{r}
+nGames.extra = MUtbl.extra |> 
+  # filter( muGames > nfilter ) |>
+  summarise(n = sum(muGames)) |>
+  pull()
+
+flexdashboard::valueBox(glue::glue("{nGames.extra} Ranked Games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Extra.RMD)} - min 10 games"),
+                        icon = "fa-table",
+                        color = "#FA7404")
+```
+
+### Last Update
+
+```{r}
+LastUpdate.box
 ```
 
 # Grid {data-icon="fa-file-image"}
@@ -315,10 +462,8 @@ flexdashboard::valueBox(Sys.Date(),
 ### MU Grid
 
 ```{r get-WR-Top}
-mu <- 15
-
 # Last 7 days most played
-TopCC <- LoR.Match.RMD |>
+TopCC <- LoR.LastMaster.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc >= now()-days(7) ) |>
   select( starts_with("deck_code") ) |>
@@ -336,16 +481,11 @@ TopCC <- LoR.Match.RMD |>
   select(playerDeck) |>
   pull()
 
-# TopCC <- WR.DT |>
-#   slice_max(playrate, n = mu) |> 
-#   select(playerDeck) |>
-#   pull() # |> sort()
-
 WRTopCC <- tibble::tibble(
   playerDeck = rep(TopCC,each=mu),
   opponentDeck = rep(TopCC,mu)
   ) |>
-  left_join(MUtbl, by = c("playerDeck","opponentDeck"))
+  left_join(MUtbl.extra, by = c("playerDeck","opponentDeck"))
 ```
 
 ```{r mu-master}
@@ -353,15 +493,7 @@ MUtbl.Master <- tibble::tibble(
   playerDeck = rep(TopCC,each=mu),
   opponentDeck = rep(TopCC,mu)
   ) |> 
-  left_join( LoR.Melt.Master.RMD |>
-  filter( playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise( muWin   = sum(game_outcome=="win"),
-             muGames = n(),
-             muWR=mean(game_outcome=="win") ) |>
-  as.data.table(), by = c("playerDeck","opponentDeck")) |>
+  left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
   mutate( muWR = replace(muWR, muGames < 30, NA ) )
 ```
 
@@ -452,7 +584,7 @@ MUgrid.gt.final <- MUgrid.gt |>
   tab_source_note(
   source_note = md(glue::glue("The upper value is from Last-Season Masters while the bottom value is from New Masters. 
                               MU with less than 30 games are not included.
-                              Order of the Archetypes based on the playrate over the last 7 days from the last-update.
+                              Order of the Archetypes based on the playrate over the last 7 days from the last-update from Plat+ (change to Master once the ladder is more populated).
                               Source: Metadata of games collected with RiotGames API")
   ))
 
@@ -492,26 +624,19 @@ gtsave(data = MUgrid.gt.final,
 
 ## Row
 
-### Number of Games (min 10 games for each MU)
+### BOX GRID
 
 ```{r value-nGames-2}
-nGames = MUtbl |> 
-  # filter( muGames > nfilter ) |>
-  summarise(n = sum(muGames)) |>
-  pull()
-
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        caption = glue::glue("out of a total of {MUtbl.tot} - min 10 games"),
+flexdashboard::valueBox(glue::glue("{nGames+nGames.extra} Ranked Games (~Plat+Master) "),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)+NROW(LoR.Melt.Extra.RMD)} - min 10 games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
 
 ### Last Update
 
-```{r value-update-2}
-flexdashboard::valueBox(Sys.Date(),
-         icon = "fa-clock",
-         color = "lightgreen")
+```{r}
+LastUpdate.box
 ```
 
 <!-- ![](images/mugrid.png) -->
@@ -542,12 +667,12 @@ flexdashboard::valueBox(Sys.Date(),
 ```
 
 
-```{r}
+```{r download-master}
 MUtbl |>
   # filter( muGames > 10 ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   downloadthis::download_this(
-    button_label = "Download MU data as .csv",
+    button_label = "Download MU (Master) data as .csv",
     output_name = "mutable",
     button_type = "success",
     has_icon = TRUE,
@@ -558,6 +683,23 @@ MUtbl |>
   # filter( muGames > 10 ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   jsonlite::write_json("MU.json")
+```
+
+```{r download-extrs}
+MUtbl.extra |>
+  select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
+  downloadthis::download_this(
+    button_label = "Download MU (~Plat+)  data as .csv",
+    output_name = "mutable",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+    )
+
+# MUtbl |>
+#   # filter( muGames > 10 ) |>
+#   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
+#   jsonlite::write_json("MU.json")
 ```
 
 <!-- ### Match Ups Data (2.12/2.13) -->
