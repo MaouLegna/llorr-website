@@ -658,11 +658,18 @@ flexdashboard::valueBox(glue::glue("{length(fct_underdog.d7)} Underdog Decks"),
 LastUpdate.box
 ```
 
-# Fresh-Stats (last 24 hours) {data-icon="fa-table"}
+# Fresh Stats (last 24 hours) {data-icon="fa-table"}
+
+## Row
+
+### Previous Day
 
 ```{r 24hrs-process-winRate}
 LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(1) ) |>
+  filter( 
+      game_start_time_utc >= Sys.Date()+hours(21)-days(2) &
+      game_start_time_utc <  Sys.Date()+hours(21)-days(1)
+      ) |>
   filter(game_outcome!="tie") |>
   # select(playerDeck,opponentDeck,game_outcome ) |>
   # filter( playerDeck == "Ezreal/Karma" ) |> tabyl(playerID)
@@ -806,6 +813,29 @@ LoR.Melt.24hrs |>
   #                                                   Source: Source: Metadata of games collected with RiotGames API")), background_color = "transparent", font_family = "Chivo")
 
 ```
+
+## Row {data-heigth="150"}
+
+
+### Time Frame
+
+```{r}
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
+                        caption = glue::glue("from {Sys.Date()+hours(21)-days(2)} to {Sys.Date()+hours(21)-days(1)}"),
+                        icon = "fa-clock",
+                        # color = "lightgreen"
+                        color = "red")
+```
+
+
+### Last Update
+
+
+```{r}
+LastUpdate.box
+```
+
+
 # Meta-Evolution {data-icon="fa-chart-line"}
 
 ## Row {data-heigth="750"}

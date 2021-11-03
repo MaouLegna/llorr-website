@@ -532,7 +532,7 @@ MUgrid.gt <- grid.all |>
     decimals = 1
   )
 
-for (i in 1:mu ) {
+for (i in 1:params$nGrid ) {
   MUgrid.gt <- MUgrid.gt |>
     cols_merge(
       columns = c(i+1,params$nGrid+i+1),
