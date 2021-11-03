@@ -3,11 +3,12 @@ params:
   ind: "MR030"
   patch: "Patch 2.18 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°30)"
-  description: "Shroud the meta in wings."
-  cardlurl: "https://dd.b.pvp.net/latest/set3/en_us/img/cards/03MT014-full.png"
+  description: "Still in a meta where BandleCity is like parsley"
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05SH014T1-full.png"
   prev:  "2021-10-20 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-10-27 21:00:00" #UTC tz / 'current' week start
   end:   "2021-11-03 21:00:00" #UTC tz / 'current' week end
+  nGrid: 15
   # skip:  3300000  # ~ Patch 2.16
 
 title: | 
@@ -19,7 +20,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 10-27-2021
+date: 11-03-2021
 output:
  distill::distill_article:
     toc: true
@@ -27,7 +28,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -1198,14 +1199,13 @@ grid.plus <- grid.plus |>
 grid.all <- cbind(grid,grid.plus)
 ```
 
-```{r}
+```{r gt-grid,fig.width=12, fig.height=10}
 MUgrid.gt <- grid.all |>
   as.data.table() |>
   add_column( name = colnames(grid),.before = 1 ) |>
   rename(" "=1) |>
   gt() |>
-  gtExtras::gt_color_rows(2:(mu+1),
-                # palette = "ggsci::red_material",
+  gtExtras::gt_color_rows(2:(params$nGrid+1),
                 # palette = c("#D73027", "white", "#1A9850" ),
                 palette = c("red", "white", "green"),
                 use_paletteer = F,
@@ -1215,17 +1215,11 @@ MUgrid.gt <- grid.all |>
     decimals = 1
   )
 
-for (i in 1:mu ) {
-  # p <- p + geom_line(
-  #   aes(x[[i]], y[[i]]))
-  
-  # i = 1
-  # cat(i)
-  
+for (i in 1:params$nGrid ) {
   MUgrid.gt <- MUgrid.gt |>
     cols_merge(
-      columns = c(i+1,mu+i+1),
-      hide_columns = (mu+i+1),
+      columns = c(i+1,params$nGrid+i+1),
+      hide_columns = (params$nGrid+i+1),
       # pattern = "{1}&mdash;{2}"
       ) |> 
     text_transform(
@@ -1236,10 +1230,9 @@ for (i in 1:mu ) {
         percent <- word(x, 1)
         frac <- word(x, -1)
         glue::glue(
-          #595959 #grey35
-          #7f7f7f #grey50
-          "<div style='line-height:10px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{percent}</div>
-           <div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-size:10px'>({frac})</span></div>"
+          #595959 #grey35 / #7f7f7f #grey50
+          "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{percent}</div>
+           <div style='line-height:10px'><span style='color:#7f7f7f;font-size:10px'>({frac})</span></div>"
         )
         }
       )
@@ -1249,37 +1242,38 @@ for (i in 1:mu ) {
 MUgrid.gt.final <- MUgrid.gt |>
   cols_align(
     align = "center",
-    columns = everything()
+    columns = -1
   ) |>
   tab_options(
-    heading.title.font.size = "smaller",
-    heading.subtitle.font.size = "smaller",
-    table.font.size = "smaller"
+    data_row.padding = px(3.5),
+    table.font.size = px(12)
+  ) |>
+  cols_width(
+    -1 ~ px(90),
+     1 ~ px(120),
+    # everything() ~ px(90)
+  ) |>
+  opt_table_font(
+    font = "Chivo"
   ) |>
   tab_source_note(
-    source_note = md(glue::glue("MU from Last-Season and Current Masters.
-                                The upper value is from Old Masters as they have many more games while the bottom value is from New Masters as they have many more games.
-                                MU with less than 30 games are not included. 
-                                Source: Metadata of games collected with RiotGames API")
-    ))
-  # gtExtras::gt_theme_538() |>
-  # cols_width(
-  #   everything() ~ px(100)
-  # ) |>
-  # text_transform(
-  #   locations = cells_body( columns = 1 ),
-  #   fn = function(x){
-  #     # percent <- word(x, 1)
-  #     # frac <- word(x, -1)
-  #     glue::glue(
-  #       #595959 #grey35
-  #       #7f7f7f #grey50
-  #       "<div style='line-height:9px'><span style='color:black;font-variant:small-caps;font-size:13px'>{x}</div>"
-  #     )
-  #     }
-  #   )
+  source_note = md(glue::glue("The upper value is from Last-Season Masters while the bottom value is from New Masters. 
+                              MU with less than 30 games are not included.
+                              Order of the Archetypes based on the playrate over the last 7 days from the last-update from Plat+ (change to Master once the ladder is more populated).
+                              Source: Metadata of games collected with RiotGames API")
+  ))
 
-MUgrid.gt.final
+MUgrid.gt.final |>
+  tab_options(
+    data_row.padding = px(5),
+    table.font.size = px(13),
+    column_labels.font.size = px(10)
+  ) |>
+  cols_width(
+    -1 ~ px(90),
+     1 ~ px(150),
+    # everything() ~ px(100)
+  )
 
 gtsave(MUgrid.gt.final,glue::glue("./images/meta-report/{params$ind}-mugrid-gt.png"), vwidth = 1500, vheight = 1000) |> invisible()
 ```
@@ -1374,9 +1368,12 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ::: {.l-page}
 ::: {.panelset}
 ::: {.panel}
-## Riven/Swain (BC/NX)
 
-It's not a rare/underdog deck, but I'm morally obliged to follow the Grand General and display his potential when recovering the Rune Blade. ( Also Riven's decks are fun too )
+## Aphelios/Lux
+
+I was planning to use my favourite deck as I was in a hurry but then I found among the "Win Marathon Leaders" an Aphelios/Lux
+
+Do I even have to say more? Always invest in meme
 
 ```{r deckweek, layout="l-page"}
 # LoR.Melt.Matches.RMD |>
@@ -1384,7 +1381,7 @@ It's not a rare/underdog deck, but I'm morally obliged to follow the Grand Gener
 #   tabyl(playerID) |>
 #   arrange(desc(n))
 
-deck.of.week <- "Riven/Swain (BC/NX)"
+deck.of.week <- "Aphelios/Lux"
 
 SubDeck_deck_code <- LoR.Melt.Matches.RMD |>
   filter(playerDeck == deck.of.week ) |>
