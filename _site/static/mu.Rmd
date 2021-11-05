@@ -76,6 +76,7 @@ LoR.LastMaster.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"
 # LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
 # colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
 ```
+
 ```{r functions}
 # Render a bar chart with positive and negative values
 bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
