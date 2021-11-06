@@ -56,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -77,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>LLoRR Stats: Resources</title>
@@ -455,7 +456,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1862,7 +1863,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2367,12 +2371,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/core-js-2.5.3/shim.min.js"></script>
   <script src="site_libs/react-17.0.0/react.min.js"></script>
   <script src="site_libs/react-17.0.0/react-dom.min.js"></script>
   <script src="site_libs/reactwidget-1.0.0/react-tools.js"></script>
-  <script src="site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+  <script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
   <script src="site_libs/reactable-binding-0.2.3/reactable.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
@@ -2451,8 +2455,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <div class="layout-chunk" data-layout="l-body">
-<div id="htmlwidget-088f50b4882668529bc3" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-088f50b4882668529bc3">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Project":["MatchUps","Bo3-Helper","Decks Codes/Structures"],"url":["https://www.llorr-stats.com/static/mu.html","https://legnavv.shinyapps.io/Bo3-helper/","https://www.llorr-stats.com/static/meta.html"],"Description":["Match Ups data that cover the same (current) cycle of buff/nerfs.","Helper for Bo3. Using mostly the most played archetypes (data from 2.14/2.16).","Dashboard with Meta or Underdog Decks' Structures and Information of some deckcodes information"]},"columns":[{"accessor":"Project","name":"Project","type":"character","cell":[{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/mu.html"},"children":["MatchUps"]},{"name":"a","attribs":{"href":"https://legnavv.shinyapps.io/Bo3-helper/"},"children":["Bo3-Helper"]},{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/meta.html"},"children":["Decks Codes/Structures"]}],"minWidth":150},{"accessor":"url","name":"url","type":["glue","character"],"show":false},{"accessor":"Description","name":"Description","type":"character","minWidth":250}],"defaultPageSize":3,"paginationType":"numbers","showPageInfo":true,"minRows":1,"theme":{"backgroundColor":"whitesmoke","borderColor":"#dfe2e5","stripedColor":"#f6f8fa","highlightColor":"#f0f5f9","cellPadding":"8px 12px","style":{"fontFamily":"-apple-system, Lato, sans-serif"}},"dataKey":"60a34ea91e633ec54efa98ea039dd816","key":"60a34ea91e633ec54efa98ea039dd816"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-82083df8217fa10792f4" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-82083df8217fa10792f4">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Project":["MatchUps","Bo3-Helper","Decks Codes/Structures"],"url":["https://www.llorr-stats.com/static/mu.html","https://legnavv.shinyapps.io/Bo3-helper/","https://www.llorr-stats.com/static/meta.html"],"Description":["Match Ups data that cover the same (current) cycle of buff/nerfs.","Helper for Bo3. Using mostly the most played archetypes (data from 2.14/2.16).","Dashboard with Meta or Underdog Decks' Structures and Information of some deckcodes information"]},"columns":[{"accessor":"Project","name":"Project","type":"character","cell":[{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/mu.html"},"children":["MatchUps"]},{"name":"a","attribs":{"href":"https://legnavv.shinyapps.io/Bo3-helper/"},"children":["Bo3-Helper"]},{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/meta.html"},"children":["Decks Codes/Structures"]}],"minWidth":150},{"accessor":"url","name":"url","type":["glue","character"],"show":false},{"accessor":"Description","name":"Description","type":"character","minWidth":250}],"defaultPageSize":3,"paginationType":"numbers","showPageInfo":true,"minRows":1,"theme":{"backgroundColor":"whitesmoke","borderColor":"#dfe2e5","stripedColor":"#f6f8fa","highlightColor":"#f0f5f9","cellPadding":"8px 12px","style":{"fontFamily":"-apple-system, Lato, sans-serif"}},"dataKey":"60a34ea91e633ec54efa98ea039dd816","key":"60a34ea91e633ec54efa98ea039dd816"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p>Credits to <a href="https://themockup.blog/resources.html">Tom Mock</a> for showing how to fully bring out the distill package potential.</p>
 <p>Regarding the Bo3-Helper, as it requires a server to work and the one I’m using have limited of available hrs it may not be always up. To solve this I would need to pay for a server and yeah it may be a problem… in case if I have enough support…I can invest on it. There’s a buymeacofee (~patreon) link in the menu if one wants to help me.</p>
