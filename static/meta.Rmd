@@ -92,6 +92,7 @@ get_score_color <- function(score) {
 }
 
 LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
+                                          caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
                                           icon = "fa-clock",
                                           # color = "lightgreen"
                                           color = "#1A9850")
@@ -669,7 +670,9 @@ LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
   filter( 
       game_start_time_utc >= Sys.Date()+hours(21)-days(2) &
       game_start_time_utc <  Sys.Date()+hours(21)-days(1)
-      ) |>
+      )
+
+WR.DT.24h <- LoR.Melt.24hrs |>
   filter(game_outcome!="tie") |>
   # select(playerDeck,opponentDeck,game_outcome ) |>
   # filter( playerDeck == "Ezreal/Karma" ) |> tabyl(playerID)
@@ -690,14 +693,15 @@ LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
   filter( WR > 0.5 & nGames > 10 ) |>
   select(-LCI,-UCI) 
 
-deckCodeTbl.24hrs  <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(1) ) |>
-  filter( playerDeck %in% c(LoR.Melt.24hrs$playerDeck) ) |>
+deckCodeTbl.24hrs  <- LoR.Melt.24hrs |>
+  filter( playerDeck %in% c(WR.DT.24h$playerDeck) ) |>
   mutate( playerDeck = factor(playerDeck, ordered = TRUE,
-                              levels = c(LoR.Melt.24hrs$playerDeck) )
+                              levels = c(WR.DT.24h$playerDeck) )
           ) |>
   group_by(server,playerDeck,deck_code ) |>
   summarise( n = n() ) |>
+  ungroup() |>
+  group_by(playerDeck) |>
   slice_max(n, n = 10) |>
   ungroup() |>
   mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
@@ -712,7 +716,7 @@ with_tooltip <- function(value, tooltip) {
             title = tooltip, value)
 }
 
-LoR.Melt.24hrs |>
+WR.DT.24h |>
   reactable(
     # groupBy = "playerDeck",
     searchable = TRUE,
@@ -730,7 +734,7 @@ LoR.Melt.24hrs |>
     ),
     details = function(index) {
       # index = 1
-      deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == LoR.Melt.24hrs$playerDeck[index], ]
+      deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == WR.DT.24h$playerDeck[index], ]
       reactable(
         deckdata,
         fullWidth = F,
@@ -1147,19 +1151,20 @@ downloadthis::download_file(
 current aggregations applied to archetypes (Champions+Regions)
 
 ```{r info-gt-archetype}
-tribble( 
+tibble::tribble( 
   ~Deck, ~Source,
   "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
   "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
   "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol"
 ) |>
-  gt() |>
-  tab_header(
+  gt::gt() |>
+  gt::tab_header(
     title = glue::glue("Archetype ~Fix")
   ) |>
   gtExtras::gt_theme_nytimes() |>
- tab_options(
-    table.background.color = "transparent",
+  gt::tab_options(
+    # table.background.color = "trasnparent",
+    table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
    )
@@ -1187,7 +1192,7 @@ tribble(
   #   )
   # ) |>
   tab_options(
-    table.background.color = "transparent",
+    table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
    )

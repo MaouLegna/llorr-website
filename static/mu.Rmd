@@ -102,6 +102,7 @@ bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_f
 
 ```{r constants}
 LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
+                                          caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
                                           icon = "fa-clock",
                                           # color = "lightgreen"
                                           color = "#1A9850")
@@ -778,19 +779,20 @@ The format of the table is the usual way I display the match-ups data but I also
 #### Archetypes Fix
 
 ```{r}
-tribble( 
+tibble::tribble( 
   ~Deck, ~Source,
   "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
   "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
   "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol"
 ) |>
-  gt() |>
-  tab_header(
+  gt::gt() |>
+  gt::tab_header(
     title = glue::glue("Archetype ~Fix")
   ) |>
   gtExtras::gt_theme_nytimes() |>
- tab_options(
-    table.background.color = "transparent",
+  gt::tab_options(
+    # table.background.color = "trasnparent",
+    table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
    )
