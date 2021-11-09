@@ -1150,20 +1150,20 @@ downloadthis::download_file(
 
 current aggregations applied to archetypes (Champions+Regions)
 
-```{r info-gt-archetype}
-tibble::tribble( 
+```{r gt-archetype}
+tribble( 
   ~Deck, ~Source,
   "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
   "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
-  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol"
+  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol",
+  "SunDisc", "Mono Shurima with 1+ Sun Disc"
 ) |>
-  gt::gt() |>
-  gt::tab_header(
+  gt() |>
+  tab_header(
     title = glue::glue("Archetype ~Fix")
   ) |>
   gtExtras::gt_theme_nytimes() |>
-  gt::tab_options(
-    # table.background.color = "trasnparent",
+ tab_options(
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
