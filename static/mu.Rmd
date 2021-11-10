@@ -792,10 +792,18 @@ tribble(
   ) |>
   gtExtras::gt_theme_nytimes() |>
  tab_options(
+    # table.background.color = "transparent",
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
    )
+# |>
+#   tab_style(
+#     style = cell_fill(color = "gray85", alpha = 0),
+#     locations = cells_body(
+#       columns = everything()
+#       )
+#   )
 ```
 
 #### General info

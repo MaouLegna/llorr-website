@@ -4,7 +4,7 @@ params:
   patch: "Patch 2.18 - Week 3"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°31)"
   description: "Still in a meta where BandleCity is like parsley"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05SH014T1-full.png"
+  cardlurl: "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH039T1-full.png"
   prev:  "2021-10-27 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-11-03 21:00:00" #UTC tz / 'current' week start
   end:   "2021-11-10 21:00:00" #UTC tz / 'current' week end
@@ -28,7 +28,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -99,13 +99,6 @@ LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
 
-```{r}
-# LoR.Match.RMD[ ,.N  ]
-# Temp.Match.RMD[match_key %in% LoR.Match.RMD$match_key, .N ]
-# LoR.Match.RMD[ match_key %!in% Temp.Match.RMD$match_key  ]
-```
-
-
 ```{r archetype-fix}
 #' Limit the Deck DT to make the fixes much faster
 deck_filter <- rbind(LoR.Match.RMD,Temp.Match.RMD) |>
@@ -148,10 +141,6 @@ LoR.Melt.Matches.RMD <- Temp.Match.RMD |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
   left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions")) |>
   as.data.table()
-
-# LoR.Melt.Matches.RMD[ playerID == "Agigas#EUW" ] |>
-#   filter(playerDeck == "Miss Fortune/Poppy (BW/DE)") |>
-#   tabyl(game_outcome)
 ```
 
 ```{r prepare-data}
@@ -201,7 +190,7 @@ max_time <- LoR.Match.RMD |>
   pull(game_start_time_utc) |>
   format(format = "%Y-%m-%d %H:%M:%S")
 
-nGames <- LoR.Match.RMD |>
+nMatches.extra <- LoR.Match.RMD |>
   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") & game_type=="Ranked") |>
   tabyl(game_type) |>
   filter( game_type=="Ranked" ) |>
@@ -300,7 +289,9 @@ nMatches <- nGames
 nGames <- NROW(LoR.Melt.Matches.RMD)
 ```
 
-Number of (Ranked) matches analysed **`r format(nMatches,scientific = F)`** or **`r format(nGames,scientific = F)`** games.
+Number of (Ranked) matches analysed **`r format(nMatches.extra,scientific = F)`** or **`r format(nMatches.extra*2,scientific = F)`** games. / Master
+
+Number of (Ranked) matches analysed **`r format(nMatches,scientific = F)`** or **`r format(nGames,scientific = F)`** games. / ~Plat+
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
@@ -335,13 +326,11 @@ nGames_tbl <- tbl_merge(
       ASIA Master playerDecks in the ladder {length(namesList.ASIA.RMD)} while number of possible Master playerDecks recovered is {masterASIA}, Number of Last-Season ASIA Master used {old.masterASIA}"
       )),
     locations = cells_column_spanners(spanners = everything())
-  ) |> #
-  tab_options(data_row.padding = px(1.2))
-  
-# nGames_tbl
+  ) 
 
-nGames_tbl |>
- tab_options(
+nGames_tbl |> #
+  tab_options(
+    data_row.padding = px(1.2),
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
@@ -449,16 +438,20 @@ The Gini Index is a measure of heterogeneity so, in this case and in simpler ter
 ::: {.panel}
 ### Master vs ~Plat+ {.panel-name}
 
-```{r prepare-static}
+```{r create-gif}
+require(gganimate)
+
+# create the data for the other group
 Region.Freq.extra <- LoR.Melt.Matches.RMD |>
   select(factions) |>
   separate_rows(factions,sep=",") |>
   tabyl(factions,show_na=F) |>
-  tibble() |> 
+  tibble() |>
   rename_all(~c("region","n","freq")) |>
   mutate( region = map_chr(.x = region, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ) ) |>
   add_column(icon = data_regions$iconsPath)
 
+# crate table with both groups
 static.Region.Freq <- Region.Freq[ ,1:3] |>
   add_column(label = "Master") |>
   rbind(
@@ -466,11 +459,10 @@ static.Region.Freq <- Region.Freq[ ,1:3] |>
       add_column(label = "~Plat+")
   ) |>
   group_by(label) |>
-  mutate(rank = rank(-freq)) 
-```
+  mutate(rank = rank(-freq))
 
-```{r static-plots}
-staticplot <- ggplot(static.Region.Freq , aes(rank, group = region, 
+# create static plot with both groups
+staticplot <- ggplot(static.Region.Freq , aes(rank, group = region,
                 fill = as.factor(region), color = as.factor(region))) +
   geom_tile(aes(y = freq/2,
                 height = freq,
@@ -508,41 +500,19 @@ staticplot <- ggplot(static.Region.Freq , aes(rank, group = region,
                      breaks = seq(0, 0.30,0.05),
                      labels = scales::percent_format(accuracy = 1) )
 
-# staticplot
-```
-
-```{r}
-require(gganimate)
+# create base for animated plot
 anim = staticplot + transition_states(label, transition_length = 1, state_length = 1) +
   # view_follow(fixed_x = TRUE)  +
-  labs(title = paste0(params$patch,"- Region Play Rate: {closest_state}"),  
+  labs(title = paste0(params$patch,"- Region Play Rate: {closest_state}"),
        subtitle  =  "by Inclusion Rate"
        )
-# anim
 
-# goo <- ggplot(mtcars, aes(factor(cyl), mpg)) + 
-#   geom_boxplot() + 
-#   # Here comes the gganimate code
-#   transition_states(
-#     gear,
-#     transition_length = 2,
-#     state_length = 1
-#   ) +
-#   enter_fade() + 
-#   exit_shrink() +
-#   ease_aes('sine-in-out')
-
-anim_save("anim.gif", anim)
-```
-
-
-```{r}
-# For GIF
-animate(anim, 50, fps = 25,  width = 1200, height = 640)
-# animate(anim, 50, fps = 20,  width = 600, height = 500, 
-#         renderer = gifski_renderer("images/meta-report/{params$ind}-PRanimate.gif"))
-
-# ggsave(glue::glue("./images/meta-report/{params$ind}-topPlayrate.png"))
+# save gif
+anim_save(filename = glue::glue("images/meta-report/{params$ind}-PRanimate.gif"),
+          animation = anim,
+          nframes = 50, fps = 20,  width = 1200, height = 600,
+          # renderer = gifski_renderer()
+          )
 ```
 :::
 
@@ -599,10 +569,6 @@ Region.Freq.tbl <- Region.Freq |>
     )
 
 Region.Freq.tbl
-
-# Region.Freq.tbl <- gtsave(
-#     "images/reg_freq.png",
-# )
 ```
 :::
 :::
@@ -763,22 +729,18 @@ Region.Freq.byCards.tbl <- Regions.Freq.byCards[,c("region","freq")] |>
     asia     = md("**Asia**"),
     europe   = md("**Europe**")
   ) |>
-  tab_source_note(
-    source_note = glue::glue("{params$patch}
-                             Ranked games from {params$start} UTC to {params$end} UTC
-                             Metadata of games collected with RiotGames API")
-    ) |>
    tab_options(
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
-   )
+   ) |>
+  tab_source_note(
+    source_note = glue::glue("{params$patch}
+                             Ranked games from {params$start} UTC to {params$end} UTC
+                             Metadata of games collected with RiotGames API")
+    )
 
 Region.Freq.byCards.tbl
-
-# Region.Freq.tbl <- gtsave(
-#     "images/reg_freq.png",
-# )
 ```
 :::
 :::
@@ -803,7 +765,7 @@ tribble(
     title = glue::glue("Archetype ~Fix")
   ) |>
   gtExtras::gt_theme_nytimes() |>
- tab_options(
+  tab_options(
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
@@ -1368,6 +1330,7 @@ MUgrid.gt.final <- MUgrid.gt |>
 
 MUgrid.gt.final |>
   tab_options(
+    table.background.color = "whitesmoke",
     data_row.padding = px(5),
     table.font.size = px(13),
     column_labels.font.size = px(10)
@@ -1398,7 +1361,6 @@ downloadthis::download_this(
 ## Match-up Table {.panel-name}
 
 ```{r reactable-tbl}
-require(reactable)
 require(htmltools)
 require(crosstalk)
 
@@ -1457,8 +1419,7 @@ bscols(
 ```{r deck-structure-prepare}
 # brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
 # clrs = colorRampPalette( c("white","steelblue") )(length(brks)+1)
-
-deck_color_generator <- scales::col_numeric(c("white", "white","green"), domain = NULL)
+# deck_color_generator <- scales::col_numeric(c("white", "white","green"), domain = NULL)
 
 make_color_pal <- function(colors, bias = 1) {
   get_color <- colorRamp(colors, bias = bias)
@@ -1472,14 +1433,9 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ::: {.panelset}
 ::: {.panel}
 
-## SunDisc
+## Xerath/Zilean
 
 ```{r deckweek, layout="l-page"}
-# LoR.Melt.Matches.RMD |>
-#   filter( playerDeck == "Braum/Poppy (BC/FR)") |>
-#   tabyl(playerID) |>
-#   arrange(desc(n))
-
 deck.of.week <- "Xerath/Zilean (BC/SH)"
 
 SubDeck_deck_code <- LoR.Melt.Matches.RMD |>
@@ -1786,9 +1742,9 @@ gtWinning <- setDT(LoR.Melt.Matches.RMD)[order(game_start_time_utc)][, counter :
     # table.font.color = "black",
     # table.font.color.light = "black",
     column_labels.border.top.width = px(3),
-    column_labels.border.top.color = "whitesmoke",
-    table.border.top.color = "whitesmoke",
-    table.border.bottom.color = "whitesmoke",
+    column_labels.border.top.color = "white",
+    table.border.top.color = "white",
+    table.border.bottom.color = "white",
     data_row.padding = px(3),
     source_notes.font.size = 12,
     heading.align = "left",
@@ -1961,7 +1917,6 @@ metathis::meta() |>
     title = params$title,
     url = "https://www.llorr-stats.com/",
     image = params$cardlurl,
-    image_alt = "LostSouL",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",

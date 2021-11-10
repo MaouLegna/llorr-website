@@ -22,147 +22,76 @@ twitter:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = FALSE,
-  eval = TRUE,
-  warning = FALSE,
-  error = FALSE,
-  message = FALSE,
-  comment = NA,
-  R.options = list(width = 140,
-                   digits.secs=6),
-  dev.args = list(bg = 'transparent'), # make graphics with transparent background
-  fig.align = 'center',
-  fig.width=12,
-  fig.height=8,
-  # engine.path = list(
-  #   python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
-  # ),
-  #'distill options
-  layout="l-body-outset",
-  preview=FALSE
-)
-
-#' R Option
-options(scipen = 999)
+# knitr::opts_chunk$set(
+#   echo = FALSE,
+#   eval = TRUE,
+#   warning = FALSE,
+#   error = FALSE,
+#   message = FALSE,
+#   comment = NA,
+#   R.options = list(width = 140,
+#                    digits.secs=6),
+#   dev.args = list(bg = 'transparent'), # make graphics with transparent background
+#   fig.align = 'center',
+#   fig.width=12,
+#   fig.height=8,
+#   # engine.path = list(
+#   #   python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+#   # ),
+#   #'distill options
+#   layout="l-body-outset",
+#   preview=FALSE
+# )
+# 
+# #' R Option
+# options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-xaringanExtra::use_panelset()
+# xaringanExtra::use_panelset()
 ```
 
 ```{r panelset-style}
-xaringanExtra::style_panelset_tabs(
-  font_family = "Helvetica",
-  active_foreground = "white",
-  hover_foreground = "black",
-  hover_border_color = "black",
-  active_background = "#007fff"
-  )
+# xaringanExtra::style_panelset_tabs(
+#   font_family = "Helvetica",
+#   active_foreground = "white",
+#   hover_foreground = "black",
+#   hover_border_color = "black",
+#   active_background = "#007fff"
+#   )
 ```
 
 ```{r raw-data}
-MUtbl <- fread("./data/mutbl_patch_2_12to13.csv",na.strings = c("",NA))
+# MUtbl <- fread("./data/mutbl_patch_2_12to13.csv",na.strings = c("",NA))
 ```
 
 
-# Match Ups
+```{r}
+library(ggplot2)
 
-```{r get-WR-Top10}
-mu <- 15
-
-# TopCC <- CC.table |> 
-#   arrange(desc(freq)) |> 
-#   {\(x) slice_head(x,n = mu)}() |> 
-#   select(playerDeck) |> 
-#   pull()
-
-TopCC <- MUtbl |> 
-  distinct(player,.keep_all = T) |>
-  # arrange(desc(freq)) |> 
-  # {\(x) slice_head(x,n = mu)}() |> 
-  # select(playerDeck) |>
-  slice_max(playrate,n = mu) |>
-  pull(player)
+ggplot2::ggplot(mpg, aes(y = class)) +
+ ggplot2::geom_bar(aes(fill = drv), position = position_stack(reverse = TRUE)) +
+ ggplot2::theme(legend.position = "top") +
+  theme_539()
+  # theme_Publication()
+```
 
 
-WRTopCC <- tibble::tibble( 
-  player = rep(TopCC,each=mu),
-  opponent = rep(TopCC,mu)
+```{r}
+tribble( 
+  ~Deck, ~Source,
+  "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
+  "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
+  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol",
+  "SunDisc", "Mono Shurima with 1+ Sun Disc"
+) |>
+  gt() |>
+  tab_header(
+    title = glue::glue("Archetype ~Fix")
   ) |>
-  left_join(MUtbl, by = c("player","opponent"))
+  gtExtras::gt_theme_nytimes()
+ # tab_options(
+ #    table.background.color = "whitesmoke",
+ #    table.font.color = "black",
+ #    table.font.color.light = "black"
+ #   )
 ```
 
-::: l-page
-::::: {.panelset}
-::: {.panel}
-
-## Match-up Grid {.panel-name}
-
-The win rates on the grid are among the `r mu` most played champion combination.
-
-```{r prepare-flex}
-require(flextable)
-require(officer)
-
-big_border   = fp_border(color="darkgray", width = 2)
-small_border = fp_border(color="gray", width = 1)
-
-dummy_fun <- function(x){
-  ifelse( !is.na(x),sprintf( "%.0f%%", x*100 ),NA )
-}
-```
-
-```{r prepare-flex-grid}
-grid <- matrix(WRTopCC$muWR, nrow = mu, ncol = mu, byrow = T)
-diag(grid) <- NA
-
-colnames(grid) <- TopCC
-colourer <- col_numeric(
-  palette = c(
-    "#D73027", # red
-    # "#f9ccac", # red/orange
-    "white",
-    # "#e3eaa7", # green
-    "#1A9850" # darker green
-    ),
-  domain = c(0, 1))
-
-funs <- setNames(rep(list(dummy_fun), mu), TopCC)
-```
-
-```{r print-flex, fig.width=24, fig.height=16, align = "center"}
-ft <- grid |> 
-  as_tibble() |>
-  # mutate(across(everything(),~scales::percent(.x, accuracy = 0.1 ))) |>
-  add_column(TopCC,.before = TopCC[1]) |>
-  rename("MatchUps"="TopCC") |>
-  flextable::flextable( ) |> 
-  theme_vanilla( ) |>
-  # theme_booktabs(bold_header = TRUE) |> 
-  flextable::align(align = "center", part = "all") |>
-  flextable::bg(
-    bg = colourer,
-    j = ~ . -MatchUps,
-    part = "body") |>
-  {\(x) border_remove(x = x)}() |>
-  border_outer(part="all", border = big_border ) |>
-  border_inner_h(part="all", border = small_border ) |>
-  border_inner_v(part="all", border = small_border ) |>
-  set_formatter(values = funs) |>
-  fontsize(size = 8, part = "header") |>
-  fontsize(j=1, size = 8) |>
-  bg(part = "header", bg = "white"  ) |>
-  bg(j = 1, bg = "white"  ) |>
-  height(height = .08) %>% 
-  hrule(rule = "exact", part = "body") %>% 
-  width(width =  .08)
-  # set_table_properties(layout = "fixed")
-  # autofit()
-
-ft
-
-# save_as_image(ft,path = glue::glue("./images/meta-report/{params$ind}-MU.png"), zoom = 2,expand = 10)
-```
-
-:::
-:::::
-:::
