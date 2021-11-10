@@ -3,7 +3,7 @@ params:
   ind: "MR031"
   patch: "Patch 2.18 - Week 3"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°31)"
-  description: "Still in a meta where BandleCity is like parsley"
+  description: "Path of Jayce"
   cardlurl: "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH039T1-full.png"
   prev:  "2021-10-27 21:00:00" #UTC tz / 'current' previous week start
   start: "2021-11-03 21:00:00" #UTC tz / 'current' week start
@@ -20,7 +20,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 11-03-2021
+date: 11-10-2021
 output:
  distill::distill_article:
     toc: true
