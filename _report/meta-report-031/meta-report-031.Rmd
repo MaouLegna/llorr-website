@@ -435,9 +435,6 @@ RegionByRegion
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
 :::
 
-::: {.panel}
-### Master vs ~Plat+ {.panel-name}
-
 ```{r create-gif}
 require(gganimate)
 
@@ -514,8 +511,6 @@ anim_save(filename = glue::glue("images/meta-report/{params$ind}-PRanimate.gif")
           # renderer = gifski_renderer()
           )
 ```
-:::
-
 ::: {.panel}
 ### Table {.panel-name}
 
@@ -1415,6 +1410,16 @@ bscols(
 :::
 
 # Deck of the week {.tabset .tabset-fade .tabset-pills}
+
+I wanted to highlight this deck (or anything with Xerath, currently the champ I love the most) as it is the deck I'm OTP the moment.
+Sadly as I couldn't find even a single instance to justify it, this week can be considered a whim of mine.
+
+Note: I'm still a scrub player compared to the other analyst the worse one, last season I almost didn't play and was only gold from the usual plat/diamond. Currently I'm almost back to Diamond playing just and only this deck
+I know the deck is just ok, if not a little bad but it's not that bad, I'm sure there are a couple of other ways to play Xerath but the play pattern of this version if one I really love.
+
+This deckcode is the version I'm mostly playing.
+
+CQBQGBIKAZE2MAIDAUDQOCYOAUCAODJFEYTVSAICAUFBXUIBAIAQKBYEAICQUAI2
 
 ```{r deck-structure-prepare}
 # brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
