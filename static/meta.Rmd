@@ -13,13 +13,13 @@ output:
     vertical_layout: fill
 # date: "`r Sys.Date()`"
 params:
-  # start: "2021-06-02 21:00:00" #UTC tz / 2.09 <- Balance Patch
-  # start:   "2021-06-30 21:00:00" #UTC tz / 2.11 <- Rose of the Underworld
-  # start: "2021-07-14 21:00:00" #UTC tz / 2.12 <- Ruination Event
-  # end: "2021-08-25 21:00:00" #UTC tz / 2.14 <- Bandle Release
-  # start: "2021-09-01 21:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
-  start:   "2021-10-20 21:00:00" #UTC tz / 2.18 <- Balance Patch
-  end:   "2022-01-01 21:00:00" #UTC tz /
+  # start: "2021-06-02 17:00:00" #UTC tz / 2.09 <- Balance Patch
+  # start:   "2021-06-30 17:00:00" #UTC tz / 2.11 <- Rose of the Underworld
+  # start: "2021-07-14 17:00:00" #UTC tz / 2.12 <- Ruination Event
+  # end: "2021-08-25 17:00:00" #UTC tz / 2.14 <- Bandle Release
+  # start: "2021-09-01 17:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
+  start:   "2021-10-20 17:00:00" #UTC tz / 2.18 <- Balance Patch
+  end:   "2022-01-01 17:00:00" #UTC tz /
   # skip:  2800000  # Patch 2.14
   # skip:  3500000  # Patch 2.18
   # hrs: 2
@@ -417,7 +417,7 @@ LastUpdate.box
 
 ```{r 7days-process-winRate}
 WR.DT.d7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
   filter(game_outcome!="tie") |>
   select(playerDeck,opponentDeck,game_outcome ) |>
   group_by(playerDeck) |>
@@ -435,7 +435,7 @@ WR.DT.d7 <- LoR.Melt.Matches.RMD |>
   mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
   
 WR.DT.Reg.d7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
   filter(game_outcome!="tie") |>
   select( playerDeck,opponentDeck,game_outcome,server ) |>
   group_by(server,playerDeck) |>
@@ -466,7 +466,7 @@ fct_underdog.d7 <- WR.DT.d7 |>
 
 ```{r 7days-create-support-tbl}
 deckCodeTbl.d7  <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
   filter( playerDeck %in% c(fct_meta.d7,fct_underdog.d7) ) |>
   mutate( playerDeck = factor(playerDeck, ordered = TRUE,
                               levels = c(fct_meta.d7,fct_underdog.d7) )
@@ -626,7 +626,7 @@ reactDT.d7 |>
 
 ```{r 7days-value-games}
 nGames7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
   NROW()
 
 flexdashboard::valueBox(glue::glue("{nGames7} Games"),
@@ -668,8 +668,8 @@ LastUpdate.box
 ```{r 24hrs-process-winRate}
 LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
   filter( 
-      game_start_time_utc >= Sys.Date()+hours(21)-days(2) &
-      game_start_time_utc <  Sys.Date()+hours(21)-days(1)
+      game_start_time_utc >= Sys.Date()+hours(17)-days(2) &
+      game_start_time_utc <  Sys.Date()+hours(17)-days(1)
       )
 
 WR.DT.24h <- LoR.Melt.24hrs |>
@@ -825,7 +825,7 @@ WR.DT.24h |>
 
 ```{r}
 flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
-                        caption = glue::glue("from {Sys.Date()+hours(21)-days(2)} to {Sys.Date()+hours(21)-days(1)}"),
+                        caption = glue::glue("from {Sys.Date()+hours(17)-days(2)} to {Sys.Date()+hours(17)-days(1)}"),
                         icon = "fa-clock",
                         # color = "lightgreen"
                         color = "red")
@@ -851,7 +851,7 @@ seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
 
 ```{r prepare-meta-evo}
 top7days <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(21)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
   count(playerDeck) |>
   slice_max(n,n=ntopPR,with_ties = F) |>
   pull(playerDeck)
