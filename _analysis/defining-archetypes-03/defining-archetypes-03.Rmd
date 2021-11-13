@@ -1,0 +1,68 @@
+---
+params:
+  ind: "03"
+  title: "Defining Archetypes #3: "
+  description: ""
+title: | 
+  `r params$title`
+description: |
+  `r params$description`
+# preview: 
+base_url: https://www.llorr-stats.com
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 11-11-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+bibliography: references.bib
+draft: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,
+                   digits.secs=6),
+  dev.args = list(bg = 'transparent'), # make graphics with transparent background
+  fig.align = 'center',
+  fig.width=6,
+  fig.height=4,
+  engine.path = list(
+    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
+  ),
+  #'distill options
+  layout="l-body-outset",
+  preview=FALSE
+)
+
+#' R Option
+options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+xaringanExtra::use_panelset()
+
+pacman::p_load(apcluster,dbscan,fpc,factoextra)
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(
+  font_family = "Helvetica",
+  active_foreground = "white",
+  hover_foreground = "black",
+  hover_border_color = "black",
+  active_background = "#007fff"
+  )
+```
+
+# Introduction
+
+## The Shuriman Desert is Sparse

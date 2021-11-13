@@ -417,7 +417,7 @@ LastUpdate.box
 
 ```{r 7days-process-winRate}
 WR.DT.d7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   filter(game_outcome!="tie") |>
   select(playerDeck,opponentDeck,game_outcome ) |>
   group_by(playerDeck) |>
@@ -435,7 +435,7 @@ WR.DT.d7 <- LoR.Melt.Matches.RMD |>
   mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
   
 WR.DT.Reg.d7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   filter(game_outcome!="tie") |>
   select( playerDeck,opponentDeck,game_outcome,server ) |>
   group_by(server,playerDeck) |>
@@ -466,7 +466,7 @@ fct_underdog.d7 <- WR.DT.d7 |>
 
 ```{r 7days-create-support-tbl}
 deckCodeTbl.d7  <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   filter( playerDeck %in% c(fct_meta.d7,fct_underdog.d7) ) |>
   mutate( playerDeck = factor(playerDeck, ordered = TRUE,
                               levels = c(fct_meta.d7,fct_underdog.d7) )
@@ -626,7 +626,7 @@ reactDT.d7 |>
 
 ```{r 7days-value-games}
 nGames7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   NROW()
 
 flexdashboard::valueBox(glue::glue("{nGames7} Games"),
@@ -668,8 +668,8 @@ LastUpdate.box
 ```{r 24hrs-process-winRate}
 LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
   filter( 
-      game_start_time_utc >= Sys.Date()+hours(17)-days(2) &
-      game_start_time_utc <  Sys.Date()+hours(17)-days(1)
+      game_start_time_utc >= Sys.Date()+hours(18)-days(2) &
+      game_start_time_utc <  Sys.Date()+hours(18)-days(1)
       )
 
 WR.DT.24h <- LoR.Melt.24hrs |>
@@ -825,7 +825,7 @@ WR.DT.24h |>
 
 ```{r}
 flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
-                        caption = glue::glue("from {Sys.Date()+hours(17)-days(2)} to {Sys.Date()+hours(17)-days(1)}"),
+                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),
                         icon = "fa-clock",
                         # color = "lightgreen"
                         color = "red")
@@ -846,33 +846,60 @@ LastUpdate.box
 
 ```{r meta-evo-const}
 ntopPR <- 12
-seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
+# seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
+seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(now(),unit = "day")+hours(18) ,"day") # +days(1) since for who knows what reason it doesn't include the current day
 ```
 
-```{r prepare-meta-evo}
+```{r}
 top7days <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(17)-days(7) ) |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   count(playerDeck) |>
   slice_max(n,n=ntopPR,with_ties = F) |>
   pull(playerDeck)
 
-Champion.deck.daily <- tibble( 
+Champion.deck.daily <- tibble(
   game_start_time_utc = rep(seqDate, each = length(top7days)),
-  playerDeck = rep(top7days, times = length(seqDate))
+  playerDeck = rep(top7days, times = length(seqDate) ),
+  intDate = findInterval(game_start_time_utc, seqDate )
 ) |>
   left_join(
     LoR.Melt.Matches.RMD |>
-      mutate( 
-        playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
-        game_start_time_utc = as.Date(game_start_time_utc) 
-        ) |>
+      mutate( playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
+              intDate = findInterval(game_start_time_utc, seqDate )
+      ) |>
       filter( playerDeck != "Other" ) |>
-      group_by(game_start_time_utc) |>
+      group_by(intDate) |>
       count(playerDeck) |>
       mutate(freq = prop.table(n))|>
       ungroup(),
-    by = c("game_start_time_utc","playerDeck") ) |>
-  mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
+    by = c("playerDeck","intDate") ) |>
+  mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
+  mutate( game_start_time_utc = as.Date(game_start_time_utc) )
+  
+
+# top7days <- LoR.Melt.Matches.RMD |>
+#   filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
+#   count(playerDeck) |>
+#   slice_max(n,n=ntopPR,with_ties = F) |>
+#   pull(playerDeck)
+# 
+# Champion.deck.daily <- tibble( 
+#   game_start_time_utc = rep(seqDate, each = length(top7days)),
+#   playerDeck = rep(top7days, times = length(seqDate))
+# ) |>
+#   left_join(
+#     LoR.Melt.Matches.RMD |>
+#       mutate( 
+#         playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
+#         game_start_time_utc = as.Date(game_start_time_utc) 
+#         ) |>
+#       filter( playerDeck != "Other" ) |>
+#       group_by(game_start_time_utc) |>
+#       count(playerDeck) |>
+#       mutate(freq = prop.table(n))|>
+#       ungroup(),
+#     by = c("game_start_time_utc","playerDeck") ) |>
+#   mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
 ```
 
 ```{r prepare-meta-evo-extra}
@@ -884,26 +911,27 @@ top7days.extra <- LoR.Melt.Extra.RMD |>
 
 Champion.deck.daily.extra <- tibble( 
   game_start_time_utc = rep(seqDate, each = length(top7days.extra)),
-  playerDeck = rep(top7days.extra, times = length(seqDate))
+  playerDeck = rep(top7days.extra, times = length(seqDate)),
+  intDate = findInterval(game_start_time_utc, seqDate )
 ) |>
   left_join(
     LoR.Melt.Extra.RMD |>
       mutate( 
         playerDeck = fct_other(playerDeck,keep = top7days.extra) |> fct_infreq(),
-        game_start_time_utc = as.Date(game_start_time_utc) 
+        intDate = findInterval(game_start_time_utc, seqDate )
         ) |>
       filter( playerDeck != "Other" ) |>
-      group_by(game_start_time_utc) |>
+      group_by(intDate) |>
       count(playerDeck) |>
       mutate(freq = prop.table(n))|>
       ungroup(),
-    by = c("game_start_time_utc","playerDeck") ) |>
-  mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
+    by = c("playerDeck","intDate") ) |>
+  mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
+  mutate( game_start_time_utc = as.Date(game_start_time_utc) )
 ```
 
 ```{r create-meta-evo, fig.width=12, fig.height=8, include=F}
 meta_evo.base <- Champion.deck.daily |>
-  mutate( game_start_time_utc = as.Date(game_start_time_utc) ) |>
   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
   geom_line( aes(color = playerDeck), size = .9  ) +
   # geom_text( aes(label=str_to_upper(playerDeck),color = playerDeck)  ) +
@@ -960,8 +988,10 @@ meta_evo.base + geom_label_repel(
     bg.color = "grey",
     # xlim = c( floor_date(Sys.Date()-days(1)), floor_date(Sys.Date()-days(1)) )
     # xlim = c(floor_date(Sys.Date()-hours(12)), floor_date(Sys.Date()) )
-    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(3)) )
-  )
+    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
+  ) + 
+  plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
+                                       Source: Metadata of games collected with RiotGames API'))
 
 ggsave("./images/meta-evo.png",width = 12,height = 8)
 ```
@@ -1022,8 +1052,12 @@ meta_evo.extra.base +
     segment.ncp = 3,
     segment.angle = 15,
     bg.color = "grey",
-    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(3)) )
+    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   )
+
+LoR.Melt.Extra.RMD |>
+  filter(str_detect(playerDeck,"Jayce")) |>
+  arrange(game_start_time_utc)
 
 ggsave("./images/meta-evo-extra.png",width = 12,height = 8)
 ```
@@ -1057,7 +1091,7 @@ meta_evo.base +
     bg.color = "grey",
     # xlim = c( floor_date(Sys.Date()-days(1)), floor_date(Sys.Date()-days(1)) )
     # xlim = c(floor_date(Sys.Date()-hours(12)), floor_date(Sys.Date()) )
-    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(3)) )
+    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   ) +
 meta_evo.extra.base +
   geom_label_repel(
@@ -1084,8 +1118,10 @@ meta_evo.extra.base +
     segment.ncp = 3,
     segment.angle = 15,
     bg.color = "grey",
-    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(3)) )
-  )
+    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
+  ) + 
+  plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
+                                       Source: Metadata of games collected with RiotGames API'))
 
 ggsave("./images/meta-evo-double.png",width = 19,height = 9)
 ```
