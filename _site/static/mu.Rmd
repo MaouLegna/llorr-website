@@ -24,12 +24,6 @@ params:
   nGrid: 15      # how many MU to plot
 ---
 
-```{r}
-# 6/1/21 07:00 PM Game Updates PATCH 2.9.0 NOTES
-# 6/29/21 07:00 PM Game Updates PATCH 2.11.0 NOTES <- Rise Underworld
-# 7/13/21 07:00 PM Game Updates PATCH 2.12.0 NOTES <- Ruination # Viego & Akshan arrive in patch 2.12.0, which will be playable at approximately 11AM PT, July 14.
-```
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
@@ -58,14 +52,20 @@ source(file.path("C:","LlorR","scripts","lor_main.R"))
 xaringanExtra::use_panelset()
 ```
 
+```{r}
+# 6/1/21 07:00 PM Game Updates PATCH 2.9.0 NOTES
+# 6/29/21 07:00 PM Game Updates PATCH 2.11.0 NOTES <- Rise Underworld
+# 7/13/21 07:00 PM Game Updates PATCH 2.12.0 NOTES <- Ruination # Viego & Akshan arrive in patch 2.12.0, which will be playable at approximately 11AM PT, July 14.
+```
+
 ```{r load-data}
 #' load DeckDT
 #'############
-LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 #' load Games DT
 #'##############
-LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
 
 #' Read New Master
 ##################
@@ -315,6 +315,12 @@ LoR.Melt.Extra.RMD <- LoR.LastMaster.RMD |>
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
                )
+
+# 
+# LoR.Melt.Extra.RMD |>
+#   filter( playerDeck == "Vi/Viktor - Shellfolk" ) |>
+#   tabyl(deck_code) |>
+#   arrange(desc(n))
 ```
 
 ```{r process-MU-extra}
@@ -774,36 +780,13 @@ The format of the table is the usual way I display the match-ups data but I also
 
 -  **MU-Direction** - simply if the MU is positive (win rate \> 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%)
 
--  **Mirror**
+-  **Mirror** - hide or include mirror match-ups
 
 #### Archetypes Fix
 
 ```{r gt-archetype}
-tribble( 
-  ~Deck, ~Source,
-  "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
-  "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
-  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol",
-  "SunDisc", "Mono Shurima with 1+ Sun Disc"
-) |>
-  gt() |>
-  tab_header(
-    title = glue::glue("Archetype ~Fix")
-  ) |>
-  gtExtras::gt_theme_nytimes() |>
- tab_options(
-    # table.background.color = "transparent",
-    table.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   )
-# |>
-#   tab_style(
-#     style = cell_fill(color = "gray85", alpha = 0),
-#     locations = cells_body(
-#       columns = everything()
-#       )
-#   )
+source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
+gtfix
 ```
 
 #### General info

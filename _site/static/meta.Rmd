@@ -847,7 +847,7 @@ LastUpdate.box
 ```{r meta-evo-const}
 ntopPR <- 12
 # seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
-seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(now(),unit = "day")+hours(18) ,"day") # +days(1) since for who knows what reason it doesn't include the current day
+seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(now(),unit = "day")-days(1)+hours(18) ,"day") #
 ```
 
 ```{r}
@@ -1119,9 +1119,9 @@ meta_evo.extra.base +
     segment.angle = 15,
     bg.color = "grey",
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
-  ) + 
-  plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
-                                       Source: Metadata of games collected with RiotGames API'))
+  )
+  # plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
+  #                                      Source: Metadata of games collected with RiotGames API'))
 
 ggsave("./images/meta-evo-double.png",width = 19,height = 9)
 ```
@@ -1187,23 +1187,8 @@ downloadthis::download_file(
 current aggregations applied to archetypes (Champions+Regions)
 
 ```{r gt-archetype}
-tribble( 
-  ~Deck, ~Source,
-  "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
-  "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
-  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol",
-  "SunDisc", "Mono Shurima with 1+ Sun Disc"
-) |>
-  gt() |>
-  tab_header(
-    title = glue::glue("Archetype ~Fix")
-  ) |>
-  gtExtras::gt_theme_nytimes() |>
- tab_options(
-    table.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   )
+source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
+gtfix
 ```
 
 ### LMI - Tiers
