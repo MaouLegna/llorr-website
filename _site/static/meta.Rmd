@@ -986,6 +986,9 @@ meta_evo.base + geom_label_repel(
     segment.ncp = 3,
     segment.angle = 15,
     bg.color = "grey",
+    fill = "#f0f0f0",
+    label.padding = 0,
+    label.size = 0,
     # xlim = c( floor_date(Sys.Date()-days(1)), floor_date(Sys.Date()-days(1)) )
     # xlim = c(floor_date(Sys.Date()-hours(12)), floor_date(Sys.Date()) )
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
@@ -1052,6 +1055,9 @@ meta_evo.extra.base +
     segment.ncp = 3,
     segment.angle = 15,
     bg.color = "grey",
+    fill = "#f0f0f0",
+    label.padding = 0,
+    label.size = 0,
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   )
 

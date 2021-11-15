@@ -63,6 +63,42 @@ xaringanExtra::style_panelset_tabs(
   )
 ```
 
+```{r raw-data}
+# skip.dt <-fread(file.path("C:","LlorR","data","raw","skip_row.csv")  )
+# skip.dt
+
+#' load gameDT
+#'############
+# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
+# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
+# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
+# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+
+#' Read gamesDT
+###############
+# LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_patch_2_04_to_17final.csv"), header = T, na.strings = c("", NA))
+
+# patch_2_10 <- LoR.Match.RMD |>
+#   filter( game_type=="Ranked" ) |>
+#   filter( str_detect(game_version,"live_2_10_") ) 
+  # filter( str_detect(game_version,pattern = paste0(c("live_2_9_","live_2_10_"),collapse = "|"))  )
+
+patch_2_10 |>
+  tabyl(factions_1) |>
+  NROW()
+
+#' load Account
+#'#############
+LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
+                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+  mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
+
+#' load DeckDT
+#'############
+LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
 # Introduction
 
 ## The Shuriman Desert is Sparse
