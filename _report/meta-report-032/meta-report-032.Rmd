@@ -511,11 +511,13 @@ Region.freq.extra.current <- Temp.Match.RMD |>
   mutate(rank = rank(-freq))
 
 static.Region.Freq <- rbind(Region.freq.master.prev,Region.freq.master.current,Region.freq.extra.prev,Region.freq.extra.current)
-static.Region.Freq <- static.Region.Freq |>
-  mutate(state = as.character(glue("{time} week / {label}")),
-         state = as.factor(state))
+# static.Region.Freq <- static.Region.Freq |>
+#   mutate(state = as.character(glue("{time} week / {label}")),
+#          state = as.factor(state))
 
-static.Region.Freq$state <- factor(static.Region.Freq$state, ordered = T, levels = rev(levels(static.Region.Freq$state)) )
+# fwrite(static.Region.Freq,"static.csv")
+
+# static.Region.Freq$state <- factor(static.Region.Freq$state, ordered = T, levels = rev(levels(static.Region.Freq$state)) )
 
 # static.Region.Freq |>
 #   arrange(state)

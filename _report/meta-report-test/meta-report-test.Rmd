@@ -21,77 +21,311 @@ twitter:
 ---
 
 
-```{r setup, include=FALSE}
-# knitr::opts_chunk$set(
-#   echo = FALSE,
-#   eval = TRUE,
-#   warning = FALSE,
-#   error = FALSE,
-#   message = FALSE,
-#   comment = NA,
-#   R.options = list(width = 140,
-#                    digits.secs=6),
-#   dev.args = list(bg = 'transparent'), # make graphics with transparent background
-#   fig.align = 'center',
-#   fig.width=12,
-#   fig.height=8,
-#   # engine.path = list(
-#   #   python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
-#   # ),
-#   #'distill options
-#   layout="l-body-outset",
-#   preview=FALSE
-# )
-# 
-# #' R Option
-# options(scipen = 999)
-source(file.path("C:","LlorR","scripts","lor_main.R" ))
-# xaringanExtra::use_panelset()
-```
+```{r}
+df<- data.frame(age= c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70), gender = "male", 
+population =c(180,160,130,140,150,160,170,90,85,80,75,70,65,60,40), country = 1)
+                
+df1<- data.frame(age= c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70), gender = "female", 
+population =c(160,150,120,130,140,150,160,80,75,70,65,60,55,50,30),country  = 1)
 
-```{r panelset-style}
-# xaringanExtra::style_panelset_tabs(
-#   font_family = "Helvetica",
-#   active_foreground = "white",
-#   hover_foreground = "black",
-#   hover_border_color = "black",
-#   active_background = "#007fff"
-#   )
-```
+df2<- data.frame(age= c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70), gender = "male", 
+population =c(185,165,135,148,159,166,177,99,89,88,74,73,68,63,43), country = 2)
 
-```{r raw-data}
-# MUtbl <- fread("./data/mutbl_patch_2_12to13.csv",na.strings = c("",NA))
-```
+df3<- data.frame(age= c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70), gender = "female",
+population =c(200,190,45,77,121,131,190,68,89,98,54,23,68,76,23), country = 2)
 
+df4<- data.frame(age= c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70), gender = "male", 
+population =c(85,65,35,48,59,66,177,99,89,88,54,33,88,66,23), country = 3)
+                 
+df5<- data.frame(age= c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70), gender = "female",
+population =c(149,120,80,70,66,44,57,87,71,32,96,31,29,20,11), country = 3)
+
+mydata<- rbind(df,df1,df2,df3,df4,df5)
+```
 
 ```{r}
 library(ggplot2)
 
-ggplot2::ggplot(mpg, aes(y = class)) +
- ggplot2::geom_bar(aes(fill = drv), position = position_stack(reverse = TRUE)) +
- ggplot2::theme(legend.position = "top") +
-  theme_539()
-  # theme_Publication()
+pop<- ggplot(data=mydata, aes(x=age, y = ifelse(gender == "male", - population, population), fill=gender)) + 
+  geom_col() + 
+  facet_wrap(~country) +
+  coord_flip()
+
+
+static.Region.Freq |>
+  ggplot(aes(region, group = region,
+             fill = as.factor(region), color = as.factor(region)) )
+  
+ggplot(static.Region.Freq, aes(x=region, y = ifelse(label == "Master", - freq, freq), fill=region)) + 
+  geom_col() + 
+  facet_wrap(~time) +
+  coord_flip()
+```
+
+```{r}
+library(gganimate)
+
+ggplot(static.Region.Freq, aes(x=region, y = ifelse(label == "Master", - freq, freq), fill=region)) + 
+  geom_col() + 
+  facet_wrap(~time) +
+  coord_flip()
+
+pop <- ggplot(data = static.Region.Freq, aes(
+  x = as.factor(region),
+  y = ifelse(label == "Master", - freq, freq),
+  fill = as.factor(region))) +
+  geom_col(aes(group = as.factor(region))) +
+  coord_flip() +
+  xlab("Population") +
+  ylab("Age") +
+  transition_states(time, transition_length = 2, state_length = 1) +
+  labs(title = 'Country: {closest_state}', fill= "Gender") +
+  ease_aes('linear')
+
+# For saving the animation (though you can change the size, resolution, etc.)
+anim_pop <- animate(pop)
+anim_save(animation = anim_pop, filename ="pop.gif")
+```
+
+```{r fig.width=12, fig.height=8}
+# if(!require('pacman')) install.packages('pacman')
+# pacman::p_load(tidyverse, ggpol, gganimate, gifski, kableExtra)
+
+RegPyramid <- static.Region.Freq |>
+  ggplot(aes(
+    x = region,
+    y = freq,
+    fill = region
+    )
+    ) +
+  geom_bar(stat = "identity") +
+  # geom_text(aes(y = 0, label = paste(region, " ")), vjust = 0.2, hjust = 1 ,color="black") +
+  geom_label(
+    aes(y=freq,label = freq %>% scales::percent(accuracy = 0.1)),
+    # fill="white",
+    # label.padding = 0
+    # label.size = 0
+    color="black",
+    fill = "#f0f0f0",
+    size = 3.5,
+    hjust = 0.5,
+    )  +
+  # coord_flip(clip = "off", expand = FALSE) +
+  # scale_y_continuous(labels = scales::percent) +
+  # scale_x_reverse() +
+  scale_fill_manual("legend", values = list.levels$colorRegion.Balco) +
+  # guides(fill = FALSE) +
+  theme(
+    # plot.margin = margin(2,2, 2, 4, "cm")
+    
+    plot.background = element_rect(fill = "#f0f0f0", color = NA),
+    panel.background = element_rect(fill = "#f0f0f0", color = NA),
+    # panel.grid.major =  element_line(color = "#d0d0d0"),
+    panel.border=element_blank(),
+
+    # panel.grid.minor = element_blank(),
+    # panel.grid.major = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_line( size=.1, color="grey" ),
+    panel.grid.minor.x = element_line( size=.1, color="grey" ),
+
+    # axis.ticks = element_blank(),
+    axis.title.y = element_blank(),
+    axis.title.x = element_text( size = 16, face = "bold" ),
+    axis.text.y = element_text(size = 12, color = "grey50" ),
+
+    # panel.border = element_blank(),
+    # strip.background = element_blank(),
+    # strip.text.x = element_blank(),
+    axis.text = element_text(size = 14),
+
+    # legend.title = element_blank(),
+    legend.position = "none",
+    legend.key.size = unit(0.75, "cm"),
+    legend.text = element_text( size = 15, face = "bold" ),
+    
+    # plot.title.position = "plot"
+    plot.title  = element_text( size = 22, hjust = 0.5, face = "bold" ),
+    plot.subtitle = element_text( size = 14, hjust = 0.5, face = "bold" ),
+    plot.caption = element_text( size = 12, hjust = 0.5, face = "italic", color = "gray" )
+    ) +
+  # scale_colour_manual(values = list.levels$colorRegion.Balco) +
+  # scale_y_continuous(
+  #   limits = c(0, 0.25),
+  #   breaks = seq(0, 0.25,0.05)
+  #   # labels = scales::percent_format(accuracy = 1) 
+  #   ) +
+  # scale_y_continuous(limits = c(0, 0.30),
+  #                    breaks = seq(0, 0.30,0.05),
+  #                    labels = scales::percent_format(accuracy = 1) ) +
+  coord_flip() +
+  facet_share(
+    ~label,
+    dir = "h",
+    scales = "free",
+    reverse_num = TRUE,
+    shrink = FALSE
+    )
+  
+RegPyramid <- RegPyramid +
+ labs(
+      title = "Regions Play Rate",
+      subtitle = "number of times a region is included in a deck",
+      y = "Play Rate",
+      caption = glue::glue("{params$patch}
+                         Ranked games from {params$start} UTC to {params$end} UTC
+                         Metadata of games collected with RiotGames API")
+     )
+
+RegPyramid
+```
+
+```{r}
+# create base for animated plot
+# anim = staticplot + transition_states(states = state, transition_length = 2, state_length = 1) +
+#   # view_follow(fixed_x = TRUE)  +
+#   labs(title = paste0(params$patch,"- Region Play Rate: {closest_state}"),
+#        subtitle  =  "by Inclusion Rate"
+#        )
+
+# save gif
+# anim_save(filename = glue::glue("images/meta-report/{params$ind}-PRanimate.gif"),
+#           animation = anim,
+#           nframes = 100, fps = 20,  width = 1200, height = 600,
+#           # renderer = gifski_renderer()
+#           ) |> suppressWarnings()
+
+# animation
+animRegPyramid <- RegPyramid +
+  transition_states(
+    time,
+    transition_length = 2,
+    state_length = 1
+    ) +
+  enter_fade() +
+  exit_fade() +
+  ease_aes('cubic-in-out')
+
+# render
+animate(
+  animRegPyramid,
+  # nframes = 100, fps = 20,
+  width = 1200, height = 600,
+  fps = 24,
+  duration = 3,
+  renderer = gifski_renderer(file = glue::glue("images/meta-report/{params$ind}-RegPyramid.gif"))
+  )
 ```
 
 
-```{r}
-tribble( 
-  ~Deck, ~Source,
-  "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
-  "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
-  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol",
-  "SunDisc", "Mono Shurima with 1+ Sun Disc"
-) |>
-  gt() |>
-  tab_header(
-    title = glue::glue("Archetype ~Fix")
-  ) |>
-  gtExtras::gt_theme_nytimes()
- # tab_options(
- #    table.background.color = "whitesmoke",
- #    table.font.color = "black",
- #    table.font.color.light = "black"
- #   )
+```{r fig.width=12, fig.height=8}
+# CAPop <- fread("https://raw.githubusercontent.com/SiphuLangeni/Population-Pyramid-Animation/master/CAPop.csv")
+
+# Prepare Data
+# CAPop <- CAPop %>% 
+#   na.omit %>% 
+#   mutate(Age = substr(Series.Name, 17, 21),
+#          Age = as.factor(case_when(Age == '80 an' ~ '80+', TRUE ~ Age)),
+#          Gender = as.factor(ifelse(str_detect(Series.Name, 'female$') == TRUE, 'Female', 'Male')),
+#          Gender = factor(Gender, levels = c('Male', 'Female'))) %>% 
+#   select(-Country.Name, - Series.Name) %>% 
+#   gather(Year, Pop, X1960:X2018) %>% 
+#   mutate(Year = as.integer(substr(Year, 2, 5)),
+#          Pop = ifelse(Gender == 'Male', as.integer(Pop * -1), as.integer(Pop)))
+# 
+# # Peak data
+# dim(CAPop)
+# kable(head(CAPop)) %>%
+#   kable_styling(bootstrap_options = 'striped', font_size = 12, full_width = FALSE)
+# 
+# # static plot
+# PopPyramid <- CAPop %>%
+#  ggplot(aes(
+#             x = Age,
+#             y = Pop/1000,
+#             fill = Gender
+#            )
+#        ) +
+#  geom_bar(stat = ‘identity’) +
+#  scale_fill_manual(values = c(‘#4682b4’, ‘#ee7989’)) + 
+#  coord_flip() + 
+#  facet_share(
+#              ~ Gender,
+#              dir = ‘h’,
+#              scales = ‘free’,
+#              reverse_num = TRUE
+#             )
+# 
+#  # theme
+#  PopPyramid <- PopPyramid +
+#  theme(
+#        plot.background = element_blank(),
+#        axis.ticks = element_blank(),
+#        axis.title.y = element_blank(),
+#        legend.title = element_blank(),
+#        panel.background = element_blank(),
+#        panel.border = element_blank(),
+#        strip.background = element_blank(),
+#        strip.text.x = element_blank(),
+#        panel.grid.minor = element_blank(),
+#        panel.grid.major = element_blank(), 
+#        axis.text = element_text(size = 14),
+#        legend.key.size = unit(0.75, ‘cm’),
+#        legend.text = element_text(
+#                                   size = 15,
+#                                   face = ‘bold’
+#                                  ),
+#        plot.title = element_text(
+#                                  size = 22,
+#                                  hjust = 0.5,
+#                                  face = ‘bold’
+#                                 ),
+#        plot.subtitle = element_text(
+#                                     size = 14,
+#                                     hjust = 0.5,
+#                                     face = ‘bold’
+#                                    ),
+#        axis.title.x = element_text(
+#                                    size = 16,
+#                                    face = ‘bold’
+#                                   ),
+#        plot.caption = element_text(
+#                                    size = 12,
+#                                    hjust = 0.5,
+#                                    face = ‘italic’,
+#                                    color = ‘gray’
+#                                   )
+#       )
+#  
+# # labels 
+#  PopPyramid <- PopPyramid + 
+#  labs(
+#       title = ‘Canada Population Estimate 1960 - 2018\n\n{closest_state}’,
+#       subtitle = ‘\n\nAge Group’,
+#       y = ‘\n\nPopulation (in thousands)’,
+#       caption = ‘\n\nData Source: https://databank.worldbank.org’
+#      )
+#  
+# # animation
+#  PopPyramid <- PopPyramid + 
+#   transition_states(
+#                     Year,
+#                     transition_length = 1,
+#                     state_length = 2
+#                    ) + 
+#   enter_fade() +
+#   exit_fade() + 
+#   ease_aes('cubic-in-out')
+#  
+# # render
+# animate(
+#         PopPyramid,
+#         fps = 24,
+#         duration = 30,
+#         width = 500,
+#         height = 500,
+#         renderer = gifski_renderer(‘PopPyramid.gif’)
+#        ) 
 ```
 
