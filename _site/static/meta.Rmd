@@ -1186,6 +1186,25 @@ downloadthis::download_file(
 )
 ```
 
+### Play-Rates (to recreate the graph)
+
+```{r download-PR}
+rbind(
+  Champion.deck.daily |>
+    add_column(label = "Master"),
+  Champion.deck.daily.extra |>
+    add_column(label = "~Plat+")
+) |>
+  select(-intDate) |>
+  downloadthis::download_this(
+    button_label = "Download PlayRates data as .csv",
+    output_name = "mutable",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+    )
+```
+
 ## Column {data-width="800"}
 
 ### Archetype "fix"
