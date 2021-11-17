@@ -20,7 +20,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 11-10-2021
+date: 11-17-2021
 output:
  distill::distill_article:
     toc: true
@@ -435,7 +435,7 @@ RegionByRegion
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
 :::
 
-```{r create-gif}
+```{r create-gif-data}
 require(gganimate)
 
 Region.freq.master.prev <- LoR.Match.RMD |>
@@ -529,7 +529,7 @@ static.Region.Freq <- static.Region.Freq |>
 ```
 
 
-```{r create-gif}
+```{r create-gif-old}
 # create static plot with both groups
 # staticplot <- ggplot(static.Region.Freq , aes(rank, group = region,
 #                 fill = as.factor(region), color = as.factor(region))) +
