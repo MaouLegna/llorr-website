@@ -1230,18 +1230,18 @@ tribble(
   tab_header(
     title = glue::glue("LMI Tiers")
   ) |>
-  gtExtras::gt_theme_nytimes() |>
+  gtExtras::gt_theme_nytimes()
   # tab_style(
   #   style = cell_text(weight = "bold"),
   #   locations = cells_body(
   #     columns = 1,
   #   )
   # ) |>
-  tab_options(
-    table.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   )
+  # tab_options(
+  #   table.background.color = "whitesmoke",
+  #   table.font.color = "black",
+  #   table.font.color.light = "black"
+  #  )
 
 ```
 ### General info
