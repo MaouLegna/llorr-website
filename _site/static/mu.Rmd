@@ -316,7 +316,6 @@ LoR.Melt.Extra.RMD <- LoR.LastMaster.RMD |>
                names_pattern = "(.*)_[0-9]"
                )
 
-# 
 # LoR.Melt.Extra.RMD |>
 #   filter( playerDeck == "Vi/Viktor - Shellfolk" ) |>
 #   tabyl(deck_code) |>
@@ -627,8 +626,16 @@ gtsave(data = MUgrid.gt.final,
 ### BOX GRID
 
 ```{r value-nGames-2}
-flexdashboard::valueBox(glue::glue("{nGames+nGames.extra} Ranked Games (~Plat+Master) "),
-                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)+NROW(LoR.Melt.Extra.RMD)} - min 10 games"),
+# glue::glue(
+#           #595959 #grey35 / #7f7f7f #grey50
+#           "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{percent}</div>
+#            <div style='line-height:10px'><span style='color:#7f7f7f;font-size:10px'>({frac})</span></div>"
+#         )
+
+totalRanked <- length(unique(c(LoR.Melt.Matches.RMD$match_key,LoR.Melt.Extra.RMD$match_key)))*2
+
+flexdashboard::valueBox(glue::glue("{nGames} Master games / {nGames.extra} Last-Seasona Master(~Plat+) games"),
+                        caption = glue::glue("out of a total of {totalRanked} games - min 10 games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
