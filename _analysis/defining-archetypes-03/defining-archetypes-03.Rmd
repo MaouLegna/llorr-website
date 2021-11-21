@@ -68,11 +68,47 @@ xaringanExtra::style_panelset_tabs(
 #'############
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
-LoR.Deck.RMD |>
+set.seed(123)
+Archetype3 <- LoR.Deck.RMD |>
   group_by(factions) |>
-  slice_sample( n = 1 ) |> 
-  tabyl(factions)
+  slice_sample( n = 300 )
+# Archetype3 |> tabyl(archetype)
 
+# fwrite(Archetype3,"./data/example_archetye_03.csv")
+# fread("./data/example_archetye_03.csv")
+
+Archetype3.mini <- LoR.Deck.RMD |>
+  group_by(factions) |>
+  slice_sample( n = 20 )
+
+cos.dsim.arch3 <- cos.dsimMatrix(Archetype3.mini$deck_code)
+# object.size(cos.dsim.arch3)
+
+library("factoextra")
+MDist <- fviz_dist(cos.dsim.arch3,show_labels = F) +
+  theme(legend.position = "none")
+
+# factions <- LoR.Deck.RMD |>
+#   distinct(factions) |>
+#   arrange(factions) |>
+#   pull(factions) 
+# 
+# prova <- tibble(
+#   f1 = rep(factions, each = length(factions)),
+#   f2 = rep(factions, times = length(factions)),
+#   f3 = map2(.x=f1,.y=f2,~c(.x,.y)),
+#   # f3 = glue("{f1},{f2}")
+# )
+# 
+# prova$f3 <- lapply(prova$f3, function(x) sort(x) )
+# 
+# prova |>
+#   distinct(f3,.keep_all = T) |>
+#   mutate(
+#     f1 = map_chr(.x = f1, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
+#     f2 = map_chr(.x = f2, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) )
+#   ) |>
+#   separate(f1,sep = ",",into = c("f11","f12"))
 
 
 
@@ -103,6 +139,9 @@ regionComboInterception <- function(n) {
 }
   
 # map_dbl(1:10, ~regionComboInterception(.x))
+
+
+
   
 ```
 
