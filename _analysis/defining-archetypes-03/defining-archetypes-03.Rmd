@@ -62,32 +62,93 @@ xaringanExtra::style_panelset_tabs(
   active_background = "#007fff"
   )
 ```
+```{r create-example}
+# load DeckDT
+#'###########
+# LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+# 
+# set.seed(123)
+# Archetype3 <- LoR.Deck.RMD |>
+#   group_by(factions) |>
+#   slice_sample( n = 300 )
+# fwrite(Archetype3,"./data/example_archetye_03.csv")
+# 
+# set.seed(123)
+# Archetype3.20 <- Archetype3 |>
+#   group_by(factions) |>
+#   slice_sample( n = 20 )
+# cos.dsim.arch3.20  <- cos.dsimMatrix(Archetype3.20$deck_code)
+# fwrite(Archetype3.20, "./data/example_archetye_03_20.csv")
+# fwrite(as.matrix(cos.dsim.arch3.20),"./data/example_cosDist_03_20.csv")
+# 
+# set.seed(123)
+# Archetype3.100 <- Archetype3 |>
+#   group_by(factions) |>
+#   slice_sample( n = 100 )
+# cos.dsim.arch3.100 <- cos.dsimMatrix(Archetype3.100$deck_code)
+# fwrite(Archetype3.100,"./data/example_archetye_03_100.csv")
+# fwrite(as.matrix(cos.dsim.arch3.100),"./data/example_cosDist_03_100.csv")
+```
+
 
 ```{r raw-data}
-#' load DeckDT
-#'############
-LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+# Archetype3 <- fread("./data/example_archetye_03.csv")
+# Archetype3.20  <- fread("./data/example_archetye_03_20.csv")
+# Archetype3.100 <- fread("./data/example_archetye_03_100.csv")
 
-set.seed(123)
-Archetype3 <- LoR.Deck.RMD |>
-  group_by(factions) |>
-  slice_sample( n = 300 )
-# Archetype3 |> tabyl(archetype)
+cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |>
+  as.matrix() |> as.dist()
 
-# fwrite(Archetype3,"./data/example_archetye_03.csv")
-# fread("./data/example_archetye_03.csv")
+# cos.dsim.arch3.100 <- fread("./data/example_cosDist_03_100.csv",header=T) |>
+#   as.matrix() |> as.dist()
+```
 
-Archetype3.mini <- LoR.Deck.RMD |>
-  group_by(factions) |>
-  slice_sample( n = 20 )
+Trivia: the dimension of the distance matrix when I used 20 example for possible faction combination so a 1100x1100[^1] matrix is
 
-cos.dsim.arch3 <- cos.dsimMatrix(Archetype3.mini$deck_code)
-# object.size(cos.dsim.arch3)
+[^1]: 20*55=1100
 
-library("factoextra")
-MDist <- fviz_dist(cos.dsim.arch3,show_labels = F) +
+```{r}
+object.size(cos.dsim.arch3.20)
+```
+
+While the size for a case with 100 decks, a 5500x5500 decks is:
+
+```{r}
+object.size(cos.dsim.arch3.100)
+```
+
+This doesn't seems too bad, but there are factors to consider:
+- The increase is size scale badly with the increase in rows/columns. 5500 are hardly a lot, a patch can easily have ~20k different deck-list played.
+- The computation fatigue scales even worse -> explain prodotto matriciale
+
+To this we have to add 
+
+
+```{r fig.width=12, fig.height=8}
+# library("factoextra")
+factoextra::fviz_dist(cos.dsim.arch3.20,show_labels = F,
+                      gradient = list(low = "yellow", high = "firebrick3")) +
   theme(legend.position = "none")
+```
 
+```{r fig.width=12, fig.height=8}
+lattice::levelplot(as.matrix(cos.dsim.arch3.20), main="1100 X 1100 Heatmap", xlab="", ylab="", col.regions=colorRampPalette(c("yellow","firebrick3"), space = "rgb")(10), cuts=9, at=seq(0,1,0.1), scales=list(x=list(at=NULL),y=list(at=NULL)))
+```
+
+```{r fig.width=12, fig.height=8}
+lattice::levelplot(as.matrix(cos.dsim.arch3.100), main="5500 X 5500 Heatmap", xlab="", ylab="", col.regions=colorRampPalette(c("yellow","firebrick3"), space = "rgb")(10), cuts=9, at=seq(0,1,0.1), scales=list(x=list(at=NULL),y=list(at=NULL)))
+```
+
+```{r fig.width=12, fig.height=8}
+heatmap3::heatmap3(as.matrix(cos.dsim.arch3.20),useRaster=T,Rowv=NA,Colv=NA, col = colorRampPalette(c("yellow","firebrick3"))(1024))
+                   # legendfun=function() NA )
+```
+
+```{r fig.width=12, fig.height=8}
+heatmap3::heatmap3(as.matrix(cos.dsim.arch3.100),useRaster=TRUE,Rowv=NA,Colv=NA, col=colorRampPalette(c("yellow","firebrick3"))(1024))
+```
+
+```{r}
 # factions <- LoR.Deck.RMD |>
 #   distinct(factions) |>
 #   arrange(factions) |>
@@ -109,10 +170,62 @@ MDist <- fviz_dist(cos.dsim.arch3,show_labels = F) +
 #     f2 = map_chr(.x = f2, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) )
 #   ) |>
 #   separate(f1,sep = ",",into = c("f11","f12"))
-
-
-
 ```
+
+```{r fig.width=12, fig.height=8}
+# install.packages("heatmap3")
+
+
+nrowcol <- 1000
+dat <- matrix(ifelse(runif(nrowcol*nrowcol) > 0.5, 1, 0), nrow=nrowcol)
+
+
+
+heatmap3(dat,useRaster=TRUE,Rowv=NA,Colv=NA)
+
+heatmap3(matrix(rnorm(10),ncol=2),legendfun=function()
+plot(0,0,bty="n",xaxt="n",yaxt="n",type="n"))
+
+# install.packages("gplots")
+
+
+# heatmap.2(x=as.matrix(cos.dsim.arch3))
+```
+
+```{r fig.width=12, fig.height=8}
+# install.packages("lattice")
+library(lattice)
+
+#Build the data
+nrowcol <- 1000
+dat <- matrix(ifelse(runif(nrowcol*nrowcol) > 0.5, 1, 0), nrow=nrowcol)
+
+#Build the palette and plot it
+
+
+
+
+x <- seq(pi/4, 5 * pi, length.out = 100)
+y <- seq(pi/4, 5 * pi, length.out = 100)
+r <- as.vector(sqrt(outer(x^2, y^2, "+")))
+grid <- expand.grid(x=x, y=y)
+grid$z <- cos(r^2) * exp(-r/(pi^3))
+levelplot(z ~ x * y, grid, cuts = 50, scales=list(log="e"), xlab="",
+          ylab="", main="Weird Function", sub="with log scales",
+          colorkey = FALSE, region = TRUE)
+
+levelplot(z ~ x * y, grid, cuts = 50, scales=list(x=list(at=NULL),y=list(at=NULL)), xlab="",
+          ylab="", main="Weird Function", sub="with log scales",
+          colorkey = FALSE, region = TRUE)
+
+
+## triangular end-points in color key, with a title
+levelplot(z ~ x * y, grid, col.regions = topo.colors(10),
+          at = c(-Inf, seq(-0.8, 0.8, by = 0.2), Inf))
+```
+
+
+
 
 # Introduction
 

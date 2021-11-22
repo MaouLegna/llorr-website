@@ -569,7 +569,7 @@ RegPyramid <- static.Region.Freq |>
   
 RegPyramid <- RegPyramid +
  labs(
-      title = "Regions Play Rate",
+      # title = "Regions Play Rate",
       subtitle = "number of times a region is included in a deck",
       y = "Play Rate",
       caption = glue::glue("{params$patch}
@@ -585,6 +585,7 @@ animRegPyramid <- RegPyramid +
     transition_length = 2,
     state_length = 1
     ) +
+  labs(title = paste0(params$patch,"- Region Play Rate: {closest_state} week")) +
   enter_fade() +
   exit_fade() +
   ease_aes('cubic-in-out')
