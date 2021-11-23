@@ -964,7 +964,9 @@ meta_evo.base <- Champion.deck.daily |>
   scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily$playerDeck)  ) )
 
 meta_evo.base + geom_label_repel(
-    data = Champion.deck.daily |> filter( game_start_time_utc >= now()-days(2) ), 
+    data = Champion.deck.daily |>
+        filter( game_start_time_utc == max(game_start_time_utc) ),
+           # Champion.deck.daily |> filter( game_start_time_utc >= now()-days(2) ), 
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
     family = "Helvetica",
@@ -1033,7 +1035,8 @@ meta_evo.extra.base <- Champion.deck.daily.extra |>
 
 meta_evo.extra.base +
   geom_label_repel(
-    data = Champion.deck.daily.extra |> filter( game_start_time_utc >= now()-days(2) ), 
+    data = Champion.deck.daily.extra |>
+        filter( game_start_time_utc == max(game_start_time_utc) ), 
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
     family = "Helvetica",
@@ -1061,10 +1064,6 @@ meta_evo.extra.base +
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   )
 
-LoR.Melt.Extra.RMD |>
-  filter(str_detect(playerDeck,"Jayce")) |>
-  arrange(game_start_time_utc)
-
 ggsave("./images/meta-evo-extra.png",width = 12,height = 8)
 ```
 
@@ -1073,7 +1072,8 @@ ggsave("./images/meta-evo-extra.png",width = 12,height = 8)
 ```{r plot-meta-evo-double, fig.width=20, fig.height=8}
 meta_evo.base + 
   geom_label_repel(
-    data = Champion.deck.daily |> filter( game_start_time_utc >= now()-days(2) ), 
+    data = Champion.deck.daily |>
+        filter( game_start_time_utc == max(game_start_time_utc) ), 
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
     family = "Helvetica",
@@ -1101,7 +1101,8 @@ meta_evo.base +
   ) +
 meta_evo.extra.base +
   geom_label_repel(
-    data = Champion.deck.daily.extra |> filter( game_start_time_utc >= now()-days(2) ),
+    data = Champion.deck.daily.extra |>
+        filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     
     fontface = "bold",

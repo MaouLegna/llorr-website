@@ -83,9 +83,15 @@ Questo rende l'applicazione di certe scelte/metodi/ecc non appropriate/non fatti
 
 BUT riguardo la matrice di distanza ed i possibili cluster contenuti in essa abbiamo delle informazioni e possiamo semplificare il problema.
 
+Per quanto segue andremo a riferirci alla matrice di similarità in contesto in cui la matrice di distanza è definita per valore $in$ [0,1]
+
 Innanzitutto sappiamo che la matrice di distanza ha una struttura per cui è definita $0_{n \times n}$ null-matrix for most of sub-matrix defined in it.
 
-Nello specifico, se tutte le regioni tra due deck differiscono
+Nello specifico, se tutte le regioni tra due deck differiscono tra di loro la similarità tra i due deck sarà necessariamente nulla.
+
+There are sadly exception to this property: when we deal with dual region cards we can have non overlapping "factions" but still common cards
+
+Example: a BC/NX deck and a DE/IO deck both sharing Poppy
 
 ```{r create-example}
 # load DeckDT
