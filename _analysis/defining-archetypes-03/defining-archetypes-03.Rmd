@@ -62,6 +62,31 @@ xaringanExtra::style_panelset_tabs(
   active_background = "#007fff"
   )
 ```
+# Introduction
+
+In the previous article on archetypes [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) we introduced the concept/general theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
+
+Along side the general theory we introduced and applied a few commonly used algorithm and some new ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
+
+The example was tailored to give a general idea
+
+Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on the magnitude equal or at least similar to a real 
+
+Decklist from "Last Season Master" games in patch 2.18 ~90k decks
+Decklist from "Master" games in patch 2.18 ~10k decks
+
+---
+
+Distance Matrix and so, all algorithm derived by them have a quadratic growth ($o^2$) so scalability is a problem.
+
+Questo rende l'applicazione di certe scelte/metodi/ecc non appropriate/non fattibili ad alte numerosità.
+
+BUT riguardo la matrice di distanza ed i possibili cluster contenuti in essa abbiamo delle informazioni e possiamo semplificare il problema.
+
+Innanzitutto sappiamo che la matrice di distanza ha una struttura per cui è definita $0_{n \times n}$ null-matrix for most of sub-matrix defined in it.
+
+Nello specifico, se tutte le regioni tra due deck differiscono
+
 ```{r create-example}
 # load DeckDT
 #'###########

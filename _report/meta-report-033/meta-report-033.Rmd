@@ -5,9 +5,9 @@ params:
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°33)"
   description: "BETWEEN WORLDS - Seasonal Tournament Open Rounds Waiting Room"
   cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05PZ022T1-full.png"
-  prev:  "2021-11-10 17:00:00" #UTC tz / 'current' previous week start
-  start: "2021-11-17 17:00:00" #UTC tz / 'current' week start
-  end:   "2021-11-24 17:00:00" #UTC tz / 'current' week end
+  prev:  "2021-11-10 18:00:00" #UTC tz / 'current' previous week start
+  start: "2021-11-17 18:00:00" #UTC tz / 'current' week start
+  end:   "2021-11-24 18:00:00" #UTC tz / 'current' week end
   nGrid: 15
   # skip:  3300000  # ~ Patch 2.16
 
@@ -1507,11 +1507,7 @@ bscols(
 
 # Deck of the week {.tabset .tabset-fade .tabset-pills}
 
-Of course this week I want to highlight Jayce but there are too many decks with him, which to choose? Let's do all of them!
-
-I actually wanted to choose something with Noxus... (those who knows, knows) but too bad.
-
-As there are too many decks I restricted the data to decks which has been played for at least 10 games across the players.
+This week I opted to shows again Sentinel Control. This is nothing new but this time 
 
 ```{r deck-structure-prepare}
 # brks <- c(0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95)
@@ -1530,13 +1526,14 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ::: {.panelset}
 ::: {.panel}
 
-## Jayce's waifu/husbando (decks with at least 10 games)
+## Sentinel Control
 
 ```{r deckweek, layout="l-page"}
-deck.of.week <- "Jayce"
+deck.of.week <- "Sentinel Control"
 
 whichDecks <- LoR.Melt.Matches.RMD |>
-  filter( str_detect(playerDeck,"Jayce") ) |>
+  # filter( str_detect(playerDeck,"Jayce") ) |>
+  filter( playerDeck == deck.of.week ) |>
   tabyl(deck_code) |>
   filter(n >= 10) |>
   pull(deck_code)
