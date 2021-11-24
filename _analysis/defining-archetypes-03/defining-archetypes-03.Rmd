@@ -109,6 +109,22 @@ Di per se esistono quindi `r 55^2` possibili sotto-matrici di confronti tra regi
 
 A questo punto entra in gioco la questione regioni in comune
 
+<!-- Ipotizzando di non dover fare controlli  -->
+
+$\sum_i^n((i-1)^2+\frac{i(i+1)}{2})$
+
+Non solo, ma di questo 32%, solo una piccola parte ha senso. Cioè, quei deck al di fuori della coppia di regioni quello che vogliamo controllare sono i casi che possono essere "bridge" between regions as Mistwratih.
+
+Se devono essere "bridge" ci deve essere un collegamento tra le regioni e quindi deck in una delle due regioni diventa irrelevante, e quindi ha senso guardare solo deck che sono "Quasi-Alligiance"
+
+> Esempio, possono essere dei dati Mistwraith the usano più carte PnZ e quindi anche se la strategia è simile, è forse più corretto considerare il deck come un sub-archetipo (?)
+
+Quindi non farò tutti i confronti compresi DE/SH with DE/BW? No, non proprio. Questo confronto si farà solo tra deck DE/SH e DE/BW che sono "quasi-alligiance" e DE è ponte tra gli archetipi, quindi solo quei deck con qualcosa come 35 carte DE
+
+Quali problemi ci sono con questa assunzione? Che si presume che deck con troppe carte di un archetipo ad un certo punto il deck diventa "specifico" di regione
+
+What if we have a Draven/Ez that use even more PnZ cards than usual? Yes, it should still works as Draven/Ez but for now it would most likely differentiate. E se avessimo per esempio un AzIrelia quasi "Alligiance"?
+
 ```{r create-example}
 # load DeckDT
 #'###########
