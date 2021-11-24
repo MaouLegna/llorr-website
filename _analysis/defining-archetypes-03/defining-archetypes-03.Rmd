@@ -91,13 +91,31 @@ Nello specifico, se tutte le regioni tra due deck differiscono tra di loro la si
 
 There are sadly exception to this property: when we deal with dual region cards we can have non overlapping "factions" but still common cards
 
-Example: a BC/NX deck and a DE/IO deck both sharing Poppy
+> Example: a BandleCity/Noxus (BC/NX) deck and a Demacia/Ionia (DE/IO) deck both sharing "Poppy" as a card
+
+> BandleCity Ruined more than the Ruination
+
+Per ora le considerazioni andranno ad ignorare la questione DualRegion perché andrebbe ad aggiungere un grado di complessità non indifferente per quella che sarebbe per ora una correzzione minimale.
+
+## Cosa sappiamo delle "Zone"?
+
+### The Shuriman Desert is Sparse
+
+Assumiamo non ci sia il problema delle carte DualRegion, cosa sappiamo della struttura della matrice di similarità e della sua struttura?
+
+Possiamo considerare che esistono 55 combinazini uniche di scelte di regioni (45 Doppia Regione e 10 MonoRegione)
+
+Di per se esistono quindi `r 55^2` possibili sotto-matrici di confronti tra regioni, ma siccome la matrice è simmetrica "solo" 1540 casi sono da valutare.
+
+A questo punto entra in gioco la questione regioni in comune
 
 ```{r create-example}
 # load DeckDT
 #'###########
-# LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
-# 
+LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+
+ 
 # set.seed(123)
 # Archetype3 <- LoR.Deck.RMD |>
 #   group_by(factions) |>
@@ -120,6 +138,27 @@ Example: a BC/NX deck and a DE/IO deck both sharing Poppy
 # fwrite(Archetype3.100,"./data/example_archetye_03_100.csv")
 # fwrite(as.matrix(cos.dsim.arch3.100),"./data/example_cosDist_03_100.csv")
 ```
+
+
+```{r}
+#' region to find the percentage all cases of "interceptions" between elements like factions. For example BC/NX does correlate with all BC and all NX cases
+regionComboInterception <- function(n) {
+  # n = 10
+  dim <- n*(n+1)/2
+  total = 0
+  for ( i in 1:n ) {
+    p1 <- i*(i+1)/2
+    p2 <- (i-1)^2
+    total <- total + p1 + p2
+  }
+  total/(dim*(dim+1)/2)
+}
+  
+tibble( region = 1:10,
+        coverage = map_dbl(1:10, ~regionComboInterception(.x)) ) |>
+  gt()
+```
+
 
 
 ```{r raw-data}
@@ -154,6 +193,7 @@ This doesn't seems too bad, but there are factors to consider:
 
 To this we have to add 
 
+The first thing to do in any cluster analysis that we actually forgot to even do the most basic step and it is to display the distance matrix
 
 ```{r fig.width=12, fig.height=8}
 # library("factoextra")
@@ -256,36 +296,4 @@ levelplot(z ~ x * y, grid, col.regions = topo.colors(10),
 ```
 
 
-
-
-# Introduction
-
-
-
-## The Shuriman Desert is Sparse
-
-The first thing to do in any cluster analysis that we actually forgot to even do the most basic step and it is to display the distance matrix
-
-## Sparse Regions
-
-```{r}
-#' region to find the percentage all cases of "interceptions" between elements like factions. For example BC/NX does correlate with all BC and all NX cases
-regionComboInterception <- function(n) {
-  # n = 10
-  dim <- n*(n+1)/2
-  total = 0
-  for ( i in 1:n ) {
-    p1 <- i*(i+1)/2
-    p2 <- (i-1)^2
-    total <- total + p1 + p2
-  }
-  total/(dim*(dim+1)/2)
-}
-  
-# map_dbl(1:10, ~regionComboInterception(.x))
-
-
-
-  
-```
 
