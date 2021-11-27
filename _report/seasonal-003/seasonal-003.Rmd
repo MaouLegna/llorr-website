@@ -1143,7 +1143,7 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region") |>
 ### Plot {.panel-name}
 
 ```{r plot-Region, fig.width=12,fig.height=8}
-RegionByRegion <- Region.Freq |>
+Region.Freq |>
   ggplot(aes(x = reorder(region, freq), y = freq)) +
   geom_bar(stat="identity") +
   geom_bar_pattern(
@@ -1178,8 +1178,8 @@ RegionByRegion <- Region.Freq |>
                      labels = scales::percent_format(accuracy = 1) ) +
   guides(fill = "none") +
   #' Adding the text of the frequencies
-  geom_text(aes(label = Region.Freq$sxLabel_card), hjust = 2.5, size = 5,position = position_dodge(width = 1)) +
-  geom_text(aes(label = Region.Freq$dxLabel_card), hjust = -0.5, size = 5,position = position_dodge(width = 1)) +
+  geom_text(aes(label = sxLabel_card), hjust = 2.5, size = 5,position = position_dodge(width = 1)) +
+  geom_text(aes(label = dxLabel_card), hjust = -0.5, size = 5,position = position_dodge(width = 1)) +
   theme_539() +
   theme(
     legend.position = "none",
@@ -1195,8 +1195,6 @@ RegionByRegion <- Region.Freq |>
                                       Source: Metadata of games collected with RiotGames API"))
     )
 
-RegionByRegion
-
 ggsave(glue::glue("./images/seasonal/{params$ind}-RegionPR.png"), width = 12, height = 8)
 ```
 
@@ -1207,326 +1205,324 @@ The Gini Index is a measure of heterogeneity so, in this case and in simpler ter
 ### Table {.panel-name}
 
 ```{r print-tableFreq-gt}
-# Region.Freq.tbl <- Region.Freq |>
-#   mutate( server = factor(server, levels = c("asia","europe","americas")) ) |>
-#   select(region,freq,americas,asia,europe) |>
-#   arrange(desc(freq)) |>
-#   gt() |>
-#   tab_header(
-#     title = "Region Play Rate",
-#     subtitle = "Relative Frequencies by Inclusion Rate of a Region"
-#   ) |>
-#   tab_spanner(
-#     label = "Shard",
-#     columns = c(americas, asia, europe)
-#   ) |>
-#   fmt_percent(
-#     columns = c(2:5),
-#     decimals = 2
-#   ) |>
-#   cols_label(
-#     region   = md("**Region**"),
-#     freq     = md("**Freq**"),
-#     americas = md("**America**"),
-#     asia     = md("**Asia**"),
-#     europe   = md("**Europe**")
-#   ) |>
-#   tab_source_note(
-#     source_note = glue::glue("Source: Source: Metadata of games collected with RiotGames API")
-#     ) |>
-#   gtExtras::gt_theme_538() |>
-#   tab_options(
-#    table.background.color = "whitesmoke",
-#    table.font.color = "black",
-#    table.font.color.light = "black"
-#   )
-# 
-# Region.Freq.tbl
+Region.Freq.tbl <- Region.Freq |>
+  # mutate( server = factor(server, levels = c("asia","europe","americas")) ) |>
+  select( region,freq,contains("asia"),contains("europe"),contains("americas")) |>
+  # rename_all(str_to_title) |>
+  arrange(desc(freq)) |>
+  gt() |>
+  tab_header(
+    title = "Region Play Rate",
+    subtitle = "Relative Frequencies by Inclusion Rate of a Region"
+  ) |>
+  tab_spanner(
+    label = "Shard",
+    columns = c(contains("asia"),contains("europe"),contains("americas"))
+  ) |>
+  fmt_percent(
+    columns = -1,
+    decimals = 2
+  ) |>
+  # cols_label(
+  #   region   = md("**Region**"),
+  #   freq     = md("**Freq**"),
+  #   americas = md("**America**"),
+  #   asia     = md("**Asia**"),
+  #   europe   = md("**Europe**")
+  # ) |>
+  tab_source_note(
+    source_note = glue::glue("Source: Source: Metadata of games collected with RiotGames API")
+    ) |>
+  gtExtras::gt_theme_538() |>
+  tab_options(
+   table.background.color = "whitesmoke",
+   table.font.color = "black",
+   table.font.color.light = "black"
+  )
+
+Region.Freq.tbl
 ```
 :::
 :::::
 :::
 
-<!-- # Top Player(?) Champions of Choice -->
+# Top Player(?) Champions of Choice
 
-<!-- This section is done before the release of the official top32 list from Riot. -->
+This section is done before the release of the official top32 list from Riot.
 
-<!-- - For the *Asia shard* it displays those who reached at least 7 matches wins (not counting bye) -->
+- For the *all Shards - Asia,Europe and America* it displays those who reached at least 7 matches wins (not counting bye)
 
-<!-- - For the *America and Europe shard* it displays those who reached at least 8 matches wins (not counting bye) -->
+When partial results are being published, it's not limited to the top32 but the current highest performing players collected at that point. As there are "Bye" that I can't track the final results will never be perfect. [^3]
 
-<!-- When partial results are being published, it's not limited to the top32 but the current highest performing players collected at that point. As there are "Bye" that I can't track the final results will never be perfect. [^3] -->
+[^3]: Pls Rito add a method to let us know of this kind of tournaments data.
 
-<!-- [^3]: Pls Rito add a method to let us know of this kind of tournaments data. -->
+```{r compute-top-32-data}
+# Data from those who reached the highest amoutn of Match Win
+top32tbl <- Game.Result.all |>
+  select(playerID,cumMatchWin,server) |>
+  group_by(server) |>
+  filter( cumMatchWin >= 7 ) |>
+  filter( !is.na(playerID) ) |>
+  # filter( (server == "asia" & cumMatchWin >= 7) | (server != "asia" & cumMatchWin >= 8) ) |>
+  # slice_max(cumMatchWin, n = 3,with_ties = T) |>
+  left_join( LoR.Account.RMD[,c("gameName","RiotID")],
+             by=c("playerID"="RiotID")
+  ) |>
+  arrange(server,desc(cumMatchWin)) |>
+  distinct(gameName,.keep_all = T) |>
+  left_join(LineUp.DT,by=c("playerID","server") )
 
-<!-- ```{r compute-top-32-data} -->
-<!-- # Data from those who reached the highest amoutn of Match Win -->
-<!-- top32tbl <- Game.Result.all |> -->
-<!--   select(playerID,cumMatchWin,server) |> -->
-<!--   group_by(server) |> -->
-<!--   filter( (server == "asia" & cumMatchWin >= 7) | (server != "asia" & cumMatchWin >= 8) ) |> -->
-<!--   # slice_max(cumMatchWin, n = 3,with_ties = T) |> -->
-<!--   left_join( LoR.Account.RMD[,c("gameName","RiotID")], -->
-<!--              by=c("playerID"="RiotID") -->
-<!--   ) |> -->
-<!--   arrange(server,desc(cumMatchWin)) |> -->
-<!--   distinct(gameName,.keep_all = T) |> -->
-<!--   left_join(LineUp.DT,by=c("playerID","server") ) -->
+# count the number of times a champion is present in a deck
+# grouped by region
+#'#########
+top32tbl.CC <- top32tbl |>
+  pivot_longer(
+    cols = contains("code_"),values_to = "deck_code") |>
+  select(server,deck_code) |>
+  # for partial results
+  filter( !is.na(deck_code) ) |>
+  mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) |>
+  separate_rows(CC,sep = "/") |>
+  group_by(server) |>
+  count(CC) |>
+  ungroup() |>
+  arrange(desc(n),CC) |>
+  rename("name"="CC")
+```
 
+::: l-page
+::::: {.panelset}
 
-<!-- # count the number of times a champion is present in a deck -->
-<!-- # grouped by region -->
-<!-- #'######### -->
-<!-- top32tbl.CC <- top32tbl |> -->
-<!--   pivot_longer( -->
-<!--     cols = contains("code_"),values_to = "deck_code") |> -->
-<!--   select(server,deck_code) |> -->
-<!--   # for partial results -->
-<!--   filter( !is.na(deck_code) ) |> -->
-<!--   mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) |> -->
-<!--   separate_rows(CC,sep = "/") |> -->
-<!--   group_by(server) |> -->
-<!--   count(CC) |> -->
-<!--   ungroup() |> -->
-<!--   arrange(desc(n),CC) |> -->
-<!--   rename("name"="CC") -->
-<!-- ``` -->
+::: {.panel}
+### ASIA {.panel-name}
 
-<!-- ::: l-page -->
-<!-- ::::: {.panelset} -->
+```{r create-top32-ASIA, fig.height=8, fig.width=12}
+#' flextable for the champions which were used a single time
+ft.top32tbl.CC.ASIA <- top32tbl.CC |>
+  filter(server == "asia")  |>
+  filter(n %in% 1:2) |>
+  select(-server) |>
+  rename_all(~c("Champion","N")) |>
+  flextable::flextable() |>
+  flextable::as_raster()
 
-<!-- ::: {.panel} -->
-<!-- ### ASIA {.panel-name} -->
+#' base plot
+ggtop32.ASIA <- top32tbl.CC  |>
+  filter(server=="asia") |>
+  filter(n > 2) |>
+  left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |>
+  mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
+  mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |>
+  left_join( data_regions, by = c("regionRef") ) |>
+  ggplot(aes(reorder(name, n),n,fill=regionRef)) +
+  geom_bar(position="dodge",stat = "identity", color = "black") +
+  scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="asia",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.1,inherit.aes = FALSE) +
+  coord_flip() +
+  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
+  theme_539() +
+  labs( x = "Champion",
+        y = "#Decks",
+        title = "Champions' Play Rate - ASIA",
+        subtitle = "Champions presence based by the number of decks that included them / playrate",
+        caption = element_text(
+          glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='asia',N]}
+                     The top players are selected from those with at least 7 matches won, not counting bye
+                     The list doesn't include all top32 so obtained without Riot official data
+                     Source: Source: Metadata of games collected with RiotGames API" )
+          )) +
+  theme(
+    legend.position = "none",
+    axis.text = element_text(face = "bold", color = "grey50"),
+    panel.grid.major.y = element_blank()
+  )
 
-<!-- ```{r create-top32-ASIA, fig.height=8, fig.width=12} -->
-<!-- #' flextable for the champions which were used a single time -->
-<!-- ft.top32tbl.CC.ASIA <- top32tbl.CC |> -->
-<!--   filter(server == "asia")  |> -->
-<!--   filter(n %in% 1:2) |> -->
-<!--   select(-server) |> -->
-<!--   rename_all(~c("Champion","N")) |> -->
-<!--   flextable::flextable() |> -->
-<!--   flextable::as_raster() -->
+#' unite the plot and table
+cowplot::plot_grid(
+  ggtop32.ASIA,
+  ggplot() +
+    theme_539() +
+    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
 
-<!-- #' base plot -->
-<!-- ggtop32.ASIA <- top32tbl.CC  |> -->
-<!--   filter(server=="asia") |> -->
-<!--   filter(n > 2) |> -->
-<!--   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |> -->
+ggsave(glue::glue("./images/seasonal/{params$ind}-champ-top-Asia.png"),width = 12,height = 8)
+```
+:::
 
-<!--   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |> -->
-<!--   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |> -->
-<!--   left_join( data_regions, by = c("regionRef") ) |> -->
+::: {.panel}
+### EU {.panel-name}
 
-<!--   ggplot(aes(reorder(name, n),n,fill=regionRef)) + -->
-<!--   geom_bar(position="dodge",stat = "identity", color = "black") + -->
-<!--   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="asia",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) + -->
-<!--   ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.05,inherit.aes = FALSE) + -->
-<!--   coord_flip() + -->
-<!--   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) + -->
-<!--   theme_539() + -->
-<!--   labs( x = "Champion", -->
-<!--         y = "#Decks", -->
-<!--         title = "Champions' Play Rate - ASIA", -->
-<!--         subtitle = "Champions presence based by the number of decks that included them / playrate", -->
-<!--         caption = element_text( -->
-<!--           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='asia',N]} -->
-<!--                      The top players are selected from those with at least 7 matches won, not counting bye -->
-<!--                      The list doesn't include all top32 so obtained without Riot official data -->
-<!--                      Source: Source: Metadata of games collected with RiotGames API" ) -->
-<!--           )) + -->
-<!--   theme( -->
-<!--     legend.position = "none", -->
-<!--     axis.text = element_text(face = "bold", color = "grey50"), -->
-<!--     panel.grid.major.y = element_blank() -->
-<!--   ) -->
+```{r plot-top32-EU}
+#' flextable for the champions which were used a single time
+# ft.top32tbl.CC.EU <- top32tbl.CC |>
+#   filter(server == "europe")  |>
+#   filter(n %in% 1:2) |>
+#   select(-server) |>
+#   rename_all(~c("Champion","N")) |>
+#   flextable::flextable() |>
+#   flextable::as_raster()
+# 
+# #' base plot
+# ggtop32.EU <- top32tbl.CC  |>
+#   filter(server=="europe") |>
+#   filter(n > 2) |>
+#   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |>
+#   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
+#   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |>
+#   left_join( data_regions, by = c("regionRef") ) |>
+#   ggplot(aes(reorder(name, n),n,fill=regionRef)) +
+#   geom_bar(position="dodge",stat = "identity", color = "black") +
+#   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="europe",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
+#   ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.1,inherit.aes = FALSE) +
+#   coord_flip() +
+#   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
+#   theme_539() +
+#   labs( x = "Champion",
+#         y = "#Decks",
+#         title = "Champions' Play Rate - EU",
+#         subtitle = "Champions presence based by the number of decks that included them / playrate",
+#         caption = element_text(
+#           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]}
+#                      The top players are selected from those with at least 8 matches won, not counting bye
+#                      The list doesn't include all top32 so obtained without Riot official data
+#                      Source: Source: Metadata of games collected with RiotGames API" )
+#           )) +
+#   theme(
+#     legend.position = "none",
+#     axis.text = element_text(face = "bold", color = "grey50"),
+#     panel.grid.major.y = element_blank()
+#   )
+# 
+# if (exists("ggtop32.EU"))
+# 
+# #' unite the plot and table
+# cowplot::plot_grid(ggtop32.EU, ggplot() +
+#                      theme_void() +
+#                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
+# 
+# ggsave(glue::glue("./images/seasonal/{params$ind}-champ-top-EU.png"),width = 12,height = 8)
+```
+:::
 
-<!-- #' unite the plot and table -->
-<!-- cowplot::plot_grid( -->
-<!--   ggtop32.ASIA, -->
-<!--   ggplot() + -->
-<!--     theme_539() + -->
-<!--     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.ASIA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) ) -->
+::: {.panel}
+### NA {.panel-name}
 
-<!-- ggsave(glue::glue("./images/seasonal/{params$ind}-champ-top-Asia.png")) -->
-<!-- ``` -->
-<!-- ::: -->
+```{r plot-top32-NA}
+# ft.top32tbl.CC.EU <- top32tbl.CC |>
+#   filter(server == "americas")  |>
+#   filter(n %in% 1:2) |>
+#   select(-server) |>
+#   rename_all(~c("Champion","N")) |>
+#   flextable::flextable() |>
+#   flextable::as_raster()
+# 
+# #' base plot
+# ggtop32.NA <- top32tbl.CC  |>
+#   filter(server=="americas") |>
+#   filter(n > 2) |>
+#   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |>
+# 
+#   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
+#   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |>
+#   left_join( data_regions, by = c("regionRef") ) |>
+# 
+#   ggplot(aes(reorder(name, n),n,fill=regionRef)) +
+#   geom_bar(position="dodge",stat = "identity", color = "black") +
+#   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="americas",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
+#   ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.0750,inherit.aes = FALSE) +
+#   coord_flip() +
+#   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
+#   theme_539() +
+#   labs( x = "Champion",
+#         y = "#Decks",
+#         title = "Champions' Play Rate - NA",
+#         subtitle = "Champions presence based by the number of decks that included them / playrate",
+#         caption = element_text(
+#           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='americas',N]}
+#                      The top players are selected from those with at least 8 matches won, not counting bye
+#                      The list doesn't include all top32 so obtained without Riot official data
+#                      Source: Source: Metadata of games collected with RiotGames API" )
+#           )) +
+#   theme(
+#     legend.position = "none",
+#     axis.text = element_text(face = "bold", color = "grey50"),
+#     panel.grid.major.y = element_blank()
+#   )
+# 
+# #' unite the plot and table
+# cowplot::plot_grid(ggtop32.NA, ggplot() +
+#                      theme_void() +
+#                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
+# 
+# ggsave(glue::glue("./images/seasonal/{params$ind}-champ-top-NA.png"))
+```
+:::
 
-<!-- ::: {.panel} -->
-<!-- ### EU {.panel-name} -->
+::: {.panel}
+### Table - All Server & Deckcodes {.panel-name}
 
-<!-- ```{r plot-top32-EU} -->
-<!-- #' flextable for the champions which were used a single time -->
-<!-- ft.top32tbl.CC.EU <- top32tbl.CC |> -->
-<!--   filter(server == "europe")  |> -->
-<!--   filter(n %in% 1:2) |> -->
-<!--   select(-server) |> -->
-<!--   rename_all(~c("Champion","N")) |> -->
-<!--   flextable::flextable() |> -->
-<!--   flextable::as_raster() -->
+Remember that as I can't collect "bye" the true top list may differ buy a lot.
 
-<!-- #' base plot -->
-<!-- ggtop32.EU <- top32tbl.CC  |> -->
-<!--   filter(server=="europe") |> -->
-<!--   filter(n > 2) |> -->
-<!--   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |> -->
+```{r react-top32}
+react.LU.top32 <- top32tbl |>
+  # filter( server == "asia" ) |>
+  select(gameName,cumMatchWin,LU,contains("deck_"),contains("code_") ) |>
+  pivot_longer(
+    cols = c(contains("deck_"),contains("code_")),
+    names_to=c(".value", "index"),
+    names_sep = "_") |>
+  relocate(LU,.after = code) |>
+  select(-index) |>
+  reactable(
+    theme = reactablefmtr::fivethirtyeight(),
+    groupBy = c("server","cumMatchWin","gameName"),
+    bordered = TRUE,
+    highlight = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 10,
+    defaultSorted = c("cumMatchWin"),
+    defaultSortOrder = "desc",
+    defaultColDef = colDef(
+      style = list(fontWeight = 500, color = "black",
+                   fontFamily = "Helvetica", fontSize = "12px"),
+      align = "left",
+      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+      ),
+    columns = list(
+      LU = colDef( show = F ),
+      deck = colDef(name = "Deck",minWidth = 200 ),
+      code = colDef( show = F ),
+      # code = colDef(name = "DeckCode", cell = function(value, index) {
+      #   # Render as a link
+      #   if (!is.na(value) ) {
+      #     url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
+      #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
+      #   } } ,minWidth = 600, style = list(fontSize = "9px") ),
+      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
+      ),
+    rowStyle = JS("function(rowInfo) {
+                  if (rowInfo.level > 0) {
+                  return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
+                  } else {
+                  return { borderLeft: '2px solid whitesmoke' }
+                  }
+                  }"),
+    defaultExpanded = T
+    ) |>
+  reactablefmtr::add_title("Top Players' Deckcodes", background_color = "whitesmoke", font_family = "Helvetica") |>
+  reactablefmtr::add_subtitle(params$description, background_color = "whitesmoke", font_family = "Roboto") |>
+  reactablefmtr::add_source(glue::glue("Source: Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo")
 
-<!--   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |> -->
-<!--   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |> -->
-<!--   left_join( data_regions, by = c("regionRef") ) |> -->
+react.LU.top32 |>
+  reactablefmtr::save_reactable(glue::glue("./images/seasonal/{params$ind}-top32.png"))
 
-<!--   ggplot(aes(reorder(name, n),n,fill=regionRef)) + -->
-<!--   geom_bar(position="dodge",stat = "identity", color = "black") + -->
-<!--   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="europe",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) + -->
-<!--   ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.050,inherit.aes = FALSE) + -->
-<!--   coord_flip() + -->
-<!--   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) + -->
-<!--   theme_539() + -->
-<!--   labs( x = "Champion", -->
-<!--         y = "#Decks", -->
-<!--         title = "Champions' Play Rate - EU", -->
-<!--         subtitle = "Champions presence based by the number of decks that included them / playrate", -->
-<!--         caption = element_text( -->
-<!--           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]} -->
-<!--                      The top players are selected from those with at least 8 matches won, not counting bye -->
-<!--                      The list doesn't include all top32 so obtained without Riot official data -->
-<!--                      Source: Source: Metadata of games collected with RiotGames API" ) -->
-<!--           )) + -->
-<!--   theme( -->
-<!--     legend.position = "none", -->
-<!--     axis.text = element_text(face = "bold", color = "grey50"), -->
-<!--     panel.grid.major.y = element_blank() -->
-<!--   ) -->
+react.LU.top32
+```
+:::
+:::::
 
-<!-- #' unite the plot and table -->
-<!-- cowplot::plot_grid(ggtop32.EU, ggplot() + -->
-<!--                      theme_void() + -->
-<!--                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) ) -->
-
-<!-- ggsave(glue::glue("./images/seasonal/{params$ind}-champ-top-EU.png")) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.panel} -->
-<!-- ### NA {.panel-name} -->
-
-<!-- ```{r plot-top32-NA} -->
-<!-- ft.top32tbl.CC.EU <- top32tbl.CC |> -->
-<!--   filter(server == "americas")  |> -->
-<!--   filter(n %in% 1:2) |> -->
-<!--   select(-server) |> -->
-<!--   rename_all(~c("Champion","N")) |> -->
-<!--   flextable::flextable() |> -->
-<!--   flextable::as_raster() -->
-
-<!-- #' base plot -->
-<!-- ggtop32.NA <- top32tbl.CC  |> -->
-<!--   filter(server=="americas") |> -->
-<!--   filter(n > 2) |> -->
-<!--   left_join(LoR.Set|>select(name,regionRef),by=c("name") ) |> -->
-
-<!--   mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |> -->
-<!--   mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |> -->
-<!--   left_join( data_regions, by = c("regionRef") ) |> -->
-
-<!--   ggplot(aes(reorder(name, n),n,fill=regionRef)) + -->
-<!--   geom_bar(position="dodge",stat = "identity", color = "black") + -->
-<!--   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="americas",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) + -->
-<!--   ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.0750,inherit.aes = FALSE) + -->
-<!--   coord_flip() + -->
-<!--   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) + -->
-<!--   theme_539() + -->
-<!--   labs( x = "Champion", -->
-<!--         y = "#Decks", -->
-<!--         title = "Champions' Play Rate - NA", -->
-<!--         subtitle = "Champions presence based by the number of decks that included them / playrate", -->
-<!--         caption = element_text( -->
-<!--           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='americas',N]} -->
-<!--                      The top players are selected from those with at least 8 matches won, not counting bye -->
-<!--                      The list doesn't include all top32 so obtained without Riot official data -->
-<!--                      Source: Source: Metadata of games collected with RiotGames API" ) -->
-<!--           )) + -->
-<!--   theme( -->
-<!--     legend.position = "none", -->
-<!--     axis.text = element_text(face = "bold", color = "grey50"), -->
-<!--     panel.grid.major.y = element_blank() -->
-<!--   ) -->
-
-<!-- #' unite the plot and table -->
-<!-- cowplot::plot_grid(ggtop32.NA, ggplot() + -->
-<!--                      theme_void() + -->
-<!--                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) ) -->
-
-<!-- ggsave(glue::glue("./images/seasonal/{params$ind}-champ-top-NA.png")) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.panel} -->
-<!-- ### Table - All Server & Deckcodes {.panel-name} -->
-
-<!-- Remember that as I can't collect "bye" the true top list may differ buy a lot. -->
-
-<!-- ```{r react-top32} -->
-<!-- react.LU.top32 <- top32tbl |> -->
-<!--   # filter( server == "asia" ) |> -->
-<!--   select(gameName,cumMatchWin,LU,contains("deck_"),contains("code_") ) |> -->
-<!--   pivot_longer( -->
-<!--     cols = c(contains("deck_"),contains("code_")), -->
-<!--     names_to=c(".value", "index"), -->
-<!--     names_sep = "_") |> -->
-<!--   relocate(LU,.after = code) |> -->
-<!--   select(-index) |> -->
-<!--   reactable( -->
-<!--     theme = reactablefmtr::fivethirtyeight(), -->
-<!--     groupBy = c("server","cumMatchWin","gameName"), -->
-<!--     bordered = TRUE, -->
-<!--     highlight = TRUE, -->
-<!--     searchable = TRUE, -->
-<!--     compact = TRUE, # compact the table -->
-<!--     # fullWidth = FALSE, # don't fill the page -->
-<!--     defaultPageSize = 10, -->
-<!--     defaultSorted = c("cumMatchWin"), -->
-<!--     defaultSortOrder = "desc", -->
-<!--     defaultColDef = colDef( -->
-<!--       style = list(fontWeight = 500, color = "black", -->
-<!--                    fontFamily = "Helvetica", fontSize = "12px"), -->
-<!--       align = "left", -->
-<!--       headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" ) -->
-<!--       ), -->
-<!--     columns = list( -->
-<!--       LU = colDef( show = F ), -->
-<!--       deck = colDef(name = "Deck",minWidth = 200 ), -->
-<!--       # code = colDef( show = F ), -->
-<!--       code = colDef(name = "DeckCode", cell = function(value, index) { -->
-<!--         # Render as a link -->
-<!--         if (!is.na(value) ) { -->
-<!--           url <- glue::glue("{urlruneterraAR}{urldeck}{value}") -->
-<!--           htmltools::tags$a(href = url, target = "_blank", as.character(value)) -->
-<!--         } } ,minWidth = 600, style = list(fontSize = "9px") ), -->
-<!--       cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc") -->
-<!--       ), -->
-<!--     rowStyle = JS("function(rowInfo) { -->
-<!--                   if (rowInfo.level > 0) { -->
-<!--                   return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' } -->
-<!--                   } else { -->
-<!--                   return { borderLeft: '2px solid whitesmoke' } -->
-<!--                   } -->
-<!--                   }"), -->
-<!--     defaultExpanded = T -->
-<!--     ) |> -->
-<!--   reactablefmtr::add_title("Top Players' Deckcodes", background_color = "whitesmoke", font_family = "Helvetica") |> -->
-<!--   reactablefmtr::add_subtitle(params$description, background_color = "whitesmoke", font_family = "Roboto") |> -->
-<!--   reactablefmtr::add_source(glue::glue("Source: Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo") -->
-
-<!-- react.LU.top32 |> -->
-<!--   reactablefmtr::save_reactable(glue::glue("./images/seasonal/{params$ind}-top32.png")) -->
-
-<!-- react.LU.top32 -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- ::::: -->
-
-<!-- ::: -->
+:::
 
 ------------------------------------------------------------------------
 
