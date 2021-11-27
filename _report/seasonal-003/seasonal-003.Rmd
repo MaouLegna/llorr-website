@@ -342,6 +342,8 @@ gtSeasonal <- nSeasonal |>
    )
 
 gtsave(gtSeasonal,glue::glue("./images/seasonal/{params$ind}-coverage-player.png") ) |> invisible()
+
+gtSeasonal
 ```
 
 ```{r compute-games-asia}
@@ -710,45 +712,6 @@ gtsave(gtLMI,glue::glue("./images/seasonal/{params$ind}-LMI-table-v2.png") ) |> 
 ::::: {.panelset}
 
 ::: {.panel}
-### Missing Games {.panel-name}
-
-The following data is related to the the number of games missing to recreate a match.So when I could only collect either a win or a loss or both a win and a loss but not the remaining game. **It is not** the total number of missing games as it doesn't account for the cases where I lack all games but that value can't be known as it's impossible to know whenever the round was played or not.
-
-During the partial results is the graph is lacking I recovered all games I could up until that moment.
-
-```{r plot-missing-match-games, fig.cap="Uncomplete Matches Distribution", fig.subcap="Absolute frequencies"}
-if ( 
-  Game.Result.all |>
-    filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |>
-  count() > 0
-  ) {
-
-Game.Result.all |>
-  filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |> # | is.na(result)
-  # group_by(server) |>
-  tabyl(round,server) |>
-  pivot_longer(cols = -round,
-               names_to = "server"
-               ) |>
-  mutate(round = factor(round)) |>
-  mutate( server = str_to_title(server) ) |>
-  # rename_all(~str_to_title(.)) |>
-  ggplot(aes(round,value,fill=server)) +
-    geom_bar(position="dodge",stat = "identity") +
-    labs(x = "Round",
-         y = "#Games",
-         title = "Incomplete-Match Distribution by Round",
-         subtitle = "number of games missing for the complete information of a match by server",
-         caption = element_text(glue::glue("{params$description}
-                                           The number refer to the number of games missing to recreate a match so when I could only collect either a win or a loss or both a win and a loss but not the remaining game") )) +
-  theme_539() +
-    scale_y_continuous(breaks = seq(0,1000,2))
-  
-}
-```
-:::
-
-::: {.panel}
 ### Matches Coverage {.panel-name}
 
 ```{r}
@@ -792,6 +755,46 @@ gtsave(gtMatch, glue::glue("./images/seasonal/{params$ind}-coverage-match.png") 
 gtMatch
 ```
 :::
+
+::: {.panel}
+### Missing Games {.panel-name}
+
+The following data is related to the the number of games missing to recreate a match.So when I could only collect either a win or a loss or both a win and a loss but not the remaining game. **It is not** the total number of missing games as it doesn't account for the cases where I lack all games but that value can't be known as it's impossible to know whenever the round was played or not.
+
+During the partial results is the graph is lacking I recovered all games I could up until that moment.
+
+```{r plot-missing-match-games, fig.cap="Uncomplete Matches Distribution", fig.subcap="Absolute frequencies"}
+if ( 
+  Game.Result.all |>
+    filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |>
+  count() > 0
+  ) {
+
+Game.Result.all |>
+  filter( result %in% c("win","loss" ) | result %in% c("win,loss","loss,win" ) ) |> # | is.na(result)
+  # group_by(server) |>
+  tabyl(round,server) |>
+  pivot_longer(cols = -round,
+               names_to = "server"
+               ) |>
+  mutate(round = factor(round)) |>
+  mutate( server = str_to_title(server) ) |>
+  # rename_all(~str_to_title(.)) |>
+  ggplot(aes(round,value,fill=server)) +
+    geom_bar(position="dodge",stat = "identity") +
+    labs(x = "Round",
+         y = "#Games",
+         title = "Incomplete-Match Distribution by Round",
+         subtitle = "number of games missing for the complete information of a match by server",
+         caption = element_text(glue::glue("{params$description}
+                                           The number refer to the number of games missing to recreate a match so when I could only collect either a win or a loss or both a win and a loss but not the remaining game") )) +
+  theme_539() +
+    scale_y_continuous(breaks = seq(0,1000,2))
+  
+}
+```
+:::
+
 :::::
 :::
 
@@ -1181,7 +1184,7 @@ RegionByRegion <- Region.Freq |>
 
 RegionByRegion
 
-ggsave(glue::glue("./images/seasonal/{params$ind}-RegionPR.png"))
+ggsave(glue::glue("./images/seasonal/{params$ind}-RegionPR.png"), width = 12, height = 8)
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
