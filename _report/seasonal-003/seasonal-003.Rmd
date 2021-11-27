@@ -752,20 +752,20 @@ Game.Result.all |>
 ### Matches Coverage {.panel-name}
 
 ```{r}
-gtMatch <-Game.Result.all |>
+gtMatch <- Game.Result.all |>
   mutate( server = factor(server, levels = c("asia","europe","americas")) ) |>
   filter( !is.na(opponentID) ) |>
   select(round,server) |>
   gtsummary::tbl_summary(
     by = "server",
     statistic = list(all_categorical() ~ "{n}")
-    ) |>
+    ) |> # show_header_names() 
   modify_header(
     update = list(
       label ~ "",
-      stat_1 ~ "**America**",
-      stat_2 ~ "**Asia**",
-      stat_3 ~ "**Europe**"
+      stat_1 ~ "**Asia**",
+      stat_2 ~ "**Europe**",
+      stat_3 ~ "**America**"
     )
   ) |>
   as_gt() |>
