@@ -346,6 +346,19 @@ gtsave(gtSeasonal,glue::glue("./images/seasonal/{params$ind}-coverage-player.png
 gtSeasonal
 ```
 
+```{r}
+# LoR.Melt.Seasonal |>
+#   filter( server=="asia" ) |>
+#   # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+#   group_by( playerID,opponentID,server ) |>
+#   mutate(   timeBlock = min(game_start_time_utc) |> {\(x) as_datetime(x, tz="UTC")}() ) |>
+#   group_by(  playerID,opponentID,server,timeBlock ) |>
+#   arrange( timeBlock ) |>
+#   filter( timeBlock > as.POSIXct("2021-11-27 04:00:00",tz = "UTC") ) |>
+#   summarise( t = min(timeBlock) )
+```
+
+
 ```{r compute-games-asia}
 Game.Result.ASIA <- LoR.Melt.Seasonal |>
   filter( server=="asia" ) |>
@@ -355,21 +368,21 @@ Game.Result.ASIA <- LoR.Melt.Seasonal |>
   group_by(  playerID,opponentID,server,timeBlock ) |>
   arrange( timeBlock ) |>
   summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
-  arrange( playerID, timeBlock ) |>
+  arrange( playerID ) |>
   # Identify the round with the official schedule
   mutate( round = case_when(
     # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
     # JST = UTC - 9hrs
     timeBlock > with_tz(force_tz(timeBlock.1.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"Japan"),"UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan"),"UTC") ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan"),"UTC") ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan"),"UTC") ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan"),"UTC") ~ 5, # 16:15
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan"),"UTC")+minutes(145) ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan"),"UTC")+minutes(145) ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan"),"UTC")+minutes(145) ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan"),"UTC")+minutes(145) ~ 5, # 16:15
     
-    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan"),"UTC") ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan"),"UTC") ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan"),"UTC") ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan"),"UTC") ~ 9, # 21:00
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan"),"UTC")+minutes(145) ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan"),"UTC")+minutes(145) ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan"),"UTC")+minutes(145) & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan"),"UTC")+minutes(145) ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan"),"UTC")+minutes(145) ~ 9, # 21:00
     )
   ) |>
   # number of won games in the match
