@@ -838,23 +838,8 @@ Region.Freq.byCards.tbl
 Note: I know I have to add some aggregations especially for Bandle (sorry Dr.LoR)
 
 ```{r gt-archetype}
-tribble( 
-  ~Deck, ~Source,
-  "ASZ - Sivir Ionia", "Akshan/Sivir (IO/SH) or Sivir/Zed or Akshan/Sivir/Zed",
-  "RubinBait - <Champ>", "Burn Deck using <Champ> to bait mulligan",
-  "Dragons (DE/MT)", "(DE/MT) Decks with *at least* Shyvana and ASol",
-  "SunDisc", "Mono Shurima with 1+ Sun Disc"
-) |>
-  gt() |>
-  tab_header(
-    title = glue::glue("Archetype ~Fix")
-  ) |>
-  gtExtras::gt_theme_nytimes() |>
-  tab_options(
-    table.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   )
+source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
+gtfix
 ```
 
 ```{r process-tableChampion}

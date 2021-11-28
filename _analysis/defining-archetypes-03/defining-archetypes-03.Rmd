@@ -127,16 +127,6 @@ Quali problemi ci sono con questa assunzione? Che si presume che deck con troppe
 What if we have a Draven/Ez that use even more PnZ cards than usual? Yes, it should still works as Draven/Ez but for now it would most likely differentiate. E se avessimo per esempio un AzIrelia quasi "Alligiance"?
 
 ```{r create-example}
-LoR.Match.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-
-LoR.Match.RMD.old  <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_patch_2_04_to_17final.csv"), header = T, na.strings = c("", NA))
-
-patch_list <- rbind(
-LoR.Match.RMD |>
-  distinct(game_version),
-LoR.Match.RMD.old |>
-  distinct(game_version)
-)
 
 # load DeckDT
 #'###########
