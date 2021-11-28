@@ -182,9 +182,12 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   as.data.table()
 ```
 
-```{r}
-# LoR.Melt.Seasonal[ is.na(playerDeck), .N ]
-# LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
+```{r check-value}
+if (any(c(LoR.Melt.Seasonal[ is.na(playerID), .N ],
+          LoR.Melt.Matches.RMD[ is.na(playerID), .N ],
+          LoR.Melt.Seasonal[ is.na(playerDeck), .N ],
+          LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
+          ))!=0) paste("If you are seeing this message something is wrong and the code must be fixed")
 ```
 
 
@@ -393,6 +396,14 @@ Game.Result.ASIA <- LoR.Melt.Seasonal |>
   left_join(LineUp.DT,by=c("server","playerID")) |>
   mutate( ban = map2_chr(.x = listDeck, .y = ldeck, ~(setdiff(unlist(.x),unlist(.y) )) |> {\(x) ifelse(length(x)==1,x,NA)}() )  ) 
 ```
+
+```{r}
+# Game.Result.EU |>
+#   filter(cumMatchWin >= 8)
+# filter(str_detect(playerID,"Dudu") )
+# LoR.Melt.Seasonal[ is.na(playerID) ]
+```
+
 
 ```{r compute-games-europe}
 Game.Result.EU <- LoR.Melt.Seasonal |>
@@ -1264,9 +1275,9 @@ When partial results are being published, it's not limited to the top32 but the 
 top32tbl <- Game.Result.all |>
   select(playerID,cumMatchWin,server) |>
   group_by(server) |>
-  filter( cumMatchWin >= 7 ) |>
+  filter( (server == "asia" & cumMatchWin >= 6) | (server != "asia" & cumMatchWin >= 7) ) |>
+  # filter( cumMatchWin >= 7 ) |>
   filter( !is.na(playerID) ) |>
-  # filter( (server == "asia" & cumMatchWin >= 7) | (server != "asia" & cumMatchWin >= 8) ) |>
   # slice_max(cumMatchWin, n = 3,with_ties = T) |>
   left_join( LoR.Account.RMD[,c("gameName","RiotID")],
              by=c("playerID"="RiotID")
@@ -1320,7 +1331,7 @@ ggtop32.ASIA <- top32tbl.CC  |>
   ggplot(aes(reorder(name, n),n,fill=regionRef)) +
   geom_bar(position="dodge",stat = "identity", color = "black") +
   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="asia",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.1,inherit.aes = FALSE) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.05,inherit.aes = FALSE) +
   coord_flip() +
   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$regionRef  ) ) +
   theme_539() +
