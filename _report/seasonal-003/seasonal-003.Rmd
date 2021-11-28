@@ -1157,7 +1157,7 @@ Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region") |>
 ### Plot {.panel-name}
 
 ```{r plot-Region, fig.width=12,fig.height=8}
-Region.Freq |>
+Region.Freq.plot <- Region.Freq |>
   ggplot(aes(x = reorder(region, freq), y = freq)) +
   geom_bar(stat="identity") +
   geom_bar_pattern(
@@ -1207,9 +1207,11 @@ Region.Freq |>
     subtitle = "number of times a region is included in a deck",
     caption = element_text(glue::glue("{params$description}
                                       Source: Metadata of games collected with RiotGames API"))
-    )
+    ) |> suppressMessages()
 
-ggsave(glue::glue("./images/seasonal/{params$ind}-RegionPR.png"), width = 12, height = 8)
+ggsave(glue::glue("./images/seasonal/{params$ind}-RegionPR.png"),plot = Region.Freq.plot, width = 12, height = 8)
+
+Region.Freq.plot
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -1341,7 +1343,7 @@ ggtop32.ASIA <- top32tbl.CC  |>
         subtitle = "Champions presence based by the number of decks that included them / playrate",
         caption = element_text(
           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='asia',N]}
-                     The top players are selected from those with at least 7 matches won, not counting bye
+                     The top players are selected from those with at least 6 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      Source: Source: Metadata of games collected with RiotGames API" )
           )) +
@@ -1396,7 +1398,7 @@ ggtop32.EU <- top32tbl.CC  |>
         subtitle = "Champions presence based by the number of decks that included them / playrate",
         caption = element_text(
           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]}
-                     The top players are selected from those with at least 8 matches won, not counting bye
+                     The top players are selected from those with at least 7 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      Source: Source: Metadata of games collected with RiotGames API" )
           )) +
@@ -1452,7 +1454,7 @@ ggtop32.NA <- top32tbl.CC  |>
         subtitle = "Champions presence based by the number of decks that included them / playrate",
         caption = element_text(
           glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='americas',N]}
-                     The top players are selected from those with at least 8 matches won, not counting bye
+                     The top players are selected from those with at least 7 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      Source: Source: Metadata of games collected with RiotGames API" )
           )) +
