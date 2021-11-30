@@ -127,19 +127,19 @@ Quali problemi ci sono con questa assunzione? Che si presume che deck con troppe
 What if we have a Draven/Ez that use even more PnZ cards than usual? Yes, it should still works as Draven/Ez but for now it would most likely differentiate. E se avessimo per esempio un AzIrelia quasi "Alligiance"?
 
 ```{r create-example}
-
 # load DeckDT
 #'###########
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+# data.table::fwrite(example_archetye_03,"C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv")
+example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
+# data.table::fwrite(LoR.Deck.RMD[deck_code %in% example_archetye_03$deck_code,],"C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03_old.csv")
 
 # set.seed(123)
 # Archetype3 <- LoR.Deck.RMD |>
 #   group_by(factions) |>
 #   slice_sample( n = 300 )
 # fwrite(Archetype3,"./data/example_archetye_03.csv")
-
-saveRDS(DeckArchetype3,example_archetye_03) 
-
 
 # set.seed(123)
 # Archetype3.20 <- Archetype3 |>
@@ -156,8 +156,6 @@ saveRDS(DeckArchetype3,example_archetye_03)
 # cos.dsim.arch3.100 <- cos.dsimMatrix(Archetype3.100$deck_code)
 # fwrite(Archetype3.100,"./data/example_archetye_03_100.csv")
 # fwrite(as.matrix(cos.dsim.arch3.100),"./data/example_cosDist_03_100.csv")
-
-
 ```
 
 
@@ -186,6 +184,8 @@ tibble( region = 1:10,
 # Archetype3 <- fread("./data/example_archetye_03.csv")
 # Archetype3.20  <- fread("./data/example_archetye_03_20.csv")
 # Archetype3.100 <- fread("./data/example_archetye_03_100.csv")
+# fwrite(example_archetye_03[deck_code %in% Archetype3.20$deck_code],"./data/example_archetye_03_20.csv")
+# fwrite(example_archetye_03[deck_code %in% Archetype3.100$deck_code],"./data/example_archetye_03_100.csv")
 
 cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |>
   as.matrix() |> as.dist()
@@ -240,49 +240,26 @@ heatmap3::heatmap3(as.matrix(cos.dsim.arch3.20),useRaster=T,Rowv=NA,Colv=NA, col
 heatmap3::heatmap3(as.matrix(cos.dsim.arch3.100),useRaster=TRUE,Rowv=NA,Colv=NA, col=colorRampPalette(c("yellow","firebrick3"))(1024))
 ```
 
+# Divide and Conquer the archetypes
+
 ```{r}
-# factions <- LoR.Deck.RMD |>
-#   distinct(factions) |>
-#   arrange(factions) |>
-#   pull(factions) 
-# 
-# prova <- tibble(
-#   f1 = rep(factions, each = length(factions)),
-#   f2 = rep(factions, times = length(factions)),
-#   f3 = map2(.x=f1,.y=f2,~c(.x,.y)),
-#   # f3 = glue("{f1},{f2}")
-# )
-# 
-# prova$f3 <- lapply(prova$f3, function(x) sort(x) )
-# 
-# prova |>
-#   distinct(f3,.keep_all = T) |>
-#   mutate(
-#     f1 = map_chr(.x = f1, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
-#     f2 = map_chr(.x = f2, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) )
-#   ) |>
-#   separate(f1,sep = ",",into = c("f11","f12"))
+example_archetye_03 |>
+  group_by(factions) |>
+  summarise(n = n())
 ```
 
+
+## Heatmap3 code example
+
 ```{r fig.width=12, fig.height=8}
-# install.packages("heatmap3")
-
-
 nrowcol <- 1000
 dat <- matrix(ifelse(runif(nrowcol*nrowcol) > 0.5, 1, 0), nrow=nrowcol)
 
-
-
-heatmap3(dat,useRaster=TRUE,Rowv=NA,Colv=NA)
-
-heatmap3(matrix(rnorm(10),ncol=2),legendfun=function()
-plot(0,0,bty="n",xaxt="n",yaxt="n",type="n"))
-
-# install.packages("gplots")
-
-
-# heatmap.2(x=as.matrix(cos.dsim.arch3))
+heatmap3::heatmap3(dat,useRaster=TRUE,Rowv=NA,Colv=NA)
+heatmap3::heatmap3(matrix(rnorm(10),ncol=2),legendfun=function() plot(0,0,bty="n",xaxt="n",yaxt="n",type="n"))
 ```
+
+## Lattice code example
 
 ```{r fig.width=12, fig.height=8}
 # install.packages("lattice")
@@ -293,9 +270,6 @@ nrowcol <- 1000
 dat <- matrix(ifelse(runif(nrowcol*nrowcol) > 0.5, 1, 0), nrow=nrowcol)
 
 #Build the palette and plot it
-
-
-
 
 x <- seq(pi/4, 5 * pi, length.out = 100)
 y <- seq(pi/4, 5 * pi, length.out = 100)
