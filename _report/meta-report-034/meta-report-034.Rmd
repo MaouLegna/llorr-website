@@ -87,10 +87,13 @@ LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
 #' load DeckDT
 #'############
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+
+# mutate( allegiance = na_if(allegiance,"") )
 ```
 
 ```{r archetype-fix}
-#' Limit the Deck DT to make the fixes much faster
+# Limit the Deck DT to make the fixes much faster
 deck_filter <- rbind(LoR.Match.RMD,Temp.Match.RMD) |>
   distinct() |>
 # deck_filter <- LoR.Match.RMD |>
@@ -104,11 +107,14 @@ deck_filter <- rbind(LoR.Match.RMD,Temp.Match.RMD) |>
 
 LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 
-#' Archetype-Fix
-#'##############
+# Archetype-Fix
+#'#############
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+
+LoR.Deck.RMD <- LoR.Deck.RMD |>
+  mutate( archetype = map_chr(archetype,~str_replace_all(.x,",","/") )  )
 ```
 
 ```{r prepare-data-temp}
@@ -129,6 +135,8 @@ LoR.Melt.Matches.RMD <- Temp.Match.RMD |>
   #' finish 'process' data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
+  mutate( factions = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
+          factions = str_replace_all(factions, set_names(data_regions$abbreviation, data_regions$nameRef)) ) |>
   left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions")) |>
   as.data.table()
 ```
@@ -151,7 +159,19 @@ LoR.Melt.Master.RMD <- LoR.Match.RMD |>
   #' finish 'process' data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions"))
+  mutate( factions = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ),
+          factions = str_replace_all(factions, set_names(data_regions$abbreviation, data_regions$nameRef)) ) |>
+  left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions")) |>
+  as.data.table()
+```
+
+```{r check-value}
+if (any(c(LoR.Melt.Matches.RMD[ is.na(playerID), .N ],
+          LoR.Melt.Master.RMD[  is.na(playerID), .N ],
+          # LoR.Melt.Matches.RMD[ is.na(playerDeck),  ]
+          LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ],
+          LoR.Melt.Master.RMD[  is.na(playerDeck), .N ]
+          ))!=0) paste("If you are seeing this message something is wrong and the code must be fixed")
 ```
 
 # Data
@@ -340,27 +360,31 @@ Switching back to Master as this report is supposed to be
 Region.Freq <- LoR.Melt.Master.RMD |>
   select(factions) |>
   separate_rows(factions,sep=",") |>
-  tabyl(factions,show_na=F) |>
-  tibble() |> 
-  rename_all(~c("region","n","freq")) |>
-  mutate( region = map_chr(.x = region, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ) ) |>
-  add_column(icon = data_regions$iconsPath)
+  rename(region = factions) |>
+  tabyl(region,show_na=F)
+  # rename_all(~c("region","n","freq")) |>
+  # mutate( region = map_chr(.x = region, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ) ) |>
+  # add_column(icon = data_regions$iconsPath)
 
 Region.Freq.Server <- LoR.Melt.Master.RMD |>
   select(server,factions) |>
   separate_rows(factions,sep=",") |>
   tabyl(factions,server, show_na = F) |>
   adorn_percentages("col") |>
-  mutate( region = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ) )
+  rename(region=factions)
+  # mutate( region = map_chr(.x = factions, ~str_remove_all(.x, paste(c("_Name","faction_", ""), collapse = "|") ) ) )
 
-Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region")
+Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region") |>
+  as_tibble() |>
+  rename(freq = percent) |>
+  left_join(data_regions, by=c("region"="abbreviation"))
 ```
 
 ::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plot-Region}
+```{r plot-Region, fig.width=12, fig.height=8}
 sxLabel_card <- format(Region.Freq$freq*100,2)
 dxLabel_card <- format(Region.Freq$freq*100,2)
 sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
@@ -596,7 +620,7 @@ anim_save(animation = animRegPyramid,
 
 ```{r print-tableFreq-gt}
 Region.Freq.tbl <- Region.Freq |>
-  select(-n,-icon,-factions) |>
+  select(region:europe,-n) |>
   arrange(desc(freq)) |>
   gt( ) |>
   tab_header(
@@ -625,6 +649,7 @@ Region.Freq.tbl <- Region.Freq |>
       columns = 1,
     )
   ) |>
+  # gtExtras::gt_theme_538() |>
   cols_label(
     region   = md("**Region**"),
     freq     = md("**Freq**"),
@@ -634,6 +659,7 @@ Region.Freq.tbl <- Region.Freq |>
   ) |>
    tab_options(
     table.background.color = "whitesmoke",
+    # heading.background.color = "black",
     table.font.color = "black",
     table.font.color.light = "black"
    ) |>
@@ -653,49 +679,53 @@ Region.Freq.tbl
 
 ## Play Rate by number of Cards
 
-`r kableExtra::text_spec("Note:", color = "red")` currently all dual region cards have only their main region as possible value assigned. The same problem also apply to the card's inclusion rates.
+`r kableExtra::text_spec("Note:", color = "green")` the dual region factor has been solved
 
 ::: {.l-page}
 ```{r process-tableFreq_byCard}
+LoR.Melt.Master.RMD[ cards.region.fix=="", cards.region.fix:=NA  ]
+LoR.Melt.Master.RMD[ !is.na(cards.region.fix) , cards.region:=cards.region.fix  ]
+
 Regions.Freq.byCards <- LoR.Melt.Master.RMD |>
-  select( starts_with( "Card") ) %>%
-  map_df(.,~str_sub(.x, start=3,end=4) ) %>%
-  mutate_all(~fct_recode(.,!!!recodeRegShort)) |>
-  unlist(use.names = FALSE) |> 
-  tabyl(show_na = F) |> 
-  rename_all(~c("region","n","freq")) |> 
-  mutate(region := as.character(region))
+  select( cards.region, cards.region.freq ) |>
+  separate_rows( cards.region,cards.region.freq, sep = "," ) |>
+  mutate( n = as.numeric(cards.region.freq) ) |>
+  group_by(cards.region) |>
+  summarise(n = sum(n) ) |>
+  mutate( freq = n / sum(n) ) |>
+  rename_all(~c("region","n","freq")) |>
+  arrange(region) |>
+  mutate( freq = round(freq,4) ) |>
+  left_join(data_regions[,c("abbreviation","iconsPath")] , by = c("region"="abbreviation") ) |>
+  rename( icon = iconsPath )
   
-setorderv(Regions.Freq.byCards, c("region"), c(1))
-
-# Regions.Freq.byCards <- as.tibble(Regions.Freq.byCards)
-Regions.Freq.byCards$freq <- round(Regions.Freq.byCards$freq,4)
-Regions.Freq.byCards$icon <- data_regions$iconsPath
-
 Regions.Freq.byCards.Server <- LoR.Melt.Master.RMD |>
-  select( starts_with( "Card") ) %>%
-  map_df(.,~str_sub(.x, start=3,end=4) ) %>%
-  mutate_all(~fct_recode(.,!!!recodeRegShort)) |>
-  add_column(server = LoR.Melt.Master.RMD$server ) |>
-  melt(id.var=c("server")) |>
-  select(value,server) |>
-  tabyl(value,server, show_na = F) |>
-  adorn_percentages("col")
+  select( cards.region, cards.region.freq,server ) |>
+  separate_rows( cards.region,cards.region.freq, sep = "," ) |>
+  mutate( n = as.numeric(cards.region.freq) ) |>
+  group_by(cards.region,server) |>
+  summarise(n = sum(n) ) |>
+  group_by(server) |>
+  mutate( freq = n / sum(n) ) |>
+  ungroup() |>
+  rename_all(~c("region","server","n","freq")) |>
+  arrange(region) |>
+  mutate( freq = round(freq,4) )
 
-Card.tableByRegPlot <- LoR.Melt.Master.RMD |>
-  select( starts_with( "Card") ) %>%
-  map_df(.,~str_sub(.x, start=3,end=4) ) %>%
-  mutate_all(~fct_recode(.,!!!recodeRegShort)) |>
-  add_column(server = LoR.Melt.Master.RMD$server ) |>
-  melt(id.var=c("server")) |>
-  select(value,server) |> table() %>% prop.table(.,margin = 2) |> as.data.table()
+# Card.tableByRegPlot <- LoR.Melt.Master.RMD |>
+#   select( starts_with( "Card") ) %>%
+#   map_df(.,~str_sub(.x, start=3,end=4) ) %>%
+#   mutate_all(~fct_recode(.,!!!recodeRegShort)) |>
+#   add_column(server = LoR.Melt.Master.RMD$server ) |>
+#   melt(id.var=c("server")) |>
+#   select(value,server) |> table() %>% prop.table(.,margin = 2) |> as.data.table()
 ```
 
 ::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plotRegion_byCards}
+```{r plotRegion_byCards, fig.width=12, fig.height=8}
 sxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
 dxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
 sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
@@ -768,7 +798,9 @@ RegionByCards
 
 ```{r print-tableFreq_byCard-gt}
 Region.Freq.byCards.tbl <- Regions.Freq.byCards[,c("region","freq")] |>
-  left_join( Regions.Freq.byCards.Server, by = c("region"="value") ) |>
+  left_join( Regions.Freq.byCards.Server |> 
+               select(-n) |>
+               pivot_wider(names_from = "server", values_from = "freq"  ), by = c("region") ) |>
   arrange(desc(freq)) |>
   gt( ) |>
   tab_header(
@@ -825,13 +857,6 @@ Region.Freq.byCards.tbl
 
 # Champions Combinations
 
-Note: I know I have to add some aggregations especially for Bandle (sorry Dr.LoR)
-
-```{r gt-archetype}
-source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
-gtfix
-```
-
 ```{r process-tableChampion}
 CC.tableByReg <- LoR.Melt.Matches.RMD |>
   tabyl(playerDeck,server) |>
@@ -876,7 +901,7 @@ ChampionCombo <- tibble( playerDeck = topDeck ) |>
 ```
 
 
-```{r plot-Champion-PR}
+```{r plot-Champion-PR, fig.width=12, fig.height=8}
 # | fig.width=12,
 # | fig.height=8
 
@@ -932,7 +957,7 @@ ChampionCombo |>
     legend.position = c(0.8,0.1)
     )
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-topPlayrate.png"))
+ggsave(glue::glue("./images/meta-report/{params$ind}-topPlayrate.png"),width = 12,height = 8) |> suppressMessages()
 ```
 :::
 
@@ -1107,7 +1132,7 @@ meta_evo <- ggplot(
 
 meta_evo
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png"))
+ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png")) |> suppressMessages()
 ```
 
 ## Win Rates
@@ -1507,6 +1532,7 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 deck.of.week <- "Draven/Jinx"
 
 whichDecks <- LoR.Melt.Matches.RMD |>
+  # filter( str_detect(playerDeck,"Jinx") )
   # filter( str_detect(playerDeck,"Jayce") ) |>
   filter( playerDeck == deck.of.week ) |>
   tabyl(deck_code) |>
@@ -1853,20 +1879,40 @@ gtsave(gtWinning, glue::glue("./images/meta-report/{params$ind}-topWin.png")   )
 # Cards Presence
 
 ```{r process-UniqueCards}
-Card.Subset <- LoR.Melt.Master.RMD |>
-  select( starts_with( "Card" ) )
+LoR.Melt.Master.RMD[ cards.region.fix == "" , cards.region.fix:=NA   ]
+LoR.Melt.Master.RMD[ !is.na(cards.region.fix), cards:=cards.fix  ]
 
-allCards            <- unlist(apply(Card.Subset, 1, unique),use.names = F)
-TableAllCards       <- tabyl(allCards) |>
-  mutate( abbreviation = str_sub(allCards,3,4) ) |>
-  rename( card = allCards, N = n ) |>
-  as.data.table() |>
-  left_join(Region.Freq[,c("region","n")]|>left_join(data_regions[,c("nameRef","abbreviation")], by=c("region"="nameRef") ), by = c("abbreviation") ) |>
-  mutate( p.byReg = round(N/n,3),
-          card    := str_replace_all(card, set_names(LoR.Card$name, LoR.Card$cardCode)),
-          region  := str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation))
-          ) |>
-  select(card,N,region,nGamesReg=n,p.byReg)
+DeckWeight <- LoR.Melt.Master.RMD |>
+  tabyl(deck_code) |>
+  select(-percent) |>
+  rename(ndeck = n)
+
+# LoR.Deck.RMD |>
+#   slice(1:10) |>
+#   distinct(deck_code,cards) |>
+#   separate_rows(cards,sep = " ")
+
+TableAllCards <- LoR.Melt.Master.RMD |>
+  # slice(1:10) |>
+  distinct(deck_code,cards) |>
+  separate_rows(cards,sep = " ") |>
+  group_by(deck_code) |>
+  distinct(cards) |>
+  ungroup() |>
+  left_join(DeckWeight, by = "deck_code") |>
+  group_by(cards) |>
+  summarise(ncard = sum(ndeck)) |>
+  ungroup() |>
+  mutate( region = str_sub(cards,3,4) ) |>
+  left_join(Region.Freq |>
+              select(region,n), by = "region")
+  
+TableAllCards <- TableAllCards |>
+  rename(card = cards) |>
+  mutate( p.byReg = round(ncard/n,3),
+          card    = str_replace_all(card, set_names(LoR.Card$name, LoR.Card$cardCode)),
+          region  = str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation))
+          )
 ```
 
 ::: {.l-page}
@@ -1878,10 +1924,14 @@ TableAllCards       <- tabyl(allCards) |>
 It seems that not even Twin Disciple can beat Sharsight
 
 ```{r print-CardsTable-1}
-MostPlayed <- TableCardsDT |>
+MostPlayed <- TableAllCards |>
   arrange(desc(p.byReg)) |>
-  rename_all(~c("Card","# Decks with that card ","Region","RegionID","Games of X Region","Play Rate")) |>
-  select(c(1,3,6,2)) |>
+  rename_all(~c("Card",
+                "#Decks with that card",
+                "Region",
+                "Games of X Region",
+                "Play Rate")) |>
+  # select(c(1,3,6,2)) |>
   datatable(rownames = FALSE) |>
   formatStyle('Card', fontWeight = 'bold') |>
   formatStyle('Play Rate', fontWeight = 'bold') |>
@@ -1901,19 +1951,21 @@ MostPlayed
 ## Top 3 Play Rates by Region {.panel-name}
 
 ```{r print-CardsTable-3}
-TopPlayed.PbyReg <- TableCardsDT |>
+TopPlayed.PbyReg <- TableAllCards |>
   group_by(region) |>
   arrange(desc(p.byReg)) |>
   top_n(3) |>
   arrange(region) |>
-  rename_all(~c("Card","N","Region","RegionID","Games of X Region","Play Rate")) |>
-  select(c(1,3,6,2,5)) |>
+  rename_all(~c("Card","N","Region","Games of X Region","Play Rate")) |>
+  # select(c(1,3,6,2,5)) |>
   ungroup() |>
-  datatable(rownames = FALSE, options = list(
-    searching = FALSE,
-    lengthChange = FALSE,
-    pageLength = 4*9,
-    info = FALSE)) |>
+  datatable(rownames = FALSE,
+            options = list(
+              searching = FALSE,
+              # lengthChange = FALSE,
+              pageLength = 4*9,
+              info = FALSE)
+            ) |>
   formatStyle('Card', fontWeight = 'bold') |>
   formatStyle('Play Rate', fontWeight = 'bold') |>
   formatStyle(
@@ -1921,7 +1973,8 @@ TopPlayed.PbyReg <- TableCardsDT |>
     target = 'row',
     backgroundColor = styleEqual(data_regions$nameRef, data_regions$colorRegion)
   ) |>
-  formatPercentage('Play Rate', 1)
+  formatPercentage('Play Rate', 1) |>
+  suppressMessages()
 
 TopPlayed.PbyReg
 ```
@@ -1980,6 +2033,23 @@ data.table(
 :::
 :::::
 :::
+
+# Not-Standard Archetype Names
+
+Names and rules for the "non standard archetypes" which are not defined by Champion+Regions
+
+```{r gt-archetype}
+source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
+gtfix
+```
+
+# Credits
+
+Special thanks to bA1ance and Pavelicii for the recent support ^^ [^4]
+
+I may not express gratitude often but that's because I think the best way I can do it is to continuing working hard on what I do and strive for improvements. Still, proper credits are necessary and I'll try do it to them more often.
+
+[^4]: [Support page link](https://www.buymeacoffee.com/MaouLegna). In case donations-only the plan is to have the name in the credits for at least a month from the time of the donation.
 
 <!-- Close Card Presence panelset -->
 

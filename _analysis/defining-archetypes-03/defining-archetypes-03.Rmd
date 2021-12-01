@@ -35,8 +35,8 @@ knitr::opts_chunk$set(
                    digits.secs=6),
   dev.args = list(bg = 'transparent'), # make graphics with transparent background
   fig.align = 'center',
-  fig.width=6,
-  fig.height=4,
+  fig.width=12,
+  fig.height=8,
   engine.path = list(
     python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
   ),
@@ -129,7 +129,7 @@ What if we have a Draven/Ez that use even more PnZ cards than usual? Yes, it sho
 ```{r create-example}
 # load DeckDT
 #'###########
-LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+# LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 # data.table::fwrite(example_archetye_03,"C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv")
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
@@ -178,6 +178,22 @@ tibble( region = 1:10,
   gt()
 ```
 
+```{r}
+alleDeck <- example_archetye_03 |>
+  select(deck_code,allegiance,factions,cards.region.freq) |>
+  # separate_rows(factions) |>
+  separate_rows(factions,cards.region.freq) |>
+  mutate(cards.region.freq = as.numeric(cards.region.freq) ) |>
+  filter(cards.region.freq >=  33 | !is.na(allegiance) ) |>
+  group_by(deck_code) |>
+  slice_max(cards.region.freq) |>
+  ungroup() |>
+  as.data.table()
+
+
+
+
+```
 
 
 ```{r raw-data}
@@ -290,5 +306,67 @@ levelplot(z ~ x * y, grid, col.regions = topo.colors(10),
           at = c(-Inf, seq(-0.8, 0.8, by = 0.2), Inf))
 ```
 
+```{r fig.width=12, fig.height=8}
+SI <- cos.dsimMatrix(alleDeck[factions == "SI",deck_code])
 
+dend.SI <- hclust(SI,method = "average")
+
+set.seed(123)
+ap.SI <- apcluster(linKernel(SI,normalize = T),details = T)
+
+apcluster::heatmap(
+  ap.SI,linKernel(SI,normalize = T),
+  # Rowv=NA, Colv=NA,
+  # cexRow= 0.75, cexCol = 0.75,
+  cexRow= 0, cexCol = 0,
+  # sideColors=c("darkgreen", "yellowgreen"),
+  # col=terrain.colors(12),
+  legend = "col"
+  )
+
+factoextra::fviz_dend(dend.SI)
+
+table(archetype.v2,
+      ap.res@idx)
+
+table(example_archetye_03[deck_code %in% alleDeck[factions == "SI",deck_code], archetype],ap.SI@idx)
+```
+
+```{r}
+NXPZ <- cos.dsimMatrix(example_archetye_03[factions == "NX,PZ",deck_code])
+
+example_archetye_03[factions == "NX,PZ",tabyl(archetype)]
+
+dend.NXPZ <- hclust(NXPZ,method = "average")
+
+factoextra::fviz_dend(dend.NXPZ)
+
+set.seed(123)
+ap.NXPZ <- apcluster(linKernel(NXPZ,normalize = T),details = T, q= 0)
+
+apcluster::heatmap(
+  ap.NXPZ,linKernel(NXPZ,normalize = T),
+  # Rowv=NA, Colv=NA,
+  # cexRow= 0.75, cexCol = 0.75,
+  cexRow= 0, cexCol = 0,
+  # sideColors=c("darkgreen", "yellowgreen"),
+  # col=terrain.colors(12),
+  legend = "col"
+  )
+
+print( table(example_archetye_03[deck_code %in% example_archetye_03[factions == "NX,PZ",deck_code], archetype],ap.NXPZ@idx), zero.print = ".")
+
+
+getOption("max.print")
+
+options(max.print=2000)
+
+173
+280
+293
+
+example_archetye_03[factions == "NX,PZ",deck_code][which(ap.NXPZ@idx==173)]
+example_archetye_03[factions == "NX,PZ",deck_code][which(ap.NXPZ@idx==280)]
+example_archetye_03[factions == "NX,PZ",deck_code][which(ap.NXPZ@idx==293)]
+```
 
