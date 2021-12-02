@@ -1892,6 +1892,12 @@ DeckWeight <- LoR.Melt.Master.RMD |>
 #   distinct(deck_code,cards) |>
 #   separate_rows(cards,sep = " ")
 
+LoR.Card <- rbind(
+  LoR.Card[,c("name","cardCode")],
+  LoR.DualRegion[,c("name","cardCode.fix")] |>
+  select(name,cardCode = cardCode.fix )
+)
+
 TableAllCards <- LoR.Melt.Master.RMD |>
   # slice(1:10) |>
   distinct(deck_code,cards) |>
