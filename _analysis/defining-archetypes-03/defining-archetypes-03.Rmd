@@ -80,15 +80,15 @@ Decklist from "Master" games in patch 2.18 ~10k decks
 
 Distance Matrix and so, all algorithm derived by them have a quadratic growth ($o^2$) so scalability is a problem.
 
-Questo rende l'applicazione di certe scelte/metodi/ecc non appropriate/non fattibili ad alte numerosità.
+This makes the choice and/or application of certain method/algorithms/ecc not feasable at high dimension.
 
-BUT riguardo la matrice di distanza ed i possibili cluster contenuti in essa abbiamo delle informazioni e possiamo semplificare il problema.
+BUT if the "whole" problem related to the distance matrix is too big an approach comes to help: to "Divide et Impera" the problem
 
-Per quanto segue andremo a riferirci alla matrice di similarità in contesto in cui la matrice di distanza è definita per valore $in$ [0,1]
+We are going to refer to the similarity matrix instead of the normalized distance matrix.
 
-Innanzitutto sappiamo che la matrice di distanza ha una struttura per cui è definita $0_{n \times n}$ null-matrix for most of sub-matrix defined in it.
+First of all, we knows that the similarity matrix has a structure so that it is defined $0_{n \times n}$ null-matrix for most of sub-matrix defined in it.
 
-Nello specifico, se tutte le regioni tra due deck differiscono tra di loro la similarità tra i due deck sarà necessariamente nulla.
+To be more precise, everywhere all regions from both deck are different the similarity between these deck is 0
 
 There are sadly exception to this property: when we deal with dual region cards we can have non overlapping "factions" but still common cards
 
@@ -96,29 +96,92 @@ There are sadly exception to this property: when we deal with dual region cards 
 
 > BandleCity Ruined more than the Ruination
 
-Per ora le considerazioni andranno ad ignorare la questione DualRegion perché andrebbe ad aggiungere un grado di complessità non indifferente per quella che sarebbe per ora una correzzione minimale.
+For now everything we will do will ignore this factor. While we can take into account the second-region of a card and simply expand the cards pool with them there other factor that would increase the complexity of the problem so that it's left for future works.
 
-## Cosa sappiamo delle "Zone"?
+## The Shuriman Desert is Sparse
 
-### The Shuriman Desert is Sparse
+Let's assume we don't have the problem of the DualRegion cards, what do we know about the structure of the similarity matrix ?
 
-Assumiamo non ci sia il problema delle carte DualRegion, cosa sappiamo della struttura della matrice di similarità e della sua struttura?
+We know that there are 55 unique combination of region
 
-Possiamo considerare che esistono 55 combinazini uniche di scelte di regioni (45 Doppia Regione e 10 MonoRegione)
+When comparing two decks we so have 55^2 possible sub-matrix of confrontation between combination of regions. Of course we as the Matrix is symmetrical it's reduced to just 1540 cases.
 
-Di per se esistono quindi `r 55^2` possibili sotto-matrici di confronti tra regioni, ma siccome la matrice è simmetrica "solo" 1540 casi sono da valutare.
+But even among those 1540, the cases different from zero are not that many.
 
-A questo punto entra in gioco la questione regioni in comune
+As we mentioned only cases with deck that share at least a common region can be different from zero.
 
-<!-- Ipotizzando di non dover fare controlli  -->
+This makes it so the number of sub-matrix to consider follows the following formula:
 
 $\sum_i^n((i-1)^2+\frac{i(i+1)}{2})$
 
-Non solo, ma di questo 32%, solo una piccola parte ha senso. Cioè, quei deck al di fuori della coppia di regioni quello che vogliamo controllare sono i casi che possono essere "bridge" between regions as Mistwratih.
+```{r}
+#' region to find the percentage all cases of "interceptions" between elements like factions. For example BC/NX does correlate with all BC and all NX cases
+regionComboInterception <- function(n) {
+  # n = 10
+  dim <- n*(n+1)/2
+  total = 0
+  for ( i in 1:n ) {
+    p1 <- i*(i+1)/2
+    p2 <- (i-1)^2
+    total <- total + p1 + p2
+  }
+  total/(dim*(dim+1)/2)
+}
+  
+tibble::tibble( region = 1:10,
+        coverage = map_dbl(1:10, ~regionComboInterception(.x)) ) |>
+  gt::gt() |>
+  fmt_percent(
+    columns = coverage,
+    decimals = 2
+  ) |>
+  tab_header(
+    title = "Sparsity of Similarity Matrix",
+    subtitle = md("Percent of sub-matrix that share a common region <br> by number of existing regions.")
+  ) |>
+  gtExtras::gt_theme_538()
+```
 
-Se devono essere "bridge" ci deve essere un collegamento tra le regioni e quindi deck in una delle due regioni diventa irrelevante, e quindi ha senso guardare solo deck che sono "Quasi-Alligiance"
+From **Table1 (add ref) **  we can see that in the current setting with n=10 existing regions of the 1540 cases only the 32% actually meaningful.
 
-> Esempio, possono essere dei dati Mistwraith the usano più carte PnZ e quindi anche se la strategia è simile, è forse più corretto considerare il deck come un sub-archetipo (?)
+But this is not over as only a small subset of this 32% is actually relevant. 
+
+What follows is a simplification which works for most cases.
+
+When we compare decks with a common shared region not all comparison are meaningful.
+
+If decks with only one shared regions have to be similar either the key cards are unique enough to identify the decks and so the regions are not important, or the shared region presence must be overwhelming compared to the second one. If it wasn't by definition of the similarity we used up until know (a measure defined by number of copies of a card in a deck) than the similarity will be small giving indication of different archetypes/clusters.
+
+In other words the decks that matters are bridge among the regions with a main region that mostly identify the deck.
+
+As easy example is the Mistwraith decks that we also used in the previous article.
+
+Normally Mistwraith decks are made mostly of ShadowIsles cards while the remaining cards are often from a region of choice that synergies with the rest of the deck but are not essential / key-cards. This cards act are the bridge between regions.
+
+Is the deck using as the only not-SI cards 3 copies of Pale Cascade? Then it's a SI/MT deck
+
+Is the deck using as the only not-SI cards any copies of Raz Bloodmane? Then it's a SI/SH deck and SI/MT and SI/SH are connected
+
+Is the deck using as the only not-SI cards 3 copies of Iterative Improvement? Then it's a SI/PZ deck and we connected SH,MT and PZ by SI.
+
+And so on
+
+Of course as mentioned this is more an approximation as one could that a Mistwraith deck with just 20 SI cards and a lot of duplication cards can be defined as Mistwratith decks but here we assume that that by itself is an over-simplification and it's more likely to be defined as a sub-archetype of Mistwraith Allegiance that may have sense to the connected/related the 20-SI cards Mistwraith deck would most likely while having a similar goal and strategy would have a play-pattern that differs enough from the Mistwraith Allegiance so that in this initial clustering it is more correct to separate them.
+
+In a second step, when trying to find more generalized archetypes (be it something like aggro/control/initiative/resource) then there is reason to try aggregated these different "aggregated version" of Mistwraith decks but as of now, with 
+
+---
+
+We so choose to propose to set a rule so that only these bridge decks are clustered. This open for a consequential step, as we restricted the between regions cases to decks with an overwhelming presence of a region to the other they can be all aggregated into the ~Mono region
+
+What benchmark and rules should we use ? This is tricky
+
+
+```{r allegiance-mess}
+
+```
+
+
 
 Quindi non farò tutti i confronti compresi DE/SH with DE/BW? No, non proprio. Questo confronto si farà solo tra deck DE/SH e DE/BW che sono "quasi-alligiance" e DE è ponte tra gli archetipi, quindi solo quei deck con qualcosa come 35 carte DE
 
@@ -159,24 +222,7 @@ example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 ```
 
 
-```{r}
-#' region to find the percentage all cases of "interceptions" between elements like factions. For example BC/NX does correlate with all BC and all NX cases
-regionComboInterception <- function(n) {
-  # n = 10
-  dim <- n*(n+1)/2
-  total = 0
-  for ( i in 1:n ) {
-    p1 <- i*(i+1)/2
-    p2 <- (i-1)^2
-    total <- total + p1 + p2
-  }
-  total/(dim*(dim+1)/2)
-}
-  
-tibble( region = 1:10,
-        coverage = map_dbl(1:10, ~regionComboInterception(.x)) ) |>
-  gt()
-```
+
 
 ```{r}
 alleDeck <- example_archetye_03 |>
