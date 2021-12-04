@@ -143,7 +143,7 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   #' finish 'process' data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions")) |>
+  left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
   as.data.table()
 
 # LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD[ !(is.na(playerDeck) | is.na(opponentDeck)) ]
@@ -169,7 +169,7 @@ LoR.Melt.Extra.RMD <- LoR.LastMaster.RMD |>
   #' finish 'process' data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions")) |>
+  left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
   as.data.table()
 ```
 
