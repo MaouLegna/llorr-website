@@ -72,22 +72,20 @@ xaringanExtra::style_panelset_tabs(
 ```{r raw-data}
 #' Read gamesDT
 ###############
-LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
 
 #' Read Temp
 ###############
-Temp.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
+Temp.Match.RMD  <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
 
 #' load Account
 #'#############
-LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
-                         header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
 
 #' load DeckDT
 #'############
-LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
-
+LoR.Deck.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 # mutate( allegiance = na_if(allegiance,"") )
 ```
@@ -95,11 +93,8 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 ```{r archetype-fix}
 # Limit the Deck DT to make the fixes much faster
 deck_filter <- rbind(LoR.Match.RMD,Temp.Match.RMD) |>
-  distinct() |>
-# deck_filter <- LoR.Match.RMD |>
-  #' Base filters
-  # filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
+  # distinct() |>
   select(deck_code_1,deck_code_2) |>
   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
   filter(decks!="") |>
@@ -112,9 +107,6 @@ LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-
-# LoR.Deck.RMD <- LoR.Deck.RMD |>
-#   mutate( archetype = map_chr(archetype,~str_replace_all(.x,",","/") )  )
 ```
 
 ```{r prepare-data-temp}
@@ -161,6 +153,27 @@ LoR.Melt.Master.RMD <- LoR.Match.RMD |>
   as.data.table()
 ```
 
+```{r}
+LoR.Melt.Seasonal.RMD <- LoR.Match.RMD |>
+  filter( game_mode == "SeasonalTournamentLobby"  ) |>
+  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
+  select( -ends_with("_3"),-ends_with("_4")  ) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
+  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               ) |>
+  #' finish 'process' data
+  left_join(LoR.Account.RMD[,.(puuid,playergameName=gameName,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
+  left_join(LoR.Account.RMD[,.(puuid,opponentgameName=gameName,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
+  left_join(LoR.Deck.RMD |> select(!archetype),by=c("deck_code","factions")) |>
+  as.data.table()
+```
+
+
 ```{r check-value}
 if (any(c(LoR.Melt.Matches.RMD[ is.na(playerID), .N ],
           LoR.Melt.Master.RMD[  is.na(playerID), .N ],
@@ -169,6 +182,67 @@ if (any(c(LoR.Melt.Matches.RMD[ is.na(playerID), .N ],
           LoR.Melt.Master.RMD[  is.na(playerDeck), .N ]
           ))!=0) paste("If you are seeing this message something is wrong and the code must be fixed")
 ```
+
+```{r create-lineUp-DT}
+LineUp.DT <- LoR.Melt.Seasonal.RMD |>
+  group_by(playerID,playergameName,server) |>
+  summarise( listDeck=list(unique(playerDeck)),listCode=list(unique(deck_code)) ) |>
+  ungroup()
+
+LineUp.DT <- LineUp.DT |>
+  group_by( playerID ) |>
+  summarise( map_df(.x = listCode, .f = ~assignLineUp(.x) )) |>
+  ungroup() |>
+  right_join(LineUp.DT, by = "playerID") |>
+  #' quality filter
+  filter( !is.na(deck_1) ) |>
+  rename("code_1"="deck_1","code_2"="deck_2","code_3"="deck_3" ) |>
+  left_join( LoR.Deck.RMD |>select(deck_code,deck_1=archetype),by=c("code_1"="deck_code") ) |>
+  left_join( LoR.Deck.RMD |>select(deck_code,deck_2=archetype),by=c("code_2"="deck_code") ) |>
+  left_join( LoR.Deck.RMD |>select(deck_code,deck_3=archetype),by=c("code_3"="deck_code") ) |>
+  #' quality filter
+  filter( !is.na(deck_1) ) |>
+  mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  )
+```
+
+```{r check-seasonal-32}
+# LoR.Melt.Seasonal.RMD |>
+#   group_by(server) |>
+#   distinct(playergameName) |>
+#   summarise(nplayer = n())
+
+LoR.Melt.Seasonal.RMD |>
+  group_by( playerID,opponentID,server ) |>
+  # timeblock è l'orario minimo di ciascun match tra diversi giocatori
+  mutate(   timeBlock = min(game_start_time_utc) |> {\(x) as_datetime(x, tz="UTC")}() ) |>
+  group_by(  playerID,opponentID,server,timeBlock ) |>
+  arrange( timeBlock ) |>
+  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
+  arrange( server,playerID,timeBlock ) |>
+  # number of won games in the match
+  mutate( nWin = str_count(result,"win") ) |>
+  # is the match won?
+  mutate( matchWin = ifelse(nWin==2,1,0) ) |>
+  ungroup() |>
+  group_by(playerID) |>
+  # sum of ALL matches won
+  mutate( cumWin = cumsum(nWin)) |>
+  # sum of ALL games won
+  mutate( cumMatchWin = cumsum(matchWin)) |>
+  ungroup() |>
+  {\(x)
+  left_join(
+  tibble( playerID = rep( LineUp.DT |>filter(server=="asia") |>pull(playerID),each=9),
+          round  = rep(seq(1,9,1), times = (LineUp.DT |>filter(server=="asia") |>NROW())  ),
+          server = "asia"),
+  x, by = c("playerID","round","server"))}() |>
+  relocate(round, .after = server) |>
+  left_join(LineUp.DT,by=c("server","playerID")) |>
+  mutate( ban = map2_chr(.x = listDeck, .y = ldeck, ~(setdiff(unlist(.x),unlist(.y) )) |> {\(x) ifelse(length(x)==1,x,NA)}() )  ) 
+
+
+```
+
 
 # Data
 

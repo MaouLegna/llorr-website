@@ -19,6 +19,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
+slug: legna2021archetype03
 bibliography: references.bib
 draft: FALSE
 ---
@@ -65,15 +66,23 @@ xaringanExtra::style_panelset_tabs(
 
 # Introduction
 
-In the previous article on archetypes [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) we introduced the concept/general theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
+In the [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) on defining archetypes we introduced the basic theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
 
-Along side the general theory we introduced and applied a few commonly used algorithm and some new ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
+Along side the general theory we introduced and also applied a few commonly used algorithms and some of the "newer/trending" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
 
-The example was tailored to give a general idea
+The example was tailored to give a general idea about the methods, some of their strong point and also weaknesses.
+
+As the previous analysis was mostly based around the mathematical properties 
 
 Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on the magnitude equal or at least similar to a real 
 
+```{r}
+
+```
+
+
 Decklist from "Last Season Master" games in patch 2.18 ~90k decks
+
 Decklist from "Master" games in patch 2.18 ~10k decks
 
 ---
@@ -174,21 +183,26 @@ In a second step, when trying to find more generalized archetypes (be it somethi
 
 We so choose to propose to set a rule so that only these bridge decks are clustered. This open for a consequential step, as we restricted the between regions cases to decks with an overwhelming presence of a region to the other they can be all aggregated into the ~Mono region
 
-What benchmark and rules should we use ? This is tricky
+What benchmark and rules should we use ? This is tricky but the idea was of using either an hard defined benchmark and to support the presence of Allegiance
 
-An idea was to use 
+```{r region-freq-dist}
+
+```
+
+
+An idea was to use the inclusion of Allegiance cards as their effect is not a gamble only in deck that either can heavily control their draw or are made mostly of a single region. As LoR offer some card draw control options they are far from common so usually use of Allegiance cards do predict the use of an ~Mono deck.
+
+Sadly this is true, but not entirely. Not only these cards have being played in decks where their activation is very risky but there are even cases there more the Allegiance card for both region has being played in the same deck.
 
 ```{r allegiance-mess}
 
 ```
 
+There is also an additional potential failing point of this strategy: the "Theseus's Archetype".
 
+This is related to the problem with Mistwraith deck mentioned before. We said that there can be a ~Mono SI version and others SI/XX when the second region has way too many cards to assume it's still the same deck.
 
-Quindi non farò tutti i confronti compresi DE/SH with DE/BW? No, non proprio. Questo confronto si farà solo tra deck DE/SH e DE/BW che sono "quasi-alligiance" e DE è ponte tra gli archetipi, quindi solo quei deck con qualcosa come 35 carte DE
-
-Quali problemi ci sono con questa assunzione? Che si presume che deck con troppe carte di un archetipo ad un certo punto il deck diventa "specifico" di regione
-
-What if we have a Draven/Ez that use even more PnZ cards than usual? Yes, it should still works as Draven/Ez but for now it would most likely differentiate. E se avessimo per esempio un AzIrelia quasi "Alligiance"?
+Overall this problem is being left for another moment to refine the result of a cluster analysis but conceptually we believe there is merit both in saying there can be more version of the same base-archetype and then we can work on an aggregated one
 
 ```{r create-example}
 # load DeckDT
