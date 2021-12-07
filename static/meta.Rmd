@@ -847,7 +847,7 @@ LastUpdate.box
 ```{r meta-evo-const}
 ntopPR <- 12
 # seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
-seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(now(),unit = "day")-days(1)+hours(18) ,"day") #
+seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")-days(1)+hours(18) ,"day") #
 ```
 
 ```{r}
