@@ -28,7 +28,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -72,11 +72,11 @@ xaringanExtra::style_panelset_tabs(
 ```{r raw-data}
 #' Read gamesDT
 ###############
-LoR.Match.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S10_218_220.csv"), header = T, na.strings = c("", NA))
 
 #' Read Temp
 ###############
-Temp.Match.RMD  <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
+Temp.Match.RMD  <- fread(file.path("C:","LlorR","data","raw","old-data-special","LoR_MatchDT_S10_fromLastSeason.csv"), header = T, na.strings = c("", NA))
 
 #' load Account
 #'#############
@@ -205,22 +205,21 @@ LineUp.DT <- LineUp.DT |>
   filter( !is.na(deck_1) ) |>
   mutate(LU = purrr::pmap_chr(list(x = deck_1,y = deck_2,z = deck_3), ~  glue::glue_collapse(na.omit(sort(c(..1,..2,..3))), sep = " - ")   )  )
 ```
-
-
 # Data
 
 ```{r account-info}
-masterEU   <- LoR.Account.RMD |> filter(activeShard=="europe"   & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-masterNA   <- LoR.Account.RMD |> filter(activeShard=="americas" & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-masterASIA <- LoR.Account.RMD |> filter(activeShard=="asia"     & master=="master") |> distinct(gameName,tagLine) |> count() |> pull()
+masterEU <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S10_EU.csv"),
+                              header = T, na.strings = c("", NA), encoding = "UTF-8")
 
-old.masterEU   <- LoR.Account.RMD |> filter(activeShard=="europe"   & note=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-old.masterNA   <- LoR.Account.RMD |> filter(activeShard=="americas" & note=="master") |> distinct(gameName,tagLine) |> count() |> pull()
-old.masterASIA <- LoR.Account.RMD |> filter(activeShard=="asia"     & note=="master") |> distinct(gameName,tagLine) |> count() |> pull()
+masterNA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S10_NA.csv"),
+                              header = T, na.strings = c("", NA), encoding = "UTF-8")
 
-namesList.EU.RMD   <- lor_leaderboard("europe")$name
-namesList.NA.RMD   <- lor_leaderboard("americas")$name
-namesList.ASIA.RMD <- lor_leaderboard("asia")$name
+masterASIA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S10_AS.csv"),
+                              header = T, na.strings = c("", NA), encoding = "UTF-8")
+
+namesList.EU.RMD   <- masterEU[ !is.na(puuid), .N ]
+namesList.NA.RMD   <- masterNA[ !is.na(puuid), .N ]
+namesList.ASIA.RMD <- masterASIA[ !is.na(puuid), .N ]
 ```
 
 ```{r nGames-data}
@@ -320,9 +319,6 @@ tbl2.temp <- Temp.Match.RMD |>
   select(Server=server) |>
   tbl_summary()
 
-# tbl1.temp
-# tbl2.temp
-
 merge.tbl.temp <- tbl_merge( 
     tbls = list(tbl1.temp, tbl2.temp),
     tab_spanner = c("**All Games**", "**Ranked**")
@@ -364,9 +360,9 @@ nGames_tbl <- tbl_merge(
     ) |>
   tab_footnote(
     footnote = md(glue::glue(
-      "EU Master playerDecks in the ladder {length(namesList.EU.RMD)} while number of possible Master playerDecks recovered is {masterEU}, Number of Last-Season EU Master used {old.masterEU}
-      NA Master playerDecks in the ladder {length(namesList.NA.RMD)} while number of possible Master playerDecks recovered is {masterNA}, Number of Last-Season NA Master used {old.masterNA}
-      ASIA Master playerDecks in the ladder {length(namesList.ASIA.RMD)} while number of possible Master playerDecks recovered is {masterASIA}, Number of Last-Season ASIA Master used {old.masterASIA}"
+      "EU Master playerDecks in the ladder {masterEU[!is.na(puuid),.N]} while number of possible Master playerDecks recovered is {masterEU[,.N]}
+      NA Master playerDecks in the ladder {masterNA[!is.na(puuid),.N]} while number of possible Master playerDecks recovered is {masterNA[,.N]}
+      ASIA Master playerDecks in the ladder {masterASIA[!is.na(puuid),.N]} while number of possible Master playerDecks recovered is {masterASIA[,.N]}"
       )),
     locations = cells_column_spanners(spanners = everything())
   ) 
@@ -443,10 +439,6 @@ deckFound <- top32tbl |>
   select(server,deck_code) |>
   drop_na() |>
   NROW()
-
-# top32tbl |>
-#   filter(cumMatchWin>=3) |>
-#   pivot_longer(cols = contains("code_"),values_to = "deck_code")
 ```
 
 Before providing the usual description of last week high ranked games here are the results from the top32
@@ -564,12 +556,6 @@ react.LU.top32 <- top32tbl |>
   reactablefmtr::add_subtitle(c("Bewtween Worlds Playoff - Top32 LineUps"), background_color = "whitesmoke", font_family = "Roboto") |>
   reactablefmtr::add_source(glue::glue("As not all decks has being played I can't provide a complete coverage of the lineUps but {deckFound}/{32*3*3} decks overall.
                                        Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo")
-
-react.LU.top32 |>
-  reactablefmtr::save_reactable(glue::glue("./images/seasonal/{params$ind}-top32-final.png"))
-
-react.LU.top32 |>
-  reactablefmtr::save_reactable(glue::glue("./images/meta-report/{params$ind}-top32-final.png"))
 
 react.LU.top32
 ```
