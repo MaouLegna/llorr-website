@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (from Patch 2.18 onward)"
+title: "Meta & Decks (from Patch 2.21 onward)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -13,16 +13,14 @@ output:
     vertical_layout: fill
 # date: "`r Sys.Date()`"
 params:
-  # start: "2021-06-02 18:00:00" #UTC tz / 2.09 <- Balance Patch
+  # start:   "2021-06-02 18:00:00" #UTC tz / 2.09 <- Balance Patch
   # start:   "2021-06-30 18:00:00" #UTC tz / 2.11 <- Rose of the Underworld
-  # start: "2021-07-14 18:00:00" #UTC tz / 2.12 <- Ruination Event
-  # end: "2021-08-25 18:00:00" #UTC tz / 2.14 <- Bandle Release
-  # start: "2021-09-01 18:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
-  start:   "2021-10-20 18:00:00" #UTC tz / 2.18 <- Balance Patch
-  end:   "2022-01-01 18:00:00" #UTC tz /
-  # skip:  2800000  # Patch 2.14
-  # skip:  3500000  # Patch 2.18
-  # hrs: 2
+  # start:   "2021-07-14 18:00:00" #UTC tz / 2.12 <- Ruination Event
+  # end:     "2021-08-25 18:00:00" #UTC tz / 2.14 <- Bandle Release
+  # start:   "2021-09-01 18:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
+  # start:   "2021-10-20 18:00:00" #UTC tz / 2.18 <- Balance Patch
+  start:   "2021-12-08 18:00:00" #UTC tz / 2.21 <- Set & Balance Patch
+  end:     "2022-01-01 18:00:00" #UTC tz /
 ---
 
 ```{r setup, include=FALSE}
@@ -47,10 +45,9 @@ knitr::opts_chunk$set(
   preview=FALSE
 )
 
-#' R Option
+# R Option
 options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-# xaringanExtra::use_panelset()
 
 # pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
 #                flextable,officer,scales,htmltools,
@@ -67,11 +64,26 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 
 #' load Games DT
 #'##############
-LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+# LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
 
-#' Read New Master
+#' Read Temp Games
 ##################
-LoR.LastMaster.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA))
+LoR.S11.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_S11DT.csv"), header = T, na.strings = c("",NA))
+
+LoR.S11.RMD <- LoR.S11.RMD |>
+  filter(!is.na(participants_1))
+
+LoR.S11.DT <- fread(file.path("C:","LlorR","data","raw","LoR_S11DT.csv"),
+                    colClasses = "character", header = T, na.strings = c("", NA)) |>
+  # mutate(across(where(is.character), ~na_if(., ""))) |>
+  mutate(across(c(starts_with('order'),status), as.numeric  ) )
+  
+
+LoR.S11.DT <- LoR.S11.DT |>
+  select(-ends_with("_3"),-ends_with("_4"))
+  
+sapply(LoR.S11.DT,class) |> unname()
+
 
 #' load Account
 #'#############
@@ -103,7 +115,7 @@ p = 0.01 # if I want to use the standard meta deck threshold
 
 ```{r archetype-fix}
 #' Limit the Deck DT to make the fixes much faster
-deck_filter <- rbind(LoR.Match.RMD,LoR.LastMaster.RMD) |>
+deck_filter <- rbind(LoR.Match.RMD,LoR.Diamond.RMD) |>
   #' Base filters
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
@@ -154,7 +166,7 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
 #' contain the a second DT
 #' can be Plat+, or Diamond depending on my current project
 #'#########################################################
-LoR.Melt.Extra.RMD <- LoR.LastMaster.RMD |>
+LoR.Melt.Diamond.RMD <- LoR.Diamond.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
   select( -ends_with("_3"),-ends_with("_4")  ) |>
@@ -902,22 +914,22 @@ Champion.deck.daily <- tibble(
 #   mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
 ```
 
-```{r prepare-meta-evo-extra}
-top7days.extra <- LoR.Melt.Extra.RMD |>
+```{r prepare-meta-evo-diamond}
+top7days.diamond <- LoR.Melt.Diamond.RMD |>
   filter( game_start_time_utc >= now()-days(7) ) |>
   count(playerDeck) |>
   slice_max(n,n=ntopPR,with_ties = F) |>
   pull(playerDeck)
 
-Champion.deck.daily.extra <- tibble( 
-  game_start_time_utc = rep(seqDate, each = length(top7days.extra)),
-  playerDeck = rep(top7days.extra, times = length(seqDate)),
+Champion.deck.daily.diamond <- tibble( 
+  game_start_time_utc = rep(seqDate, each = length(top7days.diamond)),
+  playerDeck = rep(top7days.diamond, times = length(seqDate)),
   intDate = findInterval(game_start_time_utc, seqDate )
 ) |>
   left_join(
-    LoR.Melt.Extra.RMD |>
+    LoR.Melt.Diamond.RMD |>
       mutate( 
-        playerDeck = fct_other(playerDeck,keep = top7days.extra) |> fct_infreq(),
+        playerDeck = fct_other(playerDeck,keep = top7days.diamond) |> fct_infreq(),
         intDate = findInterval(game_start_time_utc, seqDate )
         ) |>
       filter( playerDeck != "Other" ) |>
@@ -1001,8 +1013,8 @@ meta_evo.base + geom_label_repel(
 ggsave("./images/meta-evo.png",width = 12,height = 8)
 ```
 
-```{r create-meta-evo-extra, fig.width=12, fig.height=8, include=FALSE}
-meta_evo.extra.base <- Champion.deck.daily.extra |>
+```{r create-meta-evo-diamond, fig.width=12, fig.height=8, include=FALSE}
+meta_evo.diamond.base <- Champion.deck.daily.diamond |>
   mutate( game_start_time_utc = as.Date(game_start_time_utc) ) |>
   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
   geom_line( aes(color = playerDeck), size = .9  ) +
@@ -1012,8 +1024,8 @@ meta_evo.extra.base <- Champion.deck.daily.extra |>
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    # limits = c(0,signif.ceiling(max(Champion.deck.daily.extra$freq),1)),
-    # breaks = seq(0,signif.ceiling(max(Champion.deck.daily.extra$freq),1),signif.ceiling(max(Champion.deck.daily.extra$freq),1)/5),
+    # limits = c(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1)),
+    # breaks = seq(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1),signif.ceiling(max(Champion.deck.daily.diamond$freq),1)/5),
     limits = c(0,0.25),
     breaks = seq(0,0.25,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
@@ -1031,11 +1043,11 @@ meta_evo.extra.base <- Champion.deck.daily.extra |>
          axis.text = element_text(size = 10, face = "bold", color = "grey50")
   ) +
   scale_color_manual( values = rcartocolor::carto_pal(12, "Safe") ) +
-  scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily.extra$playerDeck)  ) )
+  scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily.diamond$playerDeck)  ) )
 
-meta_evo.extra.base +
+meta_evo.diamond.base +
   geom_label_repel(
-    data = Champion.deck.daily.extra |>
+    data = Champion.deck.daily.diamond |>
         filter( game_start_time_utc == max(game_start_time_utc) ), 
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
@@ -1064,7 +1076,7 @@ meta_evo.extra.base +
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   )
 
-ggsave("./images/meta-evo-extra.png",width = 12,height = 8)
+ggsave("./images/meta-evo-diamond.png",width = 12,height = 8)
 ```
 
 <!-- ### Graph -->
@@ -1099,9 +1111,9 @@ meta_evo.base +
     # xlim = c(floor_date(Sys.Date()-hours(12)), floor_date(Sys.Date()) )
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   ) +
-meta_evo.extra.base +
+meta_evo.diamond.base +
   geom_label_repel(
-    data = Champion.deck.daily.extra |>
+    data = Champion.deck.daily.diamond |>
         filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     
@@ -1163,7 +1175,7 @@ downloadthis::download_file(
 
 ```{r}
 downloadthis::download_file(
-  path = file.path("images/meta-evo-extra.png"),
+  path = file.path("images/meta-evo-diamond.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download Plat+ PlayRates over time as .png",
   button_type = "primary",
@@ -1177,7 +1189,7 @@ downloadthis::download_file(
 
 ```{r}
 downloadthis::download_file(
-  path = file.path("images/meta-evo-extra.png"),
+  path = file.path("images/meta-evo-diamond.png"),
   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
   button_label = "Download (Master+Plat) PlayRates over time as .png",
   button_type = "primary",
@@ -1193,7 +1205,7 @@ downloadthis::download_file(
 rbind(
   Champion.deck.daily |>
     add_column(label = "Master"),
-  Champion.deck.daily.extra |>
+  Champion.deck.daily.diamond |>
     add_column(label = "~Plat+")
 ) |>
   select(-intDate) |>
@@ -1231,7 +1243,7 @@ tribble(
   tab_header(
     title = glue::glue("LMI Tiers")
   ) |>
-  gtExtras::gt_theme_nytimes()
+  gtdiamonds::gt_theme_nytimes()
   # tab_style(
   #   style = cell_text(weight = "bold"),
   #   locations = cells_body(
