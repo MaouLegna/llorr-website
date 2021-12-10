@@ -55,35 +55,13 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 ```
 
 ```{r load-data}
-#' load gameDT
+#' load DeckDT
 #'############
-# file.DT <- file.path("C:","LlorR","data","raw","LoR_MatchDT.csv")
-# header        <- fread(file.DT, header = FALSE, na.strings = c("",NA), nrows = 1, stringsAsFactors = FALSE)
-# LoR.Match.RMD <- fread(file.DT, header = FALSE, na.strings = c("",NA), skip = params$skip )
-# colnames(LoR.Match.RMD) <- unlist(header,use.names = F)
+LoR.Match.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
 
-#' load Games DT
-#'##############
-# LoR.Match.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-
-#' Read Temp Games
+#' Read Diamond DT
 ##################
-LoR.S11.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_S11DT.csv"), header = T, na.strings = c("",NA))
-
-LoR.S11.RMD <- LoR.S11.RMD |>
-  filter(!is.na(participants_1))
-
-LoR.S11.DT <- fread(file.path("C:","LlorR","data","raw","LoR_S11DT.csv"),
-                    colClasses = "character", header = T, na.strings = c("", NA)) |>
-  # mutate(across(where(is.character), ~na_if(., ""))) |>
-  mutate(across(c(starts_with('order'),status), as.numeric  ) )
-  
-
-LoR.S11.DT <- LoR.S11.DT |>
-  select(-ends_with("_3"),-ends_with("_4"))
-  
-sapply(LoR.S11.DT,class) |> unname()
-
+LoR.Diamond.RMD  <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT.csv"), header = T, na.strings = c("",NA))
 
 #' load Account
 #'#############
@@ -143,7 +121,6 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  select( -ends_with("_3"),-ends_with("_4")  ) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
@@ -157,8 +134,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
   left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
   as.data.table()
-
-# LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD[ !(is.na(playerDeck) | is.na(opponentDeck)) ]
 ```
 
 ```{r prepare-data-2}
@@ -169,7 +144,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
 LoR.Melt.Diamond.RMD <- LoR.Diamond.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  select( -ends_with("_3"),-ends_with("_4")  ) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
@@ -859,10 +833,10 @@ LastUpdate.box
 ```{r meta-evo-const}
 ntopPR <- 12
 # seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
-seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")-days(1)+hours(18) ,"day") #
+seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
 ```
 
-```{r}
+```{r prepare-meta-evo-base}
 top7days <- LoR.Melt.Matches.RMD |>
   filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   count(playerDeck) |>
@@ -887,31 +861,6 @@ Champion.deck.daily <- tibble(
     by = c("playerDeck","intDate") ) |>
   mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
   mutate( game_start_time_utc = as.Date(game_start_time_utc) )
-  
-
-# top7days <- LoR.Melt.Matches.RMD |>
-#   filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-#   count(playerDeck) |>
-#   slice_max(n,n=ntopPR,with_ties = F) |>
-#   pull(playerDeck)
-# 
-# Champion.deck.daily <- tibble( 
-#   game_start_time_utc = rep(seqDate, each = length(top7days)),
-#   playerDeck = rep(top7days, times = length(seqDate))
-# ) |>
-#   left_join(
-#     LoR.Melt.Matches.RMD |>
-#       mutate( 
-#         playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
-#         game_start_time_utc = as.Date(game_start_time_utc) 
-#         ) |>
-#       filter( playerDeck != "Other" ) |>
-#       group_by(game_start_time_utc) |>
-#       count(playerDeck) |>
-#       mutate(freq = prop.table(n))|>
-#       ungroup(),
-#     by = c("game_start_time_utc","playerDeck") ) |>
-#   mutate( across(where(is.numeric), ~replace_na(.x, 0)) )
 ```
 
 ```{r prepare-meta-evo-diamond}
@@ -921,14 +870,14 @@ top7days.diamond <- LoR.Melt.Diamond.RMD |>
   slice_max(n,n=ntopPR,with_ties = F) |>
   pull(playerDeck)
 
-Champion.deck.daily.diamond <- tibble( 
+Champion.deck.daily.diamond <- tibble(
   game_start_time_utc = rep(seqDate, each = length(top7days.diamond)),
   playerDeck = rep(top7days.diamond, times = length(seqDate)),
   intDate = findInterval(game_start_time_utc, seqDate )
 ) |>
   left_join(
     LoR.Melt.Diamond.RMD |>
-      mutate( 
+      mutate(
         playerDeck = fct_other(playerDeck,keep = top7days.diamond) |> fct_infreq(),
         intDate = findInterval(game_start_time_utc, seqDate )
         ) |>
@@ -955,16 +904,16 @@ meta_evo.base <- Champion.deck.daily |>
     expand = c(0, 0),
     # limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)),
     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5),
-    limits = c(0,0.25),
-    breaks = seq(0,0.25,0.05),
+    limits = c(0,0.30),
+    breaks = seq(0,0.30,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
        y = "PlayRate",
-       title = "(Master) Evolution of Play Rate over time",
-       caption = glue::glue("{params$patch}
-                            Ranked games from {params$start} UTC to {params$end} UTC
-                            Metadata of games collected with RiotGames API")
+       title = "(Seasonal Players) Evolution of Play Rate over time"
+       # caption = glue::glue("{params$patch}
+       #                      Ranked games from {params$start} UTC to {params$end} UTC
+       #                      Metadata of games collected with RiotGames API")
   ) +
   theme_539() +
   theme( legend.position = "none",
@@ -1026,16 +975,16 @@ meta_evo.diamond.base <- Champion.deck.daily.diamond |>
     expand = c(0, 0),
     # limits = c(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1)),
     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1),signif.ceiling(max(Champion.deck.daily.diamond$freq),1)/5),
-    limits = c(0,0.25),
-    breaks = seq(0,0.25,0.05),
+    limits = c(0,0.30),
+    breaks = seq(0,0.30,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
        y = "PlayRate",
-       title = "(~Plat+) Evolution of Play Rate over time",
+       title = "(~HighDiamond) Evolution of Play Rate over time",
        caption = glue::glue("{params$patch}
                             Ranked games from {params$start} UTC to {params$end} UTC
-                            Games from Last Season Master.
+                            Games from Players who played against Master but aren't Master.
                             Metadata of games collected with RiotGames API")
   ) +
   theme_539() +
@@ -1048,21 +997,21 @@ meta_evo.diamond.base <- Champion.deck.daily.diamond |>
 meta_evo.diamond.base +
   geom_label_repel(
     data = Champion.deck.daily.diamond |>
-        filter( game_start_time_utc == max(game_start_time_utc) ), 
+        filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
     family = "Helvetica",
     size = 3.5,
-    
+
     force = 20,
     force_pull = 0.5,
-    
+
     nudge_x      = 0.15,
     direction    = "y",
     hjust        = 0,
     # vjust        = 0.5,
     segment.size = 0.5,
-    
+
     segment.alpha = .5,
     segment.linetype = "dotted",
     box.padding = .4,
@@ -1079,27 +1028,27 @@ meta_evo.diamond.base +
 ggsave("./images/meta-evo-diamond.png",width = 12,height = 8)
 ```
 
-<!-- ### Graph -->
+### Graph
 
 ```{r plot-meta-evo-double, fig.width=20, fig.height=8}
-meta_evo.base + 
+meta_evo.base +
   geom_label_repel(
     data = Champion.deck.daily |>
-        filter( game_start_time_utc == max(game_start_time_utc) ), 
+        filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
     family = "Helvetica",
     size = 2.5,
-    
+
     force = 20,
     # force_pull = 0.5,
-    
+
     nudge_x      = 0.15,
     direction    = "y",
     hjust        = 0,
     # vjust        = 0.5,
     segment.size = 0.5,
-    
+
     segment.alpha = .5,
     segment.linetype = "dotted",
     box.padding = .4,
@@ -1116,20 +1065,20 @@ meta_evo.diamond.base +
     data = Champion.deck.daily.diamond |>
         filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
-    
+
     fontface = "bold",
     family = "Helvetica",
     size = 2.5,
-    
+
     force = 20,
     force_pull = 0.5,
-    
+
     nudge_x      = 0.15,
     direction    = "y",
     hjust        = 0,
     # vjust        = 0.5,
     segment.size = 0.5,
-    
+
     segment.alpha = .5,
     segment.linetype = "dotted",
     box.padding = .4,
@@ -1138,14 +1087,34 @@ meta_evo.diamond.base +
     segment.angle = 15,
     bg.color = "grey",
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
-  )
-  # plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
-  #                                      Source: Metadata of games collected with RiotGames API'))
+  ) +
+  plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
+                                       Reference Population; Seasonal players from Between Worlds Seasonal and High Diamond defined Games from Players who played against Master but aren not Master.
+                                       Source: Metadata of games collected with RiotGames API'))
 
 ggsave("./images/meta-evo-double.png",width = 19,height = 9)
 ```
 
 ## Row {data-heigth="150"}
+
+### Number of Players
+
+```{r value-player-base}
+flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[note=='seasonal',.N]} (prev) Seasonal Players"),
+                        # caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        icon = "fa-medal",
+                        color = "#65c0a9")
+```
+
+### Number of Diamond
+
+```{r value-player-diamond}
+flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='diamond',.N]} ~HighDiamond Players"),
+                        # caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        icon = "fa-gem",
+                        color = "#ff7f24")
+```
+
 
 ### Last Update
 
@@ -1171,51 +1140,51 @@ downloadthis::download_file(
 )
 ```
 
-### Meta-Evolution (~Plat+)
+<!-- ### Meta-Evolution (~Plat+) -->
 
 ```{r}
-downloadthis::download_file(
-  path = file.path("images/meta-evo-diamond.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download Plat+ PlayRates over time as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+# downloadthis::download_file(
+#   path = file.path("images/meta-evo-diamond.png"),
+#   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+#   button_label = "Download Plat+ PlayRates over time as .png",
+#   button_type = "primary",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
 ```
 
-### Meta-Evolution (Double)
+<!-- ### Meta-Evolution (Double) -->
 
 ```{r}
-downloadthis::download_file(
-  path = file.path("images/meta-evo-diamond.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download (Master+Plat) PlayRates over time as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+# downloadthis::download_file(
+#   path = file.path("images/meta-evo-diamond.png"),
+#   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+#   button_label = "Download (Master+Plat) PlayRates over time as .png",
+#   button_type = "primary",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
 ```
 
-### Play-Rates (to recreate the graph)
+<!-- ### Play-Rates (to recreate the graph) -->
 
 ```{r download-PR}
-rbind(
-  Champion.deck.daily |>
-    add_column(label = "Master"),
-  Champion.deck.daily.diamond |>
-    add_column(label = "~Plat+")
-) |>
-  select(-intDate) |>
-  downloadthis::download_this(
-    button_label = "Download PlayRates data as .csv",
-    output_name = "mutable",
-    button_type = "success",
-    has_icon = TRUE,
-    icon = "fa fa-save"
-    )
+# rbind(
+#   Champion.deck.daily |>
+#     add_column(label = "Master"),
+#   Champion.deck.daily.diamond |>
+#     add_column(label = "~Plat+")
+# ) |>
+#   select(-intDate) |>
+#   downloadthis::download_this(
+#     button_label = "Download PlayRates data as .csv",
+#     output_name = "mutable",
+#     button_type = "success",
+#     has_icon = TRUE,
+#     icon = "fa fa-save"
+#     )
 ```
 
 ## Column {data-width="800"}
@@ -1243,19 +1212,18 @@ tribble(
   tab_header(
     title = glue::glue("LMI Tiers")
   ) |>
-  gtdiamonds::gt_theme_nytimes()
-  # tab_style(
-  #   style = cell_text(weight = "bold"),
-  #   locations = cells_body(
-  #     columns = 1,
-  #   )
-  # ) |>
+  gtExtras::gt_theme_nytimes()
   # tab_options(
   #   table.background.color = "whitesmoke",
   #   table.font.color = "black",
   #   table.font.color.light = "black"
   #  )
-
+  # tab_style(
+  #   style = cell_text(weight = "bold"),
+  #   locations = cells_body(
+  #     columns = 1,
+  #   )
+  # ) 
 ```
 
 ### General info

@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (from Patch 2.18 onward)"
+title: "Match Ups Data (from Patch 2.21 onward)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -59,7 +59,7 @@ LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),
 #' load Games DT
 #'##############
 # LoR.Match.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-LoR.Match.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_S11DT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
 
 #' Read Diamond DT
 ##################
@@ -636,13 +636,18 @@ MUgrid.gt <- grid.all |>
     decimals = 1
   )
 
+
 for (i in 1:params$nGrid ) {
+  
+  # MUgrid.gt <- MUgrid.gt |>
+  #   gtExtras::gt_merge_stack(col1 = !!TopCC[i], col2 = !!sprintf("%s.v2",TopCC[i]) )
+  
   MUgrid.gt <- MUgrid.gt |>
     cols_merge(
       columns = c(i+1,params$nGrid+i+1),
       hide_columns = (params$nGrid+i+1),
       # pattern = "{1}&mdash;{2}"
-      ) |> 
+      ) |>
     text_transform(
       locations = cells_body(
         columns = (i+1)
