@@ -1101,7 +1101,7 @@ ggsave("./images/meta-evo-double.png",width = 19,height = 9)
 
 ```{r value-player-base}
 flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[note=='seasonal',.N]} (prev) Seasonal Players"),
-                        # caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        caption = glue::glue("Players identified in the Between Worlds Seasonal Tournament"),
                         icon = "fa-medal",
                         color = "#65c0a9")
 ```
@@ -1110,7 +1110,7 @@ flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[note=='seasonal',.N]} (prev
 
 ```{r value-player-diamond}
 flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='diamond',.N]} ~HighDiamond Players"),
-                        # caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        caption = glue::glue("Players who played against Master players but aren't Master themselves"),
                         icon = "fa-gem",
                         color = "#ff7f24")
 ```
