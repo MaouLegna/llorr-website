@@ -58,12 +58,15 @@ LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),
 
 #' load Games DT
 #'##############
-# LoR.Match.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-LoR.Match.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
+# LoR.Match.DT.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.DT.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
 
 #' Read Diamond DT
 ##################
-# LoR.Diamond.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA))
+LoR.Diamond.DT.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA))
+
+# LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+#   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
 ```
 
 ```{r functions}
@@ -97,17 +100,17 @@ LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
 ```
 
 ```{r archetype-fix}
-#' Limit the Deck DT to make the fixes much faster
-# deck_filter <- rbind(LoR.Match.RMD) |>
-#   #' Base filters
-#   filter( game_type=="Ranked" ) |>
-#   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-#   select(deck_code_1,deck_code_2) |>
-#   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
-#   filter(decks!="") |>
-#   distinct(decks)
-# 
-# LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
+# Limit the Deck DT to make the fixes much faster
+deck_filter <- do.call("rbind", mget(ls(pattern="\\.DT.RMD$")) ) |>
+  #' Base filters
+  filter( game_type=="Ranked" ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  select(deck_code_1,deck_code_2) |>
+  pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
+  filter(decks!="") |>
+  distinct(decks)
+
+LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 
 #' Archetype-Fix
 #'##############
@@ -123,7 +126,7 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 # fromSeasonal-Only {data-icon="fa-table"}
 
 ```{r prepara-data}
-LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
+LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
@@ -136,8 +139,41 @@ LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
                ) |>
   as.data.table()
 
-LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
+# LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
 ```
+
+```{r}
+# LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |> 
+#   filter( game_type == "Ranked"  ) |>
+#   filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
+#   select( -ends_with("_3"),-ends_with("_4"),-starts_with("factions")) |>
+#   # since I use a different format for factions in LoR.Deck
+#   left_join(LoR.Deck.RMD[,.(deck_code,factions_1=factions,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
+#   left_join(LoR.Deck.RMD[,.(deck_code,factions_2=factions,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+#   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+#   mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+#   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+#                names_to = c(".value"),
+#                names_pattern = "(.*)_[0-9]"
+#                ) |>
+#   #' finish 'process' data
+#   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
+#   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
+#   left_join(LoR.Deck.RMD |> select(-archetype,-factions),by="deck_code") |>
+#   as.data.table()
+# 
+# LoR.Account.RMD |>
+#   mutate(gameName = str_to_lower(gameName)) |>
+#   filter(seasonal == "seasonal") |>
+#   # filter(str_detect(gameName,"moe" )  )
+#   filter(gameName %in% c("akaido","shadawx","emoetional") )
+# 
+# LoR.Melt.Matches.RMD |>
+#   filter(playerID %in% c("eMOEtional#1738","Shadawx#NA1")) |>
+#   filter(str_detect(cards,getCardCode("Minion")) ) |>
+#   distinct(deck_code)
+```
+
 
 ```{r process-MU-master}
 #' WR tbl
@@ -292,7 +328,7 @@ LastUpdate.box
 
 <!-- #'######################################################### -->
 
-<!-- LoR.Melt.Extra.RMD <- LoR.Diamond.RMD |> -->
+<!-- LoR.Melt.Extra.RMD <- LoR.Diamond.DT.RMD |> -->
 
 <!--   filter( game_type == "Ranked"  ) |> -->
 
