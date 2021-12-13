@@ -64,9 +64,6 @@ LoR.Match.DT.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.c
 #' Read Diamond DT
 ##################
 LoR.Diamond.DT.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("",NA))
-
-# LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-#   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
 ```
 
 ```{r functions}
@@ -143,7 +140,10 @@ LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
 ```
 
 ```{r}
-# LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |> 
+# LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
+#   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
+# 
+# LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
 #   filter( game_type == "Ranked"  ) |>
 #   filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
 #   select( -ends_with("_3"),-ends_with("_4"),-starts_with("factions")) |>
@@ -164,7 +164,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
 # 
 # LoR.Account.RMD |>
 #   mutate(gameName = str_to_lower(gameName)) |>
-#   filter(seasonal == "seasonal") |>
 #   # filter(str_detect(gameName,"moe" )  )
 #   filter(gameName %in% c("akaido","shadawx","emoetional") )
 # 

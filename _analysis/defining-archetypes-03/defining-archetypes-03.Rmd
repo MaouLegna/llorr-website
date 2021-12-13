@@ -76,20 +76,22 @@ As the previous analysis was mostly based around the mathematical properties
 
 Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on the magnitude equal or at least similar to a real 
 
-```{r}
+```{r load-data}
+LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
+fread(file.path("C:","LlorR","data","raw","old-data","LoR_MatchDT_S10_218_220.csv"), select=c("game_type","deck_code_1","deck_code_2"), header = T, na.strings = c("", NA)) |>
+  filter(game_type=="Ranked") |>
+  select(-game_type) |>
+  pivot_longer(cols = contains("deck_code"),values_to = "deck_code",names_to = NULL) |>
+  distinct(deck_code) -> S10Decks
 ```
-
-
-Decklist from "Last Season Master" games in patch 2.18 ~90k decks
-
-Decklist from "Master" games in patch 2.18 ~10k decks
+Deck-list from "Master" games during the Between Worlds Season - patch [2.18,2.21) ~`r floor(NROW(S10Decks)/1000)*1000`
 
 ---
 
 Distance Matrix and so, all algorithm derived by them have a quadratic growth ($o^2$) so scalability is a problem.
 
-This makes the choice and/or application of certain method/algorithms/ecc not feasable at high dimension.
+This makes the choice and/or application of certain method/algorithms and so on are not feasible at high dimension.
 
 BUT if the "whole" problem related to the distance matrix is too big an approach comes to help: to "Divide et Impera" the problem
 
@@ -109,7 +111,7 @@ For now everything we will do will ignore this factor. While we can take into ac
 
 ## The Shuriman Desert is Sparse
 
-Let's assume we don't have the problem of the DualRegion cards, what do we know about the structure of the similarity matrix ?
+Let's assume we don't have the problem of the Dual-Region cards, what do we know about the structure of the similarity matrix ?
 
 We know that there are 55 unique combination of region
 
@@ -185,18 +187,53 @@ We so choose to propose to set a rule so that only these bridge decks are cluste
 
 What benchmark and rules should we use ? This is tricky but the idea was of using either an hard defined benchmark and to support the presence of Allegiance
 
-```{r region-freq-dist}
+```{r allegiance-mess}
+S10Decks[ !is.na(cards.region.fix) , cards.region:=cards.region.fix  ]
 
+S10Decks |>
+  left_join(LoR.Deck.RMD, by = "deck_code") |>
+  mutate(cards.region = ifelse(!is.na(cards.region.fix), cards.region.fix, cards.region ) ) |>
+  filter(!is.na(allegiance)) |>
+  mutate(
+    alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
+    alle = map(alle,unique),
+    alle = map_chr(alle,~str_flatten(.x,collapse = ",")),
+    alle.region = str_sub(alle,3,4)
+  ) |>
+  separate_rows( cards.region,cards.region.freq, sep = ",",convert = T ) |>
+  select(alle,alle.region,cards.region,cards.region.freq) |>
+  filter(alle.region==cards.region) |>
+  rename(cards.region.num=cards.region.freq) |>
+  tabyl(cards.region.num)
+  
+  
+
+exampleAlle |>
+  mutate(
+    alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
+    alle = map(alle,unique),
+    alle = map_chr(alle,~str_flatten(.x,collapse = ","))
+  ) |>
+  select(alle)
+
+str_split(exampleAlle$allegiance,pattern = ",")
+
+
+  
+S10Decks |>
+  left_join(LoR.Deck.RMD, by = "deck_code") |>
+  slice_head(n= 10) |>
+  mutate(
+    cards_list_try = map(.x = deck_code, .f = ~get_deck_from_code(.x))
+  )
+
+# tabyl(allegiance)
 ```
 
 
 An idea was to use the inclusion of Allegiance cards as their effect is not a gamble only in deck that either can heavily control their draw or are made mostly of a single region. As LoR offer some card draw control options they are far from common so usually use of Allegiance cards do predict the use of an ~Mono deck.
 
 Sadly this is true, but not entirely. Not only these cards have being played in decks where their activation is very risky but there are even cases there more the Allegiance card for both region has being played in the same deck.
-
-```{r allegiance-mess}
-
-```
 
 There is also an additional potential failing point of this strategy: the "Theseus's Archetype".
 
