@@ -100,6 +100,24 @@ source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
+```{r account-info}
+masterEU <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_EU.csv"),
+                              header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  filter(time <= as.POSIXct(params$end,"UTC"))
+
+masterNA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_NA.csv"),
+                              header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  filter(time <= as.POSIXct(params$end,"UTC"))
+
+masterASIA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_AS.csv"),
+                              header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  filter(time <= as.POSIXct(params$end,"UTC"))
+
+namesList.EU.RMD   <- masterEU[ !is.na(puuid), .N ]
+namesList.NA.RMD   <- masterNA[ !is.na(puuid), .N ]
+namesList.ASIA.RMD <- masterASIA[ !is.na(puuid), .N ]
+```
+
 ```{r prepare-data-master}
 #' Melt tbl
 #'#########
@@ -173,24 +191,6 @@ if (any(c(LoR.Melt.Master.RMD[  is.na(playerID), .N ],
 ```
 
 # Data
-
-```{r account-info}
-masterEU <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_EU.csv"),
-                              header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  filter(time <= as.POSIXct(params$end,"UTC"))
-
-masterNA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_NA.csv"),
-                              header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  filter(time <= as.POSIXct(params$end,"UTC"))
-
-masterASIA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_AS.csv"),
-                              header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  filter(time <= as.POSIXct(params$end,"UTC"))
-
-namesList.EU.RMD   <- masterEU[ !is.na(puuid), .N ]
-namesList.NA.RMD   <- masterNA[ !is.na(puuid), .N ]
-namesList.ASIA.RMD <- masterASIA[ !is.na(puuid), .N ]
-```
 
 ```{r nGames-data}
 minrow_live <- min(which(LoR.Match.DT.RMD[,game_start_time_utc >= as.POSIXct(params$start)]))

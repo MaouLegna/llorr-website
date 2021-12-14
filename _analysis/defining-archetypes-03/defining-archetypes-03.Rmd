@@ -68,13 +68,13 @@ xaringanExtra::style_panelset_tabs(
 
 In the [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) on defining archetypes we introduced the basic theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
 
-Along side the general theory we introduced and also applied a few commonly used algorithms and some of the "newer/trending" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
+Along side the general theory we introduced and applied a few widely-used algorithms and some of the "newer" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
 
-The example was tailored to give a general idea about the methods, some of their strong point and also weaknesses.
+The example was tailored to give a general idea about the methods, some of their strong point and also potential weaknesses with this specific problem.
 
-As the previous analysis was mostly based around the mathematical properties 
+As the previous analysis was mostly based around the mathematical properties and a well defined example it can't translate directly to a generalized use with the commonly analysed data.
 
-Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on the magnitude equal or at least similar to a real 
+Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on a scale more similar to a 'real case'.
 
 ```{r load-data}
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
@@ -83,15 +83,19 @@ fread(file.path("C:","LlorR","data","raw","old-data","LoR_MatchDT_S10_218_220.cs
   filter(game_type=="Ranked") |>
   select(-game_type) |>
   pivot_longer(cols = contains("deck_code"),values_to = "deck_code",names_to = NULL) |>
-  distinct(deck_code) -> S10Decks
+  distinct(deck_code) |>
+  as.data.table() -> S10Decks
 ```
-Deck-list from "Master" games during the Between Worlds Season - patch [2.18,2.21) ~`r floor(NROW(S10Decks)/1000)*1000`
 
----
+To give a reference the Between Worlds Season from patch 2.18 to 2.20 featured at Master rank ~`r floor(NROW(S10Decks)/1000)*1000`
+
+## An Engineering Problem
+
+The main issue to use 'real-case' amount of decks is related to the computational complexity.
 
 Distance Matrix and so, all algorithm derived by them have a quadratic growth ($o^2$) so scalability is a problem.
 
-This makes the choice and/or application of certain method/algorithms and so on are not feasible at high dimension.
+**This makes the choice and/or application of certain method/algorithms and so on are not feasible at high dimension.**
 
 BUT if the "whole" problem related to the distance matrix is too big an approach comes to help: to "Divide et Impera" the problem
 
@@ -125,7 +129,7 @@ This makes it so the number of sub-matrix to consider follows the following form
 
 $\sum_i^n((i-1)^2+\frac{i(i+1)}{2})$
 
-```{r}
+```{r table-sparse}
 #' region to find the percentage all cases of "interceptions" between elements like factions. For example BC/NX does correlate with all BC and all NX cases
 regionComboInterception <- function(n) {
   # n = 10
@@ -153,7 +157,13 @@ tibble::tibble( region = 1:10,
   gtExtras::gt_theme_538()
 ```
 
-From **Table1 (add ref) **  we can see that in the current setting with n=10 existing regions of the 1540 cases only the 32% actually meaningful.
+<caption>
+
+(\#tab:table-sparse)
+
+</caption>
+
+From Tab:\@ref(tab:table-sparse) we can see that in the current setting with n=10 existing regions of the 1540 cases only the 32% actually meaningful.
 
 But this is not over as only a small subset of this 32% is actually relevant. 
 
@@ -167,7 +177,7 @@ In other words the decks that matters are bridge among the regions with a main r
 
 As easy example is the Mistwraith decks that we also used in the previous article.
 
-Normally Mistwraith decks are made mostly of ShadowIsles cards while the remaining cards are often from a region of choice that synergies with the rest of the deck but are not essential / key-cards. This cards act are the bridge between regions.
+Normally Mistwraith decks are made mostly of Shadow Isles cards while the remaining cards are often from a region of choice that synergies with the rest of the deck but are not essential / key-cards. This cards act are the bridge between regions.
 
 Is the deck using as the only not-SI cards 3 copies of Pale Cascade? Then it's a SI/MT deck
 
@@ -177,22 +187,20 @@ Is the deck using as the only not-SI cards 3 copies of Iterative Improvement? Th
 
 And so on
 
-Of course as mentioned this is more an approximation as one could that a Mistwraith deck with just 20 SI cards and a lot of duplication cards can be defined as Mistwratith decks but here we assume that that by itself is an over-simplification and it's more likely to be defined as a sub-archetype of Mistwraith Allegiance that may have sense to the connected/related the 20-SI cards Mistwraith deck would most likely while having a similar goal and strategy would have a play-pattern that differs enough from the Mistwraith Allegiance so that in this initial clustering it is more correct to separate them.
+Of course as mentioned this is more an approximation as one could that a Mistwraith deck with just 20 SI cards and a lot of duplication cards can be defined as Mistwraith decks but here we assume that that by itself is an over-simplification and it's more likely to be defined as a sub-archetype of Mistwraith Allegiance that may have sense to the connected/related the 20-SI cards Mistwraith deck would most likely while having a similar goal and strategy would have a play-pattern that differs enough from the Mistwraith Allegiance so that in this initial clustering it is more correct to separate them.
 
 In a second step, when trying to find more generalized archetypes (be it something like aggro/control/initiative/resource) then there is reason to try aggregated these different "aggregated version" of Mistwraith decks but as of now, with 
 
----
+## Cross-Region Comparisons
 
 We so choose to propose to set a rule so that only these bridge decks are clustered. This open for a consequential step, as we restricted the between regions cases to decks with an overwhelming presence of a region to the other they can be all aggregated into the ~Mono region
 
-What benchmark and rules should we use ? This is tricky but the idea was of using either an hard defined benchmark and to support the presence of Allegiance
+What benchmark and rules should we use ? This is tricky but the idea is to use both an hard defined benchmark and the presence of Allegiance cards
 
 ```{r allegiance-mess}
-S10Decks[ !is.na(cards.region.fix) , cards.region:=cards.region.fix  ]
-
 S10Decks |>
   left_join(LoR.Deck.RMD, by = "deck_code") |>
-  mutate(cards.region = ifelse(!is.na(cards.region.fix), cards.region.fix, cards.region ) ) |>
+  mutate(cards.region = ifelse(!is.na(cards.region.fix), cards.region.fix, cards.region ) )  |>
   filter(!is.na(allegiance)) |>
   mutate(
     alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
@@ -204,32 +212,29 @@ S10Decks |>
   select(alle,alle.region,cards.region,cards.region.freq) |>
   filter(alle.region==cards.region) |>
   rename(cards.region.num=cards.region.freq) |>
-  tabyl(cards.region.num)
+  tabyl(cards.region.num) |>
+  as_tibble() |>
+  rename_with(~c("cards","n","cumfreq")) |>
+  arrange(desc(cards)) |>
+  mutate(cumfreq=cumsum(cumfreq)) |>
+  gt() |>
+  gtExtras::gt_theme_538()
+  
+  
+  # tab_options(
+  #   data_row.padding = px(5),
+  #   table.font.size = px(13),
+  #   column_labels.font.size = px(10)
+  # ) |>
+  # cols_width(
+  #   -1 ~ px(90),
+  #    1 ~ px(150),
+  #   # everything() ~ px(100)
+  # )
   
   
 
-exampleAlle |>
-  mutate(
-    alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
-    alle = map(alle,unique),
-    alle = map_chr(alle,~str_flatten(.x,collapse = ","))
-  ) |>
-  select(alle)
-
-str_split(exampleAlle$allegiance,pattern = ",")
-
-
-  
-S10Decks |>
-  left_join(LoR.Deck.RMD, by = "deck_code") |>
-  slice_head(n= 10) |>
-  mutate(
-    cards_list_try = map(.x = deck_code, .f = ~get_deck_from_code(.x))
-  )
-
-# tabyl(allegiance)
 ```
-
 
 An idea was to use the inclusion of Allegiance cards as their effect is not a gamble only in deck that either can heavily control their draw or are made mostly of a single region. As LoR offer some card draw control options they are far from common so usually use of Allegiance cards do predict the use of an ~Mono deck.
 
@@ -403,6 +408,10 @@ levelplot(z ~ x * y, grid, cuts = 50, scales=list(x=list(at=NULL),y=list(at=NULL
 levelplot(z ~ x * y, grid, col.regions = topo.colors(10),
           at = c(-Inf, seq(-0.8, 0.8, by = 0.2), Inf))
 ```
+
+# Analysis
+
+
 
 ```{r fig.width=12, fig.height=8}
 SI <- cos.dsimMatrix(alleDeck[factions == "SI",deck_code])
