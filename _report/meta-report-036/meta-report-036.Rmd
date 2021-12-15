@@ -8,7 +8,7 @@ params:
   prev:  "2021-11-01 18:00:00" #UTC tz / 'current' previous week start
   start: "2021-12-08 18:00:00" #UTC tz / 'current' week start
   end:   "2021-12-15 18:00:00" #UTC tz / 'current' week end
-  nGrid: 15
+  nGrid: 10
 
 title: | 
   `r params$title`
@@ -27,7 +27,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -71,16 +71,16 @@ xaringanExtra::style_panelset_tabs(
 ```{r raw-data}
 #' Read Master
 ##############
-# LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
+LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA))
+# LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_TempDT.csv"), header = T, na.strings = c("", NA))
 
 #' Read Diamond
 ###############
-LoR.Diamond.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT.csv"), header = T, na.strings = c("", NA))
+LoR.Diamond.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT_S11.csv"), header = T, na.strings = c("", NA))
 
 #' Read Temp
 ############
-LoR.Old.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","old-data","LoR_MatchDT_S10_218_220.csv"), header = T, na.strings = c("", NA))
+LoR.Old.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","games","LoR_MatchDT_S10_218_220.csv"), header = T, na.strings = c("", NA))
 
 #' load Account
 #'#############
@@ -101,15 +101,15 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r account-info}
-masterEU <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_EU.csv"),
+masterEU <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_EU.csv"),
                               header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-masterNA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_NA.csv"),
+masterNA <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_NA.csv"),
                               header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-masterASIA <- fread(file.path("C:","LlorR","data","raw","master","LoR_Master_S11_AS.csv"),
+masterASIA <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_AS.csv"),
                               header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
@@ -898,7 +898,7 @@ ggsave(glue::glue("./images/meta-report/{params$ind}-topPlayrate.png"),width = 1
 :::
 
 ::: {.panel}
-### from Last-Seasononal {.panel-name}
+### from Master {.panel-name}
 
 ```{r table-Champion-PR-old}
 CC.table.Master |>
@@ -1048,8 +1048,8 @@ meta_evo <- ggplot(
   )  +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0,.20),
-    breaks = seq(0,.20,0.04),
+    limits = c(0,.35),
+    breaks = seq(0,.35,0.04),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   ) +
   scale_color_manual(
@@ -1267,24 +1267,25 @@ MUtbl <- LoR.Melt.Master.RMD |>
 ```
 
 ```{r get-WR-Top}
-mu <- 15
+# mu <- 10
 
 TopCC <- CC.table.Master |> 
   rename(freq = percent) |>
-  arrange(desc(freq)) |> 
-  {\(x) slice_head(x,n = mu)}() |> 
-  select(playerDeck) |> 
-  pull()
+  slice_max(freq,n=params$nGrid) |>
+  # arrange(desc(freq)) |> 
+  # {\(x) slice_head(x,n = mu)}() |> 
+  # select(playerDeck) |> 
+  pull(playerDeck)
 
 MUtblTop.Master <- tibble::tibble( 
-  playerDeck = rep(TopCC,each=mu),
-  opponentDeck = rep(TopCC,mu)
+  playerDeck = rep(TopCC,each=params$nGrid),
+  opponentDeck = rep(TopCC,params$nGrid)
   ) |>
   left_join(MUtbl, by = c("playerDeck","opponentDeck"))
 
 MUtblTop.Diamond <- tibble::tibble( 
-  playerDeck = rep(TopCC,each=mu),
-  opponentDeck = rep(TopCC,mu)
+  playerDeck = rep(TopCC,each=params$nGrid),
+  opponentDeck = rep(TopCC,params$nGrid)
   ) |> 
   left_join( LoR.Melt.Diamond.RMD |>
   filter( playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
@@ -1303,15 +1304,15 @@ MUtblTop.Diamond <- tibble::tibble(
 ::: {.panel}
 ## Match-up Grid {.panel-name}
 
-The win rates on the grid are among the `r mu` most played champion combination.
+The win rates on the grid are among the `r params$nGrid` most played champion combination.
 The upper value is from all the Last-Season Masters, the bottom one only from the current Current Masters. MU with less than 30 games are not included.
 
 ```{r}
-grid <- matrix(MUtblTop.Master$muWR, nrow = mu, ncol = mu, byrow = T)
+grid <- matrix(MUtblTop.Master$muWR, nrow = params$nGrid, ncol = params$nGrid, byrow = T)
 diag(grid) <- NA
 colnames(grid) <- TopCC
 
-grid.diamond <- matrix(MUtblTop.Diamond$muWR, nrow = mu, ncol = mu, byrow = T)
+grid.diamond <- matrix(MUtblTop.Diamond$muWR, nrow = params$nGrid, ncol = params$nGrid, byrow = T)
 diag(grid.diamond) <- NA
 colnames(grid.diamond) <- sprintf("%s.v2",TopCC)
 
