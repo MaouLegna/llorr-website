@@ -1483,14 +1483,12 @@ good_color <- make_color_pal(c("white", "white", "#9bc2e6"))
 ::: {.panelset}
 ::: {.panel}
 
-## Fiora/Zed
+## Ezreal/Kennen (IO/PZ)
 
-No new expansion deck? Too boring, better to promote some base-set shenanigans, it's an old deck but it checks out.
-
-It's something I saw from sunday stats and well, maybe with all those Yodles it can makes sense.
+I actually wanted to feature something else but, after recent events maybe the deck even needs "some help"
 
 ```{r deckweek, layout="l-page"}
-deck.of.week <- "Fiora/Zed"
+deck.of.week <- "Ezreal/Kennen (IO/PZ)"
 
 whichDecks <- LoR.Melt.Master.RMD |>
   filter( playerDeck == deck.of.week ) |>
