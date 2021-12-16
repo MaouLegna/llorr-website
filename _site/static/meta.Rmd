@@ -645,185 +645,129 @@ flexdashboard::valueBox(glue::glue("{length(fct_underdog.d7)} Underdog Decks"),
 LastUpdate.box
 ```
 
-<!-- # Fresh Stats (last 24 hours) {data-icon="fa-table"} -->
+# Fresh Stats (last 24 hours) {data-icon="fa-table"}
 
-<!-- ## Row -->
+## Row
 
-<!-- ### Previous Day -->
+### Previous Day
 
-<!-- ```{r 24hrs-process-winRate} -->
-<!-- LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |> -->
-<!--   filter(  -->
-<!--       game_start_time_utc >= Sys.Date()+hours(18)-days(2) & -->
-<!--       game_start_time_utc <  Sys.Date()+hours(18)-days(1) -->
-<!--       ) -->
+```{r 24hrs-process-winRate}
+LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
+  filter( game_start_time_utc %within% interval(today()+hours(18)-days(2),today()+hours(18)-days(1)) )
 
-<!-- WR.DT.24h <- LoR.Melt.24hrs |> -->
-<!--   filter(game_outcome!="tie") |> -->
-<!--   # select(playerDeck,opponentDeck,game_outcome ) |> -->
-<!--   # filter( playerDeck == "Ezreal/Karma" ) |> tabyl(playerID) -->
-<!--   group_by(playerDeck) |> -->
-<!--   summarise( -->
-<!--     nWin   = sum(game_outcome=="win"), -->
-<!--     nGames = n(), -->
-<!--     WR=mean(game_outcome=="win") -->
-<!--   ) |> -->
-<!--   ungroup() |> -->
-<!--   mutate( -->
-<!--     playrate = nGames/sum(nGames) -->
-<!--   ) |> -->
-<!--   as.data.table() |> -->
-<!--   {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |> -->
-<!--   mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) |> -->
-<!--   filter( playerDeck %!in% c(fct_meta,fct_meta.d7,fct_underdog,fct_underdog.d7) ) |> -->
-<!--   filter( WR > 0.5 & nGames > 10 ) |> -->
-<!--   select(-LCI,-UCI)  -->
+WR.DT.24h <- LoR.Melt.24hrs |>
+  filter(game_outcome!="tie") |>
+  # select(playerDeck,opponentDeck,game_outcome ) |>
+  # filter( playerDeck == "Ezreal/Karma" ) |> tabyl(playerID)
+  group_by(playerDeck) |>
+  summarise(
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR=mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate(
+    playrate = nGames/sum(nGames)
+  ) |>
+  as.data.table() |>
+  {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
+  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) |>
+  filter( playerDeck %!in% c(fct_meta,fct_meta.d7,fct_underdog,fct_underdog.d7) ) |>
+  filter( WR > 0.5 & nGames > 10 ) |>
+  select(-LCI,-UCI)
 
-<!-- deckCodeTbl.24hrs  <- LoR.Melt.24hrs |> -->
-<!--   filter( playerDeck %in% c(WR.DT.24h$playerDeck) ) |> -->
-<!--   mutate( playerDeck = factor(playerDeck, ordered = TRUE, -->
-<!--                               levels = c(WR.DT.24h$playerDeck) ) -->
-<!--           ) |> -->
-<!--   group_by(server,playerDeck,deck_code ) |> -->
-<!--   summarise( n = n() ) |> -->
-<!--   ungroup() |> -->
-<!--   group_by(playerDeck) |> -->
-<!--   slice_max(n, n = 10) |> -->
-<!--   ungroup() |> -->
-<!--   mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"), -->
-<!--           server = str_to_title(server) ) |> -->
-<!--   select(playerDeck,n,link,server) -->
-<!-- ``` -->
+deckCodeTbl.24hrs  <- LoR.Melt.24hrs |>
+  filter( playerDeck %in% c(WR.DT.24h$playerDeck) ) |>
+  mutate( playerDeck = factor(playerDeck, ordered = TRUE,
+                              levels = c(WR.DT.24h$playerDeck) )
+          ) |>
+  group_by(server,playerDeck,deck_code ) |>
+  summarise( n = n() ) |>
+  ungroup() |>
+  group_by(playerDeck) |>
+  slice_max(n, n = 10) |>
+  ungroup() |>
+  mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
+          server = str_to_title(server) ) |>
+  select(playerDeck,n,link,server)
+```
 
 
-<!-- ```{r 24hrs-react-winRate} -->
-<!-- with_tooltip <- function(value, tooltip) { -->
-<!--   htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help", -->
-<!--             title = tooltip, value) -->
-<!-- } -->
+```{r 24hrs-react-winRate}
+with_tooltip <- function(value, tooltip) {
+  htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+            title = tooltip, value)
+}
 
-<!-- WR.DT.24h |> -->
-<!--   reactable( -->
-<!--     # groupBy = "playerDeck", -->
-<!--     searchable = TRUE, -->
-<!--     bordered = TRUE, -->
-<!--     # wrap = FALSE, -->
-<!--     highlight = TRUE, -->
-<!--     striped = TRUE, -->
-<!--     pagination = FALSE, -->
-<!--     fullWidth = T, -->
-<!--     # defaultSorted = list(LMI = "desc"), -->
-<!--     defaultColDef = colDef( -->
-<!--       align = "center", -->
-<!--       minWidth = 100, -->
-<!--       # headerStyle = list(background = "steelblue",color="white") -->
-<!--     ), -->
-<!--     details = function(index) { -->
-<!--       # index = 1 -->
-<!--       deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == WR.DT.24h$playerDeck[index], ] -->
-<!--       reactable( -->
-<!--         deckdata, -->
-<!--         fullWidth = F, -->
-<!--         defaultColDef = colDef( -->
-<!--           style = list( fontSize = 13 ), -->
-<!--           html = TRUE -->
-<!--           ), -->
-<!--         theme = reactableTheme( headerStyle = list(background = "red",color="white", fontSize = 13 ) ), -->
-<!--         columns = list( -->
-<!--           n = colDef(name = "#Games", minWidth = 75 ), -->
-<!--           link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ), -->
-<!--           # playerDeck = colDef(name = "Archetype", minWidth = 150 ), -->
-<!--           playerDeck = colDef(show = F), -->
-<!--           server = colDef(name = "Server", minWidth = 100 ) -->
-<!--           ) )}, -->
-<!--     columns = list( -->
-<!--       playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left",header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")), -->
-<!--       nWin   = colDef(name = "#Win"), -->
-<!--       nGames = colDef(name = "#Games"), -->
-<!--       playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ), -->
-<!--       type = colDef(name = "Type"), -->
-<!--       # LMI = colDef(name = "LMI"), -->
-<!--       tier = colDef(name = "Tier",minWidth = 200,align = "left"), -->
-<!--       CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"), -->
-<!--       # LMI = colDef( -->
-<!--       #   name = "LMI", -->
-<!--       #   defaultSortOrder = "desc", -->
-<!--       #   # Show the user score in a donut chart like TMDb does. Since donut charts -->
-<!--       #   # are hard to compare, apply a color scale as well. -->
-<!--       #   cell = JS("function(cellInfo) { -->
-<!--       #             const sliceColor = cellInfo.row['score_color'] -->
-<!--       #             const sliceLength = 2 * Math.PI * 24 -->
-<!--       #             const sliceOffset = sliceLength * (1 - cellInfo.value / 100) -->
-<!--       #             const donutChart = ( -->
-<!--       #             '<svg width=60 height=60 style=\"transform: rotate(-90deg)\" focusable=false>' + -->
-<!--       #             '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=rgba(0,0,0,0.1)></circle>' + -->
-<!--       #             '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=' + sliceColor + -->
-<!--       #             ' stroke-dasharray=' + sliceLength + ' stroke-dashoffset=' + sliceOffset + '></circle>' + -->
-<!--       #             '</svg>' -->
-<!--       #             ) -->
-<!--       #             const label = '<div style=\"position: absolute; top: 50%; left: 50%; ' + -->
-<!--       #             'transform: translate(-50%, -50%)\">' + cellInfo.value + '</div>' -->
-<!--       #             return '<div style=\"display: inline-flex; position: relative\">' + donutChart + label + '</div>' -->
-<!--       #             }"), -->
-<!--       #   html = TRUE, -->
-<!--       #   align = "center", -->
-<!--       #   width = 140, -->
-<!--       #   class = "user-score" -->
-<!--       #   ), -->
-<!--       # score_color = colDef(show = F), -->
-<!--       WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) ) -->
-<!--       # WR     = colDef(name = "WinRate", -->
-<!--       #                 format = colFormat(percent = TRUE,digits = 1), -->
-<!--       #                 details = function(index) { -->
-<!--       #                   wrdata <- serverWRTbl[ serverWRTbl$playerDeck == reactDT$playerDeck[index], ] -->
-<!--       #                   htmltools::div(style = "padding: 10px", -->
-<!--       #                                  reactable( -->
-<!--       #                                    wrdata, -->
-<!--       #                                    fullWidth = FALSE, -->
-<!--       #                                    theme = reactableTheme( headerStyle = list(background = "green",color="white", fontSize = 12 ) ), -->
-<!--       #                                    defaultColDef = colDef(  -->
-<!--       #                                      style = list( fontSize = 12, align = "center" ) -->
-<!--       #                                      # html = TRUE -->
-<!--       #                                      ), -->
-<!--       #                                    columns = list( -->
-<!--       #                                      playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left"), -->
-<!--       #                                      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) ), -->
-<!--       #                                      nWin   = colDef(name = "#Win"), -->
-<!--       #                                      nGames = colDef(name = "#Games"), -->
-<!--       #                                      regPlayrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ), -->
-<!--       #                                      CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"), -->
-<!--       #                                      server = colDef(name = "Server",align = "left") -->
-<!--       #                                    ) -->
-<!--       #                                    ) -->
-<!--       #                                  ) } ) -->
-<!--     ) -->
+WR.DT.24h |>
+  reactable(
+    # groupBy = "playerDeck",
+    searchable = TRUE,
+    bordered = TRUE,
+    # wrap = FALSE,
+    highlight = TRUE,
+    striped = TRUE,
+    pagination = FALSE,
+    fullWidth = T,
+    # defaultSorted = list(LMI = "desc"),
+    defaultColDef = colDef(
+      align = "center",
+      minWidth = 100,
+      # headerStyle = list(background = "steelblue",color="white")
+    ),
+    details = function(index) {
+      # index = 1
+      deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == WR.DT.24h$playerDeck[index], ]
+      reactable(
+        deckdata,
+        fullWidth = F,
+        defaultColDef = colDef(
+          style = list( fontSize = 13 ),
+          html = TRUE
+          ),
+        theme = reactableTheme( headerStyle = list(background = "red",color="white", fontSize = 13 ) ),
+        columns = list(
+          n = colDef(name = "#Games", minWidth = 75 ),
+          link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ),
+          # playerDeck = colDef(name = "Archetype", minWidth = 150 ),
+          playerDeck = colDef(show = F),
+          server = colDef(name = "Server", minWidth = 100 )
+          ) )},
+    columns = list(
+      playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left",header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")),
+      nWin   = colDef(name = "#Win"),
+      nGames = colDef(name = "#Games"),
+      playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
+      type = colDef(name = "Type"),
+      # LMI = colDef(name = "LMI"),
+      tier = colDef(name = "Tier",minWidth = 200,align = "left"),
+      CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"),
+      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) )
+    )
 
-<!--   ) -->
-<!--   # reactablefmtr::add_source(element_text(glue::glue("Data from Last-Season Master Only. -->
-<!--   #                                                   Source: Source: Metadata of games collected with RiotGames API")), background_color = "transparent", font_family = "Chivo") -->
+  )
+```
 
-<!-- ``` -->
-
-<!-- ## Row {data-heigth="150"} -->
+## Row {data-heigth="150"}
 
 
-<!-- ### Time Frame -->
+### Time Frame
 
-<!-- ```{r} -->
-<!-- flexdashboard::valueBox(glue::glue("24 Hours Time Frame"), -->
-<!--                         caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"), -->
-<!--                         icon = "fa-clock", -->
-<!--                         # color = "lightgreen" -->
-<!--                         color = "red") -->
-<!-- ``` -->
-
-
-<!-- ### Last Update -->
+```{r}
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
+                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),
+                        icon = "fa-clock",
+                        # color = "lightgreen"
+                        color = "red")
+```
 
 
-<!-- ```{r} -->
-<!-- LastUpdate.box -->
-<!-- ``` -->
+### Last Update
+
+
+```{r}
+LastUpdate.box
+```
 
 
 # Meta-Evolution {data-icon="fa-chart-line"}
@@ -1166,7 +1110,7 @@ LastUpdate.box
 
 # Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 
-## Download {data-width="200"}
+## Download {data-width="250"}
 
 ### Meta-Evolution (Master)
 
@@ -1182,54 +1126,54 @@ downloadthis::download_file(
 )
 ```
 
-<!-- ### Meta-Evolution (~Plat+) -->
+### Meta-Evolution (~HighDiamond)
 
 ```{r}
-# downloadthis::download_file(
-#   path = file.path("images/meta-evo-diamond.png"),
-#   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-#   button_label = "Download Plat+ PlayRates over time as .png",
-#   button_type = "primary",
-#   has_icon = TRUE,
-#   icon = "fa fa-save",
-#   self_contained = FALSE
-# )
+downloadthis::download_file(
+  path = file.path("images/meta-evo-diamond.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download ~HighDiamond PlayRates over time as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
 ```
 
-<!-- ### Meta-Evolution (Double) -->
+### Meta-Evolution (Double)
 
 ```{r}
-# downloadthis::download_file(
-#   path = file.path("images/meta-evo-diamond.png"),
-#   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-#   button_label = "Download (Master+Plat) PlayRates over time as .png",
-#   button_type = "primary",
-#   has_icon = TRUE,
-#   icon = "fa fa-save",
-#   self_contained = FALSE
-# )
+downloadthis::download_file(
+  path = file.path("images/meta-evo-double.png"),
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+  button_label = "Download (Master+HighDiamond) PlayRates over time as .png",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
 ```
 
-<!-- ### Play-Rates (to recreate the graph) -->
+### Play-Rates (to recreate the graph)
 
 ```{r download-PR}
-# rbind(
-#   Champion.deck.daily |>
-#     add_column(label = "Master"),
-#   Champion.deck.daily.diamond |>
-#     add_column(label = "~Plat+")
-# ) |>
-#   select(-intDate) |>
-#   downloadthis::download_this(
-#     button_label = "Download PlayRates data as .csv",
-#     output_name = "mutable",
-#     button_type = "success",
-#     has_icon = TRUE,
-#     icon = "fa fa-save"
-#     )
+rbind(
+  Champion.deck.daily |>
+    add_column(label = "Master"),
+  Champion.deck.daily.diamond |>
+    add_column(label = "~HighDiamond")
+) |>
+  select(-intDate) |>
+  downloadthis::download_this(
+    button_label = "Download PlayRates data as .csv",
+    output_name = "mutable",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+    )
 ```
 
-## Column {data-width="800"}
+## Column {data-width="750"}
 
 ### Archetype "fix"
 
@@ -1255,17 +1199,6 @@ tribble(
     title = glue::glue("LMI Tiers")
   ) |>
   gtExtras::gt_theme_nytimes()
-  # tab_options(
-  #   table.background.color = "whitesmoke",
-  #   table.font.color = "black",
-  #   table.font.color.light = "black"
-  #  )
-  # tab_style(
-  #   style = cell_text(weight = "bold"),
-  #   locations = cells_body(
-  #     columns = 1,
-  #   )
-  # ) 
 ```
 
 ### General info
