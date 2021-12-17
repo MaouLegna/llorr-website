@@ -79,7 +79,7 @@ Here, we want to continue to use the Cluster Analysis but this times applied to 
 ```{r load-data}
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
-fread(file.path("C:","LlorR","data","raw","old-data","LoR_MatchDT_S10_218_220.csv"), select=c("game_type","deck_code_1","deck_code_2"), header = T, na.strings = c("", NA)) |>
+fread(file.path("C:","LlorR","data","raw","games","LoR_MatchDT_S10_218_220.csv"), select=c("game_type","deck_code_1","deck_code_2"), header = T, na.strings = c("", NA)) |>
   filter(game_type=="Ranked") |>
   select(-game_type) |>
   pivot_longer(cols = contains("deck_code"),values_to = "deck_code",names_to = NULL) |>
