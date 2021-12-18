@@ -212,31 +212,18 @@ S10Decks |>
   select(alle,alle.region,cards.region,cards.region.freq) |>
   filter(alle.region==cards.region) |>
   rename(cards.region.num=cards.region.freq) |>
-  tabyl(cards.region.num) |>
+  tabyl(alle)
+  # tabyl(cards.region.num) |>
   as_tibble() |>
   rename_with(~c("cards","n","cumfreq")) |>
   arrange(desc(cards)) |>
   mutate(cumfreq=cumsum(cumfreq)) |>
-  gt() |>
-  gtExtras::gt_theme_538()
-  
-  
-  # tab_options(
-  #   data_row.padding = px(5),
-  #   table.font.size = px(13),
-  #   column_labels.font.size = px(10)
-  # ) |>
-  # cols_width(
-  #   -1 ~ px(90),
-  #    1 ~ px(150),
-  #   # everything() ~ px(100)
-  # )
-  
-  
-
+  gt()
 ```
 
 An idea was to use the inclusion of Allegiance cards as their effect is not a gamble only in deck that either can heavily control their draw or are made mostly of a single region. As LoR offer some card draw control options they are far from common so usually use of Allegiance cards do predict the use of an ~Mono deck.
+
+
 
 Sadly this is true, but not entirely. Not only these cards have being played in decks where their activation is very risky but there are even cases there more the Allegiance card for both region has being played in the same deck.
 
@@ -247,10 +234,6 @@ This is related to the problem with Mistwraith deck mentioned before. We said th
 Overall this problem is being left for another moment to refine the result of a cluster analysis but conceptually we believe there is merit both in saying there can be more version of the same base-archetype and then we can work on an aggregated one
 
 ```{r create-example}
-# load DeckDT
-#'###########
-# LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
-
 # data.table::fwrite(example_archetye_03,"C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv")
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
 # data.table::fwrite(LoR.Deck.RMD[deck_code %in% example_archetye_03$deck_code,],"C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03_old.csv")
@@ -309,8 +292,8 @@ alleDeck <- example_archetye_03 |>
 cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |>
   as.matrix() |> as.dist()
 
-# cos.dsim.arch3.100 <- fread("./data/example_cosDist_03_100.csv",header=T) |>
-#   as.matrix() |> as.dist()
+cos.dsim.arch3.100 <- fread("./data/example_cosDist_03_100.csv",header=T) |>
+  as.matrix() |> as.dist()
 ```
 
 Trivia: the dimension of the distance matrix when I used 20 example for possible faction combination so a 1100x1100[^1] matrix is
@@ -318,14 +301,17 @@ Trivia: the dimension of the distance matrix when I used 20 example for possible
 [^1]: 20*55=1100
 
 ```{r}
-object.size(cos.dsim.arch3.20)
+format(object.size(cos.dsim.arch3.20), units = "Mb")
 ```
 
 While the size for a case with 100 decks, a 5500x5500 decks is:
 
 ```{r}
-object.size(cos.dsim.arch3.100)
+format(object.size(cos.dsim.arch3.100), units = "Mb")
 ```
+Quite the increase while still far from the number of decks of a patch, still an order of magnitude lower than that. And yet using a patch data is already a simplification for the overall problem.
+
+At the moment of the writing of this article our Deck's dataset is in fact made of 1M decks.
 
 This doesn't seems too bad, but there are factors to consider:
 - The increase is size scale badly with the increase in rows/columns. 5500 are hardly a lot, a patch can easily have ~20k different deck-list played.

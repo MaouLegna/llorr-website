@@ -56,13 +56,11 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 ```
 
 ```{r load-data}
-#' load DeckDT
-#'############
-LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA))
-
-#' Read Diamond DT
-##################
-LoR.Diamond.DT.RMD  <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT_S11.csv"), header = T, na.strings = c("",NA))
+#' load Games
+#'###########
+LoR.Match.DT.RMD <- list.files(path = file.path("C:","LlorR","data","raw"), pattern = "DT_S11.csv",full.names = T) |>
+  map_dfr(data.table::fread, header = T, na.strings = c("",NA), .id = "source") |>
+  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master") ))
 
 #' load Account
 #'#############
@@ -93,11 +91,11 @@ p = 0.01 # if I want to use the standard meta deck threshold
 ```
 
 ```{r archetype-fix}
-#' Limit the Deck DT to make the fixes much faster
-deck_filter <- rbind(LoR.Match.DT.RMD,LoR.Diamond.DT.RMD) |>
-  #' Base filters
+# Limit the Deck DT to make the fixes much faster
+# deck_filter <- do.call("rbind", mget(ls(pattern="\\.DT.RMD$")) ) |>
+deck_filter <- LoR.Match.DT.RMD |>
   filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  # filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
   select(deck_code_1,deck_code_2) |>
   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
   filter(decks!="") |>
@@ -122,6 +120,7 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$hotfix, tz = "UTC") ) |>
+  distinct(match_key,.keep_all = T) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
@@ -130,32 +129,6 @@ LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
   ) |>
-  #' finish 'process' data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
-  as.data.table()
-```
-
-```{r prepare-data-2}
-#' Additional tbl
-#' contain the a second DT
-#' can be Plat+, or Diamond depending on my current project
-#'#########################################################
-LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$hotfix, tz = "UTC") ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-  ) |>
-  #' finish 'process' data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
   left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
   as.data.table()
 ```
@@ -182,7 +155,7 @@ WR.DT <- LoR.Melt.Matches.RMD |>
 
 WR.DT.Reg <- LoR.Melt.Matches.RMD |>
   filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
+  select(playerDeck,opponentDeck,game_outcome,server ) |>
   group_by(server,playerDeck) |>
   summarise( 
     nWin   = sum(game_outcome=="win"),
@@ -201,8 +174,8 @@ fct_meta <- WR.DT |>
   pull(playerDeck)
 
 fct_underdog <- WR.DT |>
-  filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
-  arrange(desc(n)) |>
+  filter(nGames >= 100 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
+  slice_max(WR, n = 30, with_ties = F) |>
   pull(playerDeck)
 ```
 ## Row
@@ -219,12 +192,10 @@ deckCodeTbl  <- LoR.Melt.Matches.RMD |>
   summarise( n = n() ) |>
   slice_max(n, n = 3) |>
   ungroup() |>
-  # select( playerDeck,deck_code, nGames=n ) |>
   mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
           server = str_to_title(server) ) |>
-  # rename_all(~c("Server","Archetype","DeckCode","nGames")) |>
   select(playerDeck,n,link,server)
-  # select( nGames = n, DeckCode = deck_code, Archetype = playerDeck, Server = server )
+  
 
 serverWRTbl <- WR.DT.Reg |>
   filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
@@ -244,6 +215,7 @@ serverWRTbl <- WR.DT.Reg |>
   arrange(desc(playrate)) |>
   select(playerDeck,WR,nWin,nGames,regPlayrate,CI,server)
 ```
+
 ```{r react-stats-master}
 reactDT <- WR.DT |>
   filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
@@ -257,10 +229,10 @@ reactDT <- WR.DT |>
     WR_ind    = scale_quantile(WR),
     LMI = map2_dbl(.x =PR_ind,.y =WR_ind, ~harm.mean(c(.x,.y) )  ),
     tier = case_when( 
-     LMI >= 0.975 ~ "Tier0",
-     0.85 <= LMI & LMI < 0.975 ~ "Tier1",
-     0.60 <= LMI & LMI < 0.85 ~ "Tier2",
-     LMI < 0.60 ~ "Tier3 or lower"
+     LMI >= 0.975 ~ "T0",
+     0.85 <= LMI & LMI < 0.975 ~ "T1",
+     0.60 <= LMI & LMI < 0.85 ~ "T2",
+     LMI < 0.60 ~ "T3-"
     ),
     LMI = round(LMI*100)
   ) |>
@@ -370,7 +342,7 @@ reactDT |>
 ### Number of Games
 
 ```{r value-games}
-flexdashboard::valueBox(glue::glue("{NROW(LoR.Melt.Matches.RMD)} Games"),
+flexdashboard::valueBox(glue::glue("{LoR.Melt.Matches.RMD[ ,.N ]} Games"),
                         caption = glue::glue("Number of Ranked Games"),
                         icon = "fa-table",
                         color = "#a88b32")
@@ -443,8 +415,8 @@ fct_meta.d7 <- WR.DT.d7 |>
   pull(playerDeck)
 
 fct_underdog.d7 <- WR.DT.d7 |>
-  filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
-  arrange(desc(n)) |>
+  filter(nGames >= 100 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
+  slice_max(WR, n = 30, with_ties = F) |>
   pull(playerDeck)
 ```
 ## Row
@@ -499,10 +471,10 @@ reactDT.d7 <- WR.DT.d7 |>
     WR_ind    = scale_quantile(WR),
     LMI = map2_dbl(.x =PR_ind,.y =WR_ind, ~harm.mean(c(.x,.y) )  ),
     tier = case_when( 
-     LMI >= 0.975 ~ "Tier0",
-     0.85 <= LMI & LMI < 0.975 ~ "Tier1",
-     0.60 <= LMI & LMI < 0.85 ~ "Tier2",
-     LMI < 0.60 ~ "Tier3 or lower"
+     LMI >= 0.975 ~ "T0",
+     0.85 <= LMI & LMI < 0.975 ~ "T1",
+     0.60 <= LMI & LMI < 0.85 ~ "T2",
+     LMI < 0.60 ~ "T3-"
     ),
     LMI = round(LMI*100)
   ) |>
@@ -657,8 +629,6 @@ LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
 
 WR.DT.24h <- LoR.Melt.24hrs |>
   filter(game_outcome!="tie") |>
-  # select(playerDeck,opponentDeck,game_outcome ) |>
-  # filter( playerDeck == "Ezreal/Karma" ) |> tabyl(playerID)
   group_by(playerDeck) |>
   summarise(
     nWin   = sum(game_outcome=="win"),
@@ -673,7 +643,8 @@ WR.DT.24h <- LoR.Melt.24hrs |>
   {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
   mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) |>
   filter( playerDeck %!in% c(fct_meta,fct_meta.d7,fct_underdog,fct_underdog.d7) ) |>
-  filter( WR > 0.5 & nGames > 10 ) |>
+  filter( WR > 0.5 ) |>
+  slice_max(nGames, n = 50, with_ties = F) |>
   select(-LCI,-UCI)
 
 deckCodeTbl.24hrs  <- LoR.Melt.24hrs |>
@@ -784,41 +755,35 @@ seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),
 #' Metl tbl
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
+  filter(source=="Master") |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  select( match_key, game_start_time_utc, starts_with("deck_code") ) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
   ) |>
-  #' finish 'process' data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
   as.data.table()
 
 #' Additional tbl
 #' contain the a second DT
 #' can be Plat+, or Diamond depending on my current project
 #'#########################################################
-LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
+LoR.Melt.Diamond.RMD <- LoR.Match.DT.RMD |>
+  filter(source=="Diamond") |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  select( match_key, game_start_time_utc, starts_with("deck_code") ) |>
   left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
   left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
   ) |>
-  #' finish 'process' data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
   as.data.table()
 ```
 
@@ -1189,10 +1154,10 @@ gtfix
 ```{r info-gt-lmi}
 tribble( 
   ~Tier, ~Note,
-  "Tier0", "with LMI >= 97.5",
-  "Tier1", "with LMI in [85,97.5)",
-  "Tier2", "with LMI in [60,85)",
-  "Tier3 or lower", "with LMI < 60"
+  "T0", "with LMI >= 97.5",
+  "T1", "with LMI in [85,97.5)",
+  "T2", "with LMI in [60,85)",
+  "T3-", "with LMI < 60"
   ) |>
   gt() |>
   tab_header(
