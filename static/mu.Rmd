@@ -20,7 +20,7 @@ params:
   start:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
   end:     "2022-01-31 18:00:00" #UTC tz /
   minMUGames: 10 # min number of games for a MU
-  nGrid: 10      # how many MU to plot
+  nGrid: 11      # how many MU to plot
 ---
 
 ```{r setup, include=FALSE}
@@ -594,112 +594,121 @@ gtsave(data = MUgrid.gt.final,
 ```
 
 ```{r grid-diamond}
-grid.diamond <- matrix(MUtbl.Diamond$muWR,
-                       nrow = params$nGrid,
-                       ncol = params$nGrid, byrow = T)
-
-diag(grid.diamond) <- NA
-colnames(grid.diamond) <- TopCC
-
-grid.CI <- matrix(MUtbl.Diamond$CI,
-                    nrow = params$nGrid,
-                    ncol = params$nGrid, byrow = T)
-
-diag(grid.CI) <- NA
-colnames(grid.CI) <- sprintf("%s.v2",TopCC)
-
-grid.CI <- grid.CI |>
-  as.data.table()
-
-grid.diamond.all <- cbind(grid.diamond,grid.CI)
-
-MUgrid.gt.Diamond <- grid.diamond.all |>
-  as.data.table() |>
-  add_column( name = colnames(grid.diamond),.before = 1 ) |>
-  rename(" "=1) |>
-  gt() |>
-  gtExtras::gt_color_rows(2:(params$nGrid+1),
-                # palette = c("#D73027", "white", "#1A9850" ),
-                palette = c("red", "white", "green"),
-                use_paletteer = F,
-                domain = c(0,1) ) |>
-  fmt_percent(
-    columns = 2:(params$nGrid+1),
-    decimals = 1
-  )
-
-
-for (i in 1:params$nGrid ) {
-  
-  # MUgrid.gt <- MUgrid.gt |>
-  #   gtExtras::gt_merge_stack(col1 = !!TopCC[i], col2 = !!sprintf("%s.v2",TopCC[i]) )
-  
-  MUgrid.gt.Diamond <- MUgrid.gt.Diamond |>
-    cols_merge(
-      columns = c(i+1,params$nGrid+i+1),
-      hide_columns = (params$nGrid+i+1),
-      # pattern = "{1}&mdash;{2}"
-      ) |>
-    text_transform(
-      locations = cells_body(
-        columns = (i+1)
-        ),
-      fn = function(x){
-        upper <- word(x, 1)
-        bottom <- word(x, -1)
-        glue::glue(
-          #595959 #grey35 / #7f7f7f #grey50
-          "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{upper}</div>
-           <div style='line-height:10px'><span style='color:#7f7f7f;font-size:10px'>{bottom}</span></div>"
-        )
-        }
-      )
-  
-}
-
-MUgrid.gt.Diamond |>
-  cols_align(
-    align = "center",
-    columns = -1
-  ) |>
-  tab_options(
-    data_row.padding = px(5),
-    table.font.size = px(13),
-    column_labels.font.size = px(10)
-  ) |>
-  cols_width(
-    -1 ~ px(90),
-     1 ~ px(120),
-    # everything() ~ px(90)
-  ) |>
-  opt_table_font(
-    font = "Chivo"
-  ) |>
-  tab_source_note(
-  source_note = md(glue::glue("MatchUp values from Ranked games with ~HighDiamond Ranked players.
-                              Order of the Archetypes based on the playrate.
-                              Source: Metadata of games collected with RiotGames API")
-  ))
+# grid.diamond <- matrix(MUtbl.Diamond$muWR,
+#                        nrow = params$nGrid,
+#                        ncol = params$nGrid, byrow = T)
+# 
+# diag(grid.diamond) <- NA
+# colnames(grid.diamond) <- TopCC
+# 
+# grid.CI <- matrix(MUtbl.Diamond$CI,
+#                     nrow = params$nGrid,
+#                     ncol = params$nGrid, byrow = T)
+# 
+# diag(grid.CI) <- NA
+# colnames(grid.CI) <- sprintf("%s.v2",TopCC)
+# 
+# grid.CI <- grid.CI |>
+#   as.data.table()
+# 
+# grid.diamond.all <- cbind(grid.diamond,grid.CI)
+# 
+# MUgrid.gt.Diamond <- grid.diamond.all |>
+#   as.data.table() |>
+#   add_column( name = colnames(grid.diamond),.before = 1 ) |>
+#   rename(" "=1) |>
+#   gt() |>
+#   gtExtras::gt_color_rows(2:(params$nGrid+1),
+#                 # palette = c("#D73027", "white", "#1A9850" ),
+#                 palette = c("red", "white", "green"),
+#                 use_paletteer = F,
+#                 domain = c(0,1) ) |>
+#   fmt_percent(
+#     columns = 2:(params$nGrid+1),
+#     decimals = 1
+#   )
+# 
+# 
+# for (i in 1:params$nGrid ) {
+#   
+#   # MUgrid.gt <- MUgrid.gt |>
+#   #   gtExtras::gt_merge_stack(col1 = !!TopCC[i], col2 = !!sprintf("%s.v2",TopCC[i]) )
+#   
+#   MUgrid.gt.Diamond <- MUgrid.gt.Diamond |>
+#     cols_merge(
+#       columns = c(i+1,params$nGrid+i+1),
+#       hide_columns = (params$nGrid+i+1),
+#       # pattern = "{1}&mdash;{2}"
+#       ) |>
+#     text_transform(
+#       locations = cells_body(
+#         columns = (i+1)
+#         ),
+#       fn = function(x){
+#         upper <- word(x, 1)
+#         bottom <- word(x, -1)
+#         glue::glue(
+#           #595959 #grey35 / #7f7f7f #grey50
+#           "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{upper}</div>
+#            <div style='line-height:10px'><span style='color:#7f7f7f;font-size:10px'>{bottom}</span></div>"
+#         )
+#         }
+#       )
+#   
+# }
+# 
+# MUgrid.gt.Diamond |>
+#   cols_align(
+#     align = "center",
+#     columns = -1
+#   ) |>
+#   tab_options(
+#     data_row.padding = px(5),
+#     table.font.size = px(13),
+#     column_labels.font.size = px(10)
+#   ) |>
+#   cols_width(
+#     -1 ~ px(90),
+#      1 ~ px(120),
+#     # everything() ~ px(90)
+#   ) |>
+#   opt_table_font(
+#     font = "Chivo"
+#   ) |>
+#   tab_source_note(
+#   source_note = md(glue::glue("MatchUp values from Ranked games with ~HighDiamond Ranked players.
+#                               Order of the Archetypes based on the playrate.
+#                               Source: Metadata of games collected with RiotGames API")
+#   ))
 ```
 
-<!-- ## Row -->
+## Row
 
-<!-- ### BOX GRID -->
+### Box MU
 
-<!-- ```{r value-nGames-2} -->
-<!-- flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"), -->
-<!--                         caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min 10 games"), -->
-<!--                         icon = "fa-table", -->
-<!--                         color = "#FA7404") -->
-<!-- ``` -->
+```{r}
+flexdashboard::valueBox(glue::glue("{nGames} Master - Ranked Games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min 10 games"),
+                        icon = "fa-table",
+                        color = "#FA7404")
+```
 
-<!-- ### Last Update -->
+### Box MU
 
-<!-- ```{r} -->
-<!-- LastUpdate.box -->
-<!-- ``` -->
+```{r}
+flexdashboard::valueBox(glue::glue("{nGames.diamond} Diamond - Ranked Games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Diamond.RMD)} - min 10 games"),
+                        icon = "fa-table",
+                        color = "#A88B32")
+```
 
-<!-- ![](images/mugrid.png) -->
+### Last Update
+
+```{r}
+LastUpdate.box
+```
+
+![](images/mugrid.png)
 
 ```{r}
 # knitr::include_graphics(path = "./images/mugrid.png")
