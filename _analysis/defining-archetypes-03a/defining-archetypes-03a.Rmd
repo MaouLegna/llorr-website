@@ -121,27 +121,21 @@ To give a reference the Between Worlds Season (S10) from patch 2.18 to 2.20 feat
 
 The main issue to use 'real-case' relates to the amount of decks to use and the resulting computational load.
 
-Distance Matrices and consequently all algorithm derived by them have a quadratic growth ($o^2$) so scalability is a problem.
+Distance Matrices and consequently all algorithm derived by them have a quadratic growth ($O(n^2)$) so scalability is a problem.
 
-This makes the problem not feasible at high dimension but that's not all. This project to "define archetypes" is not meant to be purely theoretical, the aim is to also apply it to the collected data and provide the results, be it in the reports or any other content.
+This project to "define archetypes" is not meant to be purely theoretical, the aim is to also apply it to the collected data and provide the results, be it in the reports or any other content.
 
-
+Yet, the problem not feasible at high dimension even assuming the analysis is self contained and we have more time to apply any algorithm.
 
 One may not be used to these context so let us give some numbers of the problem at hand:
 
-At the moment of the writing of this article our Deck's dataset is made of neatly 1M decks.
+At the moment of the writing of this article our Deck's dataset is made of neatly 1M decks. The dataset contains only 40-cards decks which has been played in Constructed or PvP modes. [^1]
+
+[^1]: Constructed, SeasonalTournamentLobby, Bo3ChallengeLobby, StandardGauntletLobby, LastCallQualifierGauntletLobby
 
 Realistically we would never try to works with all of them at the same time, at least not when using a cluster analysis (CA).
 
-A proper time-frame can a single competitive Season.
-
-The tenth competitive Season as we mentioned had ~`r floor(NROW(S10Decks)/1000)*1000` decks at Master rank. We will start from here but let us remember that
-
-* The Season by itself didn't see a huge amount of games and so of deck being played compared to others.
-
-* It's just Master players so usually a more homogeneous population.
-
-* With more and more cards being released the single instance of decks is more likely to increase considerably.
+A more appropriate time-frame can be a single competitive Season; we will create a dataset created to that is has a similar scale of the S10-MasterRank (42000) decks mentioned before.
 
 ```{r read-example-03}
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
@@ -151,9 +145,9 @@ For this article we created an example made of `r NROW(example_archetye_03)` dec
 
 The creation criteria will be explained more in detail later. The size is clearly to have an order of magnitude similar to the S10-MasterRank numbers.
 
-Now, let us explain we it would be impossible to even simple use the algorithm applied in the previous article, because of the distance matrix and it's size.
+Now, let us explain why it would be impossible to even try to apply the algorithm/code of the previous article.
 
-We wouldn't be able to even allocate enough memory to work with it.
+The required distance matrix would be too big (44000^2) and we wouldn't even be able to allocate enough memory to work with it.
 
 ```{r read-cos-dsim}
 cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |> 
@@ -181,9 +175,10 @@ Quite the increase but consistent to the fact that the second matrix is 25 times
 #   theme(legend.position = "none")
 ```
 
-Let's assume that we solve the computation and allocation of the distance matrix.
+Let us assume that we are able to solve the computation and allocation of the distance matrix.
 
-We now wants to highlight that it would be almost a waste.
+We now wants to highlight that it would be almost a waste of resources.
+
 This would not be enough, because, every aspect that uses it will still be affected by the same computational burden.
 
 And this is not worth/necessary
@@ -363,7 +358,7 @@ An idea was to use the inclusion of Allegiance cards as their effect is not a ga
 
 Sadly this is true, but not entirely. Not only these cards have being played in decks where their activation is very risky but there are even cases there more the Allegiance card for both region has being played in the same deck.
 
-There is also an additional potential failing point of this strategy: the "Theseus's Archetype".
+There is also an additional potential failing point of this strategy: the "Theseus Archetype".
 
 This is related to the problem with Mistwraith deck mentioned before. We said that there can be a ~Mono SI version and others SI/XX when the second region has way too many cards to assume it's still the same deck.
 
