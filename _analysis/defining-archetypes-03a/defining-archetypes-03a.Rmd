@@ -66,13 +66,13 @@ xaringanExtra::style_panelset_tabs(
 
 In the [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) on defining archetypes we introduced the basic theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
 
-Along side the general theory we introduced and applied a few widely-used algorithms and some of the "newer" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
+We introduced the general theory along side a few widely-used algorithms and some of the "newer" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
 
 The example was tailored to give a general idea about the methods, some of their strong point and also potential weaknesses with this specific problem.
 
 As the previous analysis was mostly based around the mathematical properties and a well defined example it can't translate directly to a generalized use with the commonly analysed data.
 
-Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on a scale more similar to a 'real case'.
+Here, we want to continue to use the Cluster Analysis but this times applied to a set of data on a scale more similar to a 'real-case'.
 
 ```{r load-data}
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
@@ -85,7 +85,7 @@ fread(file.path("C:","LlorR","data","raw","games","LoR_MatchDT_S10_218_220.csv")
   as.data.table() -> S10Decks
 ```
 
-To give a reference the Between Worlds Season (S10) from patch 2.18 to 2.20 featured at Master rank ~`r floor(NROW(S10Decks)/1000)*1000` decks.
+To give a reference of a 'real-case' number, the Between Worlds (S10) Season which lasted from patch 2.18 to 2.20 featured at Master rank ~`r floor(NROW(S10Decks)/1000)*1000` decks.
 
 ### An Engineering Problem
 
@@ -119,13 +119,11 @@ To give a reference the Between Worlds Season (S10) from patch 2.18 to 2.20 feat
 # fwrite(as.matrix(cos.dsim.arch3.100),"./data/example_cosDist_03_100.csv")
 ```
 
-The main issue to use 'real-case' relates to the amount of decks to use and the resulting computational load.
+What is the main issue with data from 'real-case'? It mainly relates to two factor: the *dirtiness* of the data but mostly the amount of decks to use and the resulting computational load.
 
-Distance Matrices and consequently all algorithm derived by them have a quadratic growth ($O(n^2)$) so scalability is a problem.
+Distance Matrices and consequently all algorithm derived by them have a quadratic growth ($O(n^2)$) so scalability is a problem as this project to "define archetypes" is not meant to be purely theoretical. The aim of this project is to also apply it to the collected data and provide the results, be it in the reports or any other content.
 
-This project to "define archetypes" is not meant to be purely theoretical, the aim is to also apply it to the collected data and provide the results, be it in the reports or any other content.
-
-Yet, the problem not feasible at high dimension even assuming the analysis is self contained and we have more time to apply any algorithm.
+Yet, the problem is not feasible at high dimension even assuming the analysis is self contained and we have an infinite amount of time to apply any algorithm.
 
 One may not be used to these context so let us give some numbers of the problem at hand:
 
@@ -133,9 +131,11 @@ At the moment of the writing of this article our Deck's dataset is made of neatl
 
 [^1]: Constructed, SeasonalTournamentLobby, Bo3ChallengeLobby, StandardGauntletLobby, LastCallQualifierGauntletLobby
 
-Realistically we would never try to works with all of them at the same time, at least not when using a cluster analysis (CA).
+Realistically, we would never try to works with all of them at the same time, at least not when using a cluster analysis (CA).
 
-A more appropriate time-frame can be a single competitive Season; we will create a dataset created to that is has a similar scale of the S10-MasterRank (42000) decks mentioned before.
+A more appropriate time-frame can be a single competitive Season and restrict ourselves only to the decks played around that time.
+
+As we are not ready yet to just simpoly apply any methods to any kind of decks data we will create a dataset so that is has a similar scale of the S10-MasterRank (42000) decks mentioned before.
 
 ```{r read-example-03}
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
@@ -145,9 +145,7 @@ For this article we created an example made of `r NROW(example_archetye_03)` dec
 
 The creation criteria will be explained more in detail later. The size is clearly to have an order of magnitude similar to the S10-MasterRank numbers.
 
-Now, let us explain why it would be impossible to even try to apply the algorithm/code of the previous article.
-
-The required distance matrix would be too big (44000^2) and we wouldn't even be able to allocate enough memory to work with it.
+Now, let us explain why it would be impossible to even try to apply the algorithm/code of the previous article:
 
 ```{r read-cos-dsim}
 cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |> 
@@ -156,8 +154,6 @@ cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |>
 cos.dsim.arch3.100 <- fread("./data/example_cosDist_03_100.csv",header=T) |>
   as.matrix() |> as.dist()
 ```
-
-To give some context:
 
 * If we used only a fraction of the chosen decks, just 1100, then we would have a $1100 \times 1100$ distance matrix that requires: `r format(object.size(cos.dsim.arch3.20), units = "Mb")`
 
@@ -363,25 +359,3 @@ There is also an additional potential failing point of this strategy: the "These
 This is related to the problem with Mistwraith deck mentioned before. We said that there can be a ~Mono SI version and others SI/XX when the second region has way too many cards to assume it's still the same deck.
 
 Overall this problem is being left for another moment to refine the result of a cluster analysis but conceptually we believe there is merit both in saying there can be more version of the same base-archetype and then we can work on an aggregated one
-
-```{r monoDecks}
-example_archetye_03 |>
-  select(deck_code,archetype,allegiance,factions,cards.region.freq) |>
-  separate_rows(factions,cards.region.freq) |>
-  mutate(cards.region.freq = as.numeric(cards.region.freq) ) |>
-  mutate(
-    # unique 
-    alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
-    alle = map(alle,unique),
-    alle = map_chr(alle,~str_flatten(.x,collapse = ",")),
-    alle.region = str_sub(alle,3,4)
-  ) |>
-  # either contain 33+ cards regions OR contain A SINGLE allegiance card
-  filter(cards.region.freq >=  33 | (!is.na(allegiance) & !str_detect(alle,","))  ) |>
-  # but since I separated the rows I have to take only the row with the correct region, the one of the allegiance card since I then have to count the cards of the region of the Allegiance card
-  filter(is.na(alle.region) | alle.region==factions) |>
-  as.data.table() -> mono.deck.DT
-
-# mono.deck.DT |>
-#   tabyl(allegiance,factions)
-```

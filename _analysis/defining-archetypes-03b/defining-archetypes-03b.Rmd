@@ -63,6 +63,32 @@ xaringanExtra::style_panelset_tabs(
   active_background = "#007fff"
   )
 ```
+```{r read-example-03}
+example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
+# LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+```
+
+```{r monoDecks}
+example_archetye_03 |>
+  select(deck_code,archetype,allegiance,factions,cards.region.freq) |>
+  separate_rows(factions,cards.region.freq) |>
+  mutate(cards.region.freq = as.numeric(cards.region.freq) ) |>
+  mutate(
+    # unique 
+    alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
+    alle = map(alle,unique),
+    alle = map_chr(alle,~str_flatten(.x,collapse = ",")),
+    alle.region = str_sub(alle,3,4)
+  ) |>
+  # either contain 33+ cards regions OR contain A SINGLE allegiance card
+  filter(cards.region.freq >=  33 | (!is.na(allegiance) & !str_detect(alle,","))  ) |>
+  # but since I separated the rows I have to take only the row with the correct region, the one of the allegiance card since I then have to count the cards of the region of the Allegiance card
+  filter(is.na(alle.region) | alle.region==factions) |>
+  as.data.table() -> mono.deck.DT
+
+# mono.deck.DT |>
+#   tabyl(allegiance,factions)
+```
 
 # Analysis
 
@@ -71,7 +97,7 @@ xaringanExtra::style_panelset_tabs(
 deck.IO <- mono.deck.DT[factions == "IO", deck_code]
 
 # "sparse matrix" of deck's cards
-sparse.IO <- sparseMatrix(deck.IO,source = LoR.Deck.RMD)
+sparse.IO <- sparseMatrix(deck.IO,source = example_archetye_03)
 # SIMILARITY MATRIX
 Dsim.IO   <- eisen_cos.sim(sparse.IO,dist = F)
 
@@ -151,15 +177,20 @@ table(
   example_archetye_03[deck_code %in% deck.NXPZ, archetype],
   res.NXPZ.Drisoth$cluster
 )
+```
 
+
+```{r}
 set.seed(123)
 w <- sample(x = c(1:1000),size = 1467,replace = T )
 set.seed(123)
 res.IO.Drisoth.min2 <- dbscan::dbscan(dist(sparse.IO, method = "manhattan", diag = FALSE, upper = FALSE), 37, 5 , weights = w )
 
+res.IO.Drisoth <- dbscan::dbscan(dist(sparse.IO, method = "manhattan", diag = FALSE, upper = FALSE), 37, 1 )
+
 
 
 example_archetye_03[deck_code %in% deck.IO, ][ which(res.IO.Drisoth.min2$cluster==0) ]
 
-example_archetye_03[deck_code %in% deck.IO, ][ which(res.IO.Drisoth.min2$cluster!=1) ]
+example_archetye_03[deck_code %in% deck.IO, ][ which(res.IO.Drisoth$cluster!=1) ]
 ```
