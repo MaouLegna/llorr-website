@@ -296,16 +296,16 @@ So the proposed solution is the following:
 
 - For the early weeks of a Season I'm going to collect the games from those who played the Seasonal tournament (of course this is assuming it's held each season which is a safe approach I guess). If I should show all the results or either LastSeasonal/Diamond or Master/Diamond is something I still have to decide. Adding more stuff can be fine but the report is already big like this.
 
-Number of (Ranked) matches analysed **`r format(nMatches.extra,scientific = F)`** or **`r format(nMatches.extra*2,scientific = F)`** games. / LastSeasonal Players
+Number of (Ranked) matches analysed **`r format(nMatches.extra,scientific = F)`** or **`r format(nMatches.extra*2,scientific = F)`** games. / **Master** Players
 
-Number of (Ranked) matches analysed **`r format(nMatches,scientific = F)`** or **`r format(nGames,scientific = F)`** games. / ~HighDiamond
+Number of (Ranked) matches analysed **`r format(nMatches,scientific = F)`** or **`r format(nGames,scientific = F)`** games. / **~HighDiamond**
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
 ```{r table-nGames-data, layout="l-body"}
 nGames_tbl <- tbl_merge( 
   tbls = list(merge.tbl.master,merge.tbl.diamond),
-    tab_spanner = c("**Last Seasonal**", "**~HighDiamond**")
+    tab_spanner = c("**Master**", "**~HighDiamond**")
   ) |>
   modify_footnote(
     update = label ~
@@ -404,7 +404,7 @@ Region.Freq |>
     title = "Regions Play Rate",
     subtitle = "number of times a region is included in a deck",
     caption = glue::glue("{params$patch}
-                         Ranked games from {params$start} UTC to {params$end} UTC and players who qualified for the previous Seasonal Tournament
+                         Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
                          Metadata of games collected with RiotGames API")
     ) +
   annotate(
@@ -578,7 +578,7 @@ Regions.Freq.byCards |>
     title = "Regions Play Rate",
     subtitle = "number of times a card within a region is included in a deck",
     caption = glue::glue("{params$patch}
-                         Ranked games from {params$start} UTC to {params$end} UTC and players who qualified for the previous Seasonal Tournament
+                         Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
                          DualRegions cards are counted based by the region that matters in the deck
                          Metadata of games collected with RiotGames API")
   ) +
@@ -707,8 +707,8 @@ topDeck <- union(
 ChampionCombo <- tibble( playerDeck = topDeck ) |>
   left_join(CC.table.Master[,c("playerDeck","percent")], by ="playerDeck" ) |>
   left_join(CC.table.Diamond[,c("playerDeck","percent")], by ="playerDeck" ) |>
-  rename_all(~c("playerDeck","LastSeasonal","Diamond")) |>
-  pivot_longer( cols = c("LastSeasonal","Diamond"),names_to = "master",values_to = "freq" )
+  rename_all(~c("playerDeck","Master","Diamond")) |>
+  pivot_longer( cols = c("Master","Diamond"),names_to = "master",values_to = "freq" )
 ```
 
 
