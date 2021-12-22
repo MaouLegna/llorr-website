@@ -145,7 +145,7 @@ For this article we created an example made of `r NROW(example_archetye_03)` dec
 
 The creation criteria will be explained more in detail later. The size is clearly to have an order of magnitude similar to the S10-MasterRank numbers.
 
-Now, let us explain why it would be impossible to even try to apply the algorithm/code of the previous article:
+Now, let us explain why it would be impossible to even try to apply the algorithm/code of the previous article.
 
 ```{r read-cos-dsim}
 cos.dsim.arch3.20 <- fread("./data/example_cosDist_03_20.csv",header=T) |> 
@@ -155,13 +155,15 @@ cos.dsim.arch3.100 <- fread("./data/example_cosDist_03_100.csv",header=T) |>
   as.matrix() |> as.dist()
 ```
 
+To give some context:
+
 * If we used only a fraction of the chosen decks, just 1100, then we would have a $1100 \times 1100$ distance matrix that requires: `r format(object.size(cos.dsim.arch3.20), units = "Mb")`
 
 * If we increased the choice to 5500 decks, the resulting 5500x5500 distance matrix would occupy: `r format(object.size(cos.dsim.arch3.100), units = "Mb")`.
 
 Quite the increase but consistent to the fact that the second matrix is 25 times the smaller one and we can see the issue with the quadratic growth that comes with the matrix.
 
-* By using all the 44k decks we can't even try to recreate the distance matrix, it would require quite the machine and we can infer that just that matrix would be of around  `r 116*(44000^2/5500^2)` Mb.
+* By using all the 44k decks we can't even try to recreate the distance matrix, it would require quite the machine and we can infer that just that matrix would be of around  `r 116*(44000^2/5500^2)` Mb. The required distance matrix would be too big (44000^2) and we wouldn't even be able to allocate enough memory to work with it.
 
 ### Needles in the Shruiman (vast) Desert
 
@@ -173,23 +175,19 @@ Quite the increase but consistent to the fact that the second matrix is 25 times
 
 Let us assume that we are able to solve the computation and allocation of the distance matrix.
 
-We now wants to highlight that it would be almost a waste of resources.
+This still would not be enough, because, every aspect that uses it will still be affected by the same computational burden.
 
-This would not be enough, because, every aspect that uses it will still be affected by the same computational burden.
+We now wants to explain how it would be 'a waste' of resources.
 
-And this is not worth/necessary
+To explain this we will show the resulting heatmap of a couple of subsets of the example dataset. One with a subset of 1100 not completely at random decks and another one with 5500 decks.
 
-To reason can be explained with the following step:
-A typical step in applying a clustering analysis is even just looking for the potential number of cluster we will find by displaying the heatmap of the distance matrix.
-
-Again, we will show the results with 1100 and 5500 decks. With more than 5500 our machine would struggle to just not crash.
-
-The resulting 1100 decks heatamap is:
+The resulting heatamap with 1100 decks is:
 
 ```{r Heat1100, fig.width=8, fig.height=8, fig.cap="heatmap of a 1100 x 1100 distance matrix of LoR decks"}
 lattice::levelplot(as.matrix(cos.dsim.arch3.20), main="1100 X 1100 Heatmap", xlab="", ylab="", col.regions=colorRampPalette(c("yellow","firebrick3"), space = "rgb")(10), cuts=9, at=seq(0,1,0.1), scales=list(x=list(at=NULL),y=list(at=NULL)))
 ```
-The resulting 5500 decks heatamap is:
+
+The resulting heatamap with 5500 decks heatamap is:
 
 ```{r Heat5500, fig.width=8, fig.height=8, fig.cap="heatmap of a 5500 x 5500 distance matrix of LoR decks"}
 lattice::levelplot(as.matrix(cos.dsim.arch3.100), main="5500 X 5500 Heatmap", xlab="", ylab="", col.regions=colorRampPalette(c("yellow","firebrick3"), space = "rgb")(10), cuts=9, at=seq(0,1,0.1), scales=list(x=list(at=NULL),y=list(at=NULL)),colorkey=NULL)
@@ -199,9 +197,11 @@ lattice::levelplot(as.matrix(cos.dsim.arch3.100), main="5500 X 5500 Heatmap", xl
 # heatmap3::heatmap3(as.matrix(cos.dsim.arch3.100),useRaster=TRUE,Rowv=NA,Colv=NA, col=colorRampPalette(c("yellow","firebrick3"))(1024))
 ```
 
-As we can see in Fig:\@ref(fig:Heat1100) and Fig:\@ref(fig:Heat5500) there are clear indication of the presence of several small clusters (the yellow areas) but the majority, the vast majority of the matrix is actually null. While it's true that part of this is related by how the example matrix was created, even assuming actual "real-data" the resulting plot wouldn't differ by much.
+As we can see in Fig:\@ref(fig:Heat1100) and Fig:\@ref(fig:Heat5500) there are clear indication of the presence of several small clusters (the yellow areas) but the majority, the vast majority of the matrix the distance is at its max or we can the similarity is null.
 
-The main reason simply because by the limitation imposed by the deck building just can't allow to have huge clusters compared to the one if the diagonal from our example. There could be exceptions but for the most part it would imply that certain regions and cards would vastly dominate their playrate across a huge amount of decks.
+While it's true that this result is like this partially because of how the example matrix was created, even assuming actual "real-data" the plot wouldn't differ by much.
+
+The main reason is to simply because by the limitation imposed by the deck building just can't allow to have huge clusters compared to the one if the diagonal from our example. There could be exceptions but for the most part it would imply that certain regions and cards would vastly dominate their playrate across a huge amount of decks.
 
 While some players may think that this condition is already applied with Regions like BandleCity being played way more than the other and some cards being always present in some decks, no that is still not enough. We would require the decks to be overall even way, way more similar to each other.
 

@@ -3,7 +3,7 @@ params:
   ind: "MR037"
   patch: "Patch 2.22 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°37)"
-  description: "Boh"
+  description: "1/1 Doctor(s).LoR prescribes the current meta"
   cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05IO004-full.png"
   prev:  "2021-11-08 18:00:00" #UTC tz / 'current' previous week start
   start: "2021-12-15 18:00:00" #UTC tz / 'current' week start
@@ -693,7 +693,7 @@ CC.table.Diamond <- LoR.Melt.Diamond.RMD |>
 ## Play Rates
 
 ::: {.l-page}
-::: {.panelset}
+::::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
 
@@ -841,6 +841,12 @@ CC.table.Diamond |>
 
 Highlisting the top10 most played decks (at the moment of the last game played).
 
+::: {.l-page}
+::::: {.panelset}
+
+::: {.panel}
+### Master {.panel-name}
+
 ```{r champion-freq-by-date}
 m = 10
 
@@ -854,10 +860,10 @@ Champion.deck.daily <- LoR.Melt.Master.RMD |>
   select(!num_cc) |>
   mutate( champions = factor(champions) |> fct_infreq() )
 
-fct_values <- LoR.Melt.Diamond.RMD |>
-  # mutate( top5 = fct_lump(champions, n = m, w = tot, ties.method = "max") ) |>
- mutate( top5 = fct_lump_n(playerDeck,n = m) |> fct_infreq() ) |>
- pull(top5) |> levels()
+fct_values <- LoR.Melt.Master.RMD |>
+ mutate(topN = fct_lump_n(playerDeck,n = m) |> fct_infreq() ) |>
+  pull(topN) |> 
+  levels()
 ```
 
 ```{r plot-date-by-date, fig.width=12, fig.height=8}
@@ -937,6 +943,90 @@ meta_evo
 
 ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png")) |> suppressMessages()
 ```
+:::
+
+::: {.panel}
+### HighDiamond {.panel-name}
+
+```{r diamond-freq-by-date}
+m = 12
+
+Champion.deck.daily <- LoR.Melt.Diamond.RMD |>
+  rename("champions"="playerDeck") |>
+  arrange(game_start_time_utc) |>
+  select(game_start_time_utc,champions) |>
+  mutate( num_cc = factor(champions) |> as.numeric() ) |>
+  as.data.table() |>
+  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ]}() |>
+  select(!num_cc) |>
+  mutate( champions = factor(champions) |> fct_infreq() )
+
+fct_values <- LoR.Melt.Diamond.RMD |>
+  mutate(topN = fct_lump_n(playerDeck,n = m) |> fct_infreq() ) |>
+  pull(topN) |> 
+  levels()
+```
+
+```{r plot-diamond-day-by-day, fig.width=12, fig.height=8}
+meta_evo <- ggplot(
+  data = Champion.deck.daily |> filter(champions %in% fct_values[-1]),
+  aes(game_start_time_utc, cumFreq, group = champions) ) +
+  geom_line(
+    data = Champion.deck.daily |> filter(champions %!in% fct_values[-1]),
+    color = "grey75",
+    size = .6,
+    alpha = .5
+  ) +
+  geom_line(
+    aes(color = champions),
+    size = .9
+  ) +
+  geom_label_repel(
+    data = Champion.deck.daily |> filter(champions %in% fct_values[-1]) |> group_by(champions) |> slice_max(game_start_time_utc,n=1) |> distinct(game_start_time_utc,champions,.keep_all = T),
+    aes(label=str_to_upper(champions),color = champions),
+    
+    xlim = c(as.POSIXct(max(Champion.deck.daily$game_start_time_utc) + hours(12)), NA),
+    
+    family = "Helvetica", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4, segment.curvature = -0.1, segment.ncp = 3,
+    segment.angle = 15, bg.color = "grey50", fill = "#f0f0f0", abel.padding = 0, label.size = 0
+  ) +
+  scale_x_datetime(
+    date_minor_breaks = "1 day",
+    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(23))
+  )  +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0,.12),
+    breaks = seq(0,.12,0.04),
+    labels = scales::percent_format(accuracy = 1)
+  ) +
+  scale_color_manual(
+    values = rcartocolor::carto_pal(12, "Safe")
+    # values = c(rcartocolor::carto_pal(n = 10, name = "Vivid")[1:10-1], "grey50")
+  ) +
+  labs(x = "Date",
+       y = "PlayRate",
+       title = "Evolution of ~HighDiamond Play Rate over time",
+       caption = glue::glue("{params$patch}
+                            Ranked games from {params$start} UTC to {params$end} UTC
+                            Metadata of games collected with RiotGames API")
+  ) +
+  theme_539() +
+  theme( legend.position = "none",
+         axis.text = element_text(size = 10, face = "bold", color = "grey50")
+         )
+
+# scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily.diamond$playerDeck)  ) )
+
+meta_evo
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday-diamond.png")) |> suppressMessages()
+```
+:::
+
+:::::
+:::
+
 
 ## Win Rates
 
