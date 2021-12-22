@@ -1641,7 +1641,7 @@ TopPlayed.PbyReg
 Cards that couldn't find place even in a meme deck.
 
 ```{r missingCards}
-missingCards <- LoR.Card$cardCode[LoR.Card$cardCode %!in% names(TableAllCards)]
+missingCards <- LoR.Card$cardCode[LoR.Card$name %!in% TableAllCards$card]
 
 data.table(
   Card = LoR.Card$name[LoR.Card$cardCode %in% missingCards],
