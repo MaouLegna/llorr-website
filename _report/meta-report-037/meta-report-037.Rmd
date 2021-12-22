@@ -381,7 +381,7 @@ dxLabel_card <- format(Region.Freq$freq*100,2)
 sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
 dxLabel_card <- ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
 
-RegionByRegion <- Region.Freq |>
+Region.Freq |>
   ggplot(aes(x = reorder(region, freq), y = freq)) +
   geom_bar(stat="identity") +
   geom_bar_pattern(
@@ -391,7 +391,7 @@ RegionByRegion <- Region.Freq |>
     stat            = 'identity',
     pattern         = 'image',
     pattern_type    = 'none',
-    fill            = data_regions$colorRegion,
+    fill            = Region.Freq$colorRegion,
     colour          = 'black',
     pattern_scale   = -2,
     pattern_filter  = 'point',
@@ -416,7 +416,7 @@ RegionByRegion <- Region.Freq |>
     label = glue::glue('n = {nGames}\nGini Index = {round(DescTools::Gini(Region.Freq$freq,na.rm = T),3)}'), 
     fontface = 'bold') +
   coord_flip() +
-  scale_pattern_filename_discrete(choices = Region.Freq$iconsPath ) +
+  scale_pattern_filename_discrete(choices = data_regions$iconsPath ) +
   scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
   scale_fill_manual("legend", values = data_regions$colorRegion) +
   scale_y_continuous(limits = c(0, round(max(Region.Freq$freq+0.04 ),3) ),
@@ -433,8 +433,9 @@ RegionByRegion <- Region.Freq |>
     axis.text = element_text(face = "bold", color = "grey50"),
     panel.grid.major.y = element_blank()
     )
-  
-RegionByRegion
+
+# Region.Freq |>
+#   arrange(desc(n))
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -554,7 +555,7 @@ dxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
 sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
 dxLabel_card <- ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
 
-RegionByCards <- Regions.Freq.byCards |>
+Regions.Freq.byCards |>
   ggplot(aes(x = reorder(region, freq), y = freq)) +
   geom_bar_pattern(
     aes(
@@ -563,7 +564,7 @@ RegionByCards <- Regions.Freq.byCards |>
     stat            = 'identity',
     pattern         = 'image',
     pattern_type    = 'none',
-    fill            = data_regions$colorRegion,
+    fill            = Regions.Freq.byCards$colorRegion,
     colour          = 'black',
     pattern_scale   = -2,
     pattern_filter  = 'point',
@@ -591,7 +592,7 @@ RegionByCards <- Regions.Freq.byCards |>
     fontface = 'bold'
     ) +
   coord_flip() +
-  scale_pattern_filename_discrete(choices = Region.Freq$iconsPath) +
+  scale_pattern_filename_discrete(choices = data_regions$iconsPath) +
   scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
   scale_y_continuous(limits = c(0, round(max(Regions.Freq.byCards$freq+0.04 ),3) ),
                      breaks = seq(0,0.5,0.04),
@@ -607,8 +608,6 @@ RegionByCards <- Regions.Freq.byCards |>
          axis.text = element_text(face = "bold", color = "grey50"),
          panel.grid.major.y = element_blank()
          )
-
-RegionByCards
 ```
 :::
 
