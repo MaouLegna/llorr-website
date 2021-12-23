@@ -1382,6 +1382,7 @@ WR.DT |>
   ggplot( aes(x=WR_ind, y=PR_ind, size = LMI, color = tier, text=tooltip)) +
   geom_point(alpha=0.6) +
   scale_size(range = c(1, 15), name="LMI") +
+  # scale_color_manual(breaks = c("Tier0", "Tier1", "Tier2"), values=c("red", "blue", "green"))
   theme_539() +
   geom_label_repel( 
     aes(label=tooltip),
@@ -1398,13 +1399,12 @@ WR.DT |>
     segment.linetype = 2,
     segment.color = 'grey50'
   ) + 
-  guides(colour = guide_legend(override.aes = list(size=10)),
-         size = FALSE ) +
-  theme( legend.position = "top",
-         legend.background = element_blank(),
-         legend.title = element_text(size=9, lineheight = 1.3),
-         legend.justification = "right"
-         ) +
+  guides(colour = guide_legend(override.aes = list(size=10)), size = FALSE ) +
+  theme(
+    legend.position = "top",
+    legend.background = element_blank(),
+    legend.title = element_text(size=9, lineheight = 1.3),
+    legend.justification = "right") +
   labs(
     title = "Top15 Deck Peformances",
     subtitle = "Deck's Peformances by highest value of LMI",
@@ -1575,8 +1575,6 @@ TableAllCards <- TableAllCards |>
 ::: {.panel}
 
 ## Play Rate {.panel-name}
-
-It seems that not even Twin Disciple can beat Sharsight
 
 ```{r print-CardsTable-1}
 MostPlayed <- TableAllCards |>
