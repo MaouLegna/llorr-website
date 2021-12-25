@@ -1,0 +1,3508 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+
+  <!--radix_placeholder_meta_tags-->
+<title>LLoRR Stats: Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data
+</title>
+
+<meta property="description" itemprop="description" content="Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks."/>
+
+<link rel="canonical" href="https://www.llorr-stats.com/analysis/defining-archetypes-03/"/>
+
+<!--  https://schema.org/Article -->
+<meta property="article:published" itemprop="datePublished" content="2021-12-25"/>
+<meta property="article:created" itemprop="dateCreated" content="2021-12-25"/>
+<meta name="article:author" content="Valentino (Legna) Vazzoler"/>
+
+<!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+<meta property="og:title" content="LLoRR Stats: Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data&#10;"/>
+<meta property="og:type" content="article"/>
+<meta property="og:description" content="Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks."/>
+<meta property="og:url" content="https://www.llorr-stats.com/analysis/defining-archetypes-03/"/>
+<meta property="og:image" content="https://www.llorr-stats.com/analysis/defining-archetypes-03/defining-archetypes-03_files/figure-html5/Heat1100-1.png"/>
+<meta property="og:image:width" content="768"/>
+<meta property="og:image:height" content="768"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="LLoRR Stats"/>
+
+<!--  https://dev.twitter.com/cards/types/summary -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:title" content="LLoRR Stats: Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data&#10;"/>
+<meta property="twitter:description" content="Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks."/>
+<meta property="twitter:url" content="https://www.llorr-stats.com/analysis/defining-archetypes-03/"/>
+<meta property="twitter:image" content="https://www.llorr-stats.com/analysis/defining-archetypes-03/defining-archetypes-03_files/figure-html5/Heat1100-1.png"/>
+<meta property="twitter:image:width" content="768"/>
+<meta property="twitter:image:height" content="768"/>
+
+<!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+<script type="text/json" id="radix-rmarkdown-metadata">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["params","title","description","base_url","author","date","output","citation","slug","draft","citation_url","canonical_url"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["ind","title","description"]}},"value":[{"type":"character","attributes":{},"value":["03"]},{"type":"character","attributes":{},"value":["Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data"]},{"type":"character","attributes":{},"value":["Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks."]}]},{"type":"character","attributes":{},"value":["Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data\n"]},{"type":"character","attributes":{},"value":["Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks."]},{"type":"character","attributes":{},"value":["https://www.llorr-stats.com"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Valentino (Legna) Vazzoler"]}]}]},{"type":"character","attributes":{},"value":["12-25-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","toc_depth","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[3]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["legna2021archetype03"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["https://www.llorr-stats.com/analysis/defining-archetypes-03/"]},{"type":"character","attributes":{},"value":["https://www.llorr-stats.com/analysis/defining-archetypes-03/"]}]}
+</script>
+<!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["defining-archetypes-03_files/anchor-4.2.2/anchor.min.js","defining-archetypes-03_files/bowser-1.9.3/bowser.min.js","defining-archetypes-03_files/distill-2.2.21/template.v2.js","defining-archetypes-03_files/figure-html5/Heat1100-1.png","defining-archetypes-03_files/figure-html5/Heat5500-1.png","defining-archetypes-03_files/header-attrs-2.11/header-attrs.js","defining-archetypes-03_files/jquery-3.6.0/jquery-3.6.0.js","defining-archetypes-03_files/jquery-3.6.0/jquery-3.6.0.min.js","defining-archetypes-03_files/jquery-3.6.0/jquery-3.6.0.min.map","defining-archetypes-03_files/pagedtable-1.1/css/pagedtable.css","defining-archetypes-03_files/pagedtable-1.1/js/pagedtable.js","defining-archetypes-03_files/panelset-0.2.6/panelset.css","defining-archetypes-03_files/panelset-0.2.6/panelset.js","defining-archetypes-03_files/popper-2.6.0/popper.min.js","defining-archetypes-03_files/tippy-6.2.7/tippy-bundle.umd.min.js","defining-archetypes-03_files/tippy-6.2.7/tippy-light-border.css","defining-archetypes-03_files/tippy-6.2.7/tippy.css","defining-archetypes-03_files/tippy-6.2.7/tippy.umd.min.js","defining-archetypes-03_files/webcomponents-2.0.0/webcomponents.js","images/A03-example-deck.png"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+<meta name="distill:offset" content="../.."/>
+
+<script type="application/javascript">
+
+  window.headroom_prevent_pin = false;
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // initialize headroom for banner
+    var header = $('header').get(0);
+    var headerHeight = header.offsetHeight;
+    var headroom = new Headroom(header, {
+      tolerance: 5,
+      onPin : function() {
+        if (window.headroom_prevent_pin) {
+          window.headroom_prevent_pin = false;
+          headroom.unpin();
+        }
+      }
+    });
+    headroom.init();
+    if(window.location.hash)
+      headroom.unpin();
+    $(header).addClass('headroom--transition');
+
+    // offset scroll location for banner on hash change
+    // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+    window.addEventListener("hashchange", function(event) {
+      window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+    });
+
+    // responsive menu
+    $('.distill-site-header').each(function(i, val) {
+      var topnav = $(this);
+      var toggle = topnav.find('.nav-toggle');
+      toggle.on('click', function() {
+        topnav.toggleClass('responsive');
+      });
+    });
+
+    // nav dropdowns
+    $('.nav-dropbtn').click(function(e) {
+      $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+      $(this).parent().siblings('.nav-dropdown')
+         .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $("body").click(function(e){
+      $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $(".nav-dropdown").click(function(e){
+      e.stopPropagation();
+    });
+  });
+</script>
+
+<style type="text/css">
+
+/* Theme (user-documented overrideables for nav appearance) */
+
+.distill-site-nav {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: #0F2E3D;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.distill-site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.distill-site-nav a:hover {
+  color: white;
+}
+
+@media print {
+  .distill-site-nav {
+    display: none;
+  }
+}
+
+.distill-site-header {
+
+}
+
+.distill-site-footer {
+
+}
+
+
+/* Site Header */
+
+.distill-site-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.distill-site-header .nav-left {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header .nav-left {
+    margin-left: 0;
+  }
+}
+
+
+.distill-site-header .nav-right {
+  float: right;
+  margin-right: 8px;
+}
+
+.distill-site-header a,
+.distill-site-header .title {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 10px 14px 10px;
+}
+
+.distill-site-header .title {
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.distill-site-header .logo {
+  padding: 0;
+}
+
+.distill-site-header .logo img {
+  display: none;
+  max-height: 20px;
+  width: auto;
+  margin-bottom: -4px;
+}
+
+.distill-site-header .nav-image img {
+  max-height: 18px;
+  width: auto;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+
+
+@media screen and (min-width: 1000px) {
+  .distill-site-header .logo img {
+    display: inline-block;
+  }
+  .distill-site-header .nav-left {
+    margin-left: 20px;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 20px;
+  }
+  .distill-site-header .title {
+    padding-left: 12px;
+  }
+}
+
+
+.distill-site-header .nav-toggle {
+  display: none;
+}
+
+.nav-dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.nav-dropdown .nav-dropbtn {
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 16px 10px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  margin-top: 1px;
+  z-index: 2;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 200px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 2px;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-dropdown-content hr {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dropdown-active {
+  display: block;
+}
+
+.nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+  color: black;
+  padding: 6px 24px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.nav-dropdown-content .nav-dropdown-header {
+  display: block;
+  padding: 5px 24px;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropbtn {
+  color: white;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.nav-right .nav-dropdown-content {
+  margin-left: -45%;
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+  .distill-site-header a.nav-toggle {
+    float: right;
+    display: block;
+  }
+  .distill-site-header .title {
+    margin-left: 0;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 0;
+  }
+  .distill-site-header {
+    overflow: hidden;
+  }
+  .nav-right .nav-dropdown-content {
+    margin-left: 0;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-header.responsive {position: relative; min-height: 500px; }
+  .distill-site-header.responsive a.nav-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .distill-site-header.responsive a,
+  .distill-site-header.responsive .nav-dropdown {
+    display: block;
+    text-align: left;
+  }
+  .distill-site-header.responsive .nav-left,
+  .distill-site-header.responsive .nav-right {
+    width: 100%;
+  }
+  .distill-site-header.responsive .nav-dropdown {float: none;}
+  .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+  .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Site Footer */
+
+.distill-site-footer {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 3;
+  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Headroom */
+
+d-title {
+  padding-top: 6rem;
+}
+
+@media print {
+  d-title {
+    padding-top: 4rem;
+  }
+}
+
+.headroom {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.headroom--transition {
+  transition: all .4s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+/* adjust viewport for navbar height */
+/* helps vertically center bootstrap (non-distill) content */
+.min-vh-100 {
+  min-height: calc(100vh - 100px) !important;
+}
+
+</style>
+
+<script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../../site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+<link href="../../site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+<script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
+<script src="../../site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+<script src="../../site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+<script type="application/javascript">
+
+function getMeta(metaName) {
+  var metas = document.getElementsByTagName('meta');
+  for (let i = 0; i < metas.length; i++) {
+    if (metas[i].getAttribute('name') === metaName) {
+      return metas[i].getAttribute('content');
+    }
+  }
+  return '';
+}
+
+function offsetURL(url) {
+  var offset = getMeta('distill:offset');
+  return offset ? offset + '/' + url : url;
+}
+
+function createFuseIndex() {
+
+  // create fuse index
+  var options = {
+    keys: [
+      { name: 'title', weight: 20 },
+      { name: 'categories', weight: 15 },
+      { name: 'description', weight: 10 },
+      { name: 'contents', weight: 5 },
+    ],
+    ignoreLocation: true,
+    threshold: 0
+  };
+  var fuse = new window.Fuse([], options);
+
+  // fetch the main search.json
+  return fetch(offsetURL('search.json'))
+    .then(function(response) {
+      if (response.status == 200) {
+        return response.json().then(function(json) {
+          // index main articles
+          json.articles.forEach(function(article) {
+            fuse.add(article);
+          });
+          // download collections and index their articles
+          return Promise.all(json.collections.map(function(collection) {
+            return fetch(offsetURL(collection)).then(function(response) {
+              if (response.status === 200) {
+                return response.json().then(function(articles) {
+                  articles.forEach(function(article) {
+                    fuse.add(article);
+                  });
+                })
+              } else {
+                return Promise.reject(
+                  new Error('Unexpected status from search index request: ' +
+                            response.status)
+                );
+              }
+            });
+          })).then(function() {
+            return fuse;
+          });
+        });
+
+      } else {
+        return Promise.reject(
+          new Error('Unexpected status from search index request: ' +
+                      response.status)
+        );
+      }
+    });
+}
+
+window.document.addEventListener("DOMContentLoaded", function (event) {
+
+  // get search element (bail if we don't have one)
+  var searchEl = window.document.getElementById('distill-search');
+  if (!searchEl)
+    return;
+
+  createFuseIndex()
+    .then(function(fuse) {
+
+      // make search box visible
+      searchEl.classList.remove('hidden');
+
+      // initialize autocomplete
+      var options = {
+        autoselect: true,
+        hint: false,
+        minLength: 2,
+      };
+      window.autocomplete(searchEl, options, [{
+        source: function(query, callback) {
+          const searchOptions = {
+            isCaseSensitive: false,
+            shouldSort: true,
+            minMatchCharLength: 2,
+            limit: 10,
+          };
+          var results = fuse.search(query, searchOptions);
+          callback(results
+            .map(function(result) { return result.item; })
+          );
+        },
+        templates: {
+          suggestion: function(suggestion) {
+            var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+              ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+              : '';
+            var html = `
+              <div class="search-item">
+                <h3>${suggestion.title}</h3>
+                <div class="search-item-description">
+                  ${suggestion.description || ''}
+                </div>
+                <div class="search-item-preview">
+                  ${img}
+                </div>
+              </div>
+            `;
+            return html;
+          }
+        }
+      }]).on('autocomplete:selected', function(event, suggestion) {
+        window.location.href = offsetURL(suggestion.path);
+      });
+      // remove inline display style on autocompleter (we want to
+      // manage responsive display via css)
+      $('.algolia-autocomplete').css("display", "");
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+
+});
+
+</script>
+
+<style type="text/css">
+
+.nav-search {
+  font-size: x-small;
+}
+
+/* Algolioa Autocomplete */
+
+.algolia-autocomplete {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: sub;
+  background-color: white;
+  color: black;
+  padding: 6px;
+  padding-top: 8px;
+  padding-bottom: 0;
+  border-radius: 6px;
+  border: 1px #0F2E3D solid;
+  width: 180px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-nav .algolia-autocomplete {
+    display: none;
+    visibility: hidden;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete {
+    display: inline-block;
+    visibility: visible;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+    margin-left: 0;
+    width: 400px;
+    max-height: 400px;
+  }
+}
+
+.algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+  width: 90%;
+  outline: none;
+  border: none;
+}
+
+.algolia-autocomplete .aa-hint {
+  color: #999;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+  width: 550px;
+  max-height: 70vh;
+  overflow-x: visible;
+  overflow-y: scroll;
+  padding: 5px;
+  margin-top: 3px;
+  margin-left: -150px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #999;
+  border-top: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+  cursor: pointer;
+  padding: 5px 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+  border-bottom: none;
+  margin-bottom: 2px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+  overflow: hidden;
+  font-size: 0.8em;
+  line-height: 1.4em;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+  font-size: 1rem;
+  margin-block-start: 0;
+  margin-block-end: 5px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+  display: inline-block;
+  overflow: hidden;
+  height: 2.8em;
+  width: 80%;
+  margin-right: 4%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+  display: inline-block;
+  width: 15%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+  height: 3em;
+  width: auto;
+  display: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+  display: initial;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+  background-color: #eee;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+</style>
+
+
+<!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+<style type="text/css">
+
+body {
+  background-color: white;
+}
+
+.pandoc-table {
+  width: 100%;
+}
+
+.pandoc-table>caption {
+  margin-bottom: 10px;
+}
+
+.pandoc-table th:not([align]) {
+  text-align: left;
+}
+
+.pagedtable-footer {
+  font-size: 15px;
+}
+
+d-byline .byline {
+  grid-template-columns: 2fr 2fr;
+}
+
+d-byline .byline h3 {
+  margin-block-start: 1.5em;
+}
+
+d-byline .byline .authors-affiliations h3 {
+  margin-block-start: 0.5em;
+}
+
+.authors-affiliations .orcid-id {
+  width: 16px;
+  height:16px;
+  margin-left: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+  padding-bottom: 2px;
+}
+
+d-title .dt-tags {
+  margin-top: 1em;
+  grid-column: text;
+}
+
+.dt-tags .dt-tag {
+  text-decoration: none;
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0em 0.4em;
+  margin-right: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 70%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+d-article table.gt_table td,
+d-article table.gt_table th {
+  border-bottom: none;
+}
+
+.html-widget {
+  margin-bottom: 2.0em;
+}
+
+.l-screen-inset {
+  padding-right: 16px;
+}
+
+.l-screen .caption {
+  margin-left: 10px;
+}
+
+.shaded {
+  background: rgb(247, 247, 247);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .html-widget {
+  margin-bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .shaded-content {
+  background: white;
+}
+
+.text-output {
+  margin-top: 0;
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+d-article {
+  padding-top: 2.5rem;
+  padding-bottom: 30px;
+}
+
+d-appendix {
+  padding-top: 30px;
+}
+
+d-article>p>img {
+  width: 100%;
+}
+
+d-article h2 {
+  margin: 1rem 0 1.5rem 0;
+}
+
+d-article h3 {
+  margin-top: 1.5rem;
+}
+
+d-article iframe {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 2.0em;
+  width: 100%;
+}
+
+/* Tweak code blocks */
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: auto;
+}
+
+d-article div.sourceCode {
+  background-color: white;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 10px;
+  font-size: 12px;
+  border-left: 2px solid rgba(0,0,0,0.1);
+}
+
+d-article pre {
+  font-size: 12px;
+  color: black;
+  background: none;
+  margin-top: 0;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+d-article pre a {
+  border-bottom: none;
+}
+
+d-article pre a:hover {
+  border-bottom: none;
+  text-decoration: underline;
+}
+
+d-article details {
+  grid-column: text;
+  margin-bottom: 0.8em;
+}
+
+@media(min-width: 768px) {
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: visible !important;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+d-article pre {
+  font-size: 14px;
+}
+
+}
+
+figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* CSS for d-contents */
+
+.d-contents {
+  grid-column: text;
+  color: rgba(0,0,0,0.8);
+  font-size: 0.9em;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 0.25em;
+  justify-self: start;
+}
+
+@media(min-width: 1000px) {
+  .d-contents.d-contents-float {
+    height: 0;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: center;
+    padding-right: 3em;
+    padding-left: 2em;
+  }
+}
+
+.d-contents nav h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.d-contents li {
+  list-style-type: none
+}
+
+.d-contents nav > ul {
+  padding-left: 0;
+}
+
+.d-contents ul {
+  padding-left: 1em
+}
+
+.d-contents nav ul li {
+  margin-top: 0.6em;
+  margin-bottom: 0.2em;
+}
+
+.d-contents nav a {
+  font-size: 13px;
+  border-bottom: none;
+  text-decoration: none
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.d-contents nav a:hover {
+  text-decoration: underline solid rgba(0, 0, 0, 0.6)
+}
+
+.d-contents nav > ul > li > a {
+  font-weight: 600;
+}
+
+.d-contents nav > ul > li > ul {
+  font-weight: inherit;
+}
+
+.d-contents nav > ul > li > ul > li {
+  margin-top: 0.2em;
+}
+
+
+.d-contents nav ul {
+  margin-top: 0;
+  margin-bottom: 0.25em;
+}
+
+.d-article-with-toc h2:nth-child(2) {
+  margin-top: 0;
+}
+
+
+/* Figure */
+
+.figure {
+  position: relative;
+  margin-bottom: 2.5em;
+  margin-top: 1.5em;
+}
+
+.figure img {
+  width: 100%;
+}
+
+.figure .caption {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5em;
+}
+
+.figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.figure .caption a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.figure .caption b,
+.figure .caption strong, {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+/* Citations */
+
+d-article .citation {
+  color: inherit;
+  cursor: inherit;
+}
+
+div.hanging-indent{
+  margin-left: 1em; text-indent: -1em;
+}
+
+/* Citation hover box */
+
+.tippy-box[data-theme~=light-border] {
+  background-color: rgba(250, 250, 250, 0.95);
+}
+
+.tippy-content > p {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+
+/* Tweak 1000px media break to show more text */
+
+@media(min-width: 1000px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 16px;
+  }
+
+  .grid {
+    grid-column-gap: 16px;
+  }
+
+  d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+  }
+  figure .caption, .figure .caption, figure figcaption {
+    font-size: 13px;
+  }
+}
+
+@media(min-width: 1180px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 32px;
+  }
+
+  .grid {
+    grid-column-gap: 32px;
+  }
+}
+
+
+/* Get the citation styles for the appendix (not auto-injected on render since
+   we do our own rendering of the citation appendix) */
+
+d-appendix .citation-appendix,
+.d-appendix .citation-appendix {
+  font-size: 11px;
+  line-height: 15px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 18px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.02);
+  padding: 10px 18px;
+  border-radius: 3px;
+  color: rgba(150, 150, 150, 1);
+  overflow: hidden;
+  margin-top: -12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Include appendix styles here so they can be overridden */
+
+d-appendix {
+  contain: layout style;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-top: 60px;
+  margin-bottom: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0,0,0,0.5);
+  padding-top: 60px;
+  padding-bottom: 48px;
+}
+
+d-appendix h3 {
+  grid-column: page-start / text-start;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.65);
+}
+
+d-appendix h3 + * {
+  margin-top: 1em;
+}
+
+d-appendix ol {
+  padding: 0 0 0 15px;
+}
+
+@media (min-width: 768px) {
+  d-appendix ol {
+    padding: 0 0 0 30px;
+    margin-left: -30px;
+  }
+}
+
+d-appendix li {
+  margin-bottom: 1em;
+}
+
+d-appendix a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+d-appendix > * {
+  grid-column: text;
+}
+
+d-appendix > d-footnote-list,
+d-appendix > d-citation-list,
+d-appendix > distill-appendix {
+  grid-column: screen;
+}
+
+/* Include footnote styles here so they can be overridden */
+
+d-footnote-list {
+  contain: layout style;
+}
+
+d-footnote-list > * {
+  grid-column: text;
+}
+
+d-footnote-list a.footnote-backlink {
+  color: rgba(0,0,0,0.3);
+  padding-left: 0.5em;
+}
+
+
+
+/* Anchor.js */
+
+.anchorjs-link {
+  /*transition: all .25s linear; */
+  text-decoration: none;
+  border-bottom: none;
+}
+*:hover > .anchorjs-link {
+  margin-left: -1.125em !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Social footer */
+
+.social_footer {
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.67);
+}
+
+.disqus-comments {
+  margin-right: 30px;
+}
+
+.disqus-comment-count {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#disqus_thread {
+  margin-top: 30px;
+}
+
+.article-sharing a {
+  border-bottom: none;
+  margin-right: 8px;
+}
+
+.article-sharing a:hover {
+  border-bottom: none;
+}
+
+.sidebar-section.subscribe {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.subscribe p {
+  margin-bottom: 0.5em;
+}
+
+
+.article-footer .subscribe {
+  font-size: 15px;
+  margin-top: 45px;
+}
+
+
+.sidebar-section.custom {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.custom p {
+  margin-bottom: 0.5em;
+}
+
+/* Styles for listing layout (hide title) */
+.layout-listing d-title, .layout-listing .d-title {
+  display: none;
+}
+
+/* Styles for posts lists (not auto-injected) */
+
+
+.posts-with-sidebar {
+  padding-left: 45px;
+  padding-right: 45px;
+}
+
+.posts-list .description h2,
+.posts-list .description p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.posts-list .description h2 {
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.posts-list h2.post-tag {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 12px;
+}
+.posts-list {
+  margin-top: 60px;
+  margin-bottom: 24px;
+}
+
+.posts-list .post-preview {
+  text-decoration: none;
+  overflow: hidden;
+  display: block;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+}
+
+.post-preview-last {
+  border-bottom: none !important;
+}
+
+.posts-list .posts-list-caption {
+  grid-column: screen;
+  font-weight: 400;
+}
+
+.posts-list .post-preview h2 {
+  margin: 0 0 6px 0;
+  line-height: 1.2em;
+  font-style: normal;
+  font-size: 24px;
+}
+
+.posts-list .post-preview p {
+  margin: 0 0 12px 0;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+.posts-list .post-preview .thumbnail {
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  position: relative;
+  max-width: 500px;
+}
+.posts-list .post-preview img {
+  width: 100%;
+  display: block;
+}
+
+.posts-list .metadata {
+  font-size: 12px;
+  line-height: 1.4em;
+  margin-bottom: 18px;
+}
+
+.posts-list .metadata > * {
+  display: inline-block;
+}
+
+.posts-list .metadata .publishedDate {
+  margin-right: 2em;
+}
+
+.posts-list .metadata .dt-authors {
+  display: block;
+  margin-top: 0.3em;
+  margin-right: 2em;
+}
+
+.posts-list .dt-tags {
+  display: block;
+  line-height: 1em;
+}
+
+.posts-list .dt-tags .dt-tag {
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0.3em 0.4em;
+  margin-right: 0.2em;
+  margin-bottom: 0.4em;
+  font-size: 60%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.posts-list img {
+  opacity: 1;
+}
+
+.posts-list img[data-src] {
+  opacity: 0;
+}
+
+.posts-more {
+  clear: both;
+}
+
+
+.posts-sidebar {
+  font-size: 16px;
+}
+
+.posts-sidebar h3 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.categories ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categories li {
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0;
+}
+
+.categories li>a {
+  border-bottom: none;
+}
+
+.categories li>a:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.categories .active {
+  font-weight: 600;
+}
+
+.categories .category-count {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+@media(min-width: 768px) {
+  .posts-list .post-preview h2 {
+    font-size: 26px;
+  }
+  .posts-list .post-preview .thumbnail {
+    float: right;
+    width: 30%;
+    margin-bottom: 0;
+  }
+  .posts-list .post-preview .description {
+    float: left;
+    width: 45%;
+  }
+  .posts-list .post-preview .metadata {
+    float: left;
+    width: 20%;
+    margin-top: 8px;
+  }
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.5em;
+    font-size: 16px;
+  }
+  .posts-with-sidebar .posts-list {
+    float: left;
+    width: 75%;
+  }
+  .posts-with-sidebar .posts-sidebar {
+    float: right;
+    width: 20%;
+    margin-top: 60px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+
+/* Improve display for browsers without grid (IE/Edge <= 15) */
+
+.downlevel {
+  line-height: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+}
+
+.downlevel .d-title {
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+}
+
+.downlevel .d-title h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1em;
+  margin: 0 0 0.5rem;
+}
+
+.downlevel .d-title p {
+  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.55em;
+  margin-top: 0;
+}
+
+.downlevel .d-byline {
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  font-size: 0.8rem;
+  line-height: 1.8em;
+}
+
+.downlevel .section-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.downlevel .d-article {
+  font-size: 1.06rem;
+  line-height: 1.7em;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+
+.downlevel .d-appendix {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: none;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.5);
+  padding-top: 40px;
+  padding-bottom: 48px;
+}
+
+.downlevel .footnotes ol {
+  padding-left: 13px;
+}
+
+.downlevel .base-grid,
+.downlevel .distill-header,
+.downlevel .d-title,
+.downlevel .d-abstract,
+.downlevel .d-article,
+.downlevel .d-appendix,
+.downlevel .distill-appendix,
+.downlevel .d-byline,
+.downlevel .d-footnote-list,
+.downlevel .d-citation-list,
+.downlevel .distill-footer,
+.downlevel .appendix-bottom,
+.downlevel .posts-container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media(min-width: 768px) {
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+  padding-left: 150px;
+  padding-right: 150px;
+  max-width: 900px;
+}
+}
+
+.downlevel pre code {
+  display: block;
+  border-left: 2px solid rgba(0, 0, 0, .1);
+  padding: 0 0 0 20px;
+  font-size: 14px;
+}
+
+.downlevel code, .downlevel pre {
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+.downlevel .posts-list .post-preview {
+  color: inherit;
+}
+
+
+
+</style>
+
+<script type="application/javascript">
+
+function is_downlevel_browser() {
+  if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                 window.navigator.userAgent)) {
+    return true;
+  } else {
+    return window.load_distill_framework === undefined;
+  }
+}
+
+// show body when load is complete
+function on_load_complete() {
+
+  // add anchors
+  if (window.anchors) {
+    window.anchors.options.placement = 'left';
+    window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+  }
+
+
+  // set body to visible
+  document.body.style.visibility = 'visible';
+
+  // force redraw for leaflet widgets
+  if (window.HTMLWidgets) {
+    var maps = window.HTMLWidgets.findAll(".leaflet");
+    $.each(maps, function(i, el) {
+      var map = this.getMap();
+      map.invalidateSize();
+      map.eachLayer(function(layer) {
+        if (layer instanceof L.TileLayer)
+          layer.redraw();
+      });
+    });
+  }
+
+  // trigger 'shown' so htmlwidgets resize
+  $('d-article').trigger('shown');
+}
+
+function init_distill() {
+
+  init_common();
+
+  // create front matter
+  var front_matter = $('<d-front-matter></d-front-matter>');
+  $('#distill-front-matter').wrap(front_matter);
+
+  // create d-title
+  $('.d-title').changeElementType('d-title');
+
+  // create d-byline
+  var byline = $('<d-byline></d-byline>');
+  $('.d-byline').replaceWith(byline);
+
+  // create d-article
+  var article = $('<d-article></d-article>');
+  $('.d-article').wrap(article).children().unwrap();
+
+  // move posts container into article
+  $('.posts-container').appendTo($('d-article'));
+
+  // create d-appendix
+  $('.d-appendix').changeElementType('d-appendix');
+
+  // flag indicating that we have appendix items
+  var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+  // replace footnotes with <d-footnote>
+  $('.footnote-ref').each(function(i, val) {
+    appendix = true;
+    var href = $(this).attr('href');
+    var id = href.replace('#', '');
+    var fn = $('#' + id);
+    var fn_p = $('#' + id + '>p');
+    fn_p.find('.footnote-back').remove();
+    var text = fn_p.html();
+    var dtfn = $('<d-footnote></d-footnote>');
+    dtfn.html(text);
+    $(this).replaceWith(dtfn);
+  });
+  // remove footnotes
+  $('.footnotes').remove();
+
+  // move refs into #references-listing
+  $('#references-listing').replaceWith($('#refs'));
+
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    var id = $(this).attr('id');
+    $('.d-contents a[href="#' + id + '"]').parent().remove();
+    appendix = true;
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+  });
+
+  // show d-appendix if we have appendix content
+  $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+  // localize layout chunks to just output
+  $('.layout-chunk').each(function(i, val) {
+
+    // capture layout
+    var layout = $(this).attr('data-layout');
+
+    // apply layout to markdown level block elements
+    var elements = $(this).children().not('details, div.sourceCode, pre, script');
+    elements.each(function(i, el) {
+      var layout_div = $('<div class="' + layout + '"></div>');
+      if (layout_div.hasClass('shaded')) {
+        var shaded_content = $('<div class="shaded-content"></div>');
+        $(this).wrap(shaded_content);
+        $(this).parent().wrap(layout_div);
+      } else {
+        $(this).wrap(layout_div);
+      }
+    });
+
+
+    // unwrap the layout-chunk div
+    $(this).children().unwrap();
+  });
+
+  // remove code block used to force  highlighting css
+  $('.distill-force-highlighting-css').parent().remove();
+
+  // remove empty line numbers inserted by pandoc when using a
+  // custom syntax highlighting theme
+  $('code.sourceCode a:empty').remove();
+
+  // load distill framework
+  load_distill_framework();
+
+  // wait for window.distillRunlevel == 4 to do post processing
+  function distill_post_process() {
+
+    if (!window.distillRunlevel || window.distillRunlevel < 4)
+      return;
+
+    // hide author/affiliations entirely if we have no authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+    if (!have_authors)
+      $('d-byline').addClass('hidden');
+
+    // article with toc class
+    $('.d-contents').parent().addClass('d-article-with-toc');
+
+    // strip links that point to #
+    $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+    // add orcid ids
+    $('.authors-affiliations').find('.author').each(function(i, el) {
+      var orcid_id = front_matter.authors[i].orcidID;
+      if (orcid_id) {
+        var a = $('<a></a>');
+        a.attr('href', 'https://orcid.org/' + orcid_id);
+        var img = $('<img></img>');
+        img.addClass('orcid-id');
+        img.attr('alt', 'ORCID ID');
+        img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+        a.append(img);
+        $(this).append(a);
+      }
+    });
+
+    // hide elements of author/affiliations grid that have no value
+    function hide_byline_column(caption) {
+      $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+    }
+
+    // affiliations
+    var have_affiliations = false;
+    for (var i = 0; i<front_matter.authors.length; ++i) {
+      var author = front_matter.authors[i];
+      if (author.affiliation !== "&nbsp;") {
+        have_affiliations = true;
+        break;
+      }
+    }
+    if (!have_affiliations)
+      $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+    // published date
+    if (!front_matter.publishedDate)
+      hide_byline_column("Published");
+
+    // document object identifier
+    var doi = $('d-byline').find('h3:contains("DOI")');
+    var doi_p = doi.next().empty();
+    if (!front_matter.doi) {
+      // if we have a citation and valid citationText then link to that
+      if ($('#citation').length > 0 && front_matter.citationText) {
+        doi.html('Citation');
+        $('<a href="#citation"></a>')
+          .text(front_matter.citationText)
+          .appendTo(doi_p);
+      } else {
+        hide_byline_column("DOI");
+      }
+    } else {
+      $('<a></a>')
+         .attr('href', "https://doi.org/" + front_matter.doi)
+         .html(front_matter.doi)
+         .appendTo(doi_p);
+    }
+
+     // change plural form of authors/affiliations
+    if (front_matter.authors.length === 1) {
+      var grid = $('.authors-affiliations');
+      grid.children('h3:contains("Authors")').text('Author');
+      grid.children('h3:contains("Affiliations")').text('Affiliation');
+    }
+
+    // remove d-appendix and d-footnote-list local styles
+    $('d-appendix > style:first-child').remove();
+    $('d-footnote-list > style:first-child').remove();
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // hoverable references
+    $('span.citation[data-cites]').each(function() {
+      var refs = $(this).attr('data-cites').split(" ");
+      var refHtml = refs.map(function(ref) {
+        return "<p>" + $('#ref-' + ref).html() + "</p>";
+      }).join("\n");
+      window.tippy(this, {
+        allowHTML: true,
+        content: refHtml,
+        maxWidth: 500,
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start'
+      });
+    });
+
+    // clear polling timer
+    clearInterval(tid);
+
+    // show body now that everything is ready
+    on_load_complete();
+  }
+
+  var tid = setInterval(distill_post_process, 50);
+  distill_post_process();
+
+}
+
+function init_downlevel() {
+
+  init_common();
+
+   // insert hr after d-title
+  $('.d-title').after($('<hr class="section-separator"/>'));
+
+  // check if we have authors
+  var front_matter = JSON.parse($("#distill-front-matter").html());
+  var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+  // manage byline/border
+  if (!have_authors)
+    $('.d-byline').remove();
+  $('.d-byline').after($('<hr class="section-separator"/>'));
+  $('.d-byline a').remove();
+
+  // remove toc
+  $('.d-contents').remove();
+
+  // move appendix elements
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+  });
+
+
+  // inject headers into references and footnotes
+  var refs_header = $('<h3></h3>');
+  refs_header.text('References');
+  $('#refs').prepend(refs_header);
+
+  var footnotes_header = $('<h3></h3');
+  footnotes_header.text('Footnotes');
+  $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+  // move appendix-bottom entries to the bottom
+  $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+  $('.appendix-bottom').remove();
+
+  // remove appendix if it's empty
+  if ($('.d-appendix').children().length === 0)
+    $('.d-appendix').remove();
+
+  // prepend separator above appendix
+  $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+  // trim code
+  $('pre>code').each(function(i, val) {
+    $(this).html($.trim($(this).html()));
+  });
+
+  // move posts-container right before article
+  $('.posts-container').insertBefore($('.d-article'));
+
+  $('body').addClass('downlevel');
+
+  on_load_complete();
+}
+
+
+function init_common() {
+
+  // jquery plugin to change element types
+  (function($) {
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+        attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+        return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+  })(jQuery);
+
+  // prevent underline for linked images
+  $('a > img').parent().css({'border-bottom' : 'none'});
+
+  // mark non-body figures created by knitr chunks as 100% width
+  $('.layout-chunk').each(function(i, val) {
+    var figures = $(this).find('img, .html-widget');
+    if ($(this).attr('data-layout') !== "l-body") {
+      figures.css('width', '100%');
+    } else {
+      figures.css('max-width', '100%');
+      figures.filter("[width]").each(function(i, val) {
+        var fig = $(this);
+        fig.css('width', fig.attr('width') + 'px');
+      });
+
+    }
+  });
+
+  // auto-append index.html to post-preview links in file: protocol
+  // and in rstudio ide preview
+  $('.post-preview').each(function(i, val) {
+    if (window.location.protocol === "file:")
+      $(this).attr('href', $(this).attr('href') + "index.html");
+  });
+
+  // get rid of index.html references in header
+  if (window.location.protocol !== "file:") {
+    $('.distill-site-header a[href]').each(function(i,val) {
+      $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+    });
+  }
+
+  // add class to pandoc style tables
+  $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+  $('.kable-table').children('table').addClass('pandoc-table');
+
+  // add figcaption style to table captions
+  $('caption').parent('table').addClass("figcaption");
+
+  // initialize posts list
+  if (window.init_posts_list)
+    window.init_posts_list();
+
+  // implmement disqus comment link
+  $('.disqus-comment-count').click(function() {
+    window.headroom_prevent_pin = true;
+    $('#disqus_thread').toggleClass('hidden');
+    if (!$('#disqus_thread').hasClass('hidden')) {
+      var offset = $(this).offset();
+      $(window).resize();
+      $('html, body').animate({
+        scrollTop: offset.top - 35
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (is_downlevel_browser())
+    init_downlevel();
+  else
+    window.addEventListener('WebComponentsReady', init_distill);
+});
+
+</script>
+
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    sans-serif;
+  --mono-font:       monospace;
+  --body-font:       sans-serif;
+  --navbar-font:     sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+</style>
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #881C03;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    'Fira Mono', sans-serif;
+  --mono-font:       monospace;
+  --body-font:       'Lato', sans-serif;
+  --navbar-font:     'Roboto', sans-serif;        /* edited */
+  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       white;
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #007fff;
+  --font-weight:      900;
+}
+
+
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+
+body {
+  background-color: whitesmoke;
+}
+
+/* snow, milk, ivory, pearl, paper, corn silk, seashell, linen, cream, alabaster */
+
+.screenshot {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* .panelset {
+  --panel-tab-foreground: currentColor;
+  --panel-tab-active-foreground: #0051BA;
+  --panel-tab-hover-foreground: #d22;
+  --panel-tabs-border-bottom: #ddd;
+  --panel-tab-inactive-opacity: 0.5;
+} */</style>
+<style type="text/css">
+/* base style */
+
+/* FONT FAMILIES */
+
+:root {
+  --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+body,
+.posts-list .post-preview p,
+.posts-list .description p {
+  font-family: var(--body-font), var(--body-default);
+}
+
+h1, h2, h3, h4, h5, h6,
+.posts-list .post-preview h2,
+.posts-list .description h2 {
+  font-family: var(--heading-font), var(--heading-default);
+}
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: var(--mono-font), var(--mono-default);
+}
+
+
+/*-- TITLE --*/
+d-title h1,
+.posts-list > h1 {
+  color: var(--title-color, black);
+}
+
+d-title h1 {
+  font-size: var(--title-size, 50px);
+}
+
+/*-- HEADERS --*/
+d-article h1,
+d-article h2,
+d-article h3,
+d-article h4,
+d-article h5,
+d-article h6 {
+  color: var(--header-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- BODY --*/
+d-article > p,  /* only text inside of <p> tags */
+d-article > ul, /* lists */
+d-article > ol {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+  font-size: var(--body-size, 1.06rem);
+}
+
+
+/*-- CODE --*/
+d-article div.sourceCode code,
+d-article pre code {
+  font-size: var(--code-size, 14px);
+}
+
+/*-- ASIDE --*/
+d-article aside {
+  font-size: var(--aside-size, 12px);
+  color: var(--aside-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- FIGURE CAPTIONS --*/
+figure .caption,
+figure figcaption,
+.figure .caption {
+  font-size: var(--fig-cap-size, 13px);
+  color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- METADATA --*/
+d-byline h3 {
+  font-size: var(--heading-size, 0.6rem);
+  color: var(--heading-color, rgba(0, 0, 0, 0.5));
+}
+
+d-byline {
+  font-size: var(--body-size, 0.8rem);
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+d-byline a,
+d-article d-byline a {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- TABLE OF CONTENTS --*/
+.d-contents nav h3 {
+  font-size: var(--heading-size, 18px);
+}
+
+.d-contents nav a {
+  font-size: var(--contents-size, 13px);
+}
+
+/*-- APPENDIX --*/
+d-appendix h3 {
+  font-size: var(--heading-size, 15px);
+  color: var(--heading-color, rgba(0, 0, 0, 0.65));
+}
+
+d-appendix {
+  font-size: var(--text-size, 0.8em);
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+d-appendix d-footnote-list a.footnote-backlink {
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+.distill-site-header .title {
+  font-size: var(--title-size, 18px);
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.distill-site-header a,
+.nav-dropdown .nav-dropbtn {
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.nav-dropdown .nav-dropbtn {
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  font-size: var(--text-size, 15px);
+}
+
+.distill-site-header a:hover,
+.nav-dropdown:hover .nav-dropbtn {
+  color: var(--hover-color, white);
+}
+
+.distill-site-header {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer a:hover {
+  color: var(--hover-color, white);
+}</style>
+<!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <link href="../../site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="../../site_libs/panelset-0.2.6/panelset.js"></script>
+  <link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+  <script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+  <script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+  <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
+  <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="../../site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="../../site_libs/anchor-4.2.2/anchor.min.js"></script>
+  <script src="../../site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="../../site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+<script type="text/javascript" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=UA-204289277-1"></script>
+<script type="text/javascript" cookie-consent="tracking">
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-204289277-1');
+</script>
+<!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data\n","description":"Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks.","authors":[{"author":"Valentino (Legna) Vazzoler","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-12-25T00:00:00.000+01:00","citationText":"Vazzoler, 2021"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a class="logo">
+<img src="../../images/logo.png" alt="Logo"/>
+</a>
+<a href="../../index.html" class="title">LLoRR Stats</a>
+<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
+</div>
+<div class="nav-right">
+<a href="../../report.html">MetaReport</a>
+<a href="https://www.llorr-stats.com/static/mu.html">MatchUps</a>
+<a href="https://www.llorr-stats.com/static/meta.html">Meta</a>
+<a href="../../analysis.html">Analysis</a>
+<a href="../../resources.html">Resources</a>
+<a href="../../about.html">About</a>
+<a href="https://github.com/MaouLegna">
+<i class="fab fa-github-alt fa-1x" aria-hidden="true"></i>
+</a>
+<a href="https://twitter.com/Maou_Legna">
+<i class="fab fa-twitter fa-1x" aria-hidden="true"></i>
+</a>
+<a href="https://rpubs.com/Legna">
+<i class="fab fa-r-project" aria-hidden="true"></i>
+</a>
+<a href="https://www.buymeacoffee.com/MaouLegna" class="nav-image">
+<img src="https://www.buymeacoffee.com/assets/img/bmc-meta-new/new/favicon.png"/>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>Defining Archetypes #3: Approaching a Clustering Analysis with a Season worth of Data</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p><p>Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks.</p></p>
+</div>
+
+<div class="d-byline">
+  Valentino (Legna) Vazzoler  
+  
+<br/>12-25-2021
+</div>
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#an-engineering-problem">An Engineering Problem</a></li>
+</ul></li>
+<li><a href="#discussion">Discussion</a>
+<ul>
+<li><a href="#needles-in-the-shuriman-vast-desert">Needles in the Shuriman (vast) Desert</a></li>
+<li><a href="#the-lazy-approach">The Lazy Approach</a></li>
+<li><a href="#cross-region-comparisons">Cross-Region Comparisons</a></li>
+</ul></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</nav>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<p><style>.panelset{--panel-tab-active-foreground: white;--panel-tab-active-background: #007fff;--panel-tab-hover-foreground: black;--panel-tab-hover-border-color: black;--panel-tab-font-family: Helvetica;}</style></p>
+</div>
+<h1 id="introduction">Introduction</h1>
+<p>In the <a href="https://llorr-stats.netlify.app/analysis/defining-archetypes-02/">previous article/analysis</a> on defining archetypes we introduced the basic theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.</p>
+<p>We introduced the general theory along side a few widely-used algorithms and some of the “newer” ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).</p>
+<p>The example was tailored to give a general idea about the methods, some of their strong point and also potential weaknesses with this specific context of analysing LoR decks.</p>
+<p>As the previous analysis was mostly based around the basic approach to the methods and a well defined example it can’t translate directly to a generalized use with the commonly analysed data like the weekly reports.</p>
+<p>For now, we want to continue to use the Cluster Analysis but this times applied to a set of data on a scale more similar to a <em>real-case-study</em>. To do this we first need to solve a couple of issues related to the scale of the algorithms at hand.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<h3 id="an-engineering-problem">An Engineering Problem</h3>
+<p>What are the main issue when switching to data from a real-case study? Mostly the impact of the amount of decks to use with the resulting computational load. Also the <em>dirtiness</em> of the data resulting from not having a clean dataset, but that is to be expected.</p>
+<p>Distance matrices and consequently all algorithm derived by them have a quadratic growth <span class="math inline">\(O(n^2)\)</span> so scalability is a problem, even more so as this project to “define archetypes” is not meant to be purely theoretical. The aim of this project is to also apply it to the collected data and provide the results, be it in the reports or any other content so time has to be considered.</p>
+<p>Yet, creating distance matrices at high dimension is not feasible even assuming the analysis is self contained and we have an infinite amount of time to compute the distances. Time is not the only factor, <em>Space</em> is too and probably it is even more important to find a way to solve it. One may not be used to these context so let us give some numbers of the problem at hand.</p>
+<p>At the moment of the writing of this article our Deck’s dataset is made of about 1M decks <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. The dataset contains only 40-cards decks which has been played in Constructed or PvP modes.</p>
+<p>Realistically, we would never try to works with all of them at the same time, at least not when using a cluster analysis (CA). A more appropriate time-frame can be a single competitive Season and restrict ourselves only to the decks played around that time.</p>
+<p>To give a reference of a ‘real-case’ number, the Between Worlds (S10) Season which lasted from patch 2.18 to 2.20 featured at Master rank ~42000 unique decks.</p>
+<p>As we are not ready yet to just simply apply any methods to any kind of decks data we are going to create a dataset so that is has a similar scale of the S10-MasterRank (42000) decks.</p>
+<p>For this article we planned to create an example made of 44000 decks. The creation criteria will be explained in another moment. Its size is clearly to have an order of magnitude similar to the S10-MasterRank numbers. Se say <strong>planned</strong> as the actual analysis of the dataset is being delayed because of issues we just introduced.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<p>Let us now give some more numbers of the problem at hand, let’s talk about the memory allocation of the distance matrix:</p>
+<ul>
+<li><p>If we used only a fraction of the chosen decks, just 1100, then we would have a <span class="math inline">\(1100 \times 1100\)</span> distance matrix that requires: 4.7 Mb</p></li>
+<li><p>If we increased the choice to 5500 decks, the resulting 5500x5500 distance matrix would occupy: 115.7 Mb.</p></li>
+</ul>
+<p>Quite the increase but consistent to the fact that the second matrix is 25 times the smaller one and we can see the issue with the quadratic growth that comes with the matrix.</p>
+<ul>
+<li>By using all the 44k decks we can’t even try to recreate the distance matrix, it would require a very good machine and we can infer that just the distance matrix size with its <span class="math inline">\(44000^2\)</span> elements would be of around 7424 Mb. We wouldn’t be able to allocate enough memory to save it, let alone work with it.</li>
+</ul>
+<p>Overall, while it would be nice to work with any available data (assuming it’s meaningful) one can’t ignore the time/cost that comes from each choice and so we need to search for a way to circumnavigate the issue. While we don’t have the perfect solution, we are going to propose a way to approach the problem making it a bit more feasible.</p>
+<h1 id="discussion">Discussion</h1>
+<h3 id="needles-in-the-shuriman-vast-desert">Needles in the Shuriman (vast) Desert</h3>
+<p>Let us assume that we are able to solve the computation and allocation of the distance matrix; this would solve the engineering-side of the problem it would most likely be an incredible ‘a waste’ of resources.</p>
+<p>To explain this we are going to show the resulting heatmaps of a couple of subsets of the example dataset. One with a subset of 1100 decks and another one with 5500 decks. In both cases the subset decks are chosen not completely at random.</p>
+<p>The resulting heatamap with 1100 decks is:</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:Heat1100"></span>
+<img src="defining-archetypes-03_files/figure-html5/Heat1100-1.png" alt="heatmap of a 1100 x 1100 distance matrix of LoR decks chosen not completely at random" width="384" />
+<p class="caption">
+Figure 1: heatmap of a 1100 x 1100 distance matrix of LoR decks chosen not completely at random
+</p>
+</div>
+</div>
+<p>The resulting heatamap with 5500 decks is:</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:Heat5500"></span>
+<img src="defining-archetypes-03_files/figure-html5/Heat5500-1.png" alt="heatmap of a 5500 x 5500 distance matrix of LoR decks chosen not completely at random" width="384" />
+<p class="caption">
+Figure 2: heatmap of a 5500 x 5500 distance matrix of LoR decks chosen not completely at random
+</p>
+</div>
+</div>
+<p>As we can see in Fig:<a href="#fig:Heat1100">1</a> and Fig:<a href="#fig:Heat5500">2</a> there are clear indication of the presence of several small clusters (the yellow areas) but in the majority, the vast majority of the matrix, the distance is at its max (1) and the similarity is at its min (0) <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<p>While we need to account for the decks that compose the example, in a <em>typical real-case</em> the results would be similar in most cases.</p>
+<p>There is a structural reason behind this and that’s a result of the limitation imposed by the deck building process which doesn’t allow the use of cards from more than two different regions (not counting Dual Region cards). This makes almost all pair of decks decks with no common region having a similarity that has to be zero (again, dual region cards aside).</p>
+<p>Our proposed solution is to use this information and start simplify the problem to a series of smaller one cases.</p>
+<p>Because of the limitation in deck building we know that the similarity of decks with no common faction has to be zero. A Noxus-PnZ deck has to have a similarity equal to zero with a ShadowIsles-Shurima deck and if we order the deck by faction it means that the distance matrix is made of several <span class="math inline">\(0_{n \times n}\)</span> sub null-matrix.</p>
+<p>To be more precise, there are sadly exception to this property: when we deal with dual region cards we can have non overlapping factions but still common cards <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>.</p>
+<blockquote>
+<p>Example: a BandleCity/Noxus (BC/NX) deck and a Demacia/Ionia (DE/IO) deck both sharing “Poppy” as a card. Both their regions are different but the similarity if not null is we are going to use the original card code of a card.</p>
+</blockquote>
+<p>For now everything we will do will ignore the dual-region issue and leave it for for future works.</p>
+<h3 id="the-lazy-approach">The Lazy Approach</h3>
+<p>Let’s assume we don’t have the problem of the Dual-Region cards and all the 10 regions, what do we know about the structure of the similarity matrix?</p>
+<p>We know that there are 55 unique combination of region and so when comparing two decks it can fall into one of <span class="math inline">\(55^2\)</span> possible confrontation. Of course as we know that the Matrix is symmetrical it’s reduced to just 1540 cases.</p>
+<p>Of these 1540 cases, as we already explained, most of them are made of null-matrix. But how many exactly?</p>
+<p>As we mentioned only when there is at least a common region the similarity can be different from zero. This makes it so the number of sub-matrix to consider follows the following formula:</p>
+<p><span class="math display">\[
+\sum_i^n((i-1)^2+\frac{i(i+1)}{2})
+\]</span></p>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<p>The following table shows the percentage of sub-matrix that can be not-null depending on the number of existing regions:</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="xporyttzqx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  font-family: Chivo, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#xporyttzqx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: normal;
+  background-color: #F5F5F5;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 3px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_heading {
+  background-color: #F5F5F5;
+  text-align: left;
+  border-bottom-color: #F5F5F5;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #F5F5F5;
+  border-bottom-width: 0;
+}
+
+#xporyttzqx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #F5F5F5;
+  border-top-width: 0;
+}
+
+#xporyttzqx .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_col_heading {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: normal;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xporyttzqx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: normal;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xporyttzqx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xporyttzqx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xporyttzqx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xporyttzqx .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xporyttzqx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#xporyttzqx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xporyttzqx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xporyttzqx .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xporyttzqx .gt_stub {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 0px;
+  border-right-color: #FFFFFF;
+  padding-left: 12px;
+}
+
+#xporyttzqx .gt_summary_row {
+  color: #333333;
+  background-color: #F5F5F5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xporyttzqx .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #F5F5F5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xporyttzqx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xporyttzqx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_footnotes {
+  color: #333333;
+  background-color: #F5F5F5;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#xporyttzqx .gt_sourcenotes {
+  color: #333333;
+  background-color: #F5F5F5;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xporyttzqx .gt_sourcenote {
+  font-size: 12px;
+  padding: 4px;
+}
+
+#xporyttzqx .gt_left {
+  text-align: left;
+}
+
+#xporyttzqx .gt_center {
+  text-align: center;
+}
+
+#xporyttzqx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xporyttzqx .gt_font_normal {
+  font-weight: normal;
+}
+
+#xporyttzqx .gt_font_bold {
+  font-weight: bold;
+}
+
+#xporyttzqx .gt_font_italic {
+  font-style: italic;
+}
+
+#xporyttzqx .gt_super {
+  font-size: 65%;
+}
+
+#xporyttzqx .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style>Sparsity of Similarity Matrix</th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Percent of sub-matrix that share a common region <br> by number of existing regions.</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">region</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">coverage</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_right">1</td>
+<td class="gt_row gt_right">100.00&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">2</td>
+<td class="gt_row gt_right">83.33&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">3</td>
+<td class="gt_row gt_right">71.43&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">4</td>
+<td class="gt_row gt_right">61.82&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">5</td>
+<td class="gt_row gt_right">54.17&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">6</td>
+<td class="gt_row gt_right">48.05&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">7</td>
+<td class="gt_row gt_right">43.10&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">8</td>
+<td class="gt_row gt_right">39.04&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">9</td>
+<td class="gt_row gt_right">35.65&percnt;</td></tr>
+    <tr><td class="gt_row gt_right" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: transparent;">10</td>
+<td class="gt_row gt_right" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: transparent;">32.79&percnt;</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<p>Tab. 1: Percent of sub-matrix that share a common region by amount of by number of existing regions.</p>
+<p>From Tab. 1 we can see that in the current setting with n=10 existing regions, of the 1540 cases only the 32.8% of pairing of combination of regions is actually meaningful with a similarity that can different from zero.</p>
+<p>But this is not over as again only a small subset of this 32.8% is actually relevant.</p>
+<p>When we compare decks with a single shared region not all comparison are meaningful and what follows is a simplification which works for most cases.</p>
+<p>If pairs of decks shares only one regions, for the similarity not to be zero that very same region needs to contains all the common cards. Usually it means that the shared cards are key component to a strategy and unless they are mainly staples they would probably identify an archetype. In the most extreme case the shared region presence may be overwhelming compared to the second one which is used only for the second region unique strength offered by some cards. Like the Rally effects from Demacia.</p>
+<p>In other words, when comparing pair of decks with a single shared region, since we aim to look for clusters, the decks that matters are the “bridge” among the regions with a main region that mostly identify the deck.</p>
+<p>As easy example is the Mistwraith decks that we also used in the previous article.</p>
+<p>Normally Mistwraith decks are made mostly of Shadow Isles cards while the remaining cards are often from a region of choice that synergies with the rest of the deck but are not essential / key-cards. This cards act are the bridge between regions.</p>
+<p>Is the deck using as the only not-SI cards 3 copies of Pale Cascade? Then it’s a SI/MT deck</p>
+<p>Is the deck using as the only not-SI cards any copies of Raz Bloodmane? Then it’s a SI/SH deck and SI/MT and SI/SH are connected</p>
+<p>Is the deck using as the only not-SI cards 3 copies of Iterative Improvement? Then it’s a SI/PZ deck and we connected SH,MT and PZ by SI.</p>
+<p>And so on with all the non-SI regions.</p>
+<p>Of course as mentioned this is more an approximation as one could that a Mistwraith deck with just 20 SI cards and a lot of duplication cards, the deck could still be defined as Mistwraith decks; here we are going to assume that such identification is an over-simplification and it’s more likely it would be better to define that ‘20 SI cards Mistwraith deck’ as a sub-archetype of Mistwraith Allegiance. While the main archetype and the sub-archetype would have a similar strategy, we believe it would have a play-pattern that differs enough from the ‘main Mistwraith Allegiance’ as the amount of cards from the second region would have a greater impact.</p>
+<p>In a second step, when trying to find more generalized archetypes (be it something like aggro/control/initiative/resource) then there is reason to try aggregated these different ‘aggregated version’ of Mistwraith decks but as of now, with</p>
+<p>Addendum: At the moment of the writing the Ionia-Allegiance decks provides an even more easier example as similar to Mistwraith decks they are often made of only Ionia cards and differ mostly by the choice of the second region.</p>
+<h3 id="cross-region-comparisons">Cross-Region Comparisons</h3>
+<p>When confronting decks with only a shared region we explained how we consider more appropriate to only use <em>bridge decks</em> and considering all the other cases as with null similarity. This open for question: how do we define these bridge decks? Intuitively we described how they mainly relates to cases where a region has an overwhelming playrate compared to the second one, or to put it on another term they are almost mono-region decks.</p>
+<p>If so, at which point a deck can be considered almost mono-region? What benchmark and rules should we use?</p>
+<p>This is tricky but our idea is to use both an hard defined benchmark and the presence of Allegiance cards.</p>
+<p>The choice to include <strong>the use of Allegiance cards</strong> is meant to be a clear and easy to understand rule that at the same times allows for a more “fuzzy separation” of ~Mono decks with the not-mono decks. The allegiance rule should be able to include some decks that may still point toward a certain strategy that is connected to the region identity while not investing as much cards from that region.</p>
+<p>As such, one question may arise: doesn’t the presence of Allegiance cards requires already a massive amount of cards in a deck from the same region of the allegiance card? It does. But it’s not an hard requirement. Also one shouldn’t underestimate the wild deckbuilding that can be found even at high level ranks, even if few, it’s possible to find all kind of wild decks. We are going to now provide a couple of characteristics of the presence of Allegiance cards in the “Between Worlds Master rank” decks.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["allegiance"],"name":[1],"type":["chr"],"align":["left"]},{"label":["n"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["percent"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"01DE001","2":"9","3":"0.0026753864"},{"1":"01DE001,01DE001","2":"37","3":"0.0109988109"},{"1":"01DE001,01DE001,01DE001","2":"277","3":"0.0823424495"},{"1":"01FR037,01FR037","2":"2","3":"0.0005945303"},{"1":"01FR037,01FR037,01FR037","2":"65","3":"0.0193222354"},{"1":"01IO050,01IO050","2":"5","3":"0.0014863258"},{"1":"01IO050,01IO050,01IO050","2":"80","3":"0.0237812128"},{"1":"01NX008","2":"2","3":"0.0005945303"},{"1":"01NX008,01NX008","2":"4","3":"0.0011890606"},{"1":"01NX008,01NX008,01NX008","2":"68","3":"0.0202140309"},{"1":"01PZ034","2":"5","3":"0.0014863258"},{"1":"01PZ034,01PZ034","2":"7","3":"0.0020808561"},{"1":"01PZ034,01PZ034,01PZ034","2":"8","3":"0.0023781213"},{"1":"01SI016","2":"2","3":"0.0005945303"},{"1":"01SI016,01SI016","2":"14","3":"0.0041617122"},{"1":"01SI016,01SI016,01SI016","2":"372","3":"0.1105826397"},{"1":"02BW011","2":"2","3":"0.0005945303"},{"1":"02BW011,02BW011","2":"37","3":"0.0109988109"},{"1":"02BW011,02BW011,02BW011","2":"1539","3":"0.4574910820"},{"1":"03MT076","2":"5","3":"0.0014863258"},{"1":"03MT076,03MT076","2":"23","3":"0.0068370987"},{"1":"03MT076,03MT076,03MT076","2":"277","3":"0.0823424495"},{"1":"04SH102","2":"25","3":"0.0074316290"},{"1":"04SH102,04SH102","2":"110","3":"0.0326991677"},{"1":"04SH102,04SH102,04SH102","2":"273","3":"0.0811533888"},{"1":"04SH102,04SH102,04SH102,02BW011,02BW011,02BW011","2":"1","3":"0.0002972652"},{"1":"05BC039","2":"10","3":"0.0029726516"},{"1":"05BC039,05BC039","2":"45","3":"0.0133769322"},{"1":"05BC039,05BC039,05BC039","2":"60","3":"0.0178359096"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<p>Tab. 2: Frequency table of all combination of card and copies of Allegiance cards played in the S10 at Master rank.</p>
+<p>First and foremost with Tab. 2 we can see that simply assuming Allegiance cards identify the main region of a deck is not completely fail-proof as they may exist decks that use Allegiance cards from both regions of a deck. Of course they are extreme cases, they are exception to the rule but as they exist they needs to be accounted for. For now we will simply remove these cases if encountered.</p>
+<p>For the <strong>amount of cards from the same region</strong> we propose to use all decks with no less than 32 cards from the same region (80%+ cards from the same region). This choice is mostly a guided personal choice than a data-driven one even if we will be able to see that data sort of confirm the validity of choice.</p>
+<p>The reason behind the choice is a such when creating an Allegiance deck that wants to use an Allegiance card deck one can push a second risk with the risk at the main region not being as consistent as it could:</p>
+<ul>
+<li><p>Using 3 cards from the second region minimize the risk of failing Allegiance while maximizing the use a very strong card from the second region.</p></li>
+<li><p>Most players would agree that without card draw control, more than 10 cards from the second region (25%+) is pushing luck.</p></li>
+<li><p>Of all the other cases in the middle having 8 cards from the second region (20% of the total) is probably the most one may push with the risk-benefit.</p></li>
+</ul>
+<p>The following table shows the relationship of Decks with Allegiance cards with the amount of cards from the same region of the Allegiance card.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="mmbzorolam" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+html {
+  font-family: Chivo, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#mmbzorolam .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: normal;
+  background-color: #F5F5F5;
+  width: auto;
+  border-top-style: none;
+  border-top-width: 3px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_heading {
+  background-color: #F5F5F5;
+  text-align: left;
+  border-bottom-color: #F5F5F5;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #F5F5F5;
+  border-bottom-width: 0;
+}
+
+#mmbzorolam .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #F5F5F5;
+  border-top-width: 0;
+}
+
+#mmbzorolam .gt_bottom_border {
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_col_headings {
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_col_heading {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: normal;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mmbzorolam .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: normal;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mmbzorolam .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mmbzorolam .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mmbzorolam .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mmbzorolam .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mmbzorolam .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: none;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #FFFFFF;
+  vertical-align: middle;
+}
+
+#mmbzorolam .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mmbzorolam .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mmbzorolam .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mmbzorolam .gt_stub {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 0px;
+  border-right-color: #FFFFFF;
+  padding-left: 12px;
+}
+
+#mmbzorolam .gt_summary_row {
+  color: #333333;
+  background-color: #F5F5F5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmbzorolam .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_grand_summary_row {
+  color: #333333;
+  background-color: #F5F5F5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mmbzorolam .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mmbzorolam .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_footnotes {
+  color: #333333;
+  background-color: #F5F5F5;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mmbzorolam .gt_sourcenotes {
+  color: #333333;
+  background-color: #F5F5F5;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mmbzorolam .gt_sourcenote {
+  font-size: 12px;
+  padding: 4px;
+}
+
+#mmbzorolam .gt_left {
+  text-align: left;
+}
+
+#mmbzorolam .gt_center {
+  text-align: center;
+}
+
+#mmbzorolam .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mmbzorolam .gt_font_normal {
+  font-weight: normal;
+}
+
+#mmbzorolam .gt_font_bold {
+  font-weight: bold;
+}
+
+#mmbzorolam .gt_font_italic {
+  font-style: italic;
+}
+
+#mmbzorolam .gt_super {
+  font-size: 65%;
+}
+
+#mmbzorolam .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style>Cumulative Frequencies of Allegiance Decks</th>
+    </tr>
+    <tr>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Percentages by decreasing amount of cards from the same region of the Allegiance card.</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">same region cards</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">n</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 0px; border-top-style: solid; border-top-color: black;">cumulative frequency</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_right">40</td>
+<td class="gt_row gt_right">490</td>
+<td class="gt_row gt_right">14.57&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">39</td>
+<td class="gt_row gt_right">35</td>
+<td class="gt_row gt_right">15.61&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">38</td>
+<td class="gt_row gt_right">157</td>
+<td class="gt_row gt_right">20.28&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">37</td>
+<td class="gt_row gt_right">840</td>
+<td class="gt_row gt_right">45.26&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">36</td>
+<td class="gt_row gt_right">790</td>
+<td class="gt_row gt_right">68.75&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">35</td>
+<td class="gt_row gt_right">438</td>
+<td class="gt_row gt_right">81.77&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">34</td>
+<td class="gt_row gt_right">303</td>
+<td class="gt_row gt_right">90.78&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">33</td>
+<td class="gt_row gt_right">109</td>
+<td class="gt_row gt_right">94.02&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">32</td>
+<td class="gt_row gt_right">62</td>
+<td class="gt_row gt_right">95.87&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">31</td>
+<td class="gt_row gt_right">31</td>
+<td class="gt_row gt_right">96.79&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">30</td>
+<td class="gt_row gt_right">16</td>
+<td class="gt_row gt_right">97.26&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">29</td>
+<td class="gt_row gt_right">10</td>
+<td class="gt_row gt_right">97.56&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">28</td>
+<td class="gt_row gt_right">14</td>
+<td class="gt_row gt_right">97.98&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">27</td>
+<td class="gt_row gt_right">11</td>
+<td class="gt_row gt_right">98.31&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">26</td>
+<td class="gt_row gt_right">17</td>
+<td class="gt_row gt_right">98.81&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">25</td>
+<td class="gt_row gt_right">8</td>
+<td class="gt_row gt_right">99.05&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">24</td>
+<td class="gt_row gt_right">2</td>
+<td class="gt_row gt_right">99.11&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">23</td>
+<td class="gt_row gt_right">6</td>
+<td class="gt_row gt_right">99.29&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">22</td>
+<td class="gt_row gt_right">5</td>
+<td class="gt_row gt_right">99.44&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">21</td>
+<td class="gt_row gt_right">5</td>
+<td class="gt_row gt_right">99.58&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">20</td>
+<td class="gt_row gt_right">4</td>
+<td class="gt_row gt_right">99.70&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">19</td>
+<td class="gt_row gt_right">1</td>
+<td class="gt_row gt_right">99.73&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">18</td>
+<td class="gt_row gt_right">2</td>
+<td class="gt_row gt_right">99.79&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">17</td>
+<td class="gt_row gt_right">1</td>
+<td class="gt_row gt_right">99.82&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">16</td>
+<td class="gt_row gt_right">1</td>
+<td class="gt_row gt_right">99.85&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">15</td>
+<td class="gt_row gt_right">2</td>
+<td class="gt_row gt_right">99.91&percnt;</td></tr>
+    <tr><td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">2</td>
+<td class="gt_row gt_right">99.97&percnt;</td></tr>
+    <tr><td class="gt_row gt_right" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: transparent;">9</td>
+<td class="gt_row gt_right" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: transparent;">1</td>
+<td class="gt_row gt_right" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: transparent;">100.00&percnt;</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="3">Values from the example dataset created for this article. The dataset is made of 800 random decks for each of the 55 combinations of regions among the decks collected over time.</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+</div>
+<p>Tab. 3: Cumulative Frequencies of Allegiance decks by decreasing amount of cards from the same region of the Allegiance card.</p>
+<p>From Tab. 3 we can see that in this example 32 cards is the benchmark which allows to include 95% of the Allegiance decks and we are satisfied by this.</p>
+<p>The most surprising result is the presence of decks that have a very few amount of cards from the same region of the Allegiance card like the following example</p>
+<p><img src="images/A03-example-deck.png" /></p>
+<p>The above deck is an example of those decks. While strange we can still see that it’s supposed to be a different take from the Teemo-Ionia decks that are usually played. Would this case be more appropriate to be considered noise for that archetype? Maybe but at the same time we can also assume it’s an archetype of its own. Overall this is problem related to what defines an archetype. This topic will be explored in the next article as we are trying to apply this approach to the example dataset, or to be more correct, to two of the 55 possible subsets of the example dataset, one for a MonoRegion case and one for a generic dual-region case.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>Overall this was a very simple article of the subject but that is key to the archetype problem. Again and again I usually start with an idea I have in mind for what should follow an article I just released and each time while in the process of doing it I find myself having to deal with many different issue that needs to be solved before going forward. In this case I wanted to simply apply the cluster algorithms from the second article to the example dataset created here and had to deal with the resources problem (well that one was expected actually) and having to define the rules which allows for the overall data to be divided. At the same time I already saw some of the problem regarding the application of the CA to a bigger dataset regarding the clusters that are being found. As I only partially anticipated something that the next article will have to deal with is to “define what defines an archetype” which is related to the Theseus Ship dilemma. When does an archetype stops being the same archetype after changing one card at a time? Here I won’t promise I will find a personal answer to the problem but again at least something that will allows me to provide some results for the two sub-examples I’m planning to tackle. Will it actually be what the next article will accomplish? Hard to say, but at least that’s the new visible goal.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Constructed, SeasonalTournamentLobby, Bo3ChallengeLobby, StandardGauntletLobby, LastCallQualifierGauntletLobby<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p> [0,1] being the domain of the cosine-similarity.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>BandleCity Ruined more than the Ruination<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom"></div>
+<!--/radix_placeholder_appendices-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<!--radix_placeholder_navigation_after_body--><html><body>
+<div class="distill-site-nav distill-site-footer">
+<p>Â© 2021 Vazzoler Valentino</p>
+<p>LlorR Stats was created under Riot Gamesâ âLegal Jibber Jabberâ policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</p>
+</div>
+<!--/radix_placeholder_navigation_after_body-->
+</body></html>
+
+
+</body>
+
+</html>
