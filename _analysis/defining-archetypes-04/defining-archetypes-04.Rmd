@@ -1,0 +1,124 @@
+---
+params:
+  ind: "04"
+  title: "Defining Archetypes #4: Approaching a Clustering Analysis with a Season worth of Data"
+  description: "Describing the basic issues when using Clustering Analysis with a bigger dataset and a possible solution in the context of Legends of Runeterra decks."
+title: | 
+  `r params$title`
+description: |
+  `r params$description`
+base_url: https://www.llorr-stats.com
+author:
+  - name: Valentino (Legna) Vazzoler
+date: 12-25-2021
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+slug: legna2021archetype03
+draft: FALSE
+# bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE,
+  warning = FALSE,
+  error   = FALSE,
+  message = FALSE,
+  comment = NA,
+  R.options = list(width = 140,digits.secs=6),
+  dev.args  = list(bg = 'transparent'),
+  fig.align = 'center',
+  fig.width = 12,
+  fig.height= 8,
+  layout="l-body-outset"
+  # preview=FALSE,
+  # engine.path = list(python = 'C:/anaconda/')
+)
+
+options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+
+xaringanExtra::use_panelset()
+```
+
+```{r style}
+xaringanExtra::style_panelset_tabs(
+  font_family = "Helvetica",
+  active_foreground = "white",
+  hover_foreground = "black",
+  hover_border_color = "black",
+  active_background = "#007fff")
+
+table_nums  <- captioner::captioner(prefix = "Tab.")
+figure_nums <- captioner::captioner(prefix = "Fig.")
+
+f.ref <- function(x) {
+  stringr::str_extract(table_nums(x), "[^:]*")
+}
+```
+
+# Introduction
+
+In the [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) on defining archetypes we introduced the basic theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
+
+We introduced the general theory along side a few widely-used algorithms and some of the "newer" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
+
+The example was tailored to give a general idea about the methods, some of their strong point and also potential weaknesses with this specific context of analysing LoR decks.
+
+As the previous analysis was mostly based around the basic approach to the methods and a well defined example it can't translate directly to a generalized use with the commonly analysed data like the weekly reports.
+
+For now, we want to continue to use the Cluster Analysis but this times applied to a set of data on a scale more similar to a *real-case-study*. To do this we first need to solve a couple of issues related to the scale of the algorithms at hand.
+
+```{r load-data}
+example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
+```
+
+```{r}
+LoR.Match.RMD <- data.table::fread(list.files(path = file.path("C:","LlorR","data","raw","games"), pattern = "204_213",full.names = T), colClasses = "character", header = T, na.strings = c("", NA) ) |>
+  mutate(across(c(starts_with('order'),status), as.numeric  ) )
+
+min.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-03-03 10:00:00"),"US/Pacific") ,"UTC")
+max.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC")
+# max.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC")
+# max.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-08-25 10:00:00"),"US/Pacific") ,"UTC")
+
+minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= min.time ]))
+maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < max.time ]))
+
+LoR.Match.RMD |>
+  slice(1:1012161) |>
+  # slice(1010890:1909803) |>
+  # slice(1909708:2837308) |>
+  mutate( game_start_time_utc = ymd_hms(game_start_time_utc) ) |>
+  # filter( game_start_time_utc %within% interval( min.time , max.time ) ) |>
+  filter( is.na(game_start_time_utc) | game_start_time_utc %within% interval( min.time , max.time ) ) |>
+  # tabyl(status)
+  select(match_key) -> sub
+  
+LoR.Match.RMD |>
+  filter(match_key %!in% sub$match_key ) |> # |> # -> LoR.Match.RMD
+  tabyl(game_version)
+  # select(-ends_with("_3"),-ends_with("_4")) |>
+  skimr::skim()
+  fwrite("LoR_MatchDT_S06_203_206.csv")
+
+
+LoR.Match.RMD |>
+  filter(game_version=="live_2_11_19")
+
+  
+  
+data.table::fread(list.files(path = file.path("C:","LlorR","data","raw","games"), pattern = "207_210",full.names = T), colClasses = "character", header = T, na.strings = c("", NA) ) |>
+  filter( !is.na(participants_3) | !is.na(participants_4) )
+  skimr::skim()
+```
+
+
