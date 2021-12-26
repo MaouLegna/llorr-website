@@ -162,112 +162,20 @@ if (any(c(LoR.Melt.Master.RMD[  is.na(playerID), .N ],
 
 # Data
 
-```{r nGames-data}
-# minrow_live <- min(which(LoR.Match.DT.RMD[,game_start_time_utc >= as.POSIXct(params$start,"UTC")]))
-minrow_live <- LoR.Match.DT.RMD |>
-  select( game_start_time_utc ) |>
-  mutate( row = row_number() ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  slice_head(n=1) |>
-  pull(row)
-  # I don't have to take the row with the min time but the first row index
-  # filter( game_start_time_utc == min(game_start_time_utc) ) |>
-  
-# maxrow_live <- max(which(LoR.Diamond.DT.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
-maxrow_live <- LoR.Match.DT.RMD |>
-  select( game_start_time_utc ) |>
-  mutate( row = row_number() ) |>
-  filter( game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
-  slice_tail(n=1) |>
-  pull(row)
+```{r}
 
-max_time <- LoR.Melt.Master.RMD |>
+
+```
+
+
+```{r nGames-data}
+max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
   slice_max(game_start_time_utc,n=1,with_ties = F) |> 
   pull(game_start_time_utc) |>
   format(format = "%Y-%m-%d %H:%M:%S")
   
-LoR.Match.DT.RMD |>
-  # Stay only 'among' the row with the games in the time-frame I want
-  slice(minrow_live:maxrow_live) |>
-  # Extrapolate Friendly and to Scrap matches
-  mutate( game_type = case_when(
-    status==404   ~ "Friendly",
-    game_mode=="Power_XP1" ~ "PathOfChampion",
-    # is.na(status) ~ "to Scrap",
-    TRUE ~ as.character(game_type) )
-    ) |>
-  # Give to the new game_types a game_start_time_utc among the timeframe on interest
-  # so it can be used a filter without worrying about other parameter like status and so on
-  ##########################################################################################
-  mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% "Friendly",  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) |>
-  filter( game_start_time_utc %within% interval(as.POSIXct(params$start, tz = "UTC"), as.POSIXct(params$end, tz = "UTC") ) ) |>
-  mutate( game_type = fct_other(game_type, keep = c("Ranked","Friendly","PathOfChampion")) |> fct_infreq() ) |>
-  select(Status=game_type,Server=server) |>
-  tbl_summary() -> tbl1
-
-LoR.Melt.Master.RMD |>
-  distinct(match_key,server) |>
-  select(Server=server) |>
-  tbl_summary() -> tbl2
-
-tbl_merge( tbls = list(tbl1, tbl2),
-           tab_spanner = c("**All Games**", "**Ranked**") ) -> merge.tbl.master
-```
-
-```{r nGames-data-diamond}
-# minrow_live <- min(which(LoR.Diamond.DT.RMD[,game_start_time_utc >= as.POSIXct(params$start)] )) # base buth more demanding
-minrow_live <- LoR.Diamond.DT.RMD |>
-  select( game_start_time_utc ) |>
-  mutate( row = row_number() ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  slice_head(n=1) |>
-  pull(row)
-  
-# maxrow_live <- max(which(LoR.Diamond.DT.RMD[,game_start_time_utc  < as.POSIXct(params$end)]  ))
-maxrow_live <- LoR.Diamond.DT.RMD |>
-  select( game_start_time_utc ) |>
-  mutate( row = row_number() ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  slice_tail(n=1) |>
-  pull(row)
-
-# max_time <- LoR.Melt.Diamond.RMD |>
-#   slice_max(game_start_time_utc,n=1,with_ties = F) |> 
-#   pull(game_start_time_utc) |>
-#   format(format = "%Y-%m-%d %H:%M:%S")
-
-LoR.Diamond.DT.RMD |>
-  # Stay only 'among' the row with the games in the time-frame I want
-  slice(minrow_live:maxrow_live) |>
-  # Extrapolate Friendly and to Scrap matches
-  mutate( game_type = case_when(
-    status==404   ~ "Friendly",
-    game_mode=="Power_XP1" ~ "PathOfChampion",
-    # is.na(status) ~ "to Scrap",
-    TRUE ~ as.character(game_type) )
-    ) |>
-  # Give to the new game_types a game_start_time_utc among the timeframe on interest
-  # so it can be used a filter without worrying about other parameter like status and so on
-  ##########################################################################################
-  mutate( game_start_time_utc = replace( game_start_time_utc, game_type %in% "Friendly",  as.POSIXct(params$start, tz = "UTC")+days(3) ) ) |>
-  filter( game_start_time_utc %within% interval(as.POSIXct(params$start, tz = "UTC"), as.POSIXct(params$end, tz = "UTC") ) ) |>
-  mutate( game_type = fct_other(game_type, keep = c("Ranked","Friendly","PathOfChampion")) |> fct_infreq() ) |>
-  select(Status=game_type,Server=server) |>
-  tbl_summary() -> tbl1.diamond
-
-tbl2.diamond <- LoR.Diamond.DT.RMD |>
-  filter( game_start_time_utc >= as.POSIXct(params$start, tz = "UTC") & game_start_time_utc < as.POSIXct(params$end, tz = "UTC") ) |>
-  filter( game_type == "Ranked" ) |>
-  select(Server=server) |>
-  tbl_summary()
-
-merge.tbl.diamond <- tbl_merge( 
-    tbls = list(tbl1.diamond, tbl2.diamond),
-    tab_spanner = c("**All Games**", "**Ranked**")
-  )
-
-nMatches <- nGames
-nGames <- NROW(LoR.Melt.Diamond.RMD)
+merge.tbl.master  <- table_bythenumbers(LoR.Match.DT.RMD)
+merge.tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
 ```
 
 `r kableExtra::text_spec("Note:", color = "red")` With the current Season I want to start using a "more robust" way for which games to collect. Reason being that while I want to focus on Master players it's possible to notice the flaw that
@@ -284,9 +192,9 @@ So the proposed solution is the following:
 
 - For the early weeks of a Season I'm going to collect the games from those who played the Seasonal tournament (of course this is assuming it's held each season which is a safe approach I guess). If I should show all the results or either LastSeasonal/Diamond or Master/Diamond is something I still have to decide. Adding more stuff can be fine but the report is already big like this.
 
-Number of (Ranked) matches analysed **`r format(nMatches.extra,scientific = F)`** or **`r format(nMatches.extra*2,scientific = F)`** games. / **Master** Players
+Number of (Ranked) matches analysed **`r LoR.Melt.Master.RMD[,.N]/2`** or **`r LoR.Melt.Master.RMD[,.N]`** games. / **Master** Players
 
-Number of (Ranked) matches analysed **`r format(nMatches,scientific = F)`** or **`r format(nGames,scientific = F)`** games. / **~HighDiamond**
+Number of (Ranked) matches analysed **`r LoR.Melt.Diamond.RMD[,.N]/2`** or **`r LoR.Melt.Diamond.RMD[,.N]`** games. / **~HighDiamond**
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
