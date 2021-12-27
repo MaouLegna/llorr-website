@@ -48,6 +48,8 @@ knitr::opts_chunk$set(
 #' R Option
 options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -124,19 +126,43 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 
 ```{r prepara-data}
 LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
+  filter( game_type == "Ranked"  ) |>
+  filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
                ) |>
-  as.data.table()
+  as.data.table() |>
+  # Add Deck data
+  select(-factions) |>
+  left_join(LoR.Deck.RMD, by="deck_code") |>
+  rename(playerDeck=archetype) |>
+  left_join(
+    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+    by=c("opponent_deck_code"="deck_code"))
 
-# LoR.Melt.Matches.RMD[ is.na(playerDeck), .N ]
+# Additional tbl
+LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
+  filter( game_type == "Ranked"  ) |>
+  filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               ) |>
+  as.data.table() |>
+  # Add Deck data
+  select(-factions) |>
+  left_join(LoR.Deck.RMD, by="deck_code") |>
+  rename(playerDeck=archetype) |>
+  left_join(
+    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+    by=c("opponent_deck_code"="deck_code"))
 ```
 
 ```{r process-MU-master}
@@ -158,8 +184,8 @@ WR.DT <- LoR.Melt.Matches.RMD |>
 #' MU tbl the date is already filtered
 #'####################################
 MUtbl <- LoR.Melt.Matches.RMD |>
-  filter( game_outcome != "tie" ) |>
-  select( playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
+  filter(game_outcome != "tie" ) |>
+  select(playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
   group_by(playerDeck,opponentDeck,factions) |>
   summarise( 
     muWin   = sum(game_outcome=="win"),
@@ -281,24 +307,6 @@ LastUpdate.box
 ```
 
 # ~HighDiamond {data-icon="fa-gem"}
-
-```{r prepare-data-diamond}
-#' Additional tbl
-#' contain the a second DT
-#' can be Plat+, or Diamond depending on my current project
-#'#########################################################
-LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  filter( game_type == "Ranked"  ) |>
-  filter( game_start_time_utc >= as.POSIXct(params$start,"UTC") & game_start_time_utc < as.POSIXct(params$end,"UTC") ) |>
-  select( -ends_with("_3"),-ends_with("_4")  ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               )
-```
 
 ```{r process-MU-diamond}
 #' WR tbl
@@ -445,8 +453,7 @@ TopCC <- LoR.Melt.Matches.RMD |>
   filter( game_start_time_utc >= now()-days(7) ) |>
   count(playerDeck) |>
   slice_max(n, n = params$nGrid,with_ties = F ) |> 
-  select(playerDeck) |>
-  pull()
+  pull(playerDeck)
 ```
 
 ```{r mu}
@@ -482,17 +489,11 @@ grid.plus <- matrix(MUtbl.Diamond$muWR,
                     ncol = params$nGrid, byrow = T)
 
 diag(grid.plus) <- NA
-colnames(grid.plus) <- sprintf("%s.v2",TopCC)
-
-grid.plus <- grid.plus |>
-  as.data.table()
-
-grid.all <- cbind(grid,grid.plus)
+# colnames(grid.diamond) <- sprintf("%s.v2",TopCC)
 ```
 
 ```{r gt-grid,fig.width=12, fig.height=10}
-MUgrid.gt <- grid.all |>
-  as.data.table() |>
+MUgrid.gt <- as.data.table(cbind(grid,grid.plus)) |>
   add_column( name = colnames(grid),.before = 1 ) |>
   rename(" "=1) |>
   gt() |>

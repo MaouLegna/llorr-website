@@ -82,43 +82,81 @@ example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 ```
 
 ```{r}
-LoR.Match.RMD <- data.table::fread(list.files(path = file.path("C:","LlorR","data","raw","games"), pattern = "204_213",full.names = T), colClasses = "character", header = T, na.strings = c("", NA) ) |>
+LoR.Match.RMD <- data.table::fread( list.files(path = file.path("C:","LlorR","data","raw","games"), pattern = "204_213",full.names = T), colClasses = "character", header = T, na.strings = c("", NA) ) |>
   mutate(across(c(starts_with('order'),status), as.numeric  ) )
 
-min.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-03-03 10:00:00"),"US/Pacific") ,"UTC")
-max.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC")
-# max.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC")
-# max.time <- lubridate::with_tz( lubridate::force_tz( lubridate::ymd_hms("2021-08-25 10:00:00"),"US/Pacific") ,"UTC")
+LoR.Match.RMD |>
+  mutate(time = ymd_hms(game_start_time_utc) ) |>
+  filter(time <= with_tz( force_tz( ymd_hms("2021-03-03 10:00:00"),"US/Pacific") ,"UTC") ) |>
+  select(-ends_with("_3"),-ends_with("_4")) |>
+  select(-time) -> S00
 
-minrow_live <- min(which(LoR.Match.RMD[,game_start_time_utc >= min.time ]))
-maxrow_live <- max(which(LoR.Match.RMD[,game_start_time_utc  < max.time ]))
+# LoR.Match.RMD |>
+#   filter(match_key %!in% S00$match_key ) -> LoR.Match.RMD
 
 LoR.Match.RMD |>
-  slice(1:1012161) |>
-  # slice(1010890:1909803) |>
-  # slice(1909708:2837308) |>
-  mutate( game_start_time_utc = ymd_hms(game_start_time_utc) ) |>
-  # filter( game_start_time_utc %within% interval( min.time , max.time ) ) |>
-  filter( is.na(game_start_time_utc) | game_start_time_utc %within% interval( min.time , max.time ) ) |>
-  # tabyl(status)
-  select(match_key) -> sub
-  
-LoR.Match.RMD |>
-  filter(match_key %!in% sub$match_key ) |> # |> # -> LoR.Match.RMD
-  tabyl(game_version)
-  # select(-ends_with("_3"),-ends_with("_4")) |>
-  skimr::skim()
-  fwrite("LoR_MatchDT_S06_203_206.csv")
-
+  mutate( row = row_number() ) |>
+  mutate(time = ymd_hms(game_start_time_utc) ) |>
+  filter(time >= with_tz( force_tz( ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC") ) |>
+  slice_min(row,n=1) |>
+  select(row,time)
 
 LoR.Match.RMD |>
-  filter(game_version=="live_2_11_19")
+  mutate(row=row_number() ) |>
+  mutate(time=ymd_hms(game_start_time_utc) ) |>
+  # select(game_start_time_utc,time)
+  slice(1908227:n()) |>
+  filter(is.na(time) | time >= with_tz( force_tz( ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC") ) -> S8
+  # tabyl(game_version)
 
+# S8 |>
+#   select(-row,-time) |>
+#   select(-ends_with("_3"),-ends_with("_4")) |>
+#   fwrite("LoR_MatchDT_S08_211_213.csv")
+
+# LoR.Match.RMD |>
+#   filter(match_key %!in% S8$match_key)
+
+LoR.Match.RMD |>
+  mutate( row = row_number() ) |>
+  mutate(time = ymd_hms(game_start_time_utc) ) |>
+  filter(time >= with_tz( force_tz( ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC") ) |>
+  slice_min(row,n=1) |>
+  select(row,time)
+
+# 1009562
+
+LoR.Match.RMD |>
+  mutate(row=row_number() ) |>
+  mutate(time=ymd_hms(game_start_time_utc) ) |>
+  # select(game_start_time_utc,time)
+  slice(1009562:n()) |>
+  # filter(is.na(time) | time >= with_tz( force_tz( ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC") )
+  filter(is.na(time) | time %within% interval(
+    with_tz( force_tz( ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC"),
+    with_tz( force_tz( ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC"))
+    ) -> S7
+
+prova <- S7 |>
+  pivot_longer(cols = c(ends_with("_1"), ends_with("_2"),
+                        ends_with("_3"), ends_with("_4")),
+               names_to = c(".value"), names_pattern = "(.*)_[0-9]") |>
+  distinct() |>
+  filter(!( status==200 & is.na(participants) ) )
+
+
+# NROW(prova) # 1556660
+
+S7 |>
+  distinct(match_key)
   
-  
-data.table::fread(list.files(path = file.path("C:","LlorR","data","raw","games"), pattern = "207_210",full.names = T), colClasses = "character", header = T, na.strings = c("", NA) ) |>
-  filter( !is.na(participants_3) | !is.na(participants_4) )
-  skimr::skim()
+prova |>  
+  distinct(match_key)
+
+
+
 ```
+
+
 
 

@@ -3,8 +3,8 @@ params:
   ind: "MR038"
   patch: "Patch 2.22 - Week 3"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°38)"
-  description: ""
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05IO004-full.png"
+  description: "Hey look the nativity star! Ah, no wait that's Pantheon with 20 keywords."
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05MT003T2-full.png"
   prev:  "2021-11-15 18:00:00" #UTC tz / 'current' previous week start
   start: "2021-12-22 18:00:00" #UTC tz / 'current' week start
   end:   "2021-12-29 18:00:00" #UTC tz / 'current' week end
@@ -65,6 +65,14 @@ xaringanExtra::style_panelset_tabs(
   )
 ```
 
+```{r constant}
+general.caption <- glue::glue("{params$patch}
+                              Ranked games from {params$start} UTC to {params$end} UTC
+                              Source: Metadata of games collected with RiotGames API
+                              Last Update: {now(tzone='UTC')}")
+```
+
+
 ```{r raw-data}
 # load Master
 LoR.Match.DT.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA))
@@ -111,44 +119,52 @@ namesList.ASIA.RMD <- masterASIA[ !is.na(puuid), .N ]
 
 ```{r prepare-data-master}
 # Melt tbl
-LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
-  select(-starts_with("factions")) |>
+LoR.Match.DT.RMD |>
   filter( game_type == "Ranked"  ) |>
   filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,factions_1=factions,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,factions_2=factions,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
                ) |>
-  #' finish 'process' data
+  as.data.table() |>
+  # Add Deck data
+  select(-factions) |>
+  left_join(LoR.Deck.RMD, by="deck_code") |>
+  rename(playerDeck=archetype) |>
+  left_join(
+    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+    by=c("opponent_deck_code"="deck_code")) |>
+  # Add Player data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(-archetype,-factions),by="deck_code") |>
-  as.data.table()
+  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
 ```
 
 ```{r prepare-data-diamond}
 # Melt tbl
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  select(-starts_with("factions")) |>
   filter( game_type == "Ranked"  ) |>
   filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,factions_1=factions,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,factions_2=factions,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
                ) |>
-  #' finish 'process' data
+  as.data.table() |>
+  # Add Deck data
+  select(-factions) |>
+  left_join(LoR.Deck.RMD, by="deck_code") |>
+  rename(playerDeck=archetype) |>
+  left_join(
+    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+    by=c("opponent_deck_code"="deck_code")) |>
+  # Add Player data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid")) |>
-  left_join(LoR.Deck.RMD |> select(-archetype,-factions),by="deck_code") |>
-  as.data.table()
+  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
 ```
 
 ```{r check-value}
@@ -162,12 +178,6 @@ if (any(c(LoR.Melt.Master.RMD[  is.na(playerID), .N ],
 
 # Data
 
-```{r}
-
-
-```
-
-
 ```{r nGames-data}
 max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
   slice_max(game_start_time_utc,n=1,with_ties = F) |> 
@@ -176,25 +186,14 @@ max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
   
 merge.tbl.master  <- table_bythenumbers(LoR.Match.DT.RMD)
 merge.tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
+
+nGames.Master  <- LoR.Melt.Master.RMD[,.N]
+nGames.Diamond <- LoR.Melt.Master.RMD[,.N]
 ```
 
-`r kableExtra::text_spec("Note:", color = "red")` With the current Season I want to start using a "more robust" way for which games to collect. Reason being that while I want to focus on Master players it's possible to notice the flaw that
+Number of (Ranked) matches analysed **`r format(nGames.Master/2,scientific = F)`** or **`r format(nGames.Master,scientific = F)`** games. / **Master** Players
 
-- Once a player reached Master he/she stops playing so it's equal to be non-existent for the analysis
-
-- As of now, without an incentive to climb the Master leaderboard is less populated and yet it's not like all those lowers are probably that much worse. I noticed for example that the data from the Master of the previous Season still had very similar results regarding win rates. But using the "last-Season" masters is also quite an unstable way to pick the players/games.
-
-So the proposed solution is the following:
-
-- Collect Master Data as usual
-
-- Collect games from HighDiamond players. With "HighDiamond defined as those who played against a Master but aren't". Of course if a Diamond reaches Master I stop collecting his/her games as Diamond but start as Master. This may also help to create some analysis based on "skills"
-
-- For the early weeks of a Season I'm going to collect the games from those who played the Seasonal tournament (of course this is assuming it's held each season which is a safe approach I guess). If I should show all the results or either LastSeasonal/Diamond or Master/Diamond is something I still have to decide. Adding more stuff can be fine but the report is already big like this.
-
-Number of (Ranked) matches analysed **`r LoR.Melt.Master.RMD[,.N]/2`** or **`r LoR.Melt.Master.RMD[,.N]`** games. / **Master** Players
-
-Number of (Ranked) matches analysed **`r LoR.Melt.Diamond.RMD[,.N]/2`** or **`r LoR.Melt.Diamond.RMD[,.N]`** games. / **~HighDiamond**
+Number of (Ranked) matches analysed **`r format(nGames.Diamond/2,scientific = F)`** or **`r format(nGames.Diamond,scientific = F)`** games. / **~HighDiamond** Players
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
@@ -245,93 +244,23 @@ gtsave(nGames_tbl,glue::glue("./images/meta-report/{params$ind}-bytheNumbers.png
 
 ## Play Rate
 
-::: {.l-page}
-```{r process-tableFreq}
-Region.Freq <- LoR.Melt.Master.RMD |>
-  select(factions) |>
-  separate_rows(factions,sep=",") |>
-  rename(region = factions) |>
-  tabyl(region,show_na=F)
-
-Region.Freq.Server <- LoR.Melt.Master.RMD |>
-  select(server,factions) |>
-  separate_rows(factions,sep=",") |>
-  tabyl(factions,server, show_na = F) |>
-  adorn_percentages("col") |>
-  rename(region=factions)
-
-Region.Freq <- full_join(Region.Freq,Region.Freq.Server,by="region") |>
-  as_tibble() |> # because it's table
-  left_join(data_regions, by=c("region"="abbreviation")) |>
-  select(-region) |>
-  rename(freq = percent, region=nameRef)
+```{r compute-region-freq}
+Region.Freq <- freq_by_faction(LoR.Melt.Master.RMD)
 ```
 
-::: {.panelset}
+::: {.l-page}
+::::: {.panelset}
+
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plot-Region, fig.width=12, fig.height=8}
-sxLabel_card <- format(Region.Freq$freq*100,2)
-dxLabel_card <- format(Region.Freq$freq*100,2)
-sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
-dxLabel_card <- ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
-
-Region.Freq |>
-  ggplot(aes(x = reorder(region, freq), y = freq)) +
-  geom_bar(stat="identity") +
-  geom_bar_pattern(
-    aes(
-      pattern_filename = region,
-    ),
-    stat            = 'identity',
-    pattern         = 'image',
-    pattern_type    = 'none',
-    fill            = Region.Freq$colorRegion,
-    colour          = 'black',
-    pattern_scale   = -2,
-    pattern_filter  = 'point',
-    pattern_gravity = 'east'
-  ) +
-  # theme_void() +
-  labs(
-    x = "Region",
-    y = "Play Rate",
-    title = "Regions Play Rate",
-    subtitle = "number of times a region is included in a deck",
-    caption = glue::glue("{params$patch}
-                         Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
-                         Metadata of games collected with RiotGames API")
-    ) +
-  annotate(
-    geom = 'text', 
-    color = "grey50",
-    x = 1.0, 
-    y = 0.15, 
-    hjust = 0.5,
-    label = glue::glue('n = {nGames}\nGini Index = {round(DescTools::Gini(Region.Freq$freq,na.rm = T),3)}'), 
-    fontface = 'bold') +
-  coord_flip() +
-  scale_pattern_filename_discrete(choices = data_regions$iconsPath ) +
-  scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
-  scale_fill_manual("legend", values = data_regions$colorRegion) +
-  scale_y_continuous(limits = c(0, round(max(Region.Freq$freq+0.04 ),3) ),
-                     breaks = seq(0,0.5,0.04),
-                     expand = c(-0.001,0.02),
-                     labels = scales::percent_format(accuracy = 1) ) +
-  guides(fill = "none") +
-  #' Adding the text of the frequencies
-  geom_text(aes(label = sxLabel_card), hjust = 2.5, size = 5,position = position_dodge(width = 1)) +
-  geom_text(aes(label = dxLabel_card), hjust = -0.5, size = 5,position = position_dodge(width = 1)) +
-  theme_539() +
-  theme( 
-    legend.position = "none",
-    axis.text = element_text(face = "bold", color = "grey50"),
-    panel.grid.major.y = element_blank()
-    )
-
-# Region.Freq |>
-#   arrange(desc(n))
+```{r fig.width=12, fig.height=8}
+plot_freq(
+  Region.Freq,
+  nGames.Master,
+  subtitle = "number of times a region is included in a deck",
+  caption = general.caption
+  )
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -340,231 +269,59 @@ The Gini Index is a measure of heterogeneity so, in this case and in simpler ter
 ::: {.panel}
 ### Table {.panel-name}
 
-```{r print-tableFreq-gt}
-Region.Freq.tbl <- Region.Freq |>
-  relocate(region,.after="n") |>
-  select(region:europe) |>
-  arrange(desc(freq)) |>
-  gt( ) |>
+```{r}
+table_freq_gt(Region.Freq) |>
   tab_header(
-    title = "Region Play Rate",
+    title    = "Region Play Rate",
     subtitle = "Relative Frequencies by Inclusion Rate of a Region"
   ) |>
-  tab_spanner(
-    label = "Shard",
-    columns = c(americas, asia, europe)
-  ) |>
-  fmt_percent(
-    columns = c(2:5),
-    decimals = 2
-  ) |>
-  cols_align(
-    align = "left",
-    columns = 1
-  ) |>
-  cols_align(
-    align = "center",
-    columns = c(2:5)
-  ) |>
-  tab_style(
-    style = cell_text(weight = "bold"),
-    locations = cells_body(
-      columns = 1,
-    )
-  ) |>
-  # gtExtras::gt_theme_538() |>
-  cols_label(
-    region  = md("**Region**"),
-    freq     = md("**Freq**"),
-    americas = md("**America**"),
-    asia     = md("**Asia**"),
-    europe   = md("**Europe**")
-  ) |>
-   tab_options(
-    table.background.color = "whitesmoke",
-    column_labels.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   ) |>
-  tab_source_note(
-    source_note = glue::glue("{params$patch}
-                             Ranked games from {params$start} UTC to {params$end} UTC
-                             Metadata of games collected with RiotGames API")
-    )
-
-Region.Freq.tbl
+  tab_source_note( source_note = general.caption ) 
 ```
 :::
-:::
 
-<!-- Close Region 1 panelset -->
+:::::
 :::
 
 ## Play Rate by number of Cards
 
+```{r compute-region-freq-bycards}
+Region.Freq.byCards <- freq_by_cards(LoR.Melt.Master.RMD)
+```
+
 ::: {.l-page}
-```{r process-tableFreq_byCard}
-LoR.Melt.Master.RMD[ cards.region.fix=="", cards.region.fix:=NA ]
-LoR.Melt.Master.RMD[ !is.na(cards.region.fix) , cards.region:=cards.region.fix  ]
+::::: {.panelset}
 
-Regions.Freq.byCards <- LoR.Melt.Master.RMD |>
-  select( cards.region, cards.region.freq ) |>
-  separate_rows( cards.region,cards.region.freq, sep = ",",convert = T ) |>
-  rename( n = cards.region.freq ) |>
-  group_by(cards.region) |>
-  summarise(n = sum(n) ) |>
-  mutate( freq = n / sum(n) ) |>
-  rename_all(~c("region","n","freq")) |>
-  arrange(region) 
-
-Regions.Freq.byCards.Server <- LoR.Melt.Master.RMD |>
-  select( cards.region, cards.region.freq,server ) |>
-  separate_rows(cards.region,cards.region.freq, sep = ",",convert = T ) |>
-  rename( n = cards.region.freq ) |>
-  group_by(cards.region,server) |>
-  summarise(n = sum(n) ) |>
-  group_by(server) |>
-  mutate( freq = n / sum(n), .keep = "unused" ) |>
-  ungroup() |>
-  rename_all(~c("region","server","freq")) |>
-  pivot_wider(names_from = server,values_from = freq)
-
-Regions.Freq.byCards <- full_join(Regions.Freq.byCards,Regions.Freq.byCards.Server,by="region") |>
-  as_tibble() |>
-  left_join(data_regions, by=c("region"="abbreviation")) |>
-  select(-region) |>
-  rename(region=nameRef)
-```
-
-
-```{r}
-gc() |> invisible()
-```
-
-::: {.panelset}
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plotRegion_byCards, fig.width=12, fig.height=8}
-sxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
-dxLabel_card <- format(Regions.Freq.byCards$freq*100,2)
-sxLabel_card <- ifelse(as.numeric(sxLabel_card) > 4,  sxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
-dxLabel_card <- ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card , "") |> as.numeric() |> {\(x) scales::number(x, accuracy = 0.01)}()
-
-Regions.Freq.byCards |>
-  ggplot(aes(x = reorder(region, freq), y = freq)) +
-  geom_bar_pattern(
-    aes(
-      pattern_filename = region,
-    ),
-    stat            = 'identity',
-    pattern         = 'image',
-    pattern_type    = 'none',
-    fill            = Regions.Freq.byCards$colorRegion,
-    colour          = 'black',
-    pattern_scale   = -2,
-    pattern_filter  = 'point',
-    pattern_gravity = 'east'
-  ) +
-  theme_bw() +
-  theme(legend.position = 'none') +
-  labs(
-    x = "Region",
-    y = "Play Rate",
-    title = "Regions Play Rate",
-    subtitle = "number of times a card within a region is included in a deck",
-    caption = glue::glue("{params$patch}
-                         Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
-                         DualRegions cards are counted based by the region that matters in the deck
-                         Metadata of games collected with RiotGames API")
-  ) +
-  annotate(
-    geom = 'text',
-    color = "grey50",
-    x = 1.0, 
-    y = 0.15, 
-    hjust = 0.5,
-    label = glue::glue('n = {nGames}\nGini Index = {round(DescTools::Gini(Regions.Freq.byCards$freq,na.rm = T),3)}'), 
-    fontface = 'bold'
-    ) +
-  coord_flip() +
-  scale_pattern_filename_discrete(choices = data_regions$iconsPath) +
-  scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
-  scale_y_continuous(limits = c(0, round(max(Regions.Freq.byCards$freq+0.04 ),3) ),
-                     breaks = seq(0,0.5,0.04),
-                     expand = c(-0.001,0.02),
-                     labels = scales::percent_format(accuracy = 1) ) +
-  geom_text(aes(label=sxLabel_card),
-            hjust = 2.5, size = 5,position = position_dodge(width = 1)) +
-  geom_text(aes(label=dxLabel_card),
-            hjust = -0.5, size = 5,position = position_dodge(width = 1)) +
-  guides(fill = "none") +
-  theme_539() +
-  theme( legend.position = "none",
-         axis.text = element_text(face = "bold", color = "grey50"),
-         panel.grid.major.y = element_blank()
-         )
+```{r fig.width=12, fig.height=8}
+plot_freq(
+  Region.Freq.byCards,
+  nGames.Master,
+  subtitle = "number of times a card within a region is included in a deck",
+  # caption = general.caption
+  caption = glue::glue("{params$patch}
+                       Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
+                       DualRegions cards are counted based by the region that matters in the deck
+                       Source: Metadata of games collected with RiotGames API
+                       Last Update: {now(tzone='UTC')}")
+  )
 ```
 :::
 
 ::: {.panel}
 ### Table {.panel-name}
 
-```{r print-tableFreq_byCard-gt}
-Region.Freq.byCards.tbl <- Regions.Freq.byCards |>
-  arrange(desc(freq)) |>
-  select(region,freq,americas:europe) |>
-  gt() |>
+```{r}
+table_freq_gt(Region.Freq.byCards) |>
   tab_header(
-    title = "Region Play Rate",
+    title    = "Region Play Rate",
     subtitle = "Relative Frequencies by number of times a Card within a Region is included in a Deck"
   ) |>
-  tab_spanner(
-    label = "Shard",
-    columns = c(americas, asia, europe)
-  ) |>
-  fmt_percent(
-    columns = c(2:5),
-    decimals = 2
-  ) |>
-  cols_align(
-    align = "left",
-    columns = 1
-  ) |>
-  cols_align(
-    align = "center",
-    columns = c(2:5)
-  ) |>
-  tab_style(
-    style = cell_text(weight = "bold"),
-    locations = cells_body(
-      columns = 1,
-    )
-  ) |>
-  cols_label(
-    region   = md("**Region**"),
-    freq     = md("**Freq**"),
-    americas = md("**America**"),
-    asia     = md("**Asia**"),
-    europe   = md("**Europe**")
-  ) |>
-   tab_options(
-    table.background.color = "whitesmoke",
-    column_labels.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   ) |>
-  tab_source_note(
-    source_note = glue::glue("{params$patch}
-                             Ranked games from {params$start} UTC to {params$end} UTC
-                             Metadata of games collected with RiotGames API")
-    )
-
-Region.Freq.byCards.tbl
+  tab_source_note( source_note = general.caption ) 
 ```
 :::
-:::
-<!-- Close Region 2 panelset -->
+:::::
 :::
 
 # Champions Combinations
@@ -631,7 +388,7 @@ ChampionCombo |>
     limits = c(0, round(max(ChampionCombo$freq+0.04 ),3) ),
     breaks = seq(0,0.20,0.02),
     labels = scales::percent_format(accuracy = 1) ) +
-  annotate(geom="text", x=3, y=0.05, col="black",label = paste("n =",nGames,"\n"," cumulative frequence \n ",
+  annotate(geom="text", x=3, y=0.05, col="black",label = paste("n =",nGames.Master,"\n"," cumulative frequence \n ",
                                                                paste0(CC.table.Master |> slice_max(percent,n = 20) |> select(percent) |> sum() %>% round(.,4)*100 ,"%") )
            ) +
   theme_539() +
@@ -642,7 +399,8 @@ ChampionCombo |>
        caption = glue::glue("{params$patch}
                             Ranked games from {params$start} UTC to {params$end} UTC
                             Decks are chosen from the union of top {nrowPlot} from Last-Seasononal player and ~HighDiamond resulting in {length(topDeck)} displayed
-                            Metadata of games collected with RiotGames API")
+                            Source: Metadata of games collected with RiotGames API
+                            Last Update: {now(tzone='UTC')}")
        ) +
   theme( 
     # legend.position = "none",
@@ -687,9 +445,10 @@ CC.table.Master |>
       asia     = colDef(name = "Asia",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
       europe   = colDef(name = "Europe",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
       )
-    ) |>
-  reactablefmtr::add_source(element_text(glue::glue("Data from Last-Season Master Only.
-                                                    Source: Source: Metadata of games collected with RiotGames API")), background_color = "whitesmoke", font_family = "Chivo")
+    )
+  # reactablefmtr::add_source(element_text(glue::glue("Data from Master Only.
+  #                                                   Source: Metadata of games collected with RiotGames API.
+  #                                                   Last Update: {now(tzone='UTC')}")), background_color = "whitesmoke", font_family = "Chivo")
 ```
 :::
 
@@ -722,19 +481,19 @@ CC.table.Diamond |>
       asia     = colDef(name = "Asia",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
       europe   = colDef(name = "Europe",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
       )
-    ) |>
-  reactablefmtr::add_source(element_text(glue::glue("Data from Current Master Only.
-                                                    Source: Source: Metadata of games collected with RiotGames API")), background_color = "whitesmoke", font_family = "Chivo")
+    )
+  # reactablefmtr::add_source(element_text(glue::glue("Data from ~HighDiamond Only.
+  #                                                   Source: Metadata of games collected with RiotGames API
+  #                                                   Last Update: {now(tzone='UTC')}.")), background_color = "whitesmoke", font_family = "Chivo")
 ```
 :::
-:::
 
-<!-- Close CC lay Rate panelset -->
+:::::
 :::
 
 ## Day by Day
 
-Highlisting the top10 most played decks (at the moment of the last game played).
+Highlighting the play-rates of most played^[at the moment of the last game] decks over time.
 
 ::: {.l-page}
 ::::: {.panelset}
@@ -742,180 +501,62 @@ Highlisting the top10 most played decks (at the moment of the last game played).
 ::: {.panel}
 ### Master {.panel-name}
 
-```{r champion-freq-by-date}
-m = 10
+```{r day-by-day-master, fig.width=12, fig.height=8}
+m = 12
 
 Champion.deck.daily <- LoR.Melt.Master.RMD |>
-  rename("champions"="playerDeck") |>
   arrange(game_start_time_utc) |>
-  select(game_start_time_utc,champions) |>
-  mutate( num_cc = factor(champions) |> as.numeric() ) |>
+  select(game_start_time_utc,playerDeck) |>
+  mutate(num_cc = factor(playerDeck) |> as.numeric() ) |>
   as.data.table() |>
-  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ]}() |>
-  select(!num_cc) |>
-  mutate( champions = factor(champions) |> fct_infreq() )
+  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ][ , n:=sum(num_cc), by=playerDeck ] }()
+  # mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
 
-fct_values <- LoR.Melt.Master.RMD |>
- mutate(topN = fct_lump_n(playerDeck,n = m) |> fct_infreq() ) |>
-  pull(topN) |> 
-  levels()
-```
+fct_values = Champion.deck.daily |>
+  distinct(playerDeck,n) |>
+  slice_max(n, n = m) |>
+  pull(playerDeck)
 
-```{r plot-date-by-date, fig.width=12, fig.height=8}
-meta_evo <- ggplot(
-   # The ggplot object has associated the data for the highlighted countries
-  data = Champion.deck.daily |> filter(champions %in% fct_values[-1]),
-  aes(game_start_time_utc, cumFreq, group = champions)
-  ) +
-  ## Lines for the non-highlighted countries
-  geom_line(
-    data = Champion.deck.daily |> filter(champions %!in% fct_values[-1]),
-    color = "grey75",
-    size = .6,
-    alpha = .5
-  ) +
-  ## Lines for the highlighted countries.
-  # It's important to put them after the grey lines
-  # so the colored ones are on top
-  geom_line(
-    aes(color = champions),
-    size = .9
-  ) +
-  # geom_text(aes(label=champions,color = champions))
-  geom_label_repel(
-    data = Champion.deck.daily |> filter(champions %in% fct_values[-1]) |> group_by(champions) |> slice_max(game_start_time_utc,n=1) |> distinct(game_start_time_utc,champions,.keep_all = T),
-    aes(label=str_to_upper(champions),color = champions),
-    # aes(color = champions, label = champions),
-    family = "Helvetica",
-    # fontface = "bold",
-    size = 3.5,
-    direction = "y",
-    xlim = c(as.POSIXct(max(Champion.deck.daily$game_start_time_utc) + hours(12)), NA),
-    force = 3,
-    hjust = 1,
-    segment.size = .7,
-    segment.alpha = .5,
-    segment.linetype = "dotted",
-    box.padding = .4,
-    segment.curvature = -0.1,
-    segment.ncp = 3,
-    segment.angle = 15,
-    # bg.color = "grey50",
-    bg.color = "grey50",
-    # bg.color = "whitesmoke",
-    fill = "#f0f0f0",
-    label.padding = 0,
-    label.size = 0
-  ) +
-  scale_x_datetime(
-    # expand = c(0.02,0.01),
-    date_minor_breaks = "1 day",
-    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(23))
-    # limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC"))
-  )  +
-  scale_y_continuous(
-    expand = c(0, 0),
-    limits = c(0,.12),
-    breaks = seq(0,.12,0.04),
-    labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
-  ) +
-  scale_color_manual(
-    values = c(rcartocolor::carto_pal(n = 10, name = "Vivid")[1:10-1], "grey50")
-  ) +
-  labs(x = "Date",
-       y = "PlayRate",
-       title = "Evolution of Play Rate over time",
-       caption = glue::glue("{params$patch}
-                            Ranked games from {params$start} UTC to {params$end} UTC
-                            Metadata of games collected with RiotGames API")
-  ) +
-  theme_539() +
-  theme( legend.position = "none",
-         axis.text = element_text(size = 10, face = "bold", color = "grey50")
-         )
+plot_daily(
+  Champion.deck.daily,
+  decks = fct_values,
+  title = "Evolution of Play Rate over time - Master",
+  limit = .15 ) -> meta_evo
 
 meta_evo
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png")) |> suppressMessages()
+ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png"),plot = meta_evo, width=12, height=8)
 ```
 :::
 
 ::: {.panel}
 ### HighDiamond {.panel-name}
 
-```{r diamond-freq-by-date}
+```{r day-by-day-diamond, fig.width=12, fig.height=8}
 m = 12
 
 Champion.deck.daily <- LoR.Melt.Diamond.RMD |>
-  rename("champions"="playerDeck") |>
   arrange(game_start_time_utc) |>
-  select(game_start_time_utc,champions) |>
-  mutate( num_cc = factor(champions) |> as.numeric() ) |>
+  select(game_start_time_utc,playerDeck) |>
+  mutate(num_cc = factor(playerDeck) |> as.numeric() ) |>
   as.data.table() |>
-  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=champions ]}() |>
-  select(!num_cc) |>
-  mutate( champions = factor(champions) |> fct_infreq() )
+  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ][ , n:=sum(num_cc), by=playerDeck ] }()
+  # mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
 
-fct_values <- LoR.Melt.Diamond.RMD |>
-  mutate(topN = fct_lump_n(playerDeck,n = m) |> fct_infreq() ) |>
-  pull(topN) |> 
-  levels()
-```
+fct_values = Champion.deck.daily |>
+  distinct(playerDeck,n) |>
+  slice_max(n, n = m) |>
+  pull(playerDeck)
 
-```{r plot-diamond-day-by-day, fig.width=12, fig.height=8}
-meta_evo <- ggplot(
-  data = Champion.deck.daily |> filter(champions %in% fct_values[-1]),
-  aes(game_start_time_utc, cumFreq, group = champions) ) +
-  geom_line(
-    data = Champion.deck.daily |> filter(champions %!in% fct_values[-1]),
-    color = "grey75",
-    size = .6,
-    alpha = .5
-  ) +
-  geom_line(
-    aes(color = champions),
-    size = .9
-  ) +
-  geom_label_repel(
-    data = Champion.deck.daily |> filter(champions %in% fct_values[-1]) |> group_by(champions) |> slice_max(game_start_time_utc,n=1) |> distinct(game_start_time_utc,champions,.keep_all = T),
-    aes(label=str_to_upper(champions),color = champions),
-    
-    xlim = c(as.POSIXct(max(Champion.deck.daily$game_start_time_utc) + hours(12)), NA),
-    
-    family = "Helvetica", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4, segment.curvature = -0.1, segment.ncp = 3,
-    segment.angle = 15, bg.color = "grey50", fill = "#f0f0f0", abel.padding = 0, label.size = 0
-  ) +
-  scale_x_datetime(
-    date_minor_breaks = "1 day",
-    limits = c(as.POSIXct(params$start, tz="UTC"), as.POSIXct(params$end, tz="UTC")+hours(23))
-  )  +
-  scale_y_continuous(
-    expand = c(0, 0),
-    limits = c(0,.12),
-    breaks = seq(0,.12,0.04),
-    labels = scales::percent_format(accuracy = 1)
-  ) +
-  scale_color_manual(
-    values = rcartocolor::carto_pal(12, "Safe")
-    # values = c(rcartocolor::carto_pal(n = 10, name = "Vivid")[1:10-1], "grey50")
-  ) +
-  labs(x = "Date",
-       y = "PlayRate",
-       title = "Evolution of ~HighDiamond Play Rate over time",
-       caption = glue::glue("{params$patch}
-                            Ranked games from {params$start} UTC to {params$end} UTC
-                            Metadata of games collected with RiotGames API")
-  ) +
-  theme_539() +
-  theme( legend.position = "none",
-         axis.text = element_text(size = 10, face = "bold", color = "grey50")
-         )
-
-# scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily.diamond$playerDeck)  ) )
+plot_daily(
+  Champion.deck.daily,
+  decks = fct_values,
+  title = "Evolution of Play Rate over time - HighDiamond",
+  limit = .15 ) -> meta_evo
 
 meta_evo
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday-diamond.png")) |> suppressMessages()
+ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday-diamond.png"),plot = meta_evo, width=12, height=8)
 ```
 :::
 
@@ -925,17 +566,14 @@ ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday-diamond.p
 
 ## Win Rates
 
-Tie games are excluded
-
 ```{r process-winRate}
 WR.DT <- LoR.Melt.Master.RMD |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome ) |>
+  # filter(game_outcome!="tie") |>
   group_by(playerDeck) |>
-  summarise( nWin   = sum(game_outcome=="win"),
-             nGames = n(),
-             WR=mean(game_outcome=="win")
-            ) |>
+  summarise(
+    nWin   = sum(game_outcome=="win"),
+    nGames = n(),
+    WR     = mean(game_outcome=="win")  ) |>
   ungroup() |>
   mutate( playrate = nGames/sum(nGames) )
 
@@ -959,7 +597,7 @@ WR.DT.Reg <- LoR.Melt.Master.RMD |>
 ::: {.panel}
 ### Meta Decks {.panel-name}
 
-Win rates of the most played combination of champions. Play Rate \>= 1% in at least one of the servers.
+Win rates of the most played combination of champions. Play Rate $\geq 1\%$ in at least one of the servers.
 
 ```{r print-tableWinRate}
 WR.DT.Reg |>
@@ -1088,9 +726,8 @@ WR.DT |>
     )
 ```
 :::
-:::::
 
-<!-- Close Win Rate panelset -->
+:::::
 :::
 
 [^1]: Min number of games 50, during the times a meta/ladder just changed.
@@ -1101,8 +738,8 @@ Regarding MU, this is not the most accurate estimation you can get from my data.
 
 ```{r get-muWR}
 MUtbl <- LoR.Melt.Master.RMD |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
+  # filter(game_outcome!="tie") |>
+  # select( playerDeck,opponentDeck,game_outcome,server ) |>
   group_by(playerDeck,opponentDeck) |>
   summarise( muWin   = sum(game_outcome=="win"),
              muGames = n(),
@@ -1117,14 +754,9 @@ MUtbl <- LoR.Melt.Master.RMD |>
 ```
 
 ```{r get-WR-Top}
-# mu <- 10
-
 TopCC <- CC.table.Master |> 
   rename(freq = percent) |>
   slice_max(freq,n=params$nGrid) |>
-  # arrange(desc(freq)) |> 
-  # {\(x) slice_head(x,n = mu)}() |> 
-  # select(playerDeck) |> 
   pull(playerDeck)
 
 MUtblTop.Master <- tibble::tibble( 
@@ -1137,16 +769,19 @@ MUtblTop.Diamond <- tibble::tibble(
   playerDeck = rep(TopCC,each=params$nGrid),
   opponentDeck = rep(TopCC,params$nGrid)
   ) |> 
-  left_join( LoR.Melt.Diamond.RMD |>
-  filter( playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise( muWin   = sum(game_outcome=="win"),
-             muGames = n(),
-             muWR=mean(game_outcome=="win") ) |>
-  as.data.table(), by = c("playerDeck","opponentDeck")) |>
-  mutate( muWR = replace(muWR, muGames < 10, NA ) )
+  left_join( 
+    LoR.Melt.Diamond.RMD |>
+      filter( playerDeck %in% TopCC & opponentDeck %in% TopCC ) |>
+      filter(game_outcome!="tie") |>
+      select( playerDeck,opponentDeck,game_outcome,server ) |>
+      group_by(playerDeck,opponentDeck) |>
+      summarise(
+        muWin   = sum(game_outcome=="win"),
+        muGames = n(),
+        muWR=mean(game_outcome=="win") ) |>
+      as.data.table(),
+    by = c("playerDeck","opponentDeck") ) |>
+  mutate( muWR = replace(muWR, muGames < 30, NA ) )
 ```
 
 ## Match-up Grid
@@ -1165,12 +800,10 @@ colnames(grid) <- TopCC
 grid.diamond <- matrix(MUtblTop.Diamond$muWR, nrow = params$nGrid, ncol = params$nGrid, byrow = T)
 diag(grid.diamond) <- NA
 colnames(grid.diamond) <- sprintf("%s.v2",TopCC)
-
-grid.all <- cbind(grid,grid.diamond)
 ```
 
 ```{r gt-grid,fig.width=12, fig.height=10}
-MUgrid.gt <- grid.all |>
+MUgrid.gt <- cbind(grid,grid.diamond) |>
   as.data.table() |>
   add_column( name = colnames(grid),.before = 1 ) |>
   mutate( across(ends_with(".v2"), ~scales::percent(.,accuracy = 0.1) )) |>
@@ -1278,7 +911,7 @@ WR.DT |>
   ggplot( aes(x=WR_ind, y=PR_ind, size = LMI, color = tier, text=tooltip)) +
   geom_point(alpha=0.6) +
   scale_size(range = c(1, 15), name="LMI") +
-  # scale_color_manual(breaks = c("Tier0", "Tier1", "Tier2"), values=c("red", "blue", "green"))
+  scale_color_manual(breaks = c("Tier0", "Tier1", "Tier2","Tier3-"), values=rcartocolor::carto_pal(4, "Bold") ) +
   theme_539() +
   geom_label_repel( 
     aes(label=tooltip),
@@ -1306,11 +939,7 @@ WR.DT |>
     subtitle = "Deck's Peformances by highest value of LMI",
     x = "Win Index",
     y = "Freq Index",
-    caption = element_text(glue::glue("{params$patch}
-                                      Ranked games from {params$start} UTC to {params$end} UTC
-                                      Metadata of games collected with RiotGames API
-                                      LMI computed with the basic version which use PlayRate and WinRate. Additional Decks performances in the metareport"))
-  )
+    caption = general.caption)
 
 ggsave(glue::glue("./images/meta-report/{params$ind}-LMI.png"))
 ```
@@ -1422,13 +1051,6 @@ gtsave(gtWinning, glue::glue("./images/meta-report/{params$ind}-topWin.png")   )
 # Cards Presence
 
 ```{r process-UniqueCards}
-Region.Freq <- LoR.Melt.Master.RMD |>
-  select(factions) |>
-  separate_rows(factions,sep=",") |>
-  rename(region = factions) |>
-  tabyl(region,show_na=F) |>
-  select(-percent)
-
 LoR.Melt.Master.RMD[ cards.region.fix == "" , cards.region.fix:=NA   ]
 LoR.Melt.Master.RMD[ !is.na(cards.region.fix), cards:=cards.fix  ]
 
@@ -1454,16 +1076,12 @@ TableAllCards <- LoR.Melt.Master.RMD |>
   group_by(cards) |>
   summarise(ncard = sum(ndeck)) |>
   ungroup() |>
-  mutate( region = str_sub(cards,3,4) ) |>
-  left_join(Region.Freq |>
-              select(region,n), by = "region")
-  
-TableAllCards <- TableAllCards |>
-  rename(card = cards) |>
-  mutate( p.byReg = round(ncard/n,3),
-          card    = str_replace_all(card, set_names(LoR.Card$name, LoR.Card$cardCode)),
-          region  = str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation))
-          )
+  mutate( abbreviation = str_sub(cards,3,4) ) |>
+  left_join(Region.Freq[,c(1,2)], by = "abbreviation") |>
+  rename(region = abbreviation,card = cards) |>
+  mutate(p.byReg = ncard/n,
+         card    = str_replace_all(card, set_names(LoR.Card$name, LoR.Card$cardCode)),
+         region  = str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation)) )
 ```
 
 ::: {.l-page}
@@ -1475,7 +1093,7 @@ TableAllCards <- TableAllCards |>
 ```{r print-CardsTable-1}
 MostPlayed <- TableAllCards |>
   arrange(desc(p.byReg)) |>
-  rename_all(~c("Card",
+  rename_with(~c("Card",
                 "#Decks with that card",
                 "Region",
                 "Games of X Region",
@@ -1490,7 +1108,6 @@ MostPlayed <- TableAllCards |>
     backgroundColor = styleEqual(data_regions$nameRef, data_regions$colorRegion)
   ) |>
   formatPercentage('Play Rate', 1)
-  # formatStyle('Card',  color = 'red', backgroundColor = 'orange', fontWeight = 'bold')
 
 MostPlayed
 ```
@@ -1505,14 +1122,12 @@ TopPlayed.PbyReg <- TableAllCards |>
   arrange(desc(p.byReg)) |>
   top_n(3) |>
   arrange(region) |>
-  rename_all(~c("Card","N","Region","Games of X Region","Play Rate")) |>
-  # select(c(1,3,6,2,5)) |>
+  rename_with(~c("Card","N","Region","Games of X Region","Play Rate")) |>
   ungroup() |>
   datatable(rownames = FALSE,
             options = list(
               searching = FALSE,
-              # lengthChange = FALSE,
-              pageLength = 4*9,
+              pageLength = 3*10,
               info = FALSE)
             ) |>
   formatStyle('Card', fontWeight = 'bold') |>
@@ -1535,47 +1150,43 @@ TopPlayed.PbyReg
 Cards that couldn't find place even in a meme deck.
 
 ```{r missingCards}
-missingCards <- LoR.Card$cardCode[LoR.Card$name %!in% TableAllCards$card]
-
-data.table(
-  Card = LoR.Card$name[LoR.Card$cardCode %in% missingCards],
-  Code = missingCards,
-  Region = str_sub(missingCards,3,4) ) |>
+LoR.Card |>
+  as.data.table() |>
+  filter( cardCode %in% LoR.Card$cardCode[LoR.Card$name %!in% TableAllCards$card] ) |>
+  mutate( Region = str_sub(cardCode,3,4) ) |>
   group_by(Region) |>
   mutate(n = row_number(),
          l = n() ) |>
   ungroup() |>
   arrange(desc(l)) |>
-  select(-l,-Code) |>
-  pivot_wider( names_from = n, values_from = Card  ) |>
+  select(-l,-cardCode) |>
+  pivot_wider( names_from = n, values_from = name  ) |>
   mutate(across(everything(), .fns = ~replace_na(.,""))) |>
   t() |>
   as.data.table() |>
   {\(x) rename_all(x, ~unlist(x[1,],use.names = F ) )  }() |>
   slice(-1) |>
-  # gt() |>
-  # gtExtras::gt_theme_538()
   reactable(
     bordered = TRUE,
     highlight = TRUE,
     wrap = T,
     sortable = F,
     searchable = TRUE,
-    defaultPageSize = 15,
+    defaultPageSize = 10,
     style = list(fontFamily = "Chivo", fontSize = "12px"),
     # minRows = 10,
-    # columns = list(
-    #   BC = colDef( style = list ( background = data_regions$colorRegion[1], fontWeight = "bold", color  = "#404040" ) ),
-    #   BW = colDef( style = list ( background = data_regions$colorRegion[2], fontWeight = "bold", color  = "#404040" ) ),
-    #   DE = colDef( style = list ( background = data_regions$colorRegion[3], fontWeight = "bold", color  = "#404040" ) ),
-    #   FR = colDef( style = list ( background = data_regions$colorRegion[4], fontWeight = "bold", color  = "#404040" ) ),
-    #   IO = colDef( style = list ( background = data_regions$colorRegion[5], fontWeight = "bold", color  = "#404040" ) ),
-    #   MT = colDef( style = list ( background = data_regions$colorRegion[6], fontWeight = "bold", color  = "white" ) ),
-    #   NX = colDef( style = list ( background = data_regions$colorRegion[7], fontWeight = "bold", color  = "#404040" ) ),
-    #   PZ = colDef( style = list ( background = data_regions$colorRegion[8], fontWeight = "bold", color  = "#404040" ) ),
-    #   SI = colDef( style = list ( background = data_regions$colorRegion[9], fontWeight = "bold", color  = "#E5E5E5" ) ), #grey90
-    #   SH = colDef( style = list ( background = data_regions$colorRegion[10], fontWeight = "bold", color = "#404040" ) )
-    # ),
+    columns = list(
+      BC = colDef( style = list ( background = data_regions$colorRegion[1], fontWeight = "bold", color  = "#404040" ) ),
+      BW = colDef( style = list ( background = data_regions$colorRegion[2], fontWeight = "bold", color  = "#404040" ) ),
+      DE = colDef( style = list ( background = data_regions$colorRegion[3], fontWeight = "bold", color  = "#404040" ) ),
+      FR = colDef( style = list ( background = data_regions$colorRegion[4], fontWeight = "bold", color  = "#404040" ) ),
+      IO = colDef( style = list ( background = data_regions$colorRegion[5], fontWeight = "bold", color  = "#404040" ) ),
+      MT = colDef( style = list ( background = data_regions$colorRegion[6], fontWeight = "bold", color  = "#404040" ) ),
+      NX = colDef( style = list ( background = data_regions$colorRegion[7], fontWeight = "bold", color  = "#404040" ) ),
+      PZ = colDef( style = list ( background = data_regions$colorRegion[8], fontWeight = "bold", color  = "#404040" ) ),
+      SI = colDef( style = list ( background = data_regions$colorRegion[9], fontWeight = "bold", color  = "#404040" ) ), #grey90
+      SH = colDef( style = list ( background = data_regions$colorRegion[10], fontWeight = "bold", color = "#404040" ) )
+    ),
     defaultColDef = colDef( minWidth = 125 ) 
   )
 ```
@@ -1595,12 +1206,6 @@ gtfix |>
     column_labels.background.color = "whitesmoke"
    )
 ```
-
-<!-- # Credits -->
-
-<!-- Special thanks to **** for the recent support ^^ [^4] -->
-
-<!-- [^4]: [Support page link](https://www.buymeacoffee.com/MaouLegna). In case donations-only the plan is to have the name in the credits for at least a month from the time of the donation. -->
 
 ```{r twitter-meta, echo = FALSE}
 metathis::meta() |>

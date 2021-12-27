@@ -21,7 +21,7 @@ params:
   # start:   "2021-10-20 18:00:00" #UTC tz / 2.18 <- Balance Patch
   start:   "2021-12-08 18:00:00" #UTC tz / 2.21 <- Set & Balance Patch
   hotfix:  "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
-  end:     "2022-01-01 18:00:00" #UTC tz /
+  end:     "2022-01-05 18:00:00" #UTC tz /
 ---
 
 ```{r setup, include=FALSE}
@@ -49,10 +49,8 @@ knitr::opts_chunk$set(
 # R Option
 options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
-
-# pacman::p_load(tidyverse,data.table,DT,reactable,crosstalk,
-#                flextable,officer,scales,htmltools,
-#                downloadthis)
+source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 ```
 
 ```{r load-data}
@@ -60,7 +58,9 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 #'###########
 LoR.Match.DT.RMD <- list.files(path = file.path("C:","LlorR","data","raw"), pattern = "DT_S11.csv",full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("",NA), .id = "source") |>
-  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master") ))
+  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master") )) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+  filter( game_type == "Ranked"  )
 
 #' load Account
 #'#############
@@ -88,14 +88,16 @@ LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
 
 n = 15   # if I want to select a fixed number of underdog decks
 p = 0.01 # if I want to use the standard meta deck threshold
+
+ntopPR  <- 12 # meta evolution decks
+seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
 ```
+
 
 ```{r archetype-fix}
 # Limit the Deck DT to make the fixes much faster
 # deck_filter <- do.call("rbind", mget(ls(pattern="\\.DT.RMD$")) ) |>
 deck_filter <- LoR.Match.DT.RMD |>
-  filter( game_type=="Ranked" ) |>
-  # filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
   select(deck_code_1,deck_code_2) |>
   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
   filter(decks!="") |>
@@ -118,59 +120,99 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 #' Metl tbl
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$hotfix, tz = "UTC") ) |>
-  distinct(match_key,.keep_all = T) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1, opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
                names_pattern = "(.*)_[0-9]"
-  ) |>
-  left_join(LoR.Deck.RMD |> select(!archetype),by="deck_code") |>
-  as.data.table()
+               ) |>
+  as.data.table() |>
+  # Add Deck data
+  select(-factions) |>
+  left_join(LoR.Deck.RMD, by="deck_code") |>
+  rename(playerDeck=archetype) |>
+  left_join(
+    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+    by=c("opponent_deck_code"="deck_code"))
 ```
 
-# Stats (whole Patch) {data-icon="fa-table"}
+```{r data-meta-evo}
+top7days <- LoR.Melt.Matches.RMD |>
+  filter(source=="Master") |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
+  count(playerDeck) |>
+  slice_max(n,n=ntopPR,with_ties = F) |>
+  pull(playerDeck)
+
+tibble(
+  game_start_time_utc = rep(seqDate, each = length(top7days)),
+  playerDeck = rep(top7days, times = length(seqDate) ),
+  intDate = findInterval(game_start_time_utc, seqDate )
+) |>
+  left_join(
+    LoR.Melt.Matches.RMD |>
+      filter(source=="Master") |>
+      mutate( playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
+              intDate = findInterval(game_start_time_utc, seqDate )
+      ) |>
+      filter( playerDeck != "Other" ) |>
+      group_by(intDate) |>
+      count(playerDeck) |>
+      mutate(freq = prop.table(n))|>
+      ungroup(),
+    by = c("playerDeck","intDate") ) |>
+  mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
+  mutate( game_start_time_utc = as.Date(game_start_time_utc) ) -> Champion.deck.daily
+
+top7days.diamond <- LoR.Melt.Matches.RMD |>
+  filter(source=="Diamond") |>
+  filter( game_start_time_utc >= now()-days(7) ) |>
+  count(playerDeck) |>
+  slice_max(n,n=ntopPR,with_ties = F) |>
+  pull(playerDeck)
+
+tibble(
+  game_start_time_utc = rep(seqDate, each = length(top7days.diamond)),
+  playerDeck = rep(top7days.diamond, times = length(seqDate)),
+  intDate = findInterval(game_start_time_utc, seqDate )
+) |>
+  left_join(
+    LoR.Melt.Matches.RMD |>
+      filter(source=="Diamond") |>
+      mutate(
+        playerDeck = fct_other(playerDeck,keep = top7days.diamond) |> fct_infreq(),
+        intDate = findInterval(game_start_time_utc, seqDate )
+        ) |>
+      filter( playerDeck != "Other" ) |>
+      group_by(intDate) |>
+      count(playerDeck) |>
+      mutate(freq = prop.table(n))|>
+      ungroup(),
+    by = c("playerDeck","intDate") ) |>
+  mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
+  mutate( game_start_time_utc = as.Date(game_start_time_utc) ) -> Champion.deck.daily.diamond
+```
+
+# Stats (post hotfix) {data-icon="fa-table"}
+
+```{r}
+LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
+  filter( game_start_time_utc > as.POSIXct(params$hotfix, tz = "UTC") ) |>
+  distinct(match_key,playerPuuid,.keep_all = T)
+```
 
 ```{r process-winRate}
 WR.DT <- LoR.Melt.Matches.RMD |>
-  filter(game_outcome!="tie") |>
-  select(playerDeck,opponentDeck,game_outcome ) |>
-  group_by(playerDeck) |>
-  summarise( 
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  mutate( 
-    playrate = nGames/sum(nGames)
-  ) |>
-  as.data.table() |>
-  {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
-  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
+  win_rates(details = T,server = F)
 
 WR.DT.Reg <- LoR.Melt.Matches.RMD |>
-  filter(game_outcome!="tie") |>
-  select(playerDeck,opponentDeck,game_outcome,server ) |>
-  group_by(server,playerDeck) |>
-  summarise( 
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  group_by(server) |>
-  mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) |>
-  ungroup() |>
-  left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") 
+  win_rates(server = T)
 
-fct_meta <- WR.DT |>
+fct_meta <- WR.DT.Reg |>
+  distinct(playerDeck,playrate)  |>
   filter(playrate > p) |>
-  arrange(desc(nGames)) |>
+  arrange(desc(playrate)) |>
   pull(playerDeck)
 
 fct_underdog <- WR.DT |>
@@ -189,13 +231,12 @@ deckCodeTbl  <- LoR.Melt.Matches.RMD |>
                               levels = c(fct_meta,fct_underdog) )
           ) |>
   group_by(server,playerDeck,deck_code ) |>
-  summarise( n = n() ) |>
-  slice_max(n, n = 3) |>
+  summarise(n=n()) |>
+  slice_max(n,n=3) |>
   ungroup() |>
-  mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
-          server = str_to_title(server) ) |>
+  mutate(link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
+         server = str_to_title(server) ) |>
   select(playerDeck,n,link,server)
-  
 
 serverWRTbl <- WR.DT.Reg |>
   filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
@@ -334,15 +375,16 @@ reactDT |>
                                          )
                                        ) } )
     )
-  ) |>
-  reactablefmtr::add_source(glue::glue("Data from Current Master Only. Source: Metadata of games collected with RiotGames API"), background_color = "transparent", font_family = "Chivo")
+  )
 ```
 ## Row {data-heigth="150"}
 
 ### Number of Games
 
 ```{r value-games}
-flexdashboard::valueBox(glue::glue("{LoR.Melt.Matches.RMD[ ,.N ]} Games"),
+nGames <- NROW(LoR.Melt.Matches.RMD)
+
+flexdashboard::valueBox(glue::glue("{nGames} Games"),
                         caption = glue::glue("Number of Ranked Games"),
                         icon = "fa-table",
                         color = "#a88b32")
@@ -374,47 +416,26 @@ LastUpdate.box
 
 # Stats (last 7days) {data-icon="fa-table"}
 
+```{r}
+LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
+  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
+  distinct(match_key,playerPuuid,.keep_all = T)
+```
+
 ```{r 7days-process-winRate}
 WR.DT.d7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-  filter(game_outcome!="tie") |>
-  select(playerDeck,opponentDeck,game_outcome ) |>
-  group_by(playerDeck) |>
-  summarise( 
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  mutate( 
-    playrate = nGames/sum(nGames)
-  ) |>
-  as.data.table() |>
-  {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
-  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
-  
-WR.DT.Reg.d7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome,server ) |>
-  group_by(server,playerDeck) |>
-  summarise( 
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  group_by(server) |>
-  mutate( sumGames = sum(nGames), regPlayrate = nGames/sumGames ) |>
-  ungroup() |>
-  left_join(WR.DT.d7[,c("playerDeck","playrate")],by="playerDeck") 
+  win_rates(details = T,server = F)
 
-fct_meta.d7 <- WR.DT.d7 |>
+WR.DT.Reg.d7 <- LoR.Melt.Matches.RMD |>
+  win_rates(server = T)
+
+fct_meta.d7 <- WR.DT.Reg.d7 |>
+  distinct(playerDeck,playrate)  |>
   filter(playrate > p) |>
-  arrange(desc(nGames)) |>
+  arrange(desc(playrate)) |>
   pull(playerDeck)
 
-fct_underdog.d7 <- WR.DT.d7 |>
+fct_underdog.d7 <- WR.DT |>
   filter(nGames >= 100 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
   slice_max(WR, n = 30, with_ties = F) |>
   pull(playerDeck)
@@ -425,7 +446,6 @@ fct_underdog.d7 <- WR.DT.d7 |>
 
 ```{r 7days-create-support-tbl}
 deckCodeTbl.d7  <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   filter( playerDeck %in% c(fct_meta.d7,fct_underdog.d7) ) |>
   mutate( playerDeck = factor(playerDeck, ordered = TRUE,
                               levels = c(fct_meta.d7,fct_underdog.d7) )
@@ -583,11 +603,9 @@ reactDT.d7 |>
 ### Number of Games
 
 ```{r 7days-value-games}
-nGames7 <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-  NROW()
+nGames <- NROW(LoR.Melt.Matches.RMD)
 
-flexdashboard::valueBox(glue::glue("{nGames7} Games"),
+flexdashboard::valueBox(glue::glue("{nGames} Games"),
                         caption = glue::glue("Number of Ranked Games"),
                         icon = "fa-table",
                         color = "#a88b32")
@@ -619,42 +637,31 @@ LastUpdate.box
 
 # Fresh Stats (last 24 hours) {data-icon="fa-table"}
 
+```{r}
+LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
+  filter( game_start_time_utc %within% interval(today()+hours(18)-days(2),today()+hours(18)-days(1)) ) |>
+  distinct(match_key,playerPuuid,.keep_all = T)
+```
+
 ## Row
 
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
-LoR.Melt.24hrs <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc %within% interval(today()+hours(18)-days(2),today()+hours(18)-days(1)) )
-
-WR.DT.24h <- LoR.Melt.24hrs |>
-  filter(game_outcome!="tie") |>
-  group_by(playerDeck) |>
-  summarise(
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  mutate(
-    playrate = nGames/sum(nGames)
-  ) |>
-  as.data.table() |>
-  {\(x) x[ ,c("LCI","UCI") := binom.confint(nWin,nGames,0.95,methods="exact")[5:6] ] }() |>
-  mutate( CI := glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) |>
+WR.DT.24h <- LoR.Melt.Matches.RMD |>
+  win_rates(details = T,server = F) |>
   filter( playerDeck %!in% c(fct_meta,fct_meta.d7,fct_underdog,fct_underdog.d7) ) |>
   filter( WR > 0.5 ) |>
   slice_max(nGames, n = 50, with_ties = F) |>
   select(-LCI,-UCI)
 
-deckCodeTbl.24hrs  <- LoR.Melt.24hrs |>
+deckCodeTbl.24hrs  <- LoR.Melt.Matches.RMD |>
   filter( playerDeck %in% c(WR.DT.24h$playerDeck) ) |>
   mutate( playerDeck = factor(playerDeck, ordered = TRUE,
                               levels = c(WR.DT.24h$playerDeck) )
           ) |>
   group_by(server,playerDeck,deck_code ) |>
   summarise( n = n() ) |>
-  ungroup() |>
   group_by(playerDeck) |>
   slice_max(n, n = 10) |>
   ungroup() |>
@@ -745,103 +752,6 @@ LastUpdate.box
 
 ## Row {data-heigth="750"}
 
-```{r meta-evo-const}
-ntopPR <- 12
-# seqDate <- seq(as.Date(params$start), as.Date(now())-days(1), "day")
-seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
-```
-
-```{r for-graphs}
-#' Metl tbl
-#'#########
-LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
-  filter(source=="Master") |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  select( match_key, game_start_time_utc, starts_with("deck_code") ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-  ) |>
-  as.data.table()
-
-#' Additional tbl
-#' contain the a second DT
-#' can be Plat+, or Diamond depending on my current project
-#'#########################################################
-LoR.Melt.Diamond.RMD <- LoR.Match.DT.RMD |>
-  filter(source=="Diamond") |>
-  filter( game_type=="Ranked" ) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  select( match_key, game_start_time_utc, starts_with("deck_code") ) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,playerDeck_1=archetype)],  by=c("deck_code_1"="deck_code")) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck_1=archetype)],by=c("deck_code_2"="deck_code")) |>
-  mutate( playerDeck_2 = opponentDeck_1, opponentDeck_2 = playerDeck_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-  ) |>
-  as.data.table()
-```
-
-```{r prepare-meta-evo-base}
-top7days <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-  count(playerDeck) |>
-  slice_max(n,n=ntopPR,with_ties = F) |>
-  pull(playerDeck)
-
-Champion.deck.daily <- tibble(
-  game_start_time_utc = rep(seqDate, each = length(top7days)),
-  playerDeck = rep(top7days, times = length(seqDate) ),
-  intDate = findInterval(game_start_time_utc, seqDate )
-) |>
-  left_join(
-    LoR.Melt.Matches.RMD |>
-      mutate( playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
-              intDate = findInterval(game_start_time_utc, seqDate )
-      ) |>
-      filter( playerDeck != "Other" ) |>
-      group_by(intDate) |>
-      count(playerDeck) |>
-      mutate(freq = prop.table(n))|>
-      ungroup(),
-    by = c("playerDeck","intDate") ) |>
-  mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
-  mutate( game_start_time_utc = as.Date(game_start_time_utc) )
-```
-
-```{r prepare-meta-evo-diamond}
-top7days.diamond <- LoR.Melt.Diamond.RMD |>
-  filter( game_start_time_utc >= now()-days(7) ) |>
-  count(playerDeck) |>
-  slice_max(n,n=ntopPR,with_ties = F) |>
-  pull(playerDeck)
-
-Champion.deck.daily.diamond <- tibble(
-  game_start_time_utc = rep(seqDate, each = length(top7days.diamond)),
-  playerDeck = rep(top7days.diamond, times = length(seqDate)),
-  intDate = findInterval(game_start_time_utc, seqDate )
-) |>
-  left_join(
-    LoR.Melt.Diamond.RMD |>
-      mutate(
-        playerDeck = fct_other(playerDeck,keep = top7days.diamond) |> fct_infreq(),
-        intDate = findInterval(game_start_time_utc, seqDate )
-        ) |>
-      filter( playerDeck != "Other" ) |>
-      group_by(intDate) |>
-      count(playerDeck) |>
-      mutate(freq = prop.table(n))|>
-      ungroup(),
-    by = c("playerDeck","intDate") ) |>
-  mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
-  mutate( game_start_time_utc = as.Date(game_start_time_utc) )
-```
-
 ```{r create-meta-evo, fig.width=12, fig.height=8, include=F}
 meta_evo.base <- Champion.deck.daily |>
   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
@@ -861,7 +771,7 @@ meta_evo.base <- Champion.deck.daily |>
   )  +
   labs(x = "Date",
        y = "PlayRate",
-       title = "(Master Players) Evolution of Play Rate over time"
+       title = "Evolution of Play Rate over time - Master"
        # caption = glue::glue("{params$patch}
        #                      Ranked games from {params$start} UTC to {params$end} UTC
        #                      Metadata of games collected with RiotGames API")
@@ -932,7 +842,7 @@ meta_evo.diamond.base <- Champion.deck.daily.diamond |>
   )  +
   labs(x = "Date",
        y = "PlayRate",
-       title = "(~HighDiamond) Evolution of Play Rate over time",
+       title = "Evolution of Play Rate over time - HighDiamond",
        caption = glue::glue("{params$patch}
                             Ranked games from {params$start} UTC to {params$end} UTC
                             Games from Players who played against Master but aren't Master.

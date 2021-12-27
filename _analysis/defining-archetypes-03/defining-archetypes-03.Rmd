@@ -258,6 +258,8 @@ From `r f.ref("tab_1")` we can see that in the current setting with n=10 existin
 
 But this is not over as again only a small subset of this `r scales::percent(pull(regionSparsity[10,2]),accuracy = 0.1)` is actually relevant.
 
+Of the region comparisons all (55) sub-matrix in the diagonal remain necessary (so all NX/PZ vs all NX/PZ), what remains are the cases with only one shared region.
+
 When we compare decks with a single shared region not all comparison are meaningful and what follows is a simplification which works for most cases.
 
 If pairs of decks shares only one regions, for the similarity not to be zero that very same region needs to contains all the common cards. Usually it means that the shared cards are key component to a strategy and unless they are mainly staples they would probably identify an archetype. In the most extreme case the shared region presence may be overwhelming compared to the second one which is used only for the second region unique strength offered by some cards. Like the Rally effects from Demacia.
@@ -281,6 +283,8 @@ Of course as mentioned this is more an approximation as one could that a Mistwra
 In a second step, when trying to find more generalized archetypes (be it something like aggro/control/initiative/resource) then there is reason to try aggregated these different 'aggregated version' of Mistwraith decks but as of now, with
 
 Addendum: At the moment of the writing the Ionia-Allegiance decks provides an even more easier example as similar to Mistwraith decks they are often made of only Ionia cards and differ mostly by the choice of the second region.
+
+In a TL:DR we end up reducing our initial problem with  `r 55*56/2` sub-matrix to one with 45 sub-matrix containing all dual region combinations and 10 sub-matrix which contains all the MonoRegion decks AND all the ~mono region decks.
 
 ### Cross-Region Comparisons
 
