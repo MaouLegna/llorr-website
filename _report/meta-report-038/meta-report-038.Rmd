@@ -85,7 +85,7 @@ LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"),
   mutate( RiotID = sprintf("%s#%s",gameName,tagLine) )
 
 # load Deck
-LoR.Deck.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+LoR.Deck.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),colClasses = "character", header = T, na.strings = c("", NA))
 ```
 
 ```{r archetype-fix}
@@ -188,7 +188,7 @@ merge.tbl.master  <- table_bythenumbers(LoR.Match.DT.RMD)
 merge.tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
 
 nGames.Master  <- LoR.Melt.Master.RMD[,.N]
-nGames.Diamond <- LoR.Melt.Master.RMD[,.N]
+nGames.Diamond <- LoR.Melt.Diamond.RMD[,.N]
 ```
 
 Number of (Ranked) matches analysed **`r format(nGames.Master/2,scientific = F)`** or **`r format(nGames.Master,scientific = F)`** games. / **Master** Players
@@ -261,6 +261,8 @@ plot_freq(
   subtitle = "number of times a region is included in a deck",
   caption = general.caption
   )
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq.png"),width = 12,height = 8)
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -306,6 +308,8 @@ plot_freq(
                        Source: Metadata of games collected with RiotGames API
                        Last Update: {now(tzone='UTC')}")
   )
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq-bycards.png"))
 ```
 :::
 
@@ -318,7 +322,7 @@ table_freq_gt(Region.Freq.byCards) |>
     title    = "Region Play Rate",
     subtitle = "Relative Frequencies by number of times a Card within a Region is included in a Deck"
   ) |>
-  tab_source_note( source_note = general.caption ) 
+  tab_source_note( source_note = general.caption )
 ```
 :::
 :::::
