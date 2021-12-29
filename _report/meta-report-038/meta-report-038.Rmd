@@ -27,7 +27,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -119,7 +119,7 @@ namesList.ASIA.RMD <- masterASIA[ !is.na(puuid), .N ]
 
 ```{r prepare-data-master}
 # Melt tbl
-LoR.Match.DT.RMD |>
+LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   filter( game_type == "Ranked"  ) |>
   filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
