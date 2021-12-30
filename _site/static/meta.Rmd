@@ -135,6 +135,9 @@ LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
   left_join(
     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
     by=c("opponent_deck_code"="deck_code"))
+
+
+# LoR.Melt.Matches.RMD[ playerPuuid == LoR.Account.RMD[ str_detect(RiotID,"bA1a"),puuid ] , ]
 ```
 
 ```{r data-meta-evo}
@@ -209,10 +212,14 @@ WR.DT <- LoR.Melt.Matches.RMD |>
 WR.DT.Reg <- LoR.Melt.Matches.RMD |>
   win_rates(server = T)
 
-fct_meta <- WR.DT.Reg |>
-  distinct(playerDeck,playrate)  |>
-  filter(playrate > p) |>
-  arrange(desc(playrate)) |>
+# fct_meta <- WR.DT.Reg |>
+#   distinct(playerDeck,playrate)  |>
+#   filter(playrate > p) |>
+#   arrange(desc(playrate)) |>
+#   pull(playerDeck)
+
+fct_meta <- WR.DT |>
+  filter( playrate >= 0.01 ) |>
   pull(playerDeck)
 
 fct_underdog <- WR.DT |>
@@ -423,19 +430,23 @@ LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
 ```
 
 ```{r 7days-process-winRate}
-WR.DT.d7 <- LoR.Melt.Matches.RMD |>
+WR.DT <- LoR.Melt.Matches.RMD |>
   win_rates(details = T,server = F)
 
-WR.DT.Reg.d7 <- LoR.Melt.Matches.RMD |>
+WR.DT.Reg <- LoR.Melt.Matches.RMD |>
   win_rates(server = T)
 
-fct_meta.d7 <- WR.DT.Reg.d7 |>
-  distinct(playerDeck,playrate)  |>
-  filter(playrate > p) |>
-  arrange(desc(playrate)) |>
+# fct_meta <- WR.DT.Reg |>
+#   distinct(playerDeck,playrate)  |>
+#   filter(playrate > p) |>
+#   arrange(desc(playrate)) |>
+#   pull(playerDeck)
+
+fct_meta <- WR.DT |>
+  filter( playrate >= 0.01 ) |>
   pull(playerDeck)
 
-fct_underdog.d7 <- WR.DT |>
+fct_underdog <- WR.DT |>
   filter(nGames >= 100 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
   slice_max(WR, n = 30, with_ties = F) |>
   pull(playerDeck)
@@ -445,10 +456,10 @@ fct_underdog.d7 <- WR.DT |>
 ### Decks Performances
 
 ```{r 7days-create-support-tbl}
-deckCodeTbl.d7  <- LoR.Melt.Matches.RMD |>
-  filter( playerDeck %in% c(fct_meta.d7,fct_underdog.d7) ) |>
+deckCodeTbl  <- LoR.Melt.Matches.RMD |>
+  filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
   mutate( playerDeck = factor(playerDeck, ordered = TRUE,
-                              levels = c(fct_meta.d7,fct_underdog.d7) )
+                              levels = c(fct_meta,fct_underdog) )
           ) |>
   group_by(server,playerDeck,deck_code ) |>
   summarise( n = n() ) |>
@@ -458,8 +469,8 @@ deckCodeTbl.d7  <- LoR.Melt.Matches.RMD |>
           server = str_to_title(server) ) |>
   select(playerDeck,n,link,server)
   
-serverWRTbl.d7 <- WR.DT.Reg.d7 |>
-  filter( playerDeck %in% c(fct_meta.d7,fct_underdog.d7) ) |>
+serverWRTbl <- WR.DT.Reg |>
+  filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
   as.data.table() |>
   mutate(
     type = case_when(
@@ -479,12 +490,12 @@ serverWRTbl.d7 <- WR.DT.Reg.d7 |>
 
 
 ```{r 7days-react-stats-master}
-reactDT.d7 <- WR.DT.d7 |>
-  filter( playerDeck %in% c(fct_meta.d7,fct_underdog.d7) ) |>
+reactDT <- WR.DT |>
+  filter( playerDeck %in% c(fct_meta,fct_underdog) ) |>
   mutate(
     type = case_when(
-      playerDeck %in% fct_meta.d7 ~ "Meta",
-      playerDeck %in% fct_underdog.d7 ~ "Underdog",
+      playerDeck %in% fct_meta ~ "Meta",
+      playerDeck %in% fct_underdog ~ "Underdog",
       TRUE ~ "other"
     ),
     PR_ind    = scale_quantile(playrate),
@@ -502,7 +513,7 @@ reactDT.d7 <- WR.DT.d7 |>
   select(playerDeck,WR,nWin,nGames,playrate,LMI,tier,CI,type) |>
   mutate(score_color = get_score_color(LMI))
 
-reactDT.d7 |> 
+reactDT |> 
   reactable(
     # groupBy = "playerDeck",
     searchable = TRUE,
@@ -520,7 +531,7 @@ reactDT.d7 |>
     ),
     details = function(index) {
       # index = 1
-      deckdata <- deckCodeTbl.d7[ deckCodeTbl.d7$playerDeck == reactDT.d7$playerDeck[index], ]
+      deckdata <- deckCodeTbl[ deckCodeTbl$playerDeck == reactDT$playerDeck[index], ]
       reactable(
         deckdata,
         fullWidth = F,
@@ -574,7 +585,7 @@ reactDT.d7 |>
       WR     = colDef(name = "WinRate",
                       format = colFormat(percent = TRUE,digits = 1),
                       details = function(index) {
-                        wrdata <- serverWRTbl.d7[ serverWRTbl.d7$playerDeck == reactDT.d7$playerDeck[index], ]
+                        wrdata <- serverWRTbl[ serverWRTbl$playerDeck == reactDT$playerDeck[index], ]
                         htmltools::div(style = "padding: 10px",
                                        reactable(
                                          wrdata,
@@ -614,7 +625,7 @@ flexdashboard::valueBox(glue::glue("{nGames} Games"),
 ### Number of Meta Decks
 
 ```{r 7days-value-meta}
-flexdashboard::valueBox(glue::glue("{length(fct_meta.d7)} Meta Decks"),
+flexdashboard::valueBox(glue::glue("{length(fct_meta)} Meta Decks"),
                         caption = glue::glue("Decks with PlayRate with at least 1%"),
                         icon = "fa-trophy",
                         color = "#65c0a9")
@@ -623,7 +634,7 @@ flexdashboard::valueBox(glue::glue("{length(fct_meta.d7)} Meta Decks"),
 ### Number of Underdog Decks
 
 ```{r 7days-value-underdog}
-flexdashboard::valueBox(glue::glue("{length(fct_underdog.d7)} Underdog Decks"),
+flexdashboard::valueBox(glue::glue("{length(fct_underdog)} Underdog Decks"),
                         caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"),
                         icon = "fa-dog",
                         color = "#ff7f24")
@@ -650,7 +661,7 @@ LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
 ```{r 24hrs-process-winRate}
 WR.DT.24h <- LoR.Melt.Matches.RMD |>
   win_rates(details = T,server = F) |>
-  filter( playerDeck %!in% c(fct_meta,fct_meta.d7,fct_underdog,fct_underdog.d7) ) |>
+  filter( playerDeck %!in% c(fct_meta,fct_meta,fct_underdog,fct_underdog) ) |>
   filter( WR > 0.5 ) |>
   slice_max(nGames, n = 50, with_ties = F) |>
   select(-LCI,-UCI)

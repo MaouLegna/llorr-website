@@ -309,7 +309,7 @@ plot_freq(
                        Last Update: {now(tzone='UTC')}")
   )
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq-bycards.png"))
+ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq-bycards.png"),width = 12,height = 8)
 ```
 :::
 

@@ -135,6 +135,9 @@ LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
   left_join(
     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
     by=c("opponent_deck_code"="deck_code"))
+
+
+# LoR.Melt.Matches.RMD[ playerPuuid == LoR.Account.RMD[ str_detect(RiotID,"bA1a"),puuid ] , ]
 ```
 
 ```{r data-meta-evo}
