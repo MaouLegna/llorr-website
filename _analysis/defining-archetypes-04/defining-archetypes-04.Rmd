@@ -67,96 +67,25 @@ f.ref <- function(x) {
 
 # Introduction
 
-In the [previous article/analysis](https://llorr-stats.netlify.app/analysis/defining-archetypes-02/) on defining archetypes we introduced the basic theory of Cluster Analysis (CA) and applied to a simple toy-example of Legends of Runeterra (LoR) decks.
-
-We introduced the general theory along side a few widely-used algorithms and some of the "newer" ones like Density-Based Spatial Clustering of Applications with Noise (DBSCAN) and Affinity Propagation Clustering (APcluster).
-
-The example was tailored to give a general idea about the methods, some of their strong point and also potential weaknesses with this specific context of analysing LoR decks.
-
-As the previous analysis was mostly based around the basic approach to the methods and a well defined example it can't translate directly to a generalized use with the commonly analysed data like the weekly reports.
-
-For now, we want to continue to use the Cluster Analysis but this times applied to a set of data on a scale more similar to a *real-case-study*. To do this we first need to solve a couple of issues related to the scale of the algorithms at hand.
-
 ```{r load-data}
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
 ```
 
 ```{r}
-LoR.Match.RMD <- data.table::fread( list.files(path = file.path("C:","LlorR","data","raw","games"), pattern = "204_213",full.names = T), colClasses = "character", header = T, na.strings = c("", NA) ) |>
-  mutate(across(c(starts_with('order'),status), as.numeric  ) )
-
-LoR.Match.RMD |>
-  mutate(time = ymd_hms(game_start_time_utc) ) |>
-  filter(time <= with_tz( force_tz( ymd_hms("2021-03-03 10:00:00"),"US/Pacific") ,"UTC") ) |>
-  select(-ends_with("_3"),-ends_with("_4")) |>
-  select(-time) -> S00
-
-# LoR.Match.RMD |>
-#   filter(match_key %!in% S00$match_key ) -> LoR.Match.RMD
-
-LoR.Match.RMD |>
-  mutate( row = row_number() ) |>
-  mutate(time = ymd_hms(game_start_time_utc) ) |>
-  filter(time >= with_tz( force_tz( ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC") ) |>
-  slice_min(row,n=1) |>
-  select(row,time)
-
-LoR.Match.RMD |>
-  mutate(row=row_number() ) |>
-  mutate(time=ymd_hms(game_start_time_utc) ) |>
-  # select(game_start_time_utc,time)
-  slice(1908227:n()) |>
-  filter(is.na(time) | time >= with_tz( force_tz( ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC") ) -> S8
-  # tabyl(game_version)
-
-# S8 |>
-#   select(-row,-time) |>
-#   select(-ends_with("_3"),-ends_with("_4")) |>
-#   fwrite("LoR_MatchDT_S08_211_213.csv")
-
-# LoR.Match.RMD |>
-#   filter(match_key %!in% S8$match_key)
-
-LoR.Match.RMD |>
-  mutate( row = row_number() ) |>
-  mutate(time = ymd_hms(game_start_time_utc) ) |>
-  filter(time >= with_tz( force_tz( ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC") ) |>
-  slice_min(row,n=1) |>
-  select(row,time)
-
-# 1009562
-
-LoR.Match.RMD |>
-  mutate(row=row_number() ) |>
-  mutate(time=ymd_hms(game_start_time_utc) ) |>
-  # select(game_start_time_utc,time)
-  slice(1009562:n()) |>
-  # filter(is.na(time) | time >= with_tz( force_tz( ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC") )
-  filter(is.na(time) | time %within% interval(
-    with_tz( force_tz( ymd_hms("2021-05-05 10:00:00"),"US/Pacific") ,"UTC"),
-    with_tz( force_tz( ymd_hms("2021-06-30 10:00:00"),"US/Pacific") ,"UTC"))
-    ) -> S7
-
-prova <- S7 |>
-  pivot_longer(cols = c(ends_with("_1"), ends_with("_2"),
-                        ends_with("_3"), ends_with("_4")),
-               names_to = c(".value"), names_pattern = "(.*)_[0-9]") |>
-  distinct() |>
-  filter(!( status==200 & is.na(participants) ) )
+example_archetye_03 |>
+  mutate(cards.region = ifelse(!is.na(cards.region.fix), cards.region.fix, cards.region ) )  |>
+  filter(!is.na(allegiance)) |>
+  mutate(
+    alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
+    alle = map(alle,unique),
+    alle = map_chr(alle,~str_flatten(.x,collapse = ",")),
+    alle.region = str_sub(alle,3,4) ) -> AlleDT
 
 
-# NROW(prova) # 1556660
-
-S7 |>
-  distinct(match_key)
-  
-prova |>  
-  distinct(match_key)
-
-
+example_archetye_03 |>
+  filter(factions == "NX,PZ")
 
 ```
-
 
 
 
