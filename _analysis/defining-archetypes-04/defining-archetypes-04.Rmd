@@ -73,18 +73,20 @@ example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 
 ```{r}
 example_archetye_03 |>
-  mutate(cards.region = ifelse(!is.na(cards.region.fix), cards.region.fix, cards.region ) )  |>
-  filter(!is.na(allegiance)) |>
+  mutate(cards.region = if_else(!is.na(cards.region.fix), cards.region.fix, cards.region ) )  |>
   mutate(
     alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
     alle = map(alle,unique),
     alle = map_chr(alle,~str_flatten(.x,collapse = ",")),
-    alle.region = str_sub(alle,3,4) ) -> AlleDT
-
-
-example_archetye_03 |>
-  filter(factions == "NX,PZ")
-
+  ) |>
+  filter(!str_detect(alle,",") | is.na(alle)) |>  # 7 decks with double Allegiance
+  mutate( alle.region = str_sub(alle,3,4) ) |>
+  separate_rows(cards.region,cards.region.freq, sep = ",",convert = T ) |>
+  # take the part with more cards
+  group_by(deck_code) |>
+  slice_max(cards.region.freq,n=1,with_ties = T) |>
+  ungroup() |>
+  filter(cards.region.freq > 32 | alle.region==cards.region) -> MonoDeckDT
 ```
 
 

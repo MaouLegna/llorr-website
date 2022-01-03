@@ -972,7 +972,7 @@ ggsave("./images/meta-evo-double.png",width = 19,height = 9)
 ### Number of Players
 
 ```{r value-player-base}
-flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='master',.N]}"),
+flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='master',.N]} Master"),
                         caption = glue::glue("Master Ranked Players"),
                         icon = "fa-medal",
                         color = "#65c0a9")
@@ -981,7 +981,7 @@ flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='master',.N]}"),
 ### Number of Diamond
 
 ```{r value-player-diamond}
-flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='diamond',.N]} ~HighDiamond Players"),
+flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='diamond',.N]} ~HighDiamond"),
                         caption = glue::glue("Players who played against Master players but aren't Master themselves"),
                         icon = "fa-gem",
                         color = "#ff7f24")
