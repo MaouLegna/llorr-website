@@ -18,7 +18,7 @@ params:
   # start:   "2021-10-20 18:00:00" #UTC tz / 2.18 <- Balance Patch
   # start:   "2021-12-08 18:00:00" #UTC tz / 2.21 <- Set & Balance Patch
   start:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
-  end:     "2022-01-31 18:00:00" #UTC tz /
+  end:     "2022-01-05 18:00:00" #UTC tz /
   minMUGames: 10 # min number of games for a MU
   nGrid: 15      # how many MU to plot
 ---
@@ -825,7 +825,7 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to bA1ance and Pavelicii for the recent support \^\^
+Special thanks to bA1ance for the recent support (ᐛ)ᕗ
 
 ```{r update-Shiny}
 # Top30CC <- WR.DT.extra |>
