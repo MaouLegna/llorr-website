@@ -223,9 +223,9 @@ nGames_tbl <- tbl_merge(
     ) |>
   tab_footnote(
     footnote = md(glue::glue(
-      "EU Master playerDecks in the ladder {masterEU[!is.na(puuid),.N]} while number of possible Master playerDecks recovered is {masterEU[,.N]}
-      NA Master playerDecks in the ladder {masterNA[!is.na(puuid),.N]} while number of possible Master playerDecks recovered is {masterNA[,.N]}
-      ASIA Master playerDecks in the ladder {masterASIA[!is.na(puuid),.N]} while number of possible Master playerDecks recovered is {masterASIA[,.N]}"
+      "EU Master {masterEU[,.N]}/{masterEU[!is.na(puuid),.N]}
+      NA Master {masterNA[,.N]}/{masterNA[!is.na(puuid),.N]}
+      ASIA Master {masterASIA[,.N]}/{masterASIA[!is.na(puuid),.N]}"
       )),
     locations = cells_column_spanners(spanners = everything())
   ) 
@@ -260,9 +260,11 @@ plot_freq(
   nGames.Master,
   subtitle = "number of times a region is included in a deck",
   caption = general.caption
-  )
+  ) -> Reg.plot_freq
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq.png"),width = 12,height = 8)
+Reg.plot_freq
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq.png"),plot = Reg.plot_freq,width = 12,height = 8)
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -307,9 +309,11 @@ plot_freq(
                        DualRegions cards are counted based by the region that matters in the deck
                        Source: Metadata of games collected with RiotGames API
                        Last Update: {now(tzone='UTC')}")
-  )
+  ) -> Reg.plot_freq
 
-ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq-bycards.png"),width = 12,height = 8)
+Reg.plot_freq
+
+ggsave(glue::glue("./images/meta-report/{params$ind}-reg-freq-bycards.png"),plot = Reg.plot_freq,width = 12,height = 8)
 ```
 :::
 
