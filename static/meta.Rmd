@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (POST-HOTFIX from Patch 2.21)"
+title: "Meta & Decks (from Patch 3.00)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -11,17 +11,10 @@ output:
     # vertical_layout: fill
     orientation: row
     vertical_layout: fill
-# date: "`r Sys.Date()`"
 params:
-  # start:   "2021-06-02 18:00:00" #UTC tz / 2.09 <- Balance Patch
-  # start:   "2021-06-30 18:00:00" #UTC tz / 2.11 <- Rose of the Underworld
-  # start:   "2021-07-14 18:00:00" #UTC tz / 2.12 <- Ruination Event
-  # end:     "2021-08-25 18:00:00" #UTC tz / 2.14 <- Bandle Release
-  # start:   "2021-09-01 18:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
-  # start:   "2021-10-20 18:00:00" #UTC tz / 2.18 <- Balance Patch
-  start:   "2021-12-08 18:00:00" #UTC tz / 2.21 <- Set & Balance Patch
-  hotfix:  "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
-  end:     "2022-01-05 18:00:00" #UTC tz /
+  # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
+  start:   "2022-01-05 18:00:00" #UTC tz / 2.21 Balance
+  end:     "2022-02-14 18:00:00" #UTC tz / 2.21 Balance
 ---
 
 ```{r setup, include=FALSE}
@@ -148,7 +141,7 @@ top7days <- LoR.Melt.Matches.RMD |>
   slice_max(n,n=ntopPR,with_ties = F) |>
   pull(playerDeck)
 
-tibble(
+Champion.deck.daily <- tibble(
   game_start_time_utc = rep(seqDate, each = length(top7days)),
   playerDeck = rep(top7days, times = length(seqDate) ),
   intDate = findInterval(game_start_time_utc, seqDate )
@@ -166,7 +159,7 @@ tibble(
       ungroup(),
     by = c("playerDeck","intDate") ) |>
   mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
-  mutate( game_start_time_utc = as.Date(game_start_time_utc) ) -> Champion.deck.daily
+  mutate( game_start_time_utc = as.Date(game_start_time_utc) )
 
 top7days.diamond <- LoR.Melt.Matches.RMD |>
   filter(source=="Diamond") |>
@@ -175,7 +168,7 @@ top7days.diamond <- LoR.Melt.Matches.RMD |>
   slice_max(n,n=ntopPR,with_ties = F) |>
   pull(playerDeck)
 
-tibble(
+Champion.deck.daily.diamond <- tibble(
   game_start_time_utc = rep(seqDate, each = length(top7days.diamond)),
   playerDeck = rep(top7days.diamond, times = length(seqDate)),
   intDate = findInterval(game_start_time_utc, seqDate )
@@ -194,14 +187,14 @@ tibble(
       ungroup(),
     by = c("playerDeck","intDate") ) |>
   mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
-  mutate( game_start_time_utc = as.Date(game_start_time_utc) ) -> Champion.deck.daily.diamond
+  mutate( game_start_time_utc = as.Date(game_start_time_utc) )
 ```
 
 # Stats (post hotfix) {data-icon="fa-table"}
 
 ```{r}
 LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
-  filter( game_start_time_utc > as.POSIXct(params$hotfix, tz = "UTC") ) |>
+  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
   distinct(match_key,playerPuuid,.keep_all = T)
 ```
 

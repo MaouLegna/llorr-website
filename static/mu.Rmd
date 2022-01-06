@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (POST-HOTFIX from Patch 2.21)"
+title: "Match Ups Data (from Patch 3.00)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -7,20 +7,12 @@ output:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
-    # vertical_layout: scroll
-# date: "`r Sys.Date()`"
 params:
-  # start:   "2021-06-02 18:00:00" #UTC tz / 2.09 <- Balance Patch
-  # start:   "2021-06-30 18:00:00" #UTC tz / 2.11 <- Rose of the Underworld
-  # start:   "2021-07-14 18:00:00" #UTC tz / 2.12 <- Ruination Event
-  # end:     "2021-08-25 18:00:00" #UTC tz / 2.14 <- Bandle Release
-  # start:   "2021-09-01 18:00:00" #UTC tz / 2.14 <- World Patch to 2.18 ( one week later because of world patch )
-  # start:   "2021-10-20 18:00:00" #UTC tz / 2.18 <- Balance Patch
-  # start:   "2021-12-08 18:00:00" #UTC tz / 2.21 <- Set & Balance Patch
-  start:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
-  end:     "2022-01-05 18:00:00" #UTC tz /
-  minMUGames: 10 # min number of games for a MU
-  nGrid: 15      # how many MU to plot
+  # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
+  start:   "2022-01-05 18:00:00" #UTC tz / 2.21 Balance
+  end:     "2022-02-14 18:00:00" #UTC tz / 2.21 Balance
+  minMUGames: 5 # min number of games for a MU
+  nGrid: 15     # how many MU to plot
 ---
 
 ```{r setup, include=FALSE}
@@ -295,7 +287,7 @@ nGames = MUtbl |>
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min 10 games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min {params$minMUGames} games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
@@ -430,7 +422,7 @@ nGames.diamond = MUtbl.diamond |>
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames.diamond} Ranked Games"),
-                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Diamond.RMD)} - min 10 games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Diamond.RMD)} - min {params$minMUGames} games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
@@ -462,14 +454,14 @@ MUtbl.Master <- tibble::tibble(
   opponentDeck = rep(TopCC,params$nGrid)
   ) |> 
   left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-  mutate( muWR = replace(muWR, muGames < 10, NA ) )
+  mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) )
 
 MUtbl.Diamond <- tibble::tibble( 
   playerDeck = rep(TopCC,each=params$nGrid),
   opponentDeck = rep(TopCC,params$nGrid)
   ) |> 
   left_join( MUtbl.diamond, by = c("playerDeck","opponentDeck")) |>
-  mutate( muWR = replace(muWR, muGames < 10, NA ) )
+  mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) )
 ```
 
 ```{r create-grid}
@@ -592,95 +584,6 @@ gtsave(data = MUgrid.gt.final,
 
 
 # flextable::save_as_image(x = ft, path = "images/mugrid.png") |> invisible()
-```
-
-```{r grid-diamond}
-# grid.diamond <- matrix(MUtbl.Diamond$muWR,
-#                        nrow = params$nGrid,
-#                        ncol = params$nGrid, byrow = T)
-# 
-# diag(grid.diamond) <- NA
-# colnames(grid.diamond) <- TopCC
-# 
-# grid.CI <- matrix(MUtbl.Diamond$CI,
-#                     nrow = params$nGrid,
-#                     ncol = params$nGrid, byrow = T)
-# 
-# diag(grid.CI) <- NA
-# colnames(grid.CI) <- sprintf("%s.v2",TopCC)
-# 
-# grid.CI <- grid.CI |>
-#   as.data.table()
-# 
-# grid.diamond.all <- cbind(grid.diamond,grid.CI)
-# 
-# MUgrid.gt.Diamond <- grid.diamond.all |>
-#   as.data.table() |>
-#   add_column( name = colnames(grid.diamond),.before = 1 ) |>
-#   rename(" "=1) |>
-#   gt() |>
-#   gtExtras::gt_color_rows(2:(params$nGrid+1),
-#                 # palette = c("#D73027", "white", "#1A9850" ),
-#                 palette = c("red", "white", "green"),
-#                 use_paletteer = F,
-#                 domain = c(0,1) ) |>
-#   fmt_percent(
-#     columns = 2:(params$nGrid+1),
-#     decimals = 1
-#   )
-# 
-# 
-# for (i in 1:params$nGrid ) {
-#   
-#   # MUgrid.gt <- MUgrid.gt |>
-#   #   gtExtras::gt_merge_stack(col1 = !!TopCC[i], col2 = !!sprintf("%s.v2",TopCC[i]) )
-#   
-#   MUgrid.gt.Diamond <- MUgrid.gt.Diamond |>
-#     cols_merge(
-#       columns = c(i+1,params$nGrid+i+1),
-#       hide_columns = (params$nGrid+i+1),
-#       # pattern = "{1}&mdash;{2}"
-#       ) |>
-#     text_transform(
-#       locations = cells_body(
-#         columns = (i+1)
-#         ),
-#       fn = function(x){
-#         upper <- word(x, 1)
-#         bottom <- word(x, -1)
-#         glue::glue(
-#           #595959 #grey35 / #7f7f7f #grey50
-#           "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{upper}</div>
-#            <div style='line-height:10px'><span style='color:#7f7f7f;font-size:10px'>{bottom}</span></div>"
-#         )
-#         }
-#       )
-#   
-# }
-# 
-# MUgrid.gt.Diamond |>
-#   cols_align(
-#     align = "center",
-#     columns = -1
-#   ) |>
-#   tab_options(
-#     data_row.padding = px(5),
-#     table.font.size = px(13),
-#     column_labels.font.size = px(10)
-#   ) |>
-#   cols_width(
-#     -1 ~ px(90),
-#      1 ~ px(120),
-#     # everything() ~ px(90)
-#   ) |>
-#   opt_table_font(
-#     font = "Chivo"
-#   ) |>
-#   tab_source_note(
-#   source_note = md(glue::glue("MatchUp values from Ranked games with ~HighDiamond Ranked players.
-#                               Order of the Archetypes based on the playrate.
-#                               Source: Metadata of games collected with RiotGames API")
-#   ))
 ```
 
 ## Row
