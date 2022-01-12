@@ -667,7 +667,8 @@ WR.DT.Reg |>
 ```
 
 ```{r lor-italia, results="hide"}
-WR.DT |>
+react_lor_italia <-
+  WR.DT |>
   filter(playrate >= 0.01) |>
   slice_max(playrate,n=10) |>
   # arrange(desc(WR)) |>
@@ -696,8 +697,10 @@ WR.DT |>
     ) |>
   reactablefmtr::add_title(glue("{params$patch} - Top10"), background_color = "white", font_family = "Helvetica") |>
   reactablefmtr::add_subtitle("Top10 Most Played decks of the week by WinRate", background_color = "white", font_family = "Roboto") |>
-  reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white", font_family = "Chivo") |>
-  reactablefmtr::save_reactable(glue::glue("./images/meta-report/{params$ind}-loritalia-playrate.png"))
+  reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white", font_family = "Chivo")
+  
+  
+reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("./images/meta-report/{params$ind}-loritalia-playrate.png"))
 ```
 
 
