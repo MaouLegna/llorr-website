@@ -3,7 +3,7 @@ params:
   ind: "MR040"
   patch: "Patch 3.00 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°40)"
-  description: "The meta that fits in the hand"
+  description: "The meta that fits in the hand (like a Poro)"
   cardlurl: "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01PZ020-full.png"
   prev:  "2021-11-29 18:00:00" #UTC tz / 'current' previous week start
   start: "2022-01-05 18:00:00" #UTC tz / 'current' week start
@@ -26,8 +26,8 @@ output:
     toc_float: true
     toc_depth: 3
     self_contained: false
-citation: false
-draft: TRUE
+citation: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -43,8 +43,8 @@ knitr::opts_chunk$set(
   fig.align  = 'center',
   fig.width  = 12,
   fig.height = 8,
-  # fig.path = "figures/prefix-"
-  fig.path   = glue::glue("./images/meta-report/{params$ind}-"),
+  # fig.path   = "figures/prefix-"
+  fig.path   = glue::glue("images/{params$ind}-"),
   layout     = "l-page",
   preview    = FALSE
 )
@@ -241,7 +241,7 @@ nGames_tbl |> #
     table.font.color.light = "black"
    )
 
-gtsave(nGames_tbl,"bytheNumbers.png") |> invisible()
+gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisible()
 ```
 # Regions
 
@@ -257,7 +257,7 @@ Region.Freq <- freq_by_faction(LoR.Melt.Master.RMD)
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plot-region-freq}
+```{r reg-freq-plot}
 #| fig.width=12,
 #| fig.height=8
 
@@ -267,8 +267,6 @@ plot_freq(
   subtitle = "number of times a region is included in a deck",
   caption = general.caption
   )
-
-# cowplot::save_plot(filename = glue::glue("./images/meta-report/{params$ind}-reg-freq.png"),plot = Reg.plot_freq, base_width = 12, base_height = 8)
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -302,7 +300,7 @@ Region.Freq.byCards <- freq_by_cards(LoR.Melt.Master.RMD)
 ::: {.panel}
 ### Plot {.panel-name}
 
-```{r plot-region-freq-bycards}
+```{r reg-freq-bycards-plot}
 #| fig.width=12,
 #| fig.height=8
 
@@ -317,8 +315,6 @@ plot_freq(
                        Source: Metadata of games collected with RiotGames API
                        Last Update: {now(tzone='UTC')}")
   )
-
-# cowplot::save_plot(filename = glue::glue("./images/meta-report/{params$ind}-reg-freq-bycards.png"),plot = Reg.plot_freq_bycards, base_width = 12, base_height = 8)
 ```
 :::
 
@@ -378,7 +374,7 @@ ChampionCombo <- tibble( playerDeck = topDeck ) |>
 ```
 
 
-```{r plot-Champion-PR}
+```{r champion-playrate-plot}
 #| fig.width=12,
 #| fig.height=8
 
@@ -427,8 +423,6 @@ ChampionCombo |>
     axis.title.y = element_text(face = "bold"),
     legend.position = c(0.8,0.1)
     )
-
-ggsave(glue::glue("./images/meta-report/{params$ind}-topPlayrate.png"),width = 12,height = 8) |> suppressMessages()
 ```
 :::
 
@@ -543,8 +537,6 @@ plot_daily(
   limit = .15 ) -> meta_evo
 
 meta_evo
-
-ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday.png"),plot = meta_evo, width=12, height=8)
 ```
 :::
 
@@ -577,8 +569,6 @@ plot_daily(
   limit = .15 ) -> meta_evo
 
 meta_evo
-
-ggsave(glue::glue("./images/meta-report/{params$ind}-playrate-daybyday-diamond.png"),plot = meta_evo, width=12, height=8)
 ```
 :::
 
@@ -889,7 +879,7 @@ MUgrid.gt.final |>
     # everything() ~ px(100)
   )
 
-gtsave(MUgrid.gt.final,glue::glue("./images/meta-report/{params$ind}-mugrid-gt.png"), vwidth = 1500, vheight = 1000) |> invisible()
+gtsave(MUgrid.gt.final,glue::glue("images/{params$ind}-mugrid-gt.png"), vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
 ```{r}
@@ -910,7 +900,7 @@ downloadthis::download_this(
 
 **Tier0** with LMI $\geq$ 97.5  **Tier1** with LMI $\in$ [85,97.5) **Tier2** with LMI $\in$ [60,85) **Tier3-** with LMI $<$ 60
 
-```{r lmi}
+```{r LMI}
 #| fig.width=12,
 #| fig.height=8
 
@@ -968,8 +958,6 @@ WR.DT |>
     x = "Win Index",
     y = "Freq Index",
     caption = general.caption)
-
-ggsave(glue::glue("./images/meta-report/{params$ind}-LMI.png"))
 ```
 
 > The LMI [^2] [^3] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
@@ -1075,7 +1063,7 @@ gtWinning |>
     table.font.color.light = "black"
    )
 
-gtsave(gtWinning, glue::glue("./images/meta-report/{params$ind}-topWin.png")   ) |> invisible()
+gtsave(gtWinning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible()
 ```
 
 # Cards Presence
