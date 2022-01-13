@@ -9,7 +9,6 @@ params:
   start: "2022-01-05 18:00:00" #UTC tz / 'current' week start
   end:   "2022-01-12 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
-
 title: | 
   `r params$title`
 description: |
@@ -700,7 +699,7 @@ react_lor_italia <-
   reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white", font_family = "Chivo")
   
   
-reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("./images/meta-report/{params$ind}-loritalia-playrate.png"))
+reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("images/{params$ind}-loritalia-playrate.png"))
 ```
 
 
@@ -1230,7 +1229,6 @@ gtfix |>
 
 ```{r twitter-meta}
 #| echo=FALSE
-
 metathis::meta() |>
   metathis::meta_description(
     glue::glue("{params$patch} - {params$description}")
