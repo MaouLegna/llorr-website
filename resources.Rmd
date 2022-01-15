@@ -15,8 +15,8 @@ suppressPackageStartupMessages({
 data_in <- tibble::tribble(
   ~Project, ~url, ~Description,
   "MatchUps", glue::glue("{base_url}/static/mu.html"), "Match Ups data that cover the same (current) cycle of buff/nerfs.",
-  "Bo3-Helper", "https://legnavv.shinyapps.io/Bo3-helper/", "Helper for Bo3. Using mostly the most played archetypes (data from 2.14/2.16).",
-  "Decks Codes/Structures", glue::glue("{base_url}/static/meta.html"), "Dashboard with Meta or Underdog Decks' Structures and Information of some deckcodes information"
+  "Bo3-Helper", "https://legnavv.shinyapps.io/Bo3-helper/", "Helper for Bo3. As of now it's rarely updated because I need to remake it.",
+  "Decks Codes/Structures", glue::glue("{base_url}/static/meta.html"), "Dashboard with Meta or Underdog Decks' Most played decklist and playrates over time"
 ) 
 data_in %>%
   reactable::reactable(
@@ -53,7 +53,7 @@ Regarding the Bo3-Helper, as it requires a server to work and the one I'm using 
 ### [`MatchUps`](https://llorr-stats.netlify.app/static/mu.html)
 Match Ups data that cover the same (current) cycle of buff/nerfs.
 ### [`Bo3-Helper`](https://legnavv.shinyapps.io/Bo3-helper/)
-Helper for Bo3. Using mostly the most played archetypes (still for 2.12/2.13).
+Helper for Bo3. Using mostly the most played archetypes.
 ### [`Meta Stats`](https://llorr-stats.netlify.app/static/meta.html)
 Dashboard with Meta or Underdog Decks' Structures and Information of some deckcodes information
 ```
