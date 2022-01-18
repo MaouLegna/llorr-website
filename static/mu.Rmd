@@ -11,8 +11,8 @@ params:
   # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
   start:   "2022-01-05 18:00:00" #UTC tz / 2.21 Balance
   end:     "2022-02-14 18:00:00" #UTC tz / 2.21 Balance
-  minMUGames: 5 # min number of games for a MU
-  nGrid: 15     # how many MU to plot
+  minMUGames: 20 # min number of games for a MU
+  nGrid: 15      # how many MU to plot
 ---
 
 ```{r setup, include=FALSE}
@@ -637,7 +637,7 @@ LastUpdate.box
 
 ```{r download-master}
 MUtbl |>
-  # filter( muGames > 10 ) |>
+  filter( muGames >= params$minMUGames ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   downloadthis::download_this(
     button_label = "Download MU (Master) data as .csv",
@@ -655,6 +655,7 @@ MUtbl |>
 
 ```{r download-extrs}
 MUtbl.diamond |>
+  filter( muGames >= params$minMUGames ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   downloadthis::download_this(
     button_label = "Download MU (~HighDiamond) data as .csv",
@@ -679,18 +680,18 @@ downloadthis::download_file(
 )
 ```
 
+```{r}
 ### Match Ups Grid (2.18/2.20)
 
-```{r}
-downloadthis::download_file(
-  path = file.path("images/mugrid_218_220.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download MU grid (2.18/2.20) as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+# downloadthis::download_file(
+#   path = file.path("images/mugrid_218_220.png"),
+#   # path = system.file("assets/css/all.min.css", package = "downloadthis"),
+#   button_label = "Download MU grid (2.18/2.20) as .png",
+#   button_type = "primary",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
 ```
 
 ## Column {data-width="750"}
