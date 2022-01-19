@@ -8,6 +8,7 @@ params:
   start: "2022-01-12 18:00:00" #UTC tz / 'current' week start
   end:   "2022-01-19 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
+
 title: | 
   `r params$title`
 description: |
@@ -24,7 +25,7 @@ output:
     toc_float: true
     toc_depth: 3
     self_contained: false
-citation: TRUE
+citation: false
 draft: FALSE
 ---
 
@@ -43,8 +44,8 @@ knitr::opts_chunk$set(
   fig.height = 8,
   # fig.path   = "figures/prefix-"
   fig.path   = glue::glue("images/{params$ind}-"),
-  layout     = "l-page",
-  preview    = FALSE
+  layout     = "l-page"
+  # preview    = TRUE
 )
 
 #' R Option
