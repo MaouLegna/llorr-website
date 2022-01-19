@@ -17,7 +17,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 01-12-2022
+date: 01-19-2022
 output:
  distill::distill_article:
     toc: true
@@ -25,7 +25,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: TRUE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}

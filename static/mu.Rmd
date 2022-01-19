@@ -11,7 +11,7 @@ params:
   # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
   start:   "2022-01-05 18:00:00" #UTC tz / 2.21 Balance
   end:     "2022-02-14 18:00:00" #UTC tz / 2.21 Balance
-  minMUGames: 20 # min number of games for a MU
+  minMUGames: 30 # min number of games for a MU
   nGrid: 15      # how many MU to plot
 ---
 
@@ -640,7 +640,8 @@ MUtbl |>
   filter( muGames >= params$minMUGames ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   downloadthis::download_this(
-    button_label = "Download MU (Master) data as .csv",
+    button_label = glue("Download MU (Master) data as .csv
+                        min {params$minMUGames} games"),
     output_name = "mutable",
     button_type = "success",
     has_icon = TRUE,
@@ -658,7 +659,8 @@ MUtbl.diamond |>
   filter( muGames >= params$minMUGames ) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
   downloadthis::download_this(
-    button_label = "Download MU (~HighDiamond) data as .csv",
+    button_label = glue("Download MU (~HighDiamond) data as .csv
+                        min {params$minMUGames} games"),
     output_name = "mutable",
     button_type = "success",
     has_icon = TRUE,
