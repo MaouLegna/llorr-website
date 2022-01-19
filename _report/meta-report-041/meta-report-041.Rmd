@@ -3,8 +3,8 @@ params:
   ind: "MR041"
   patch: "Patch 3.00 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°41)"
-  description: "If you have Arachnophobia maybe don't play now"
-  cardlurl: "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01SI053-full.png"
+  description: "Ore no Turn... DRAW!"
+  cardlurl: "https://dd.b.pvp.net/latest/set2/en_us/img/cards/02BW026T3-full.png"
   start: "2022-01-12 18:00:00" #UTC tz / 'current' week start
   end:   "2022-01-19 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -1239,18 +1239,18 @@ This content was created under Riot Games 'Legal Jibber Jabber' policy using ass
 
 ```{r twitter-meta}
 #| echo=FALSE
-# metathis::meta() |>
-#   metathis::meta_description(
-#     glue::glue("{params$patch} - {params$description}")
-#   ) |> 
-#   metathis::meta_viewport() |> 
-#   metathis::meta_social(
-#     title = params$title,
-#     url = "https://www.llorr-stats.com/",
-#     image = params$cardlurl,
-#     og_type = "website",
-#     og_author = "Legna",
-#     twitter_card_type = "summary",
-#     twitter_creator = "@Maou_Legna"
-#   )
+metathis::meta() |>
+  metathis::meta_description(
+    glue::glue("{params$patch} - {params$description}")
+  ) |>
+  metathis::meta_viewport() |>
+  metathis::meta_social(
+    title = params$title,
+    url = "https://www.llorr-stats.com/",
+    image = params$cardlurl,
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
 ```
