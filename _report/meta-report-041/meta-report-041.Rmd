@@ -73,7 +73,6 @@ general.caption <- glue::glue("{params$patch}
                               Last Update: {now(tzone='UTC')}")
 ```
 
-
 ```{r raw-data}
 # load Master
 LoR.Match.DT.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA))
