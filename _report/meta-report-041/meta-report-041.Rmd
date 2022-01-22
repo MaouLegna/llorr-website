@@ -712,6 +712,8 @@ reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("imag
 
 Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^1]
 
+[^1]: Min number of games 50, during the times a meta/ladder just changed.
+
 ```{r print-under-tableWinRate}
 WR.DT |>
   filter( nGames >= 50 & WR >= 0.50 & playrate >= 0.001 & playrate < 0.01) |>
@@ -745,8 +747,6 @@ WR.DT |>
 
 :::::
 :::
-
-[^1]: Min number of games 50, during the times a meta/ladder just changed.
 
 # Match Ups
 

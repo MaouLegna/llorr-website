@@ -41,9 +41,28 @@ plot(mtcars)
 ```
 
 ```{r}
-knitr::include_graphics(path = file.path("images","MRXX-not-region-1.png"))
+knitr::include_graphics(path = file.path("images","MRXX-not-region-1.png") )
 ```
 
+```{r download-grid}
+# downloadthis::download_this(
+#   file.path("images","MRXX-not-region-1.png"),
+#   button_label = "Download MU grid as .png",
+#   button_type = "primary",
+#   has_icon = TRUE,
+#   icon = "fa fa-save"
+# )
+
+downloadthis::download_file(
+  path = file.path("images","MRXX-not-region-1.png"),
+  output_name = "Files from downloadthis",
+  button_label = "Download files",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
 
 ```{r twitter-meta}
 #| echo=FALSE
