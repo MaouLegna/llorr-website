@@ -177,31 +177,6 @@ if (any(c(LoR.Melt.Master.RMD[  is.na(playerID), .N ],
 ```
 # Data
 
-```{r}
-#| layout="l-body"
-LoR.Account.RMD |>
-  filter(master=="diamond" |
-           (master=="master" & gameName %in% masterEU$gameName & activeShard=="europe") |
-           (master=="master" & gameName %in% masterNA$gameName & activeShard=="americas") |
-           (master=="master" & gameName %in% masterAPAC$gameName & activeShard=="apac")
-  ) |>
-  select(activeShard,rank=master) |>
-  mutate(rank = factor(rank, levels = c("master","diamond"), labels = c("Master","HighDiamond") ) ) |>
-  tbl_summary(by = activeShard) |>
-  as_gt() |>
-  gtExtras::gt_theme_538() |>
-  tab_header(
-    title = glue::glue("{params$patch} / Players Info")
-  ) |>
-  tab_source_note(source_note = md(general.caption)) |>
-  tab_options(
-    data_row.padding = px(1.2),
-    table.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   )
-```
-
 ```{r nGames-data}
 max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
   slice_max(game_start_time_utc,n=1,with_ties = F) |> 
@@ -213,13 +188,43 @@ merge.tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
 
 nGames.Master  <- LoR.Melt.Master.RMD[,.N]
 nGames.Diamond <- LoR.Melt.Diamond.RMD[,.N]
+
+nMaster  <- sum(masterEU[ !is.na(puuid), .N ],masterNA[ !is.na(puuid), .N ],masterAPAC[ !is.na(puuid), .N ])
+nDiamond <- LoR.Account.RMD[ master == "diamond" , .N ]
 ```
 
-Number of (Ranked) matches analysed **`r format(nGames.Master/2,scientific = F)`** or **`r format(nGames.Master,scientific = F)`** games. / **Master** Players
+Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond
 
-Number of (Ranked) matches analysed **`r format(nGames.Diamond/2,scientific = F)`** or **`r format(nGames.Diamond,scientific = F)`** games. / **~HighDiamond** Players
+`r kableExtra::text_spec("Note:", color = "red")` Reminding that HighDiamond are defined as "players who played against Master player in a Ranked games but ARE NOT Master themselves"
 
-Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
+```{r players-by-the-numbers}
+#| layout="l-body"
+LoR.Account.RMD |>
+  filter(master=="diamond" |
+           (master=="master" & gameName %in% masterEU$gameName & activeShard=="europe") |
+           (master=="master" & gameName %in% masterNA$gameName & activeShard=="americas") |
+           (master=="master" & gameName %in% masterAPAC$gameName & activeShard=="apac")
+  ) |>
+  select(activeShard,rank=master) |>
+  mutate(across(everything(), str_to_title)) |>
+  mutate(rank = factor(rank, levels = c("Master","Diamond") ) ) |>
+  tbl_summary(by = activeShard,
+               label = list(rank = "Player Rank")) |>
+  modify_header(label ~ "**Shard/Server**") |>
+  bold_labels() |>
+  # modify_caption( glue::glue("{params$patch} - Players Info") ) |>
+  as_gt() |>
+  tab_options(
+    data_row.padding = px(1.2),
+    table.background.color = "whitesmoke",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   )
+```
+
+Number of (Ranked) **Master** matches analysed **`r format(nGames.Master/2,scientific = F)`** or **`r format(nGames.Master,scientific = F)`** games.
+
+Number of (Ranked) **~HighDiamond** matches analysed **`r format(nGames.Diamond/2,scientific = F)`** or **`r format(nGames.Diamond,scientific = F)`** games.
 
 ```{r table-nGames-data}
 #| layout="l-body"
@@ -265,6 +270,10 @@ nGames_tbl |> #
 
 gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisible()
 ```
+
+Player to Games Ratio:  **`r round(nGames.Master/nMaster,1)`** at Master / **`r round(nGames.Diamond/nDiamond,1)`** at Diamond
+
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
 # Regions
 
