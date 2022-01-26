@@ -18,14 +18,14 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 01-01-1986
+date: 01-26-2022
 output:
  distill::distill_article:
     toc: true
     toc_float: true
     toc_depth: 3
     self_contained: false
-citation: TRUE
+citation: FALSE
 draft: FALSE
 ---
 
@@ -191,11 +191,19 @@ nGames.Diamond <- LoR.Melt.Diamond.RMD[,.N]
 
 nMaster  <- sum(masterEU[ !is.na(puuid), .N ],masterNA[ !is.na(puuid), .N ],masterAPAC[ !is.na(puuid), .N ])
 nDiamond <- LoR.Account.RMD[ master == "diamond" , .N ]
+
+LoR.Melt.Master.RMD |>
+  filter( playerPuuid %in% LoR.Account.RMD[ master == "master" , puuid ]  ) |>
+  distinct(match_key,playerPuuid) |>
+  NROW() -> gamesDiamond
+
+LoR.Melt.Diamond.RMD |>
+  filter( playerPuuid %in% LoR.Account.RMD[ master == "diamond" , puuid ]  ) |>
+  distinct(match_key,playerPuuid) |>
+  NROW() -> gamesMaster
 ```
 
-Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond
-
-`r kableExtra::text_spec("Note:", color = "red")` Reminding that HighDiamond are defined as "players who played against Master player in a Ranked games but ARE NOT Master themselves"
+Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond ^[HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"]
 
 ```{r players-by-the-numbers}
 #| layout="l-body"
@@ -271,7 +279,7 @@ nGames_tbl |> #
 gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisible()
 ```
 
-Player to Games Ratio:  **`r round(nGames.Master/nMaster,1)`** at Master / **`r round(nGames.Diamond/nDiamond,1)`** at Diamond
+<!-- Player to Games Ratio:  **`r round(gamesMaster/nMaster,1)`** at Master / **`r round(gamesDiamond/nDiamond,1)`** at Diamond ^[ Approximation, number of games from Master player to Master player ] -->
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
@@ -739,9 +747,7 @@ reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("imag
 ::: {.panel}
 ### Underdog {.panel-name}
 
-Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%)[^1]
-
-[^1]: Min number of games 50, during the times a meta/ladder just changed.
+Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%) ^[Min number of games 50, during the times a meta/ladder just changed.]
 
 ```{r print-under-tableWinRate}
 WR.DT |>
@@ -994,11 +1000,11 @@ WR.DT |>
     caption = general.caption)
 ```
 
-> The LMI [^2] [^3] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+> The LMI [^1] [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
-[^2]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
+[^1]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
 
-[^3]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
+[^2]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
 
 # Win Marathons Leaders
 
