@@ -73,21 +73,46 @@ noxpnz <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-websi
 ```
 
 ```{r}
+# MonoDeckDT <-
 # example_archetye_03 |>
 #   mutate(cards.region = if_else(!is.na(cards.region.fix), cards.region.fix, cards.region ) )  |>
+#   mutate(var          = if_else(!is.na(cards.fix), cards.fix, cards) )  |>
 #   mutate(
 #     alle = map(allegiance, ~str_split(.x,pattern = ",")[[1]] ),
 #     alle = map(alle,unique),
 #     alle = map_chr(alle,~str_flatten(.x,collapse = ",")),
 #   ) |>
 #   filter(!str_detect(alle,",") | is.na(alle)) |>  # 7 decks with double Allegiance
-#   mutate( alle.region = str_sub(alle,3,4) ) |>
+#   mutate(alle.region = str_sub(alle,3,4) ) |>
 #   separate_rows(cards.region,cards.region.freq, sep = ",",convert = T ) |>
 #   # take the part with more cards
 #   group_by(deck_code) |>
 #   slice_max(cards.region.freq,n=1,with_ties = T) |>
 #   ungroup() |>
-#   filter(cards.region.freq > 32 | alle.region==cards.region) -> MonoDeckDT
+#   filter(cards.region.freq > 32 | alle.region==cards.region)
+# 
+# MonoDeckDT |>
+#   filter(cards.region=="IO") |>
+#   mutate(count = str_count(var,"IO")) |>
+#   filter(count > 32 | alle.region == "IO") |>
+#   select(-var) |>
+#   arrange(archetype,desc(count)) -> Ionia
+#   fwrite("Ionia2.csv",quote = TRUE)
+
+# IoniaOld <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/Ionia.csv",na.strings = c("",NA))
+# 
+# Ionia <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/Ionia2.csv",na.strings = c("",NA))
+# 
+# Ionia |>
+#   left_join(IoniaOld |>
+#               select(deck_code,archetype_self),by="deck_code") |>
+#   select(deck_code,archetype,archetype_self,count,everything()) |>
+#   fwrite("Ionia.csv",quote = TRUE)
+
+
+
+
+
 ```
 
 

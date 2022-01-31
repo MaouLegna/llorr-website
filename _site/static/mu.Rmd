@@ -731,21 +731,21 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to bA1ance for the recent support (ᐛ)ᕗ
+Special thanks to bA1ance for the recent support (ᐛ)ᕗ (January/February 2022)
 
 ```{r update-Shiny}
-# Top30CC <- WR.DT.extra |>
-#   slice_max(playrate,n=30) |>
+# Last 7 days most played
+# TopCC <- LoR.Melt.Matches.RMD |>
+#   filter( game_start_time_utc >= now()-days(7) ) |>
+#   count(playerDeck) |>
+#   slice_max(n, n = 30,with_ties = F ) |> 
 #   pull(playerDeck)
 # 
-# MUtbl.diamond |>
-#   filter(playerDeck %in% Top30CC & opponentDeck %in% Top30CC ) |>
-#   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle01-MUtbl.csv"))
-
-
-# WR.DT |>
-#   fwrite(file.path("C:","LlorR","data","raw","S10","WRtbl_S10_218_220.csv"))
-# 
-# MUtbl |>
-#   fwrite(file.path("C:","LlorR","data","raw","S10","MUtbl_S10_218_220.csv"))
+# tibble::tibble( 
+#   playerDeck = rep(TopCC,each=params$nGrid),
+#   opponentDeck = rep(TopCC,params$nGrid)
+#   ) |> 
+#   left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
+#   mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
+#   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle03-MUtbl.csv"))
 ```
