@@ -117,7 +117,7 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 # Master {data-icon="fa-table"}
 
 ```{r prepara-data}
-LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
+LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   filter( game_type == "Ranked"  ) |>
   filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
@@ -160,7 +160,7 @@ LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
 ```{r process-MU-master}
 #' WR tbl
 #'#######
-WR.DT <- LoR.Melt.Matches.RMD |>
+WR.DT <- LoR.Melt.Master.RMD |>
   filter(game_outcome!="tie") |>
   select( playerDeck,opponentDeck,game_outcome ) |>
   group_by(playerDeck) |>
@@ -175,7 +175,7 @@ WR.DT <- LoR.Melt.Matches.RMD |>
 
 #' MU tbl the date is already filtered
 #'####################################
-MUtbl <- LoR.Melt.Matches.RMD |>
+MUtbl <- LoR.Melt.Master.RMD |>
   filter(game_outcome != "tie" ) |>
   select(playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
   group_by(playerDeck,opponentDeck,factions) |>
@@ -287,7 +287,7 @@ nGames = MUtbl |>
   pull()
 
 flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
-                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min {params$minMUGames} games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Master.RMD)} - min {params$minMUGames} games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
@@ -441,7 +441,7 @@ LastUpdate.box
 
 ```{r get-WR-Top}
 # Last 7 days most played
-TopCC <- LoR.Melt.Matches.RMD |>
+TopCC <- LoR.Melt.Master.RMD |>
   filter( game_start_time_utc >= now()-days(7) ) |>
   count(playerDeck) |>
   slice_max(n, n = params$nGrid,with_ties = F ) |> 
@@ -592,7 +592,7 @@ gtsave(data = MUgrid.gt.final,
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{nGames} Master - Ranked Games"),
-                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Matches.RMD)} - min 10 games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Master.RMD)} - min 10 games"),
                         icon = "fa-table",
                         color = "#FA7404")
 ```
@@ -734,18 +734,36 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 Special thanks to bA1ance for the recent support (ᐛ)ᕗ (January/February 2022)
 
 ```{r update-Shiny}
-# Last 7 days most played
-# TopCC <- LoR.Melt.Matches.RMD |>
-#   filter( game_start_time_utc >= now()-days(7) ) |>
-#   count(playerDeck) |>
-#   slice_max(n, n = 30,with_ties = F ) |> 
-#   pull(playerDeck)
-# 
-# tibble::tibble( 
-#   playerDeck = rep(TopCC,each=params$nGrid),
-#   opponentDeck = rep(TopCC,params$nGrid)
-#   ) |> 
-#   left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-#   mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
-#   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle03-MUtbl.csv"))
+TopCC <- LoR.Melt.Master.RMD |>
+  count(playerDeck) |>
+  slice_max(n, n = 30,with_ties = F ) |> 
+  pull(playerDeck)
+
+MUtbl <- LoR.Melt.Master.RMD |>
+  bind_rows(LoR.Melt.Diamond.RMD) |>
+  filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
+  # removing the first week to remove "noise"
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC")+days(7),as.POSIXct(params$end,"UTC")) ) |>
+  distinct(match_key,playerPuuid,.keep_all = T) |>
+  filter(game_outcome!="tie") |>
+  group_by(playerDeck,opponentDeck) |>
+  summarise(muWin   = sum(game_outcome=="win"),
+            muGames = n(),
+            muWR=mean(game_outcome=="win") ) |>
+  ungroup() |>
+  mutate(playrate = muWin/muGames) |>
+  as.data.table() |>
+  {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
+  mutate( 
+    okCI:=(!between(0.50,LCI,UCI)),
+    direction:=ifelse(muWR>0.50,"POS","NEG"),
+    CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
+
+tibble::tibble( 
+  playerDeck = rep(TopCC,each=30),
+  opponentDeck = rep(TopCC,30)
+  ) |> 
+  left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
+  # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
+  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle02-MUtbl.csv"))
 ```
