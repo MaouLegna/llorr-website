@@ -95,7 +95,8 @@ timeBlock.9.end <- ymd_hms(glue::glue("{params$seasonalDate} 21:00:00")) + lubri
 #'##############
 LoR.Match.RMD      <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA))
 
-LoR.Seasonal <- fread(file.path("C:","LlorR","data","raw","LoR_SeasonalDT.csv"),header = T, na.strings = c("", NA) ) |>
+LoR.Seasonal <- LoR.Match.RMD |>
+  # fread(file.path("C:","LlorR","data","raw","LoR_SeasonalDT.csv"),header = T, na.strings = c("", NA) ) |>
   filter( game_mode == "SeasonalTournamentLobby" & str_detect(game_version, "live_3_01") )
   
 #' load Account
@@ -113,7 +114,7 @@ LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv")
 #' Limit the Deck DT to make the fixes much faster
 deck_filter <- LoR.Match.RMD |>
   bind_rows(LoR.Seasonal) |>
-  filter( game_start_time_utc >= (with_tz(force_tz(timeBlock.1.start,"Japan") + hours(1),"UTC")-lubridate::days(7)) & game_start_time_utc < (with_tz(force_tz(timeBlock.1.start,"Japan") + hours(1),"UTC")+days(2)) ) |>
+  filter( game_start_time_utc >= (with_tz(force_tz(timeBlock.1.start,"Japan") + minutes(60),"UTC")-lubridate::days(7)) & game_start_time_utc < (with_tz(force_tz(timeBlock.1.start,"Japan") + minutes(60),"UTC")+days(2)) ) |>
   #' Base filters
   filter( game_type=="Ranked" | game_mode == "SeasonalTournamentLobby" ) |>
   select(deck_code_1,deck_code_2) |>
@@ -162,8 +163,8 @@ LoR.Melt.Seasonal <- LoR.Seasonal |>
 LoR.Melt.Matches.RMD <- LoR.Match.RMD |>
   filter( game_type=="Ranked" ) |>
   filter( game_start_time_utc %within% interval(
-    with_tz(force_tz(timeBlock.1.start,"Japan") + hours(1),"UTC")-lubridate::days(7),
-    with_tz(force_tz(timeBlock.1.start,"Japan") + hours(1),"UTC"))
+    with_tz(force_tz(timeBlock.1.start,"Japan") + minutes(60),"UTC")-lubridate::days(7),
+    with_tz(force_tz(timeBlock.1.start,"Japan") + minutes(60),"UTC"))
   ) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
@@ -355,30 +356,32 @@ gtSeasonal
 
 ```{r compute-games-apac}
 Game.Result.APAC <- LoR.Melt.Seasonal |>
-  filter( server=="apac" ) |>
+  filter(server=="apac" ) |>
   # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
-  group_by( playerID,opponentID,server ) |>
-  mutate(   timeBlock = min(game_start_time_utc) |> {\(x) as_datetime(x, tz="UTC")}() ) |>
-  group_by(  playerID,opponentID,server,timeBlock ) |>
+  group_by(playerID,opponentID,server ) |>
+  mutate(timeBlock = min(game_start_time_utc) |> {\(x) as_datetime(x, tz="UTC")}() ) |>
+  group_by(playerID,opponentID,server,timeBlock ) |>
   arrange( timeBlock ) |>
-  summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
-  arrange( playerID ) |>
+  summarise(result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
+  arrange( playerID, timeBlock ) |>
+  ungroup() |>
   # Identify the round with the official schedule
-  mutate( round = case_when(
+  mutate(round = case_when(
     # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
     # JST = UTC - 9hrs
-    timeBlock > with_tz(force_tz(timeBlock.1.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"Japan") + hours(1),"UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan") + hours(1),"UTC") ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan") + hours(1),"UTC") ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan") + hours(1),"UTC") ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan") + hours(1),"UTC") ~ 5, # 16:15
+    timeBlock > with_tz(force_tz(timeBlock.1.start,"Japan") + minutes(60),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"Japan") + minutes(60),"UTC") ~ 1, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"Japan") + minutes(60),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"Japan") + minutes(60),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"Japan") + minutes(60),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"Japan") + minutes(60),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"Japan") + minutes(60),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"Japan") + minutes(60),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"Japan") + minutes(60),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"Japan") + minutes(60),"UTC") ~ 5, # 16:15
     
-    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan") + hours(1),"UTC") ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan") + hours(1),"UTC") ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan") + hours(1),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan") + hours(1),"UTC") ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan") + hours(1),"UTC") ~ 9, # 21:00
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"Japan") + minutes(145),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"Japan") + minutes(145),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"Japan") + minutes(145),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"Japan") + minutes(145),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"Japan") + minutes(145),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"Japan") + minutes(145),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"Japan") + minutes(145),"UTC") ~ 9 # 21:00
     )
   ) |>
+  group_by(playerID,opponentID,server,timeBlock ) |>
   # number of won games in the match
   mutate( nWin = str_count(result,"win") ) |>
   # is the match won?
@@ -419,6 +422,7 @@ Game.Result.EU <- LoR.Melt.Seasonal |>
   arrange( timeBlock ) |>
   summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
   arrange( playerID, timeBlock ) |>
+  ungroup() |>
   # Identify the round with the official schedule
   mutate( round = case_when(
     # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
@@ -480,18 +484,19 @@ Game.Result.NA <- LoR.Melt.Seasonal |>
   arrange( timeBlock ) |>
   summarise( result = paste(game_outcome,collapse = "," ), ldeck  = list(playerDeck) ) |>
   arrange( playerID, timeBlock ) |>
+  ungroup() |>
   # Identify the round with the official schedule
   mutate( round = case_when(
     timeBlock > with_tz(force_tz(timeBlock.1.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end,"US/Central"),"UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.2.end,"US/Central"),"UTC")+minutes(25) ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.3.end,"US/Central"),"UTC")+minutes(25) ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.4.end,"US/Central"),"UTC")+minutes(25) ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.5.end,"US/Central"),"UTC")+minutes(25) ~ 5, # 16:15
+    timeBlock > with_tz(force_tz(timeBlock.2.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end,"US/Central"),"UTC") ~ 2, # 13:00
+    timeBlock > with_tz(force_tz(timeBlock.3.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end,"US/Central"),"UTC") ~ 3, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.4.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end,"US/Central"),"UTC") ~ 4, # 15:10
+    timeBlock > with_tz(force_tz(timeBlock.5.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end,"US/Central"),"UTC") ~ 5, # 16:15
     
-    timeBlock > with_tz(force_tz(timeBlock.6.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.6.end,"US/Central"),"UTC")+minutes(25) ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.7.end,"US/Central"),"UTC")+minutes(25) ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start,"US/Central"),"UTC")+minutes(25) & timeBlock <= with_tz(force_tz(timeBlock.8.end,"US/Central"),"UTC")+minutes(25) ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start,"US/Central"),"UTC")+minutes(25) ~ 9, # 21:00
+    timeBlock > with_tz(force_tz(timeBlock.6.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end,"US/Central"),"UTC") ~ 6, # 17:45
+    timeBlock > with_tz(force_tz(timeBlock.7.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end,"US/Central"),"UTC") ~ 7, # 18:50
+    timeBlock > with_tz(force_tz(timeBlock.8.start,"US/Central"),"UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end,"US/Central"),"UTC") ~ 8, # 19:55
+    timeBlock > with_tz(force_tz(timeBlock.9.start,"US/Central"),"UTC") ~ 9, # 21:00
     )
   ) |>
   # number of won games in the match
@@ -898,9 +903,7 @@ by="deck"
   reactablefmtr::add_subtitle(params$description, background_color = "whitesmoke", font_family = "Roboto") |>
   reactablefmtr::add_source(glue::glue("Relative frequencies from all data or only lineUps with full information
                                        Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo")
-  
-react.LU.Stat |>
-  reactablefmtr::save_reactable(glue::glue("images/{params$ind}-deck.png"))
+  # reactablefmtr::save_reactable(glue::glue("images/{params$ind}-deck.png"))
 
 react.LU.Stat
 ```
@@ -1011,7 +1014,7 @@ gtfix
 ## Table version
 
 ```{r}
-# gtLMI
+gtLMI
 ```
 :::
 
@@ -1032,7 +1035,8 @@ LMI.DT |>
   ungroup() |>
   ggplot( aes(x=WR_ind, y=PR_ind, size = LMI, color = tier, text=tooltip)) +
   geom_point(alpha=0.6) +
-  scale_size(range = c(5, 15), name="LMI") +
+  scale_size(range = c(1, 15), name="LMI") +
+  scale_color_manual(breaks = c("Tier0", "Tier1", "Tier2","Tier3-"), values=rcartocolor::carto_pal(4, "Bold") ) +
   theme_539() +
   geom_label_repel( 
     aes(label=tooltip),
@@ -1048,15 +1052,13 @@ LMI.DT |>
     min.segment.length = 0,
     segment.linetype = 2,
     segment.color = 'grey50'
-    # nudge_y = 0
   ) + 
-  guides(colour = guide_legend(override.aes = list(size=10)),
-         size = FALSE ) +
-  theme( legend.position = "top",
-         legend.background = element_blank(),
-         legend.title = element_text(size=9, lineheight = 1.3),
-         legend.justification = "right"
-         ) +
+  guides(colour = guide_legend(override.aes = list(size=10)), size = FALSE ) +
+  theme(
+    legend.position = "top",
+    legend.background = element_blank(),
+    legend.title = element_text(size=9, lineheight = 1.3),
+    legend.justification = "right") +
   labs(
     title = "Top15 Deck Peformances",
     subtitle = "Deck's Peformances of the top15 best decks by highest value of LMI",
@@ -1066,8 +1068,6 @@ LMI.DT |>
                                       LMI computed with the improved version which included banrate and ladder win rates
                                       Source: Source: Metadata of games collected with RiotGames API"))
   )
-  # xlim( 0,1 ) +
-  # ylim( 0,1 )
 
 ggsave(glue::glue("images/{params$ind}-LMI.png"))
 ```
@@ -1183,11 +1183,11 @@ Region.Freq.plot <- Region.Freq |>
     subtitle = "number of times a region is included in a deck",
     caption = element_text(glue::glue("{params$description}
                                       Source: Metadata of games collected with RiotGames API"))
-    ) |> suppressMessages()
-
-ggsave(glue::glue("images/{params$ind}-RegionPR.png"),plot = Region.Freq.plot, width = 12, height = 8)
+    )
 
 Region.Freq.plot
+
+ggsave(glue::glue("images/{params$ind}-RegionPR.png"),plot = Region.Freq.plot, width = 12, height = 8) |> invisible()
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
