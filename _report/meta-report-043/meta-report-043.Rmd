@@ -203,19 +203,20 @@ LoR.Melt.Diamond.RMD |>
   NROW() -> gamesMaster
 ```
 
-Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond ^[HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"]
+<!-- Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond ^[HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"] -->
 
 ```{r players-by-the-numbers}
 #| layout="l-body"
 LoR.Account.RMD |>
-  filter(master=="diamond" |
-           (master=="master" & gameName %in% masterEU$gameName & activeShard=="europe") |
-           (master=="master" & gameName %in% masterNA$gameName & activeShard=="americas") |
-           (master=="master" & gameName %in% masterAPAC$gameName & activeShard=="apac")
+  filter(
+    # master=="diamond" |
+    (master=="master" & gameName %in% masterEU$gameName & activeShard=="europe") |
+      (master=="master" & gameName %in% masterNA$gameName & activeShard=="americas") |
+        (master=="master" & gameName %in% masterAPAC$gameName & activeShard=="apac")
   ) |>
   select(activeShard,rank=master) |>
   mutate(across(everything(), str_to_title)) |>
-  mutate(rank = factor(rank, levels = c("Master","Diamond") ) ) |>
+  # mutate(rank = factor(rank, levels = c("Master","Diamond") ) ) |>
   tbl_summary(by = activeShard,
                label = list(rank = "Player Rank")) |>
   modify_header(label ~ "**Shard/Server**") |>
@@ -227,7 +228,11 @@ LoR.Account.RMD |>
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
-   )
+   ) -> nPlayer_tbl
+
+nPlayer_tbl
+
+gtsave(nPlayer_tbl, glue::glue("images/{params$ind}-players.png")) |> invisible()
 ```
 
 Number of (Ranked) **Master** matches analysed **`r format(nGames.Master/2,scientific = F)`** or **`r format(nGames.Master,scientific = F)`** games.
@@ -258,15 +263,15 @@ nGames_tbl <- tbl_merge(
   tab_footnote(
     footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )),
     locations = cells_title(groups = c("title"))
-    ) |>
-  tab_footnote(
-    footnote = md(glue::glue(
-      "EU Master {masterEU[,.N]}/{masterEU[!is.na(puuid),.N]}
-      NA Master {masterNA[,.N]}/{masterNA[!is.na(puuid),.N]}
-      APAC Master {masterAPAC[,.N]}/{masterAPAC[!is.na(puuid),.N]}"
-      )),
-    locations = cells_column_spanners(spanners = everything())
-  ) 
+    )
+  # tab_footnote(
+  #   footnote = md(glue::glue(
+  #     "EU Master {masterEU[,.N]}/{masterEU[!is.na(puuid),.N]}
+  #     NA Master {masterNA[,.N]}/{masterNA[!is.na(puuid),.N]}
+  #     APAC Master {masterAPAC[,.N]}/{masterAPAC[!is.na(puuid),.N]}"
+  #     )),
+  #   locations = cells_column_spanners(spanners = everything())
+  # ) 
 
 nGames_tbl |> #
   tab_options(
@@ -302,8 +307,8 @@ Region.Freq <- freq_by_faction(LoR.Melt.Master.RMD)
 #| fig.height=8
 
 plot_freq(
-  Region.Freq,
-  nGames.Master,
+  data = Region.Freq,
+  nGames = nGames.Master,
   subtitle = "number of times a region is included in a deck",
   caption = general.caption
   )
@@ -560,12 +565,12 @@ Champion.deck.daily <- LoR.Melt.Master.RMD |>
   arrange(game_start_time_utc) |>
   select(game_start_time_utc,playerDeck) |>
   mutate(num_cc = factor(playerDeck) |> as.numeric() ) |>
-  as.data.table() |>
-  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ][ , n:=sum(num_cc), by=playerDeck ] }()
-  # mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
+  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ]}() |>
+  select(!num_cc) |>
+  mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
 
-fct_values = Champion.deck.daily |>
-  distinct(playerDeck,n) |>
+fct_values <- LoR.Melt.Master.RMD |> 
+  count(playerDeck) |>
   slice_max(n, n = m) |>
   pull(playerDeck)
 
@@ -592,12 +597,12 @@ Champion.deck.daily <- LoR.Melt.Diamond.RMD |>
   arrange(game_start_time_utc) |>
   select(game_start_time_utc,playerDeck) |>
   mutate(num_cc = factor(playerDeck) |> as.numeric() ) |>
-  as.data.table() |>
-  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ][ , n:=sum(num_cc), by=playerDeck ] }()
-  # mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
-
-fct_values = Champion.deck.daily |>
-  distinct(playerDeck,n) |>
+  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ]}() |>
+  select(!num_cc) |>
+  mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
+  
+fct_values <- LoR.Melt.Diamond.RMD |> 
+  count(playerDeck) |>
   slice_max(n, n = m) |>
   pull(playerDeck)
 
@@ -1109,7 +1114,6 @@ gtsave(gtWinning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible
 # Cards Presence
 
 ```{r process-UniqueCards}
-LoR.Melt.Master.RMD[ cards.region.fix == "" , cards.region.fix:=NA   ]
 LoR.Melt.Master.RMD[ !is.na(cards.region.fix), cards:=cards.fix  ]
 
 DeckWeight <- LoR.Melt.Master.RMD |>
@@ -1270,38 +1274,38 @@ gtfix |>
 This content was created under Riot Games 'Legal Jibber Jabber' policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
 
 ```{r update-Shiny}
-TopCC <- LoR.Melt.Master.RMD |>
-  count(playerDeck) |>
-  slice_max(n, n = 30,with_ties = F ) |> 
-  pull(playerDeck)
-
-LoR.Melt.Master.RMD |>
-  bind_rows(LoR.Melt.Diamond.RMD) |>
-  filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
-  # removing the first week to remove "noise"
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
-  distinct(match_key,playerPuuid,.keep_all = T) |>
-  filter(game_outcome!="tie") |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise(muWin   = sum(game_outcome=="win"),
-            muGames = n(),
-            muWR=mean(game_outcome=="win") ) |>
-  ungroup() |>
-  mutate(playrate = muWin/muGames) |>
-  as.data.table() |>
-  {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
-  mutate( 
-    okCI:=(!between(0.50,LCI,UCI)),
-    direction:=ifelse(muWR>0.50,"POS","NEG"),
-    CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) -> MUtbl
-
-tibble::tibble( 
-  playerDeck = rep(TopCC,each=30),
-  opponentDeck = rep(TopCC,30)
-  ) |> 
-  left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-  # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
-  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle02-MUtbl.csv"))
+# TopCC <- LoR.Melt.Master.RMD |>
+#   count(playerDeck) |>
+#   slice_max(n, n = 30,with_ties = F ) |> 
+#   pull(playerDeck)
+# 
+# LoR.Melt.Master.RMD |>
+#   bind_rows(LoR.Melt.Diamond.RMD) |>
+#   filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
+#   # removing the first week to remove "noise"
+#   filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+#   distinct(match_key,playerPuuid,.keep_all = T) |>
+#   filter(game_outcome!="tie") |>
+#   group_by(playerDeck,opponentDeck) |>
+#   summarise(muWin   = sum(game_outcome=="win"),
+#             muGames = n(),
+#             muWR=mean(game_outcome=="win") ) |>
+#   ungroup() |>
+#   mutate(playrate = muWin/muGames) |>
+#   as.data.table() |>
+#   {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
+#   mutate( 
+#     okCI:=(!between(0.50,LCI,UCI)),
+#     direction:=ifelse(muWR>0.50,"POS","NEG"),
+#     CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) -> MUtbl
+# 
+# tibble::tibble( 
+#   playerDeck = rep(TopCC,each=30),
+#   opponentDeck = rep(TopCC,30)
+#   ) |> 
+#   left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
+#   # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
+#   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle02-MUtbl.csv"))
 ```
 
 ```{r twitter-meta}
