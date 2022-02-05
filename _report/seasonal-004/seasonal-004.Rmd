@@ -365,9 +365,11 @@ gtSeasonal
 ```
 
 ```{r compute-games-apac}
-Game.Result.APAC <- LoR.Melt.Seasonal |>
+Game.Result.APAC <- 
+  LoR.Melt.Seasonal |>
   filter(server == "apac") |>
   # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  # filter(playerID == "AFTV깜동#0823") |>
   group_by(playerID, opponentID, server) |>
   mutate(timeBlock = min(game_start_time_utc) |>
     {
@@ -382,17 +384,19 @@ Game.Result.APAC <- LoR.Melt.Seasonal |>
   mutate(round = case_when(
     # Japan Standard Time is 9 hours ahead of Universal Time Coordinated
     # JST = UTC - 9hrs
-    timeBlock > with_tz(force_tz(timeBlock.1.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end, "Japan") + minutes(60), "UTC") ~ 1, # 11:55
-    timeBlock > with_tz(force_tz(timeBlock.2.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end, "Japan") + minutes(60), "UTC") ~ 2, # 13:00
-    timeBlock > with_tz(force_tz(timeBlock.3.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end, "Japan") + minutes(60), "UTC") ~ 3, # 14:05
-    timeBlock > with_tz(force_tz(timeBlock.4.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end, "Japan") + minutes(60), "UTC") ~ 4, # 15:10
-    timeBlock > with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(60), "UTC") ~ 5, # 16:15
-
-    timeBlock > with_tz(force_tz(timeBlock.6.start, "Japan") + minutes(145), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end, "Japan") + minutes(145), "UTC") ~ 6, # 17:45
-    timeBlock > with_tz(force_tz(timeBlock.7.start, "Japan") + minutes(145), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end, "Japan") + minutes(145), "UTC") ~ 7, # 18:50
-    timeBlock > with_tz(force_tz(timeBlock.8.start, "Japan") + minutes(145), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end, "Japan") + minutes(145), "UTC") ~ 8, # 19:55
-    timeBlock > with_tz(force_tz(timeBlock.9.start, "Japan") + minutes(145), "UTC") ~ 9 # 21:00
+    timeBlock > with_tz(force_tz(timeBlock.1.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end, "Japan") + minutes(60), "UTC") ~ 1, # 04:00
+    timeBlock > with_tz(force_tz(timeBlock.2.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end, "Japan") + minutes(60), "UTC") ~ 2, # 05:05
+    timeBlock > with_tz(force_tz(timeBlock.3.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end, "Japan") + minutes(60), "UTC") ~ 3, # 06:10
+    timeBlock > with_tz(force_tz(timeBlock.4.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end, "Japan") + minutes(60), "UTC") ~ 4, # 07:15
+    
+    timeBlock > with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(235), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(235), "UTC") ~ 5, # 11:15
+    timeBlock > with_tz(force_tz(timeBlock.6.start, "Japan") + minutes(210), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end, "Japan") + minutes(210), "UTC") ~ 6, # 12:20
+    timeBlock > with_tz(force_tz(timeBlock.7.start, "Japan") + minutes(210), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end, "Japan") + minutes(210), "UTC") ~ 7, # 13:25
+    timeBlock > with_tz(force_tz(timeBlock.8.start, "Japan") + minutes(210), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end, "Japan") + minutes(210), "UTC") ~ 8, # 14:30
+    timeBlock > with_tz(force_tz(timeBlock.9.start, "Japan") + minutes(210), "UTC") ~ 9 # 15:35
   )) |>
+  filter(!is.na(opponentID) & !is.na(round) ) |>
+  # filter(playerID == "AFTV깜동#0823")
   group_by(playerID, opponentID, server, timeBlock) |>
   # number of won games in the match
   mutate(nWin = str_count(result, "win")) |>
@@ -1300,8 +1304,8 @@ When partial results are being published, it's not limited to the top32 but the 
 top32tbl <- Game.Result.all |>
   select(playerID,cumMatchWin,server) |>
   group_by(server) |>
-  # filter( (server == "apac" & cumMatchWin >= 6) | (server != "apac" & cumMatchWin >= 7) ) |>
-  filter( cumMatchWin >= 7 ) |>
+  filter( (server == "apac" & cumMatchWin >= 6) | (server != "apac" & cumMatchWin >= 7) ) |>
+  # filter( cumMatchWin >= 7 ) |>
   filter( !is.na(playerID) ) |>
   # slice_max(cumMatchWin, n = 3,with_ties = T) |>
   left_join( LoR.Account.RMD[,c("gameName","RiotID")],
@@ -1358,7 +1362,7 @@ ggtop32.APAC <- top32tbl.CC  |>
   ggplot(aes(reorder(name, n),n,fill=abbreviation)) +
   geom_bar(position="dodge",stat = "identity", color = "black") +
   scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="apac",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.035,inherit.aes = FALSE) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.05,inherit.aes = FALSE) +
   coord_flip() +
   scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation  ) ) +
   theme_539() +
@@ -1707,8 +1711,8 @@ react.LU.top32 <- top32tbl |>
   reactablefmtr::add_subtitle(params$description, background_color = "whitesmoke", font_family = "Roboto") |>
   reactablefmtr::add_source(glue::glue("Source: Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo")
 
-# react.LU.top32 |>
-#   reactablefmtr::save_reactable(glue::glue("images/{params$ind}-top32.png"))
+react.LU.top32 |>
+  reactablefmtr::save_reactable(glue::glue("images/{params$ind}-top32.png"))
 
 react.LU.top32
 ```
