@@ -64,6 +64,14 @@ xaringanExtra::style_panelset_tabs(
   active_background = "#007fff"
 )
 ```
+```{r constant}
+general.caption <- glue::glue("{params$patch}
+                              Ranked games from {params$start} UTC to {params$end} UTC
+                              Source: Metadata of games collected with RiotGames API
+                              Last Update: {now(tzone='UTC')}")
+```
+
+
 
 ```{r create-TimeBlcok}
 timeBlock.1.start <- ymd_hms(glue::glue("{params$seasonalDate} 11:55:00")) + lubridate::minutes(5)
@@ -753,7 +761,8 @@ gtLMI <- LMI.DT |>
                              **WinRate**: Among the games in which a deck is being played, how many times it won.
                              **BanRate**: How many times a deck has been banned among all the ban phases of all lineUps which included such deck.
                              Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and Teemo/Ezreal was banned respectively 3 and 6 times; the ban rate would be (3+6)/(9+9) = 50%
-                             Source: Source: Metadata of games collected with RiotGames API"))
+                             Source: Source: Metadata of games collected with RiotGames API
+                             Last Update: {now(tzone='UTC')}"))
   )
 
 gtsave(gtLMI, glue::glue("images/{params$ind}-LMI-table-v2.png")) |> invisible()
@@ -843,7 +852,8 @@ if (
       title = "Incomplete-Match Distribution by Round",
       subtitle = "number of games missing for the complete information of a match by server",
       caption = element_text(glue::glue("{params$description}
-                                           The number refer to the number of games missing to recreate a match so when I could only collect either a win or a loss or both a win and a loss but not the remaining game"))
+                                           The number refer to the number of games missing to recreate a match so when I could only collect either a win or a loss or both a win and a loss but not the remaining game
+                                        Last Update: {now(tzone='UTC')}"))
     ) +
     theme_539() +
     scale_y_continuous(breaks = seq(0, 1000, 2))
@@ -1108,7 +1118,8 @@ LMI.DT |>
     y = "Freq Index",
     caption = element_text(glue::glue("{params$description}
                                       LMI computed with the improved version which included banrate and ladder win rates
-                                      Source: Source: Metadata of games collected with RiotGames API"))
+                                      Source: Source: Metadata of games collected with RiotGames API
+                                      Last Update: {now(tzone='UTC')}"))
   )
 
 ggsave(glue::glue("images/{params$ind}-LMI.png"))
@@ -1232,7 +1243,8 @@ Region.Freq.plot <- Region.Freq |>
     title = "Regions Play Rate",
     subtitle = "number of times a region is included in a deck",
     caption = element_text(glue::glue("{params$description}
-                                      Source: Metadata of games collected with RiotGames API"))
+                                      Source: Metadata of games collected with RiotGames API
+                                      Last Update: {now(tzone='UTC')}"))
   )
 
 Region.Freq.plot
@@ -1375,7 +1387,8 @@ ggtop32.APAC <- top32tbl.CC  |>
                      The top players are selected from those with at least 7 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      The region playrates are based on the regions of the deck and not the champions
-                     Source: Source: Metadata of games collected with RiotGames API" )
+                     Source: Source: Metadata of games collected with RiotGames API
+                     Last Update: {now(tzone='UTC')}" )
           )) +
   theme(
     legend.position = "none",
@@ -1483,7 +1496,8 @@ ggtop32.EU <- top32tbl.CC  |>
                      The top players are selected from those with at least 7 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      The region playrates are based on the regions of the deck and not the champions
-                     Source: Source: Metadata of games collected with RiotGames API" )
+                     Source: Source: Metadata of games collected with RiotGames API
+                     Last Update: {now(tzone='UTC')}" )
           )) +
   theme(
     legend.position = "none",
@@ -1590,7 +1604,8 @@ ggtop32.NA <- top32tbl.CC  |>
                      The top players are selected from those with at least 7 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      The region playrates are based on the regions of the deck and not the champions
-                     Source: Source: Metadata of games collected with RiotGames API" )
+                     Source: Source: Metadata of games collected with RiotGames API
+                     Last Update: {now(tzone='UTC')}" )
           )) +
   theme(
     legend.position = "none",
@@ -1869,7 +1884,8 @@ CC.table.S |>
                  Colored lines are fitted values with a univariate linear model for each Shard
                  Gray line is the diagonal for the first quadrant
                  PlayRate at the tournament obtained by inclusion rates among all LineUps
-                 Source: Metadata of games collected with RiotGames API")
+                 Source: Metadata of games collected with RiotGames API
+                 Last Update: {now(tzone='UTC')}")
     )
   ) +
   xlim(0, 0.20) +
