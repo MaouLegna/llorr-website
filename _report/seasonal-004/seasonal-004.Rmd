@@ -52,7 +52,7 @@ source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
 source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 
-pacman::p_load(grid,cowplot)
+pacman::p_load(grid, cowplot)
 ```
 
 ```{r panelset-style}
@@ -249,6 +249,8 @@ playRates.byLU <- LineUp.DT |>
 #' #######
 WR.DT <- LoR.Melt.Seasonal |>
   filter(game_outcome != "tie") |>
+  filter( !(server == "apac" & game_start_time_utc %within% interval(with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(60), "UTC"),
+                                                                   with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(60), "UTC"))) ) |>
   group_by(playerDeck, factions) |>
   summarise(
     nWin = sum(game_outcome == "win"),
@@ -264,6 +266,8 @@ WR.DT <- LoR.Melt.Seasonal |>
 #' ####################################
 MUtbl <- LoR.Melt.Seasonal |>
   filter(game_outcome != "tie") |>
+  filter( !(server == "apac" & game_start_time_utc %within% interval(with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(60), "UTC"),
+                                                                   with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(60), "UTC"))) ) |>
   select(playerDeck, opponentDeck, game_outcome, server, factions) |>
   group_by(playerDeck, opponentDeck) |>
   summarise(
@@ -339,6 +343,8 @@ Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 ```{r create-gt-summary}
 gtSeasonal <- nSeasonal |>
   left_join(LoR.Melt.Seasonal |>
+              filter( !(server == "apac" & game_start_time_utc %within% interval(with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(60), "UTC"),
+                                                                   with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(60), "UTC"))) ) |>
     group_by(server) |>
     summarize(n = n()), by = "server") |>
   mutate(server = str_to_title(server)) |>
@@ -373,11 +379,12 @@ gtSeasonal
 ```
 
 ```{r compute-games-apac}
-Game.Result.APAC <- 
+Game.Result.APAC <-
   LoR.Melt.Seasonal |>
   filter(server == "apac") |>
+  filter( !(game_start_time_utc %within% interval(with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(60), "UTC"),with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(60), "UTC"))) ) |>
   # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
-  # filter(playerID == "AFTV깜동#0823") |>
+  # filter(playerID == "AFTV<U+AE5C><U+B3D9>#0823") |>
   group_by(playerID, opponentID, server) |>
   mutate(timeBlock = min(game_start_time_utc) |>
     {
@@ -396,15 +403,15 @@ Game.Result.APAC <-
     timeBlock > with_tz(force_tz(timeBlock.2.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end, "Japan") + minutes(60), "UTC") ~ 2, # 05:05
     timeBlock > with_tz(force_tz(timeBlock.3.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end, "Japan") + minutes(60), "UTC") ~ 3, # 06:10
     timeBlock > with_tz(force_tz(timeBlock.4.start, "Japan") + minutes(60), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end, "Japan") + minutes(60), "UTC") ~ 4, # 07:15
-    
+
     timeBlock > with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(235), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(235), "UTC") ~ 5, # 11:15
     timeBlock > with_tz(force_tz(timeBlock.6.start, "Japan") + minutes(210), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end, "Japan") + minutes(210), "UTC") ~ 6, # 12:20
     timeBlock > with_tz(force_tz(timeBlock.7.start, "Japan") + minutes(210), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end, "Japan") + minutes(210), "UTC") ~ 7, # 13:25
     timeBlock > with_tz(force_tz(timeBlock.8.start, "Japan") + minutes(210), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end, "Japan") + minutes(210), "UTC") ~ 8, # 14:30
     timeBlock > with_tz(force_tz(timeBlock.9.start, "Japan") + minutes(210), "UTC") ~ 9 # 15:35
   )) |>
-  filter(!is.na(opponentID) & !is.na(round) ) |>
-  # filter(playerID == "AFTV깜동#0823")
+  filter(!is.na(opponentID) & !is.na(round)) |>
+  # filter(playerID == "AFTV<U+AE5C><U+B3D9>#0823")
   group_by(playerID, opponentID, server, timeBlock) |>
   # number of won games in the match
   mutate(nWin = str_count(result, "win")) |>
@@ -1314,82 +1321,88 @@ When partial results are being published, it's not limited to the top32 but the 
 ```{r compute-top-32-data}
 # Data from those who reached the highest amoutn of Match Win
 top32tbl <- Game.Result.all |>
-  select(playerID,cumMatchWin,server) |>
+  select(playerID, cumMatchWin, server) |>
   group_by(server) |>
-  filter( (server == "apac" & cumMatchWin >= 7) | (server != "apac" & cumMatchWin >= 8) ) |>
-  # filter( cumMatchWin >= 7 ) |>
-  filter( !is.na(playerID) ) |>
+  filter((server == "apac" & cumMatchWin >= 7) | (server != "apac" & cumMatchWin >= 8)) |>
+  # filter( cumMatchWin >= 8 ) |>
+  filter(!is.na(playerID)) |>
   # slice_max(cumMatchWin, n = 3,with_ties = T) |>
-  left_join( LoR.Account.RMD[,c("gameName","RiotID")],
-             by=c("playerID"="RiotID")
+  left_join(LoR.Account.RMD[, c("gameName", "RiotID")],
+    by = c("playerID" = "RiotID")
   ) |>
-  arrange(server,desc(cumMatchWin)) |>
-  distinct(gameName,.keep_all = T) |>
-  left_join(LineUp.DT,by=c("playerID","server") )
+  arrange(server, desc(cumMatchWin)) |>
+  distinct(gameName, .keep_all = T) |>
+  left_join(LineUp.DT, by = c("playerID", "server"))
 
 # count the number of times a champion is present in a deck
 # grouped by region
-#'#########
+#' #########
 top32tbl.CC <- top32tbl |>
   pivot_longer(
-    cols = contains("code_"),values_to = "deck_code") |>
-  select(server,deck_code) |>
+    cols = contains("code_"), values_to = "deck_code"
+  ) |>
+  select(server, deck_code) |>
   # for partial results
-  filter( !is.na(deck_code) ) |>
-  mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) |>
-  separate_rows(CC,sep = "/") |>
+  filter(!is.na(deck_code)) |>
+  mutate(CC = map_chr(.x = deck_code, ~ get_champion_from_code(.x))) |>
+  separate_rows(CC, sep = "/") |>
   group_by(server) |>
   count(CC) |>
   ungroup() |>
-  arrange(desc(n),CC) |>
-  rename("name"="CC")
+  arrange(desc(n), CC) |>
+  rename("name" = "CC")
 ```
 
-::: l-page
+::: l-screen
 ::::: {.panelset}
 
 ::: {.panel}
 ### APAC {.panel-name}
 
-```{r create-top32-APAC, fig.height=8, fig.width=14}
+```{r top-APAC}
+#| fig.width=14,
+#| fig.height=8
+
 #' flextable for the champions which were used a single time
 ft.top32tbl.CC.APAC <- top32tbl.CC |>
-  filter(server == "apac")  |>
+  filter(server == "apac") |>
   filter(n %in% 1:2) |>
   select(-server) |>
-  rename_all(~c("Champion","N")) |>
+  rename_all(~ c("Champion", "N")) |>
   flextable::flextable() |>
   flextable::as_raster()
 
 #' base plot
-ggtop32.APAC <- top32tbl.CC  |>
-  filter(server=="apac") |>
+ggtop32.APAC <- top32tbl.CC |>
+  filter(server == "apac") |>
   filter(n > 2) |>
   left_join(LoR.Champion |>
-              mutate(abbreviation = str_sub(cardCode,3,4)) |>
-              select(name,abbreviation),by=c("name") ) |>
-  mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
-  mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |>
-  left_join( data_regions, by = c("abbreviation") ) |>
-  ggplot(aes(reorder(name, n),n,fill=abbreviation)) +
-  geom_bar(position="dodge",stat = "identity", color = "black") +
-  scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="apac",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.05,inherit.aes = FALSE) +
+    mutate(abbreviation = str_sub(cardCode, 3, 4)) |>
+    select(name, abbreviation), by = c("name")) |>
+  mutate(img = map_chr(.x = name, ~ getCardCode(.x))) |>
+  mutate(img = map_chr(.x = img, ~ card_url_path(.x, full = F))) |>
+  left_join(data_regions, by = c("abbreviation")) |>
+  ggplot(aes(reorder(name, n), n, fill = abbreviation)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_y_continuous(breaks = seq(0, 60, 2), sec.axis = sec_axis(~ (. / (as.data.table(top32tbl)[, .N, by = server][server == "apac", N])) * 100, name = "PlayRate (%)", breaks = seq(0, 100, 20))) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.040, inherit.aes = FALSE) +
   coord_flip() +
-  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation  ) ) +
+  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation)) +
   theme_539() +
-  labs( x = "Champion",
-        y = "#Decks",
-        title = "Champions' Play Rate - APAC",
-        subtitle = "Champions presence based by the number of decks that included them / playrate",
-        caption = element_text(
-          glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='apac',N]}
+  labs(
+    x = "Champion",
+    y = "#Decks",
+    title = "Champions' Play Rate - APAC",
+    subtitle = "Champions presence based by the number of decks that included them / playrate",
+    caption = element_text(
+      glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='apac',N]}
                      The top players are selected from those with at least 7 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      The region playrates are based on the regions of the deck and not the champions
                      Source: Source: Metadata of games collected with RiotGames API
-                     Last Update: {now(tzone='UTC')}" )
-          )) +
+                     Last Update: {now(tzone='UTC')}")
+    )
+  ) +
   theme(
     legend.position = "none",
     axis.text = element_text(face = "bold", color = "grey50"),
@@ -1403,271 +1416,267 @@ ggtop32.APAC <- top32tbl.CC  |>
 #   ggplot() +
 #     theme_539() +
 #     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.APAC), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-# 
+#
 # ggsave(glue::glue("images/{params$ind}-champ-top-Apac.png"),width = 12,height = 8)
 
-top32tbl |>
+data.region.APAC <-
+  top32tbl |>
   ungroup() |>
   filter(server == "apac") |>
-  pivot_longer(cols = contains("code_"),values_to = "deck_code" ) |>
-  distinct(playerID,deck_code) |>
-  left_join(LoR.Deck.RMD[,c("deck_code","factions")]  ) |>
+  pivot_longer(cols = contains("code_"), values_to = "deck_code") |>
+  distinct(playerID, deck_code) |>
+  left_join(LoR.Deck.RMD[, c("deck_code", "factions")]) |>
   select(factions) |>
-  separate_rows(factions,sep=",") |>
+  separate_rows(factions, sep = ",") |>
   tabyl(factions) |>
   # mutate(factions = str_extract(factions, pattern = "(?<=_)(.+)(?=\\_)")) |>
-  mutate(ymax = cumsum(percent),
-         ymin = ymax - percent,
-         labelPosition = (ymax + ymin)/2,
-         label = str_replace(factions,data_regions$nameRef,data_regions$abbreviation),
-         label = glue("{label}: {n}")
-         ) -> data.region.APAC
+  mutate(
+    ymax = cumsum(percent),
+    ymin = ymax - percent,
+    labelPosition = (ymax + ymin) / 2,
+    # label = str_replace(factions, set_names(data_regions$abbreviation, data_regions$nameRef) ),
+    label = glue("{factions}: {n}")
+  )
 
 # Make the plot
-ggtop32.APAC.pie <- ggplot(data.region.APAC, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=factions)) +
-     geom_rect() +
-     coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
-     xlim(c(2, 4)) +
-  geom_label( x=3.5, aes(y=labelPosition, label=label), size=3.5) +
+ggtop32.APAC.pie <-
+  data.region.APAC |>
+  ggplot(aes(ymax = ymax, ymin = ymin, xmax = 4, xmin = 3, fill = factions)) +
+  geom_rect() +
+  coord_polar(theta = "y") + # Try to remove that to understand how the chart is built initially
+  xlim(c(2, 4)) +
+  geom_label(x = 3.5, aes(y = labelPosition, label = label), size = 3.5) +
   theme_void() +
   scale_fill_manual("legend", values = Region.Freq$colorRegion) +
   theme(
-   plot.background = element_rect(fill = "#f0f0f0", color = NA, size = 1),
-   panel.background = element_rect(fill = "#f0f0f0", color = NA),
-
-   panel.border = element_blank(),
-   plot.margin = margin(0, 0, 0, 0),
-   strip.background = element_blank(),
-   # strip.text = element_text(size = rel(1.33), face = "bold"),
-   legend.position = "none"
+    plot.background = element_rect(fill = "#f0f0f0", color = NA, size = 1),
+    panel.background = element_rect(fill = "#f0f0f0", color = NA),
+    panel.border = element_blank(),
+    plot.margin = margin(0, 0, 0, 0),
+    strip.background = element_blank(),
+    # strip.text = element_text(size = rel(1.33), face = "bold"),
+    legend.position = "none"
   )
 
 #' unite the plot and table
-APAC.finalplot <- cowplot::plot_grid(
+cowplot::plot_grid(
   ggtop32.APAC +
     theme(panel.grid.major.x = element_blank()) +
     inset_element(ggtop32.APAC.pie, left = 0.7, right = 1, bottom = 0.01, top = 0.6),
   ggplot() +
     theme_539() +
-    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.APAC), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-
-APAC.finalplot
-
-ggsave(glue::glue("images/{params$ind}-top-Apac.png"),plot = APAC.finalplot,width = 14,height = 8)
+    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.APAC), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf),
+  nrow = 1, ncol = 2, rel_widths = c(4, 1)
+)
 ```
 :::
 
 ::: {.panel}
 ### EU {.panel-name}
 
-```{r plot-top32-EU, fig.height=8, fig.width=14}
+```{r top-EU}
+#| fig.width=14,
+#| fig.height=8
+
 # flextable for the champions which were used a single time
 ft.top32tbl.CC.EU <- top32tbl.CC |>
-  filter(server == "europe")  |>
+  filter(server == "europe") |>
   filter(n %in% 1:3) |>
   select(-server) |>
-  rename_all(~c("Champion","N")) |>
+  rename_all(~ c("Champion", "N")) |>
   flextable::flextable() |>
   flextable::as_raster()
 
 # base plot
-ggtop32.EU <- top32tbl.CC  |>
-  filter(server=="europe") |>
+ggtop32.EU <- top32tbl.CC |>
+  filter(server == "europe") |>
   filter(n > 3) |>
   left_join(LoR.Champion |>
-              mutate(abbreviation = str_sub(cardCode,3,4)) |>
-              select(name,abbreviation),by="name" ) |>
-  mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
-  mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |>
-  left_join( data_regions, by = c("abbreviation") ) |>
-  ggplot(aes(reorder(name, n),n,fill=abbreviation)) +
-  geom_bar(position="dodge",stat = "identity", color = "black") +
-  scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="europe",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.05,inherit.aes = FALSE) +
+    mutate(abbreviation = str_sub(cardCode, 3, 4)) |>
+    select(name, abbreviation), by = "name") |>
+  mutate(img = map_chr(.x = name, ~ getCardCode(.x))) |>
+  mutate(img = map_chr(.x = img, ~ card_url_path(.x, full = F))) |>
+  left_join(data_regions, by = c("abbreviation")) |>
+  ggplot(aes(reorder(name, n), n, fill = abbreviation)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_y_continuous(breaks = seq(0, 60, 2), sec.axis = sec_axis(~ (. / (as.data.table(top32tbl)[, .N, by = server][server == "europe", N])) * 100, name = "PlayRate (%)", breaks = seq(0, 100, 20))) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.05, inherit.aes = FALSE) +
   coord_flip() +
-  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation  ) ) +
+  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation)) +
   theme_539() +
-  labs( x = "Champion",
-        y = "#Decks",
-        title = "Champions' Play Rate - EU",
-        subtitle = "Champions presence based by the number of decks that included them / playrate",
-        caption = element_text(
-          glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]}
-                     The top players are selected from those with at least 7 matches won, not counting bye
+  labs(
+    x = "Champion",
+    y = "#Decks",
+    title = "Champions' Play Rate - EU",
+    subtitle = "Champions presence based by the number of decks that included them / playrate",
+    caption = element_text(
+      glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='europe',N]}
+                     The top players are selected from those with at least 8 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      The region playrates are based on the regions of the deck and not the champions
                      Source: Source: Metadata of games collected with RiotGames API
-                     Last Update: {now(tzone='UTC')}" )
-          )) +
+                     Last Update: {now(tzone='UTC')}")
+    )
+  ) +
   theme(
     legend.position = "none",
     axis.text = element_text(face = "bold", color = "grey50"),
     panel.grid.major.y = element_blank()
   )
 
-#' unite the plot and table
-# cowplot::plot_grid(
-#   ggtop32.EU,
-#   ggplot() +
-#     theme_539() +
-#     annotation_custom(grid::rasterGrob(ft.top32tbl.CC.APAC), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-# 
-# ggsave(glue::glue("images/{params$ind}-champ-top-EU.png"),width = 12,height = 8)
-
-top32tbl |>
+data.region.EU <-
+  top32tbl |>
   ungroup() |>
   filter(server == "europe") |>
-  pivot_longer( cols = contains("code_"),values_to = "deck_code" ) |>
-  distinct(playerID,deck_code) |>
-  left_join(LoR.Deck.RMD[,c("deck_code","factions")]  ) |>
+  pivot_longer(cols = contains("code_"), values_to = "deck_code") |>
+  distinct(playerID, deck_code) |>
+  left_join(LoR.Deck.RMD[, c("deck_code", "factions")]) |>
   select(factions) |>
-  separate_rows(factions,sep=",") |>
+  separate_rows(factions, sep = ",") |>
   tabyl(factions) |>
   # mutate(factions = str_extract(factions, pattern = "(?<=_)(.+)(?=\\_)")) |>
-  mutate(ymax = cumsum(percent),
-         ymin = ymax - percent,
-         labelPosition = (ymax + ymin)/2,
-         label = str_replace(factions,data_regions$nameRef,data_regions$abbreviation),
-         label = glue("{label}: {n}")
-         ) -> data.region.EU
+  mutate(
+    ymax = cumsum(percent),
+    ymin = ymax - percent,
+    labelPosition = (ymax + ymin) / 2,
+    label = str_replace(factions, data_regions$nameRef, data_regions$abbreviation),
+    label = glue("{label}: {n}")
+  )
 
 # Make the plot
-ggtop32.EU.pie <- ggplot(data.region.EU, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=factions)) +
-     geom_rect() +
-     coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
-     xlim(c(2, 4)) +
-  geom_label( x=3.5, aes(y=labelPosition, label=label), size=3.5) +
+ggtop32.EU.pie <-
+  data.region.EU |>
+  ggplot(aes(ymax = ymax, ymin = ymin, xmax = 4, xmin = 3, fill = factions)) +
+  geom_rect() +
+  coord_polar(theta = "y") + # Try to remove that to understand how the chart is built initially
+  xlim(c(2, 4)) +
+  geom_label(x = 3.5, aes(y = labelPosition, label = label), size = 3.5) +
   theme_void() +
   scale_fill_manual("legend", values = Region.Freq$colorRegion) +
   theme(
-   plot.background = element_rect(fill = "#f0f0f0", color = NA, size = 1),
-   panel.background = element_rect(fill = "#f0f0f0", color = NA),
-
-   panel.border = element_blank(),
-   plot.margin = margin(0, 0, 0, 0),
-   strip.background = element_blank(),
-   # strip.text = element_text(size = rel(1.33), face = "bold"),
-   legend.position = "none"
+    plot.background = element_rect(fill = "#f0f0f0", color = NA, size = 1),
+    panel.background = element_rect(fill = "#f0f0f0", color = NA),
+    panel.border = element_blank(),
+    plot.margin = margin(0, 0, 0, 0),
+    strip.background = element_blank(),
+    # strip.text = element_text(size = rel(1.33), face = "bold"),
+    legend.position = "none"
   )
 
 #' unite the plot and table
-EU.finalplot <- cowplot::plot_grid(
+cowplot::plot_grid(
   ggtop32.EU +
     theme(panel.grid.major.x = element_blank()) +
     inset_element(ggtop32.EU.pie, left = 0.5, right = 1, bottom = 0, top = 0.7),
   ggplot() +
     theme_539() +
-    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-
-EU.finalplot
-
-ggsave(glue::glue("images/{params$ind}-top-EU.png"),plot = EU.finalplot,width = 14,height = 8)
+    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.EU), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf),
+  nrow = 1, ncol = 2, rel_widths = c(4, 1)
+)
 ```
 :::
 
 ::: {.panel}
 ### NA {.panel-name}
 
-```{r plot-top32-NA, fig.height=8, fig.width=14}
+```{r top-NA}
+#| fig.width=14,
+#| fig.height=8
+
 ft.top32tbl.CC.NA <- top32tbl.CC |>
-  filter(server == "americas")  |>
+  filter(server == "americas") |>
   filter(n %in% 1:2) |>
   select(-server) |>
-  rename_all(~c("Champion","N")) |>
+  rename_all(~ c("Champion", "N")) |>
   flextable::flextable() |>
   flextable::as_raster()
 
 # base plot
-ggtop32.NA <- top32tbl.CC  |>
-  filter(server=="americas") |>
+ggtop32.NA <- top32tbl.CC |>
+  filter(server == "americas") |>
   filter(n > 2) |>
   left_join(LoR.Champion |>
-              mutate(abbreviation = str_sub(cardCode,3,4)) |>
-              select(name,abbreviation),by=c("name") ) |>
-  mutate(img = map_chr(.x = name, ~getCardCode(.x) )) |>
-  mutate(img = map_chr(.x = img, ~card_url_path(.x,full=F) )) |>
-  left_join( data_regions, by = c("abbreviation") ) |>
-
-  ggplot(aes(reorder(name, n),n,fill=abbreviation)) +
-  geom_bar(position="dodge",stat = "identity", color = "black") +
-  scale_y_continuous(breaks = seq(0,60,2), sec.axis = sec_axis(~(./(as.data.table(top32tbl)[ ,.N, by=server][server=="americas",N]))*100, name = "PlayRate (%)",breaks = seq(0,100,20))) +
-  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.055,inherit.aes = FALSE) +
+    mutate(abbreviation = str_sub(cardCode, 3, 4)) |>
+    select(name, abbreviation), by = c("name")) |>
+  mutate(img = map_chr(.x = name, ~ getCardCode(.x))) |>
+  mutate(img = map_chr(.x = img, ~ card_url_path(.x, full = F))) |>
+  left_join(data_regions, by = c("abbreviation")) |>
+  ggplot(aes(reorder(name, n), n, fill = abbreviation)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  scale_y_continuous(breaks = seq(0, 60, 2), sec.axis = sec_axis(~ (. / (as.data.table(top32tbl)[, .N, by = server][server == "americas", N])) * 100, name = "PlayRate (%)", breaks = seq(0, 100, 20))) +
+  ggimage::geom_image(aes(x = name, image = img), y = 0, size = 0.055, inherit.aes = FALSE) +
   coord_flip() +
-  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation  ) ) +
+  scale_fill_manual("legend", values = set_names(data_regions$colorRegion, data_regions$abbreviation)) +
   theme_539() +
-  labs( x = "Champion",
-        y = "#Decks",
-        title = "Champions' Play Rate - NA",
-        subtitle = "Champions presence based by the number of decks that included them / playrate",
-        caption = element_text(
-          glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='americas',N]}
-                     The top players are selected from those with at least 7 matches won, not counting bye
+  labs(
+    x = "Champion",
+    y = "#Decks",
+    title = "Champions' Play Rate - NA",
+    subtitle = "Champions presence based by the number of decks that included them / playrate",
+    caption = element_text(
+      glue::glue("Number of players: {as.data.table(top32tbl)[ ,.N, by=server][server=='americas',N]}
+                     The top players are selected from those with at least 8 matches won, not counting bye
                      The list doesn't include all top32 so obtained without Riot official data
                      The region playrates are based on the regions of the deck and not the champions
                      Source: Source: Metadata of games collected with RiotGames API
-                     Last Update: {now(tzone='UTC')}" )
-          )) +
+                     Last Update: {now(tzone='UTC')}")
+    )
+  ) +
   theme(
     legend.position = "none",
     axis.text = element_text(face = "bold", color = "grey50"),
     panel.grid.major.y = element_blank()
   )
 
-#' unite the plot and table
-# cowplot::plot_grid(ggtop32.NA, ggplot() +
-#                      theme_void() +
-#                      annotation_custom(grid::rasterGrob(ft.top32tbl.CC.NA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-# 
-# ggsave(glue::glue("images/{params$ind}-champ-top-NA.png"))
-
-top32tbl |>
+data.region.NA <-
+  top32tbl |>
   ungroup() |>
   filter(server == "americas") |>
-  pivot_longer( cols = contains("code_"),values_to = "deck_code" ) |>
-  distinct(playerID,deck_code) |>
-  left_join(LoR.Deck.RMD[,c("deck_code","factions")]  ) |>
+  pivot_longer(cols = contains("code_"), values_to = "deck_code") |>
+  distinct(playerID, deck_code) |>
+  left_join(LoR.Deck.RMD[, c("deck_code", "factions")]) |>
   select(factions) |>
-  separate_rows(factions,sep=",") |>
+  separate_rows(factions, sep = ",") |>
   tabyl(factions) |>
   # mutate(factions = str_extract(factions, pattern = "(?<=_)(.+)(?=\\_)")) |>
-  mutate(ymax = cumsum(percent),
-         ymin = ymax - percent,
-         labelPosition = (ymax + ymin)/2,
-         label = str_replace(factions,data_regions$nameRef,data_regions$abbreviation),
-         label = glue("{label}: {n}")
-         ) -> data.region.NA
+  mutate(
+    ymax = cumsum(percent),
+    ymin = ymax - percent,
+    labelPosition = (ymax + ymin) / 2,
+    label = str_replace(factions, data_regions$nameRef, data_regions$abbreviation),
+    label = glue("{label}: {n}")
+  )
 
 # Make the plot
-ggtop32.NA.pie <- ggplot(data.region.NA, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=factions)) +
-     geom_rect() +
-     coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
-     xlim(c(2, 4)) +
-  geom_label( x=3.5, aes(y=labelPosition, label=label), size=3.5) +
+ggtop32.NA.pie <-
+  data.region.NA |>
+  ggplot(aes(ymax = ymax, ymin = ymin, xmax = 4, xmin = 3, fill = factions)) +
+  geom_rect() +
+  coord_polar(theta = "y") + # Try to remove that to understand how the chart is built initially
+  xlim(c(2, 4)) +
+  geom_label(x = 3.5, aes(y = labelPosition, label = label), size = 3.5) +
   theme_void() +
   scale_fill_manual("legend", values = Region.Freq$colorRegion) +
   theme(
-   plot.background = element_rect(fill = "#f0f0f0", color = NA, size = 1),
-   panel.background = element_rect(fill = "#f0f0f0", color = NA),
-
-   panel.border = element_blank(),
-   plot.margin = margin(0, 0, 0, 0),
-   strip.background = element_blank(),
-   # strip.text = element_text(size = rel(1.33), face = "bold"),
-   legend.position = "none"
+    plot.background = element_rect(fill = "#f0f0f0", color = NA, size = 1),
+    panel.background = element_rect(fill = "#f0f0f0", color = NA),
+    panel.border = element_blank(),
+    plot.margin = margin(0, 0, 0, 0),
+    strip.background = element_blank(),
+    # strip.text = element_text(size = rel(1.33), face = "bold"),
+    legend.position = "none"
   )
 
 #' unite the plot and table
-NA.finalplot <- cowplot::plot_grid(
+cowplot::plot_grid(
   ggtop32.NA +
     theme(panel.grid.major.x = element_blank()) +
     inset_element(ggtop32.NA.pie, left = 0.5, right = 1, bottom = 0, top = 0.8),
   ggplot() +
     theme_539() +
-    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.NA), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), nrow = 1, ncol = 2, rel_widths = c(4, 1) )
-
-NA.finalplot
-
-ggsave(glue::glue("images/{params$ind}-top-NA.png"),plot = NA.finalplot,width = 14,height = 8)
+    annotation_custom(grid::rasterGrob(ft.top32tbl.CC.NA), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf),
+  nrow = 1, ncol = 2, rel_widths = c(4, 1)
+)
 ```
 :::
 
@@ -1679,17 +1688,18 @@ Remember that as I can't collect "bye" the true top list may differ buy a lot.
 ```{r react-top32}
 react.LU.top32 <- top32tbl |>
   # filter( server == "apac" ) |>
-  select(gameName,cumMatchWin,LU,contains("deck_"),contains("code_") ) |>
+  select(gameName, cumMatchWin, LU, contains("deck_"), contains("code_")) |>
   pivot_longer(
-    cols = c(contains("deck_"),contains("code_")),
-    names_to=c(".value", "index"),
-    names_sep = "_") |>
-    relocate(LU,.after = code) |>
-    select(-index) |>
-  mutate( code = glue::glue("<a href='https://runeterra.ar/decks/code/{code}'>{code}</a>") ) |>
+    cols = c(contains("deck_"), contains("code_")),
+    names_to = c(".value", "index"),
+    names_sep = "_"
+  ) |>
+  relocate(LU, .after = code) |>
+  select(-index) |>
+  mutate(code = glue::glue("<a href='https://runeterra.ar/decks/code/{code}'>{code}</a>")) |>
   reactable(
     theme = reactablefmtr::fivethirtyeight(),
-    groupBy = c("server","cumMatchWin","gameName"),
+    groupBy = c("server", "cumMatchWin", "gameName"),
     bordered = TRUE,
     highlight = TRUE,
     searchable = TRUE,
@@ -1699,24 +1709,26 @@ react.LU.top32 <- top32tbl |>
     defaultSorted = c("cumMatchWin"),
     defaultSortOrder = "desc",
     defaultColDef = colDef(
-      style = list(fontWeight = 500, color = "black",
-                   fontFamily = "Helvetica", fontSize = "12px"),
-      align = "left",
-      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
+      style = list(
+        fontWeight = 500, color = "black",
+        fontFamily = "Helvetica", fontSize = "12px"
       ),
+      align = "left",
+      headerStyle = list(background = "steelblue", color = "white", fontFamily = "Work Sans, sans-serif", fontSize = "14px")
+    ),
     columns = list(
-      LU = colDef( show = F ),
-      deck = colDef(name = "Deck",minWidth = 200 ),
+      LU = colDef(show = F),
+      deck = colDef(name = "Deck", minWidth = 200),
       # code = colDef( show = F ),
-      code = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ), html = T ),
+      code = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list(fontSize = 9), html = T),
       # code = colDef(name = "DeckCode", cell = function(value, index) {
       #   # Render as a link
       #   if (!is.na(value) ) {
       #     url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
       #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
       #   } } ,minWidth = 600, style = list(fontSize = "9px") ),
-      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
-      ),
+      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique", defaultSortOrder = "desc")
+    ),
     rowStyle = JS("function(rowInfo) {
                   if (rowInfo.level > 0) {
                   return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
@@ -1725,13 +1737,16 @@ react.LU.top32 <- top32tbl |>
                   }
                   }"),
     defaultExpanded = T
-    ) |>
+  ) |>
   reactablefmtr::add_title("Top Players' Deckcodes", background_color = "whitesmoke", font_family = "Helvetica") |>
   reactablefmtr::add_subtitle(params$description, background_color = "whitesmoke", font_family = "Roboto") |>
   reactablefmtr::add_source(glue::glue("Source: Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo")
 
 # react.LU.top32 |>
 #   reactablefmtr::save_reactable(glue::glue("images/{params$ind}-top32.png"))
+
+# Game.Result.APAC |>
+#   filter(str_detect(playerID,"やまと"))
 
 react.LU.top32
 ```
