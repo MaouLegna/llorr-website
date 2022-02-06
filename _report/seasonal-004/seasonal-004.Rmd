@@ -251,7 +251,7 @@ WR.DT <- LoR.Melt.Seasonal |>
   filter(game_outcome != "tie") |>
   filter( !(server == "apac" & game_start_time_utc %within% interval(with_tz(force_tz(timeBlock.5.start, "Japan") + minutes(60), "UTC"),
                                                                    with_tz(force_tz(timeBlock.5.end, "Japan") + minutes(60), "UTC"))) ) |>
-  group_by(playerDeck, factions) |>
+  group_by(playerDeck) |>
   summarise(
     nWin = sum(game_outcome == "win"),
     nGames = n(),
@@ -291,7 +291,7 @@ MUtbl <- LoR.Melt.Seasonal |>
 #' #######
 ladder.WR.DT <- LoR.Melt.Matches.RMD |>
   filter(game_outcome != "tie") |>
-  group_by(playerDeck, factions) |>
+  group_by(playerDeck) |>
   summarise(
     nWin = sum(game_outcome == "win"),
     nGames = n(),
@@ -885,36 +885,28 @@ This is also the moment of the meta where the classification *Archetype = Champi
 ### Single Decks Stats {.panel-name}
 
 ```{r react-deck}
-react.LU.Stat <- left_join(
-  LineUp.DT |>
-    select(contains("deck_")) |>
-    {
-      \(x) unlist(x, use.names = F)
-    }() |>
-    {
-      \(x) tabyl(x, show_na = F)
-    }() |>
-    arrange(desc(n)) |>
-    #' account for the presence of 3 decks
-    mutate(percent = 3 * percent) |>
-    rename("deck" = 1),
-  LineUp.DT |>
-    select(contains("deck_")) |>
-    filter(!is.na(deck_3)) |>
-    select(contains("deck")) |>
-    {
-      \(x) unlist(x, use.names = F)
-    }() |>
-    {
-      \(x) tabyl(x, show_na = F)
-    }() |>
-    arrange(desc(n)) |>
-    #' account for the presence of 3 decks
-    mutate(percent = 3 * percent) |>
-    rename("deck" = 1, "n_full" = "n", "percent_full" = "percent"),
-  by = "deck"
-) |>
+LineUp.DT |>
+  select(contains("deck_")) |>
+  {\(x) unlist(x, use.names = F) }() |>
+  {\(x) tabyl(x, show_na = F) }() |>
+  arrange(desc(n)) |>
+  # account for the presence of 3 decks
+  mutate(percent = 3 * percent) |>
+  rename("deck" = 1) |>
+  left_join(LineUp.DT |>
+              select(contains("deck_")) |>
+              filter(!is.na(deck_3)) |>
+              select(contains("deck")) |>
+              {\(x) unlist(x, use.names = F) }() |>
+              {\(x) tabyl(x, show_na = F) }() |>
+              arrange(desc(n)) |>
+              # account for the presence of 3 decks
+              mutate(percent = 3 * percent) |>
+              rename("deck" = 1, "n_full" = "n", "percent_full" = "percent"),
+            by = "deck"
+            ) |>
   left_join(WR.DT[, c("deck", "WR", "meanBan", "lplayrate", "lWR")], by = "deck") |>
+  as.data.table() |>
   mutate(diffLadder = WR - lWR) |>
   relocate(diffLadder, .after = "meanBan") |>
   select(-lWR) |>
@@ -956,8 +948,6 @@ react.LU.Stat <- left_join(
   reactablefmtr::add_source(glue::glue("Relative frequencies from all data or only lineUps with full information
                                        Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke", font_family = "Chivo")
 # reactablefmtr::save_reactable(glue::glue("images/{params$ind}-deck.png"))
-
-react.LU.Stat
 ```
 
 - **Ban Rate**: ratio between the number of bans and the number of matches of a deck.
