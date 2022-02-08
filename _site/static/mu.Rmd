@@ -178,11 +178,12 @@ WR.DT <- LoR.Melt.Master.RMD |>
 MUtbl <- LoR.Melt.Master.RMD |>
   filter(game_outcome != "tie" ) |>
   select(playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
-  group_by(playerDeck,opponentDeck,factions) |>
+  group_by(playerDeck,opponentDeck) |>
   summarise( 
     muWin   = sum(game_outcome=="win"),
     muGames = n(),
-    muWR=mean(game_outcome=="win")
+    muWR=mean(game_outcome=="win"),
+    factions = unique(factions)
     ) |>
   ungroup() |>
   filter(muGames >= params$minMUGames) |>
@@ -321,12 +322,13 @@ WR.DT.diamond <- LoR.Melt.Diamond.RMD |>
 MUtbl.diamond <- LoR.Melt.Diamond.RMD |>
   filter( game_outcome != "tie" ) |>
   select( playerDeck,opponentDeck,game_outcome,server,game_version,factions ) |>
-  group_by(playerDeck,opponentDeck,factions) |>
-  summarise(
+  group_by(playerDeck,opponentDeck) |>
+  summarise( 
     muWin   = sum(game_outcome=="win"),
     muGames = n(),
-    muWR=mean(game_outcome=="win")
-  ) |>
+    muWR=mean(game_outcome=="win"),
+    factions = unique(factions)
+    ) |>
   ungroup() |>
   filter(muGames >= params$minMUGames) |>
   mutate(
