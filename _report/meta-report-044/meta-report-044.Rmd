@@ -3,8 +3,8 @@ params:
   ind: "MR044"
   patch: "Patch 3.00 - Week 5"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°44)"
-  description: "Dev Q&A Waiting Room - It's important! Stop laughing!"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC058-full.png"
+  description: "Quarantaquattro Yuumi entrano a Bandle..."
+  cardlurl: "https://dd.b.pvp.net/3_2_0/set5/en_us/img/cards/05BC029-full.png"
   start: "2022-02-02 18:00:00" #UTC tz / 'current' week start
   end:   "2022-02-09 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -18,7 +18,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 02-02-1990
+date: 02-09-1990
 output:
  distill::distill_article:
     toc: true
@@ -115,6 +115,10 @@ masterAPAC <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S1
 namesList.EU.RMD   <- masterEU[ !is.na(puuid), .N ]
 namesList.NA.RMD   <- masterNA[ !is.na(puuid), .N ]
 namesList.APAC.RMD <- masterAPAC[ !is.na(puuid), .N ]
+
+EU.ladder   <- length(lorR::lor_leaderboard("europe",names = T))
+NA.ladder   <- length(lorR::lor_leaderboard("americas",names = T))
+APAC.ladder <- length(lorR::lor_leaderboard("apac",names = T))
 ```
 
 ```{r prepare-data-master}
@@ -175,6 +179,7 @@ if (any(c(LoR.Melt.Master.RMD[  is.na(playerID), .N ],
           LoR.Melt.Master.RMD[  is.na(playerDeck), .N ]
           ))!=0) paste("If you are seeing this message something is wrong and the code must be fixed")
 ```
+
 # Data
 
 ```{r nGames-data}
@@ -261,9 +266,9 @@ nGames_tbl <- tbl_merge(
     ) |>
   tab_footnote(
     footnote = md(glue::glue(
-      "EU Master {masterEU[,.N]}/{masterEU[!is.na(puuid),.N]}
-      NA Master {masterNA[,.N]}/{masterNA[!is.na(puuid),.N]}
-      APAC Master {masterAPAC[,.N]}/{masterAPAC[!is.na(puuid),.N]}"
+      "EU Master {masterEU[,.N]}/{EU.ladder}
+      NA Master {masterNA[,.N]}/{NA.ladder}
+      APAC Master {masterAPAC[,.N]}/{APAC.ladder}"
       )),
     locations = cells_column_spanners(spanners = everything())
   ) 
@@ -1266,44 +1271,13 @@ gtfix |>
    )
 ```
 
+#### Credits
+
+Special thanks to bA1ance for the recent support (ᐛ)ᕗ (January/February 2022)
+
 # Legal bla bla
 
 This content was created under Riot Games 'Legal Jibber Jabber' policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
-
-```{r update-Shiny}
-TopCC <- LoR.Melt.Master.RMD |>
-  count(playerDeck) |>
-  slice_max(n, n = 30,with_ties = F ) |> 
-  pull(playerDeck)
-
-LoR.Melt.Master.RMD |>
-  bind_rows(LoR.Melt.Diamond.RMD) |>
-  filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
-  # removing the first week to remove "noise"
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
-  distinct(match_key,playerPuuid,.keep_all = T) |>
-  filter(game_outcome!="tie") |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise(muWin   = sum(game_outcome=="win"),
-            muGames = n(),
-            muWR=mean(game_outcome=="win") ) |>
-  ungroup() |>
-  mutate(playrate = muWin/muGames) |>
-  as.data.table() |>
-  {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
-  mutate( 
-    okCI:=(!between(0.50,LCI,UCI)),
-    direction:=ifelse(muWR>0.50,"POS","NEG"),
-    CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) ) -> MUtbl
-
-tibble::tibble( 
-  playerDeck = rep(TopCC,each=30),
-  opponentDeck = rep(TopCC,30)
-  ) |> 
-  left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-  # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
-  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle02-MUtbl.csv"))
-```
 
 ```{r twitter-meta}
 #| echo=FALSE
