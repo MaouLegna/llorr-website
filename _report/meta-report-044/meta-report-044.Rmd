@@ -3,8 +3,9 @@ params:
   ind: "MR044"
   patch: "Patch 3.00 - Week 5"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°44)"
-  description: "Quarantaquattro Yuumi entrano a Bandle..."
-  cardlurl: "https://dd.b.pvp.net/3_2_0/set5/en_us/img/cards/05BC029-full.png"
+  description: "Magic Disadventures Seaonal Tournament - Playoff - Waiting Room"
+  #"Quarantaquattro Yuumi entrano a Bandle..."
+  cardlurl: "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01DE054-full.png"
   start: "2022-02-02 18:00:00" #UTC tz / 'current' week start
   end:   "2022-02-09 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -18,7 +19,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 02-09-1990
+date: 02-09-2022
 output:
  distill::distill_article:
     toc: true
@@ -208,7 +209,7 @@ LoR.Melt.Diamond.RMD |>
   NROW() -> gamesMaster
 ```
 
-Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond ^[HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"]
+Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond [^1]
 
 ```{r players-by-the-numbers}
 #| layout="l-body"
@@ -237,7 +238,7 @@ LoR.Account.RMD |>
 
 Number of (Ranked) **Master** matches analysed **`r format(nGames.Master/2,scientific = F)`** or **`r format(nGames.Master,scientific = F)`** games.
 
-Number of (Ranked) **~HighDiamond** matches analysed **`r format(nGames.Diamond/2,scientific = F)`** or **`r format(nGames.Diamond,scientific = F)`** games.
+Number of (Ranked) **\~HighDiamond** matches analysed **`r format(nGames.Diamond/2,scientific = F)`** or **`r format(nGames.Diamond,scientific = F)`** games.
 
 ```{r table-nGames-data}
 #| layout="l-body"
@@ -288,6 +289,35 @@ gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisi
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
+[^1]: HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"
+
+# Seasonal Tournament Open Rounds
+
+For the full detailed report go to: [Magic Disadventure Open Rounds Report](https://www.llorr-stats.com/report/seasonal-004/)
+
+::: {.l-page}
+::::: {.panelset}
+
+::: panel
+### Decks Results {.panel-name}
+
+```{r}
+knitr::include_graphics("images/S2022-02-05-LMI-table-v2.png")
+```
+:::
+
+::: panel
+### Top Players {.panel-name}
+
+```{r}
+knitr::include_graphics("images/S2022-02-05-top32.png")
+```
+
+:::
+
+:::::
+:::
+
 # Regions
 
 ## Play Rate
@@ -296,10 +326,9 @@ Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 Region.Freq <- freq_by_faction(LoR.Melt.Master.RMD)
 ```
 
-::: {.l-page}
-::::: {.panelset}
-
-::: {.panel}
+::: l-page
+::: panelset
+::: panel
 ### Plot {.panel-name}
 
 ```{r reg-freq-plot}
@@ -314,10 +343,10 @@ plot_freq(
   )
 ```
 
-The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
+The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ \[0,1\] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
 :::
 
-::: {.panel}
+::: panel
 ### Table {.panel-name}
 
 ```{r}
@@ -329,8 +358,7 @@ table_freq_gt(Region.Freq) |>
   tab_source_note( source_note = general.caption ) 
 ```
 :::
-
-:::::
+:::
 :::
 
 ## Play Rate by number of Cards
@@ -339,10 +367,9 @@ table_freq_gt(Region.Freq) |>
 Region.Freq.byCards <- freq_by_cards(LoR.Melt.Master.RMD)
 ```
 
-::: {.l-page}
-::::: {.panelset}
-
-::: {.panel}
+::: l-page
+::: panelset
+::: panel
 ### Plot {.panel-name}
 
 ```{r reg-freq-bycards-plot}
@@ -363,7 +390,7 @@ plot_freq(
 ```
 :::
 
-::: {.panel}
+::: panel
 ### Table {.panel-name}
 
 ```{r}
@@ -375,7 +402,7 @@ table_freq_gt(Region.Freq.byCards) |>
   tab_source_note( source_note = general.caption )
 ```
 :::
-:::::
+:::
 :::
 
 # Champions Combinations
@@ -398,9 +425,9 @@ CC.table.Diamond <- LoR.Melt.Diamond.RMD |>
 
 ## Play Rates
 
-::: {.l-page}
-::::: {.panelset}
-::: {.panel}
+::: l-page
+::: panelset
+::: panel
 ### Plot {.panel-name}
 
 ```{r prepare-cc-dt}
@@ -417,7 +444,6 @@ ChampionCombo <- tibble( playerDeck = topDeck ) |>
   rename_all(~c("playerDeck","Master","Diamond")) |>
   pivot_longer( cols = c("Master","Diamond"),names_to = "master",values_to = "freq" )
 ```
-
 
 ```{r champion-playrate-plot}
 #| fig.width=12,
@@ -471,7 +497,7 @@ ChampionCombo |>
 ```
 :::
 
-::: {.panel}
+::: panel
 ### from Master {.panel-name}
 
 ```{r table-Champion-PR-old}
@@ -507,8 +533,8 @@ CC.table.Master |>
 ```
 :::
 
-::: {.panel}
-### from ~HighDiamond {.panel-name}
+::: panel
+### from \~HighDiamond {.panel-name}
 
 ```{r table-Champion-PR-new}
 CC.table.Diamond |>
@@ -542,18 +568,16 @@ CC.table.Diamond |>
   #                                                   Last Update: {now(tzone='UTC')}.")), background_color = "whitesmoke", font_family = "Chivo")
 ```
 :::
-
-:::::
+:::
 :::
 
 ## Day by Day
 
-Highlighting the play-rates of most played^[at the moment of the last game] decks over time.
+Highlighting the play-rates of most played[^2] decks over time.
 
-::: {.l-page}
-::::: {.panelset}
-
-::: {.panel}
+::: l-page
+::: panelset
+::: panel
 ### Master {.panel-name}
 
 ```{r day-by-day-master}
@@ -585,7 +609,7 @@ meta_evo
 ```
 :::
 
-::: {.panel}
+::: panel
 ### HighDiamond {.panel-name}
 
 ```{r day-by-day-diamond}
@@ -616,9 +640,10 @@ plot_daily(
 meta_evo
 ```
 :::
-
-:::::
 :::
+:::
+
+[^2]: at the moment of the last game
 
 ## Win Rates
 
@@ -648,9 +673,9 @@ WR.DT.Reg <- LoR.Melt.Master.RMD |>
   left_join(WR.DT[,c("playerDeck","playrate")],by="playerDeck") 
 ```
 
-::: {.l-page}
-::::: {.panelset}
-::: {.panel}
+::: l-page
+::: panelset
+::: panel
 ### Meta Decks {.panel-name}
 
 Win rates of the most played combination of champions. Play Rate $\geq 1\%$ in at least one of the servers.
@@ -739,7 +764,7 @@ react_lor_italia <-
       WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
       playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1))
       )
-    ) 
+    )
 
 react_lor_italia %<>%
   reactablefmtr::add_title(glue("{params$patch} - Top10"), background_color = "white", font_family = "Helvetica") |>
@@ -750,10 +775,10 @@ reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("imag
 ```
 :::
 
-::: {.panel}
+::: panel
 ### Underdog {.panel-name}
 
-Top Win rates of the top10 best performing least played combination of champions. Play rate $\in$ [0.1%,1%) ^[Min number of games 50, during the times a meta/ladder just changed.]
+Top Win rates of the top10 best performing least played combination of champions. Play rate $\in [0.1%,1%)$ [^3]
 
 ```{r print-under-tableWinRate}
 WR.DT |>
@@ -785,9 +810,10 @@ WR.DT |>
     )
 ```
 :::
-
-:::::
 :::
+:::
+
+[^3]: Min number of games 50, during the times a meta/ladder just changed.
 
 # Match Ups
 
@@ -845,7 +871,7 @@ MUtblTop.Diamond <- tibble::tibble(
 
 The win rates on the grid are among the `r params$nGrid` most played champion combination.
 
-The upper value is from all the Masters players, the bottom one only from ~HighDiamond.
+The upper value is from all the Masters players, the bottom one only from \~HighDiamond.
 
 MU with less than 30 games are not included.
 
@@ -944,7 +970,7 @@ downloadthis::download_file(
 
 `r kableExtra::text_spec("Note:", color = "red")` Games from Master Rank only
 
-**Tier0** with LMI $\geq$ 97.5  **Tier1** with LMI $\in$ [85,97.5) **Tier2** with LMI $\in$ [60,85) **Tier3-** with LMI $<$ 60
+**Tier0** with LMI $\geq$ 97.5 **Tier1** with LMI $\in [85,97.5)$ **Tier2** with LMI $\in [60,85)$ **Tier3-** with LMI $<$ 60
 
 ```{r LMI}
 #| fig.width=12,
@@ -1006,11 +1032,11 @@ WR.DT |>
     caption = general.caption)
 ```
 
-> The LMI [^1] [^2] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
+> The LMI [^4] [^5] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.
 
-[^1]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
+[^4]: [LMI - Early Theory](https://llorr-stats.com/analysis/lmi/)
 
-[^2]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
+[^5]: [LMI - Adding a Ban Index](https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/)
 
 # Win Marathons Leaders
 
@@ -1148,10 +1174,9 @@ TableAllCards <- LoR.Melt.Master.RMD |>
          region  = str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation)) )
 ```
 
-::: {.l-page}
-::::: {.panelset}
-::: {.panel}
-
+::: l-page
+::: panelset
+::: panel
 ## Play Rate {.panel-name}
 
 ```{r print-CardsTable-1}
@@ -1177,7 +1202,7 @@ MostPlayed
 ```
 :::
 
-::: {.panel}
+::: panel
 ## Top 3 Play Rates by Region {.panel-name}
 
 ```{r print-CardsTable-3}
@@ -1208,7 +1233,7 @@ TopPlayed.PbyReg
 ```
 :::
 
-::: {.panel}
+::: panel
 ## Forgotten Cards {.panel-name}
 
 Cards that couldn't find place even in a meme deck.
@@ -1255,7 +1280,7 @@ LoR.Card |>
   )
 ```
 :::
-:::::
+:::
 :::
 
 # Not-Standard Archetype Names
