@@ -14,7 +14,7 @@ output:
 params:
   # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
   start:   "2022-01-05 18:00:00" #UTC tz / 2.21 Balance
-  end:     "2022-02-14 18:00:00" #UTC tz / 2.21 Balance
+  end:     "2022-02-16 18:00:00" #UTC tz / 2.21 Balance
 ---
 
 ```{r setup, include=FALSE}
@@ -51,20 +51,21 @@ source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 #'###########
 LoR.Match.DT.RMD <- list.files(path = file.path("C:","LlorR","data","raw"), pattern = "DT_S11.csv",full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("",NA), .id = "source") |>
-  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master") )) |>
-  filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-  filter( game_type == "Ranked"  )
+  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master"))) |>
+  filter(game_start_time_utc > as.POSIXct(params$start, tz = "UTC")) |>
+  filter(game_type == "Ranked") |>
+  mutate(server = if_else(server=="sea","apac",server) )
 
 #' load Account
 #'#############
 LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"), header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate( RiotID = glue::glue("{gameName}#{tagLine}"))
+  mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
+  mutate(activeShard = if_else(activeShard %in% c("asia","sea"),"apac",activeShard) )
 
 #' load DeckDT
 #'############
 LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 ```
-
 ```{r constants}
 # Precalculate user score colors to be used for custom cell rendering
 get_score_color <- function(score) {
@@ -73,11 +74,12 @@ get_score_color <- function(score) {
   blue_pal(normalized)
 }
 
-LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
-                                          caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
-                                          icon = "fa-clock",
-                                          # color = "lightgreen"
-                                          color = "#1A9850")
+LastUpdate.box <- 
+  flexdashboard::valueBox(
+    Sys.Date(),
+    caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
+    icon = "fa-clock",
+    color = "#1A9850")
 
 n = 15   # if I want to select a fixed number of underdog decks
 p = 0.01 # if I want to use the standard meta deck threshold
@@ -98,14 +100,8 @@ deck_filter <- LoR.Match.DT.RMD |>
 
 LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 
-#' Archetype-Fix
-#'##############
+# Archetype-Fix
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
-
-# LoR.Deck.RMD[ ,tabyl(archetype_pretty) ]
-
-#' Archetype names fix
-######################
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
@@ -824,7 +820,7 @@ meta_evo.base + geom_label_repel(
   plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
                                        Source: Metadata of games collected with RiotGames API'))
 
-ggsave("./images/meta-evo.png",width = 12,height = 8)
+ggsave("images/meta-evo.png",width = 12,height = 8)
 ```
 
 ```{r create-meta-evo-diamond, fig.width=12, fig.height=8, include=FALSE}
@@ -890,7 +886,7 @@ meta_evo.diamond.base +
     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
   )
 
-ggsave("./images/meta-evo-diamond.png",width = 12,height = 8)
+ggsave("images/meta-evo-diamond.png",width = 12,height = 8)
 ```
 
 ### Graph
@@ -957,7 +953,7 @@ meta_evo.diamond.base +
                                        Reference Population; Master and ~HighDiamond defined Games from Players who played against Master but aren not Master.
                                        Source: Metadata of games collected with RiotGames API'))
 
-ggsave("./images/meta-evo-double.png",width = 19,height = 9)
+ggsave("images/meta-evo-double.png",width = 19,height = 9)
 ```
 
 ## Row {data-heigth="150"}

@@ -53,11 +53,13 @@ LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),
 #' load Games DT
 #'##############
 # LoR.Match.DT.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA))
+LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA)) |>
+  mutate(server = if_else(server=="sea","apac",server) )
 
 #' Read Diamond DT
 ##################
-LoR.Diamond.DT.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT_S11.csv"), header = T, na.strings = c("",NA))
+LoR.Diamond.DT.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT_S11.csv"), header = T, na.strings = c("",NA)) |>
+  mutate(server = if_else(server=="sea","apac",server) )
 ```
 
 ```{r functions}
@@ -83,11 +85,12 @@ bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_f
 ```
 
 ```{r constants}
-LastUpdate.box <- flexdashboard::valueBox(Sys.Date(),
-                                          caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
-                                          icon = "fa-clock",
-                                          # color = "lightgreen"
-                                          color = "#1A9850")
+LastUpdate.box <- 
+  flexdashboard::valueBox(
+    Sys.Date(),
+    caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
+    icon = "fa-clock",
+    color = "#1A9850")
 ```
 
 ```{r archetype-fix}
@@ -118,18 +121,19 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 
 ```{r prepara-data}
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
-  filter( game_type == "Ranked"  ) |>
-  filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
+  filter(game_type == "Ranked"  ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  pivot_longer(
+    cols = c(ends_with("_1"),ends_with("_2")),
+    names_to = c(".value"),
+    names_pattern = "(.*)_[0-9]"
+    ) |>
   as.data.table() |>
   # Add Deck data
-  select(-factions) |>
+  rename(factions_name = factions) |>
   left_join(LoR.Deck.RMD, by="deck_code") |>
   rename(playerDeck=archetype) |>
   left_join(
@@ -138,18 +142,19 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
 
 # Additional tbl
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  filter( game_type == "Ranked"  ) |>
-  filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
+  filter(game_type == "Ranked"  ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  pivot_longer(
+    cols = c(ends_with("_1"),ends_with("_2")),
+    names_to = c(".value"),
+    names_pattern = "(.*)_[0-9]"
+    ) |>
   as.data.table() |>
   # Add Deck data
-  select(-factions) |>
+  rename(factions_name = factions) |>
   left_join(LoR.Deck.RMD, by="deck_code") |>
   rename(playerDeck=archetype) |>
   left_join(
