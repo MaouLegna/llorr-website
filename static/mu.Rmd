@@ -17,24 +17,21 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo = FALSE,
-  eval = TRUE,
-  warning = FALSE,
-  error = FALSE,
-  message = FALSE,
-  comment = NA,
-  R.options = list(width = 140,
-                   digits.secs=6),
-  dev.args = list(bg = 'transparent'), # make graphics with transparent background
-  fig.align = 'center',
-  fig.width=12,
-  fig.height=8,
-  engine.path = list(
-    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
-  ),
-  #'distill options
-  layout="l-body-outset",
-  preview=FALSE
+  echo       = FALSE,
+  eval       = TRUE,
+  warning    = FALSE,
+  error      = FALSE,
+  message    = FALSE,
+  comment    = NA,
+  R.options  = list(width = 140, digits.secs=6),
+  dev.args   = list(bg = 'whitesmoke'),
+  fig.align  = 'center',
+  fig.width  = 12,
+  fig.height = 8,
+  # fig.path   = "figures/prefix-"
+  # fig.path   = glue::glue("images/{params$ind}-"),
+  layout     = "l-page",
+  preview    = TRUE
 )
 
 #' R Option
@@ -46,51 +43,36 @@ xaringanExtra::use_panelset()
 ```
 
 ```{r load-data}
-#' load DeckDT
-#'############
+# load DeckDT
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
-#' load Games DT
-#'##############
-# LoR.Match.DT.RMD    <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT.csv"), header = T, na.strings = c("", NA))
-LoR.Match.DT.RMD   <- fread(file.path("C:","LlorR","data","raw","LoR_MatchDT_S11.csv"), header = T, na.strings = c("", NA)) |>
-  mutate(server = if_else(server=="sea","apac",server) )
+# load Games DT
+LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S11(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map(data.table::fread) |>
+  reduce(rbind) |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
-#' Read Diamond DT
-##################
-LoR.Diamond.DT.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_DiamondDT_S11.csv"), header = T, na.strings = c("",NA)) |>
-  mutate(server = if_else(server=="sea","apac",server) )
-```
+# Read Diamond DT
+LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S11(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map(data.table::fread) |>
+  reduce(rbind) |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
-```{r functions}
-# Render a bar chart with positive and negative values
-bar_chart_pos_neg <- function(label, value, max_value = 1, height = "12px",pos_fill = "#005ab5", neg_fill = "#dc3220") {
-  
-  base_chart <- htmltools::div(style = list(flex = "1 1"))
-  # pos_chart <- htmltools::div(style = list(flex = "1 1"))
-  width <- paste0((value / max_value) * 100, "%")
-
-  if (value >= 0.5) {
-    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = pos_fill, width = width, height = height))
-    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- htmltools::tagAppendChild(base_chart, chart)
-    htmltools::div(style = list(display = "flex"), base_chart)
-  } else {
-    bar <- htmltools::div(style = list(marginLeft = "8px",marginRight = "8px", background = neg_fill, width = width, height = height))
-    chart <- htmltools::div(style = list(display = "flex", alignItems = "center"), bar, label)
-    base_chart <- htmltools::tagAppendChild(base_chart, chart)
-    htmltools::div(style = list(display = "flex"), base_chart)
-  }
-}
+# load Games DT
+LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
+  map(data.table::fread) |>
+  reduce(rbind) |>
+  mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) )
 ```
 
 ```{r constants}
-LastUpdate.box <- 
-  flexdashboard::valueBox(
-    Sys.Date(),
-    caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
-    icon = "fa-clock",
-    color = "#1A9850")
+LastUpdate.box <- flexdashboard::valueBox(
+  Sys.Date(),
+  caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"),
+  icon = "fa-clock",
+  color = "#1A9850")
 ```
 
 ```{r archetype-fix}

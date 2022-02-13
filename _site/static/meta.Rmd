@@ -19,52 +19,70 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo = FALSE,
-  eval = TRUE,
-  warning = FALSE,
-  error = FALSE,
-  message = FALSE,
-  comment = NA,
-  R.options = list(width = 140,
-                   digits.secs=6),
-  dev.args = list(bg = 'transparent'), # make graphics with transparent background
-  fig.align = 'center',
-  fig.width=12,
-  fig.height=8,
-  engine.path = list(
-    python = 'C:/anaconda/'   # -> use_python("C:/anaconda/")
-  ),
-  #'distill options
-  layout="l-body-outset",
-  preview=FALSE
+  echo       = FALSE,
+  eval       = TRUE,
+  warning    = FALSE,
+  error      = FALSE,
+  message    = FALSE,
+  comment    = NA,
+  R.options  = list(width = 140, digits.secs=6),
+  dev.args   = list(bg = 'whitesmoke'),
+  fig.align  = 'center',
+  fig.width  = 12,
+  fig.height = 8,
+  # fig.path   = "figures/prefix-"
+  # fig.path   = glue::glue("images/{params$ind}-"),
+  layout     = "l-page",
+  preview    = TRUE
 )
 
-# R Option
+#' R Option
 options(scipen = 999)
-source(file.path("C:","LlorR","scripts","lor_main.R" ))
+source(file.path("C:","LlorR","scripts","lor_main.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+xaringanExtra::use_panelset()
 ```
 
 ```{r load-data}
-#' load Games
-#'###########
-LoR.Match.DT.RMD <- list.files(path = file.path("C:","LlorR","data","raw"), pattern = "DT_S11.csv",full.names = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("",NA), .id = "source") |>
-  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master"))) |>
+# load DeckDT
+LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+
+# load Games DT
+LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
+  map_dfr(data.table::fread,colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) ) |>
+  mutate(RiotID = glue::glue("{gameName}#{tagLine}"))
+
+# load Games DT
+LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S11(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(source = "Master") |>
+  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master")))
+
+# Read Diamond DT
+LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S11(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(source = "Diamond") |>
+  mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master")))
+
+LoR.Match.DT.RMD <- LoR.Match.DT.RMD |>
+  bind_rows(LoR.Diamond.DT.RMD) |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   filter(game_start_time_utc > as.POSIXct(params$start, tz = "UTC")) |>
-  filter(game_type == "Ranked") |>
-  mutate(server = if_else(server=="sea","apac",server) )
+  filter(game_type == "Ranked")
 
-#' load Account
-#'#############
-LoR.Account.RMD <- fread(file.path("C:","LlorR","data","raw","LoR_ACCOUNT.csv"), header=T, na.strings = c("",NA), encoding = 'UTF-8') |>
-  mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
-  mutate(activeShard = if_else(activeShard %in% c("asia","sea"),"apac",activeShard) )
-
-#' load DeckDT
-#'############
-LoR.Deck.RMD        <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+# load Games DT
+# LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)DT_S11(.*)csv$"), full.names = T) |>
+#   str_subset(pattern = "Keys",negate = T) |>
+#   map_dfr(data.table::fread, header = T, na.strings = c("",NA), .id = "source") |>
+#   mutate(source = factor(source,levels = c(1,2), labels = c("Diamond","Master"))) |>
+#   filter(game_start_time_utc > as.POSIXct(params$start, tz = "UTC")) |>
+#   filter(game_type == "Ranked") |>
+#   mutate(server = if_else(server=="sea","apac",server) ) |>
+#   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 ```
 ```{r constants}
 # Precalculate user score colors to be used for custom cell rendering
@@ -109,22 +127,19 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 #' Metl tbl
 #'#########
 LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
-  rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2) |>
+  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1) |>
+  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1) |>
   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
                names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
+               names_pattern = "(.*)_[0-9]") |>
   as.data.table() |>
   # Add Deck data
   select(-factions) |>
   left_join(LoR.Deck.RMD, by="deck_code") |>
   rename(playerDeck=archetype) |>
-  left_join(
-    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code"))
-
+  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+            by=c("opponent_deck_code"="deck_code"))
 
 # LoR.Melt.Matches.RMD[ playerPuuid == LoR.Account.RMD[ str_detect(RiotID,"bA1a"),puuid ] , ]
 ```
