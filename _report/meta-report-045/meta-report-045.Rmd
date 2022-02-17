@@ -1,9 +1,9 @@
 ---
 params:
   ind: "MR045"
-  patch: "Patch 3.00 - Week 6"
+  patch: "Patch 3.10 - Week 3"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°45)"
-  description: "Runeterra Megami Tensei 5: A Curious Journey Redux"
+  description: "Runeterra Tensei 6: A Curious Journey Redux"
   #"Quarantaquattro Yuumi entrano a Bandle..."
   cardlurl: "https://dd.b.pvp.net/3_2_0/set5/en_us/img/cards/05BC029-full.png"
   start: "2022-02-09 18:00:00" #UTC tz / 'current' week start
@@ -105,16 +105,14 @@ LoR.Seasonal.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw")
   filter(game_start_time_utc >= as.POSIXct("2022-02-11 00:00:00") )
 ```
 
-```{r}
+```{r fix-account}
+setDT(LoR.Account.RMD)
 LoR.Account.RMD[, num_obs := Reduce(`+`, lapply(.SD,function(x) !is.na(x)))]
 LoR.Account.RMD <- LoR.Account.RMD |>
-  group_by(puuid) |>
+  group_by(puuid,activeShard) |>
   slice_max(num_obs,n=1,with_ties = F) |>
   ungroup() |>
   as.data.table()
-
-# LoR.Account.RMD |>
-#   get_dupes(puuid)
 ```
 
 ```{r archetype-fix}
@@ -133,29 +131,33 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r account-info}
-masterEU <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_EU.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+master.EU <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_EU.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-masterNA <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_NA.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+master.NA <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_NA.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-masterAPAC <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_APAC.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+master.APAC <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S11_APAC.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-namesList.EU.RMD   <- masterEU[ !is.na(puuid), .N ]
-namesList.NA.RMD   <- masterNA[ !is.na(puuid), .N ]
-namesList.APAC.RMD <- masterAPAC[ !is.na(puuid), .N ]
+namesList.EU.RMD   <- master.EU[ !is.na(puuid), .N ]
+namesList.NA.RMD   <- master.NA[ !is.na(puuid), .N ]
+namesList.APAC.RMD <- master.APAC[ !is.na(puuid), .N ]
 
-EU.ladder   <- length(lorR::lor_leaderboard("europe",names = T))
-NA.ladder   <- length(lorR::lor_leaderboard("americas",names = T))
-APAC.ladder <- length(lorR::lor_leaderboard("sea",names = T))
+EU.ladder   <- NROW(master.EU)
+NA.ladder   <- NROW(master.NA)
+APAC.ladder <- NROW(master.APAC)
 ```
 
 ```{r prepare-data-master}
 # Melt tbl
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
-  filter(game_type == "Ranked"  ) |>
+  filter(game_type == "Ranked") |>
+  # filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC")-days(7),as.POSIXct(params$end,"UTC")-days(7)) ) |>
   filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  filter(puuid_1 %in% c(master.APAC$puuid,master.EU$puuid,master.NA$puuid) |
+           puuid_2 %in% c(master.APAC$puuid,master.EU$puuid,master.NA$puuid) ) |>
+  distinct(match_key,puuid_1,.keep_all = T) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -174,10 +176,9 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   # Add Player data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
+```
 
-# LoR.Melt.Master.RMD |>
-#   filter(is.na(playerID) & !is.na(opponentID))
-
+```{r fix-data-master}
 LoR.Melt.Master.RMD <- LoR.Melt.Master.RMD |>
   filter(!is.na(playerID) & !is.na(opponentID))
 ```
@@ -187,6 +188,7 @@ LoR.Melt.Master.RMD <- LoR.Melt.Master.RMD |>
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
   filter( game_type == "Ranked"  ) |>
   filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  distinct(match_key,puuid_1,.keep_all = T) |>
   rename( playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate( opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate( opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -205,7 +207,9 @@ LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
   # Add Player data
   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
+```
 
+```{r fix-data-diamond}
 # LoR.Melt.Diamond.RMD |>
 #   filter(is.na(playerID) & !is.na(opponentID))
 
@@ -260,43 +264,42 @@ if (any(c(LoR.Melt.Master.RMD[ is.na(playerID), .N ],
 
 ```{r nGames-data}
 max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
-  slice_max(game_start_time_utc,n=1,with_ties = F) |> 
+  slice_max(game_start_time_utc,n=1,with_ties = F) |>
   pull(game_start_time_utc) |>
   format(format = "%Y-%m-%d %H:%M:%S")
-  
+#   
 merge.tbl.master  <- table_bythenumbers(LoR.Match.DT.RMD)
 merge.tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
-
+ 
 nGames.Master  <- LoR.Melt.Master.RMD[,.N]
 nGames.Diamond <- LoR.Melt.Diamond.RMD[,.N]
-
-nMaster  <- sum(masterEU[ !is.na(puuid), .N ],masterNA[ !is.na(puuid), .N ],masterAPAC[ !is.na(puuid), .N ])
-nDiamond <- LoR.Account.RMD[ master == "diamond" , .N ]
-
-LoR.Melt.Master.RMD |>
-  filter( playerPuuid %in% LoR.Account.RMD[ master == "master" , puuid ]  ) |>
-  distinct(match_key,playerPuuid) |>
-  NROW() -> gamesDiamond
-
-LoR.Melt.Diamond.RMD |>
-  filter( playerPuuid %in% LoR.Account.RMD[ master == "diamond" , puuid ]  ) |>
-  distinct(match_key,playerPuuid) |>
-  NROW() -> gamesMaster
+ 
+nMaster  <- length(c(master.APAC$puuid,master.EU$puuid,master.NA$puuid))
+# nDiamond <- LoR.Account.RMD[ master == "diamond" , .N ]
+ 
+# LoR.Melt.Master.RMD |>
+#   filter(playerPuuid %in% c(master.APAC$puuid,master.EU$puuid,master.NA$puuid)  ) |>
+#   distinct(match_key,playerPuuid) |>
+#   NROW() -> gamesMaster
+# 
+# LoR.Melt.Diamond.RMD |>
+#   filter( playerPuuid %in% LoR.Account.RMD[ master == "diamond" , puuid ]  ) |>
+#   distinct(match_key,playerPuuid) |>
+#   NROW() -> gamesDiamond
 ```
 
-Number of Players: **`r nMaster`** Master / **`r nDiamond`** HighDiamond [^1]
+Number of Players: **`r nMaster`** Master
 
 ```{r players-by-the-numbers}
 #| layout="l-body"
-LoR.Account.RMD |>
-  filter(master=="diamond" |
-           (master=="master" & gameName %in% masterEU$gameName & activeShard=="europe") |
-           (master=="master" & gameName %in% masterNA$gameName & activeShard=="americas") |
-           (master=="master" & gameName %in% masterAPAC$gameName & activeShard=="apac")
-  ) |>
+
+master.EU |>
+  bind_rows(master.NA) |>
+  bind_rows(master.APAC) |>
+  add_column(master="master") |>
   select(activeShard,rank=master) |>
   mutate(across(everything(), str_to_title)) |>
-  mutate(rank = factor(rank, levels = c("Master","Diamond") ) ) |>
+  # mutate(rank = factor(rank, levels = c("Master","Diamond") ) ) |>
   tbl_summary(by = activeShard,
                label = list(rank = "Player Rank")) |>
   modify_header(label ~ "**Shard/Server**") |>
@@ -309,7 +312,7 @@ LoR.Account.RMD |>
     table.font.color = "black",
     table.font.color.light = "black"
    ) -> nPlayers
-
+ 
 nPlayers
 
 gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
@@ -321,7 +324,7 @@ Number of (Ranked) **\~HighDiamond** matches analysed **`r format(nGames.Diamond
 
 ```{r table-nGames-data}
 #| layout="l-body"
-nGames_tbl <- tbl_merge( 
+nGames_tbl <- tbl_merge(
   tbls = list(merge.tbl.master,merge.tbl.diamond),
     tab_spanner = c("**Master**", "**~HighDiamond**")
   ) |>
@@ -346,12 +349,12 @@ nGames_tbl <- tbl_merge(
     ) |>
   tab_footnote(
     footnote = md(glue::glue(
-      "EU Master {masterEU[,.N]}/{EU.ladder}
-      NA Master {masterNA[,.N]}/{NA.ladder}
-      APAC Master {masterAPAC[,.N]}/{APAC.ladder}"
+      "EU Master {master.EU[,.N]}
+      NA Master {master.NA[,.N]}
+      APAC Master {master.APAC[,.N]}"
       )),
     locations = cells_column_spanners(spanners = everything())
-  ) 
+  )
 
 nGames_tbl |> #
   tab_options(
@@ -363,8 +366,6 @@ nGames_tbl |> #
 
 gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisible()
 ```
-
-<!-- Player to Games Ratio:  **`r round(gamesMaster/nMaster,1)`** at Master / **`r round(gamesDiamond/nDiamond,1)`** at Diamond ^[ Approximation, number of games from Master player to Master player ] -->
 
 Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
@@ -491,7 +492,7 @@ winlosstbl <- Game.Results |>
   # tab_options(data_row.padding = px(2)) |>
   tab_header(
     title = md("Top32 Results"),
-    subtitle = md("Game results from the top32 players of the Between Worlds Seasonal Tournament") 
+    subtitle = md("Game results from the top32 players of the Magic Disadventures Seasonal Tournament") 
   ) |>
   tab_source_note(source_note = md("Metadata of games collected with RiotGames API")) |>
   gtExtras::gt_theme_538()
@@ -564,11 +565,13 @@ react.LU.top32 <- top32tbl |>
     defaultExpanded = T
     ) |>
   reactablefmtr::add_title("Top32 Players' Deckcodes", background_color = "white", font_family = "Helvetica") |>
-  reactablefmtr::add_subtitle(c("Magic Disadventure Playoff - Top32 LineUps"), background_color = "white", font_family = "Roboto") |>
+  reactablefmtr::add_subtitle(c("Magic Disadventures Playoff - Top32 LineUps"), background_color = "white", font_family = "Roboto") |>
   reactablefmtr::add_source(glue::glue("As not all decks has being played I can't provide a complete coverage of the lineUps but {deckFound}/{32*3*3} decks overall.
                                        Source: Metadata of games collected with RiotGames API"), background_color = "white", font_family = "Chivo")
 
-reactablefmtr::save_reactable(input = react.LU.top32,output = glue::glue("images/{params$ind}-top32-decks.png"))
+react.LU.top32
+
+reactablefmtr::save_reactable(input = react.LU.top32,output = glue::glue("images/{params$ind}-top32-decks.png")) |> invisible()
 ```
 :::
 
@@ -833,7 +836,7 @@ CC.table.Diamond |>
 Highlighting the play-rates of most played[^2] decks over time.
 
 ::: l-page
-::: panelset
+::::: panelset
 ::: panel
 ### Master {.panel-name}
 
@@ -843,6 +846,7 @@ Highlighting the play-rates of most played[^2] decks over time.
 
 m = 12
 
+setindex(LoR.Melt.Master.RMD, NULL);
 Champion.deck.daily <- LoR.Melt.Master.RMD |>
   arrange(game_start_time_utc) |>
   select(game_start_time_utc,playerDeck) |>
@@ -875,6 +879,7 @@ meta_evo
 
 m = 12
 
+# setindex(LoR.Melt.Diamond.RMD, NULL);
 Champion.deck.daily <- LoR.Melt.Diamond.RMD |>
   arrange(game_start_time_utc) |>
   select(game_start_time_utc,playerDeck) |>
@@ -892,12 +897,12 @@ plot_daily(
   Champion.deck.daily,
   decks = fct_values,
   title = "Evolution of Play Rate over time - HighDiamond",
-  limit = .15 ) -> meta_evo
-
-meta_evo
+  start = as.POSIXct(params$start,"UTC"),
+  end   = as.POSIXct(params$end,"UTC"),
+  limit = .15 )
 ```
 :::
-:::
+:::::
 :::
 
 [^2]: at the moment of the last game
@@ -994,41 +999,41 @@ WR.DT.Reg |>
 
 ```{r lor-italia}
 #| results="hide"
-react_lor_italia <-
-  WR.DT |>
-  filter(playrate >= 0.01) |>
-  slice_max(playrate,n=10) |>
-  # arrange(desc(WR)) |>
-  relocate(playerDeck,WR,nWin,nGames) |>
-  reactable(
-    bordered = TRUE,
-    # wrap = FALSE,
-    highlight = TRUE,
-    striped = TRUE,
-    # filterable = TRUE,
-    defaultSorted = list(WR = "desc"),
-    defaultColDef = colDef(
-      # header = function(value) str_to_title(value),
-      #  cell = function(value) format(value, nsmall = 1),
-      align = "center",
-      minWidth = 120
-      # headerStyle = list(background = "steelblue",color="white")
-      ),
-    columns = list(
-      playerDeck = colDef(name = "Champions",minWidth = 250),
-      nWin   = colDef(name = "#Win"),
-      nGames = colDef(name = "#Games"),
-      WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
-      playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1))
-      )
-    )
-
-react_lor_italia %<>%
-  reactablefmtr::add_title(glue("{params$patch} - Top10"), background_color = "white", font_family = "Helvetica") |>
-  reactablefmtr::add_subtitle("Top10 Most Played decks of the week by WinRate", background_color = "white", font_family = "Roboto") |>
-  reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white", font_family = "Chivo")
-
-reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("images/{params$ind}-loritalia-playrate.png"))
+# react_lor_italia <-
+#   WR.DT |>
+#   filter(playrate >= 0.01) |>
+#   slice_max(playrate,n=10) |>
+#   # arrange(desc(WR)) |>
+#   relocate(playerDeck,WR,nWin,nGames) |>
+#   reactable(
+#     bordered = TRUE,
+#     # wrap = FALSE,
+#     highlight = TRUE,
+#     striped = TRUE,
+#     # filterable = TRUE,
+#     defaultSorted = list(WR = "desc"),
+#     defaultColDef = colDef(
+#       # header = function(value) str_to_title(value),
+#       #  cell = function(value) format(value, nsmall = 1),
+#       align = "center",
+#       minWidth = 120
+#       # headerStyle = list(background = "steelblue",color="white")
+#       ),
+#     columns = list(
+#       playerDeck = colDef(name = "Champions",minWidth = 250),
+#       nWin   = colDef(name = "#Win"),
+#       nGames = colDef(name = "#Games"),
+#       WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
+#       playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1))
+#       )
+#     )
+# 
+# react_lor_italia %<>%
+#   reactablefmtr::add_title(glue("{params$patch} - Top10"), background_color = "white", font_family = "Helvetica") |>
+#   reactablefmtr::add_subtitle("Top10 Most Played decks of the week by WinRate", background_color = "white", font_family = "Roboto") |>
+#   reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white", font_family = "Chivo")
+# 
+# reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("images/{params$ind}-loritalia-playrate.png"))
 ```
 :::
 
