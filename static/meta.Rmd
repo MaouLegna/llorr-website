@@ -52,6 +52,10 @@ LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), p
   reduce(rbind) |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   select(-contains("factions"))
+
+LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
+  map_dfr(data.table::fread,colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) )
 ```
 
 ```{r constants}
@@ -74,7 +78,6 @@ p = 0.01 # if I want to use the standard meta deck threshold
 
 ntopPR  <- 12 # meta evolution decks
 seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
-seqDate <- seqDate[-length(seqDate)]
 ```
 
 ```{r archetype-fix}
@@ -563,287 +566,208 @@ flexdashboard::valueBox(glue::glue("{length(fct_underdog)} Underdog Decks"),
 LastUpdate.box
 ```
 
-<!-- # Fresh Stats (last 24 hours) {data-icon="fa-table"} -->
+# Fresh Stats (last 24 hours) {data-icon="fa-table"}
 
-<!-- ```{r} -->
-<!-- LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |> -->
-<!--   filter( game_start_time_utc %within% interval(today()+hours(18)-days(2),today()+hours(18)-days(1)) ) |> -->
-<!--   distinct(match_key,playerPuuid,.keep_all = T) -->
-<!-- ``` -->
+```{r}
+LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
+  filter(game_start_time_utc %within% interval(today()+hours(18)-days(2),today()+hours(18)-days(1)) ) |>
+  distinct(match_key,playerPuuid,.keep_all = T)
+```
 
-<!-- ## Row -->
+## Row
 
-<!-- ### Previous Day -->
+### Previous Day
 
-<!-- ```{r 24hrs-process-winRate} -->
-<!-- WR.DT.24h <- LoR.Melt.Matches.RMD |> -->
-<!--   win_rates(details = T,server = F) |> -->
-<!--   filter( playerDeck %!in% c(fct_meta,fct_meta,fct_underdog,fct_underdog) ) |> -->
-<!--   filter( WR > 0.5 ) |> -->
-<!--   slice_max(nGames, n = 50, with_ties = F) |> -->
-<!--   select(-LCI,-UCI) -->
+```{r 24hrs-process-winRate}
+WR.DT.24h <- LoR.Melt.Matches.RMD |>
+  win_rates(details = T,server = F) |>
+  filter(playerDeck %!in% c(fct_meta,fct_meta,fct_underdog,fct_underdog) ) |>
+  filter(WR > 0.5 ) |>
+  slice_max(nGames, n = 50, with_ties = F) |>
+  select(-LCI,-UCI)
 
-<!-- deckCodeTbl.24hrs  <- LoR.Melt.Matches.RMD |> -->
-<!--   filter( playerDeck %in% c(WR.DT.24h$playerDeck) ) |> -->
-<!--   mutate( playerDeck = factor(playerDeck, ordered = TRUE, -->
-<!--                               levels = c(WR.DT.24h$playerDeck) ) -->
-<!--           ) |> -->
-<!--   group_by(server,playerDeck,deck_code ) |> -->
-<!--   summarise( n = n() ) |> -->
-<!--   group_by(playerDeck) |> -->
-<!--   slice_max(n, n = 10) |> -->
-<!--   ungroup() |> -->
-<!--   mutate( link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"), -->
-<!--           server = str_to_title(server) ) |> -->
-<!--   select(playerDeck,n,link,server) -->
-<!-- ``` -->
-
-
-<!-- ```{r 24hrs-react-winRate} -->
-<!-- with_tooltip <- function(value, tooltip) { -->
-<!--   htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help", -->
-<!--             title = tooltip, value) -->
-<!-- } -->
-
-<!-- WR.DT.24h |> -->
-<!--   reactable( -->
-<!--     # groupBy = "playerDeck", -->
-<!--     searchable = TRUE, -->
-<!--     bordered = TRUE, -->
-<!--     # wrap = FALSE, -->
-<!--     highlight = TRUE, -->
-<!--     striped = TRUE, -->
-<!--     pagination = FALSE, -->
-<!--     fullWidth = T, -->
-<!--     # defaultSorted = list(LMI = "desc"), -->
-<!--     defaultColDef = colDef( -->
-<!--       align = "center", -->
-<!--       minWidth = 100, -->
-<!--       # headerStyle = list(background = "steelblue",color="white") -->
-<!--     ), -->
-<!--     details = function(index) { -->
-<!--       # index = 1 -->
-<!--       deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == WR.DT.24h$playerDeck[index], ] -->
-<!--       reactable( -->
-<!--         deckdata, -->
-<!--         fullWidth = F, -->
-<!--         defaultColDef = colDef( -->
-<!--           style = list( fontSize = 13 ), -->
-<!--           html = TRUE -->
-<!--           ), -->
-<!--         theme = reactableTheme( headerStyle = list(background = "red",color="white", fontSize = 13 ) ), -->
-<!--         columns = list( -->
-<!--           n = colDef(name = "#Games", minWidth = 75 ), -->
-<!--           link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ), -->
-<!--           # playerDeck = colDef(name = "Archetype", minWidth = 150 ), -->
-<!--           playerDeck = colDef(show = F), -->
-<!--           server = colDef(name = "Server", minWidth = 100 ) -->
-<!--           ) )}, -->
-<!--     columns = list( -->
-<!--       playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left",header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")), -->
-<!--       nWin   = colDef(name = "#Win"), -->
-<!--       nGames = colDef(name = "#Games"), -->
-<!--       playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ), -->
-<!--       type = colDef(name = "Type"), -->
-<!--       # LMI = colDef(name = "LMI"), -->
-<!--       tier = colDef(name = "Tier",minWidth = 200,align = "left"), -->
-<!--       CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"), -->
-<!--       WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) ) -->
-<!--     ) -->
-
-<!--   ) -->
-<!-- ``` -->
-
-<!-- ## Row {data-heigth="150"} -->
+deckCodeTbl.24hrs  <- LoR.Melt.Matches.RMD |>
+  filter(playerDeck %in% c(WR.DT.24h$playerDeck) ) |>
+  mutate(playerDeck = factor(playerDeck, ordered = TRUE,
+                              levels = c(WR.DT.24h$playerDeck) )
+         ) |>
+  group_by(server,playerDeck,deck_code ) |>
+  summarise( n = n() ) |>
+  group_by(playerDeck) |>
+  slice_max(n, n = 10) |>
+  ungroup() |>
+  mutate(link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"),
+         server = str_to_title(server) ) |>
+  select(playerDeck,n,link,server)
+```
 
 
-<!-- ### Time Frame -->
+```{r 24hrs-react-winRate}
+with_tooltip <- function(value, tooltip) {
+  htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+            title = tooltip, value)
+}
 
-<!-- ```{r} -->
-<!-- flexdashboard::valueBox(glue::glue("24 Hours Time Frame"), -->
-<!--                         caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"), -->
-<!--                         icon = "fa-clock", -->
-<!--                         # color = "lightgreen" -->
-<!--                         color = "red") -->
-<!-- ``` -->
+WR.DT.24h |>
+  reactable(
+    # groupBy = "playerDeck",
+    searchable = TRUE,
+    bordered = TRUE,
+    # wrap = FALSE,
+    highlight = TRUE,
+    striped = TRUE,
+    pagination = FALSE,
+    fullWidth = T,
+    # defaultSorted = list(LMI = "desc"),
+    defaultColDef = colDef(
+      align = "center",
+      minWidth = 100,
+      # headerStyle = list(background = "steelblue",color="white")
+    ),
+    details = function(index) {
+      # index = 1
+      deckdata <- deckCodeTbl.24hrs[ deckCodeTbl.24hrs$playerDeck == WR.DT.24h$playerDeck[index], ]
+      reactable(
+        deckdata,
+        fullWidth = F,
+        defaultColDef = colDef(
+          style = list( fontSize = 13 ),
+          html = TRUE
+          ),
+        theme = reactableTheme( headerStyle = list(background = "red",color="white", fontSize = 13 ) ),
+        columns = list(
+          n = colDef(name = "#Games", minWidth = 75 ),
+          link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ),
+          # playerDeck = colDef(name = "Archetype", minWidth = 150 ),
+          playerDeck = colDef(show = F),
+          server = colDef(name = "Server", minWidth = 100 )
+          ) )},
+    columns = list(
+      playerDeck = colDef(name = "Archetype",minWidth = 250,align = "left",header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")),
+      nWin   = colDef(name = "#Win"),
+      nGames = colDef(name = "#Games"),
+      playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE,digits = 1) ),
+      type = colDef(name = "Type"),
+      # LMI = colDef(name = "LMI"),
+      tier = colDef(name = "Tier",minWidth = 200,align = "left"),
+      CI = colDef(name = "Conf.Interval",minWidth = 200,align = "center"),
+      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE,digits = 1) )
+    )
 
+  )
+```
 
-<!-- ### Last Update -->
-
-
-<!-- ```{r} -->
-<!-- LastUpdate.box -->
-<!-- ``` -->
-
-
-<!-- # Meta-Evolution {data-icon="fa-chart-line"} -->
-
-<!-- ## Row {data-heigth="750"} -->
-
-<!-- ```{r create-meta-evo, fig.width=12, fig.height=8, include=F} -->
-<!-- meta_evo.base <- Champion.deck.daily |> -->
-<!--   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) + -->
-<!--   geom_line( aes(color = playerDeck), size = .9  ) + -->
-<!--   # geom_text( aes(label=str_to_upper(playerDeck),color = playerDeck)  ) + -->
-<!--   scale_x_date( -->
-<!--     # date_minor_breaks = "2 day", # not working -->
-<!--     limits = c(as.Date(params$start, tz="UTC"),  as.Date(now()+days(3)) ) -->
-<!--   )  + -->
-<!--   scale_y_continuous( -->
-<!--     expand = c(0, 0), -->
-<!--     # limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)), -->
-<!--     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5), -->
-<!--     limits = c(0,0.30), -->
-<!--     breaks = seq(0,0.30,0.05), -->
-<!--     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%") -->
-<!--   )  + -->
-<!--   labs(x = "Date", -->
-<!--        y = "PlayRate", -->
-<!--        title = "Evolution of Play Rate over time - Master" -->
-<!--        # caption = glue::glue("{params$patch} -->
-<!--        #                      Ranked games from {params$start} UTC to {params$end} UTC -->
-<!--        #                      Metadata of games collected with RiotGames API") -->
-<!--   ) + -->
-<!--   theme_539() + -->
-<!--   theme( legend.position = "none", -->
-<!--          axis.text = element_text(size = 10, face = "bold", color = "grey50") -->
-<!--   ) + -->
-<!--   # scale_color_manual( values = sample(colorRampPalette(brewer.pal(8, "Dark2"))(30),15) ) -->
-<!--   # scale_color_manual( values = safe_colorblind_palette ) -->
-<!--   scale_color_manual( values = rcartocolor::carto_pal(12, "Safe") ) + -->
-<!--   scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily$playerDeck)  ) ) -->
-
-<!-- meta_evo.base + geom_label_repel( -->
-<!--     data = Champion.deck.daily |> -->
-<!--         filter( game_start_time_utc == max(game_start_time_utc) ), -->
-<!--            # Champion.deck.daily |> filter( game_start_time_utc >= now()-days(2) ),  -->
-<!--     aes(label=str_to_upper(playerDeck),color = playerDeck ), -->
-<!--     fontface = "bold", -->
-<!--     family = "Helvetica", -->
-<!--     size = 3.5, -->
-
-<!--     force = 20, -->
-<!--     force_pull = 0.5, -->
-
-<!--     nudge_x      = 0.15, -->
-<!--     direction    = "y", -->
-<!--     hjust        = 0, -->
-<!--     # vjust        = 0.5, -->
-<!--     segment.size = 0.5, -->
-
-<!--     segment.alpha = .5, -->
-<!--     segment.linetype = "dotted", -->
-<!--     box.padding = .4, -->
-<!--     segment.curvature = -0.1, -->
-<!--     segment.ncp = 3, -->
-<!--     segment.angle = 15, -->
-<!--     bg.color = "grey", -->
-<!--     fill = "#f0f0f0", -->
-<!--     label.padding = 0, -->
-<!--     label.size = 0, -->
-<!--     # xlim = c( floor_date(Sys.Date()-days(1)), floor_date(Sys.Date()-days(1)) ) -->
-<!--     # xlim = c(floor_date(Sys.Date()-hours(12)), floor_date(Sys.Date()) ) -->
-<!--     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) ) -->
-<!--   ) +  -->
-<!--   plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported. -->
-<!--                                        Source: Metadata of games collected with RiotGames API')) -->
-
-<!-- ggsave("images/meta-evo.png",width = 12,height = 8) -->
-<!-- ``` -->
-
-<!-- ### Graph -->
-
-<!-- ```{r plot-meta-evo-double, fig.width=20, fig.height=8} -->
-<!-- meta_evo.base + -->
-<!--   geom_label_repel( -->
-<!--     data = Champion.deck.daily |> -->
-<!--         filter( game_start_time_utc == max(game_start_time_utc) ), -->
-<!--     aes(label=str_to_upper(playerDeck),color = playerDeck ), -->
-<!--     fontface = "bold", -->
-<!--     family = "Helvetica", -->
-<!--     size = 2.5, -->
-
-<!--     force = 20, -->
-<!--     # force_pull = 0.5, -->
-
-<!--     nudge_x      = 0.15, -->
-<!--     direction    = "y", -->
-<!--     hjust        = 0, -->
-<!--     # vjust        = 0.5, -->
-<!--     segment.size = 0.5, -->
-
-<!--     segment.alpha = .5, -->
-<!--     segment.linetype = "dotted", -->
-<!--     box.padding = .4, -->
-<!--     segment.curvature = -0.1, -->
-<!--     segment.ncp = 3, -->
-<!--     segment.angle = 15, -->
-<!--     bg.color = "grey", -->
-<!--     # xlim = c( floor_date(Sys.Date()-days(1)), floor_date(Sys.Date()-days(1)) ) -->
-<!--     # xlim = c(floor_date(Sys.Date()-hours(12)), floor_date(Sys.Date()) ) -->
-<!--     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) ) -->
-<!--   ) + -->
-<!-- meta_evo.diamond.base + -->
-<!--   geom_label_repel( -->
-<!--     data = Champion.deck.daily.diamond |> -->
-<!--         filter( game_start_time_utc == max(game_start_time_utc) ), -->
-<!--     aes(label=str_to_upper(playerDeck),color = playerDeck ), -->
-
-<!--     fontface = "bold", -->
-<!--     family = "Helvetica", -->
-<!--     size = 2.5, -->
-
-<!--     force = 20, -->
-<!--     force_pull = 0.5, -->
-
-<!--     nudge_x      = 0.15, -->
-<!--     direction    = "y", -->
-<!--     hjust        = 0, -->
-<!--     # vjust        = 0.5, -->
-<!--     segment.size = 0.5, -->
-
-<!--     segment.alpha = .5, -->
-<!--     segment.linetype = "dotted", -->
-<!--     box.padding = .4, -->
-<!--     segment.curvature = -0.1, -->
-<!--     segment.ncp = 3, -->
-<!--     segment.angle = 15, -->
-<!--     bg.color = "grey", -->
-<!--     xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) ) -->
-<!--   ) + -->
-<!--   plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported. -->
-<!--                                        Reference Population; Master and ~HighDiamond defined Games from Players who played against Master but aren not Master. -->
-<!--                                        Source: Metadata of games collected with RiotGames API')) -->
-
-<!-- ggsave("images/meta-evo-double.png",width = 19,height = 9) -->
-<!-- ``` -->
-
-<!-- ## Row {data-heigth="150"} -->
-
-<!-- ### Number of Players -->
-
-<!-- ```{r value-player-base} -->
-<!-- flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='master',.N]} Master"), -->
-<!--                         caption = glue::glue("Master Ranked Players"), -->
-<!--                         icon = "fa-medal", -->
-<!--                         color = "#65c0a9") -->
-<!-- ``` -->
-
-<!-- ### Number of Diamond -->
-
-<!-- ```{r value-player-diamond} -->
-<!-- flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[master=='diamond',.N]} ~HighDiamond"), -->
-<!--                         caption = glue::glue("Players who played against Master players but aren't Master themselves"), -->
-<!--                         icon = "fa-gem", -->
-<!--                         color = "#ff7f24") -->
-<!-- ``` -->
+## Row {data-heigth="150"}
 
 
-<!-- ### Last Update -->
+### Time Frame
 
-<!-- ```{r} -->
-<!-- LastUpdate.box -->
-<!-- ``` -->
+```{r}
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
+                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),
+                        icon = "fa-clock",
+                        # color = "lightgreen"
+                        color = "red")
+```
+
+
+### Last Update
+
+
+```{r}
+LastUpdate.box
+```
+
+
+# Meta-Evolution {data-icon="fa-chart-line"}
+
+## Row {data-heigth="750"}
+
+### Graph
+
+```{r meta-evo-temp}
+#| fig.width=20,
+#| fig.height=8
+
+Champion.deck.daily |>
+  ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
+  geom_line( aes(color = playerDeck), size = .9  ) +
+  # geom_text( aes(label=str_to_upper(playerDeck),color = playerDeck)  ) +
+  scale_x_date(
+    # date_minor_breaks = "2 day", # not working
+    limits = c(as.Date(params$start, tz="UTC"),  as.Date(now()+days(3)) )
+  )  +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0,0.30),
+    breaks = seq(0,0.30,0.05),
+    labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
+  )  +
+  labs(x = "Date",
+       y = "PlayRate",
+       title = "Evolution of Play Rate over time - Master"
+       # caption = glue::glue("{params$patch}
+       #                      Ranked games from {params$start} UTC to {params$end} UTC
+       #                      Metadata of games collected with RiotGames API")
+  ) +
+  theme_539() +
+  theme( legend.position = "none",
+         axis.text = element_text(size = 10, face = "bold", color = "grey50")
+  ) +
+  scale_color_manual( values = rcartocolor::carto_pal(12, "Safe") ) +
+  scale_fill_manual(values = setNames(rcartocolor::carto_pal(12, "Safe"), unique(Champion.deck.daily$playerDeck)  ) ) +
+  geom_label_repel(
+    data = Champion.deck.daily |>
+        filter( game_start_time_utc == max(game_start_time_utc) ),
+           # Champion.deck.daily |> filter( game_start_time_utc >= now()-days(2) ),
+    aes(label=str_to_upper(playerDeck),color = playerDeck ),
+    fontface = "bold",
+    family = "Helvetica",
+    size = 3.5,
+
+    force = 20,
+    force_pull = 0.5,
+
+    nudge_x      = 0.15,
+    direction    = "y",
+    hjust        = 0,
+    # vjust        = 0.5,
+    segment.size = 0.5,
+
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 15,
+    bg.color = "grey",
+    fill = "#f0f0f0",
+    label.padding = 0,
+    label.size = 0,
+    xlim = c(as.Date(Sys.Date()), as.Date(Sys.Date()+days(4)) )
+  ) +
+  plot_annotation(caption = glue::glue('Days starts at 18:00:00 UTC time of X day to 18:00:00 UTC time of X+1 day. During solar-time 18:00 UTC seems to be the release time of LoR content. Any detected changes will be reported.
+                                       Source: Metadata of games collected with RiotGames API'))
+
+# ggsave("images/meta-evo-temp.png",width = 12,height = 8)
+```
+
+## Row {data-heigth="150"}
+
+### Number of Players
+
+```{r value-player-base}
+flexdashboard::valueBox(glue::glue("{LoR.Account.RMD[seasonal=='seasonal',.N]}"),
+                        caption = glue::glue("Seasonal Players"),
+                        icon = "fa-medal",
+                        color = "#65c0a9")
+```
+
+### Last Update
+
+```{r}
+LastUpdate.box
+```
 
 # Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 
