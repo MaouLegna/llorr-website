@@ -1,12 +1,14 @@
 ---
 title: "Match Ups Data(from Patch 3.02 a Curious Journey)"
 author: "by Legna"
+base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     navbar:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
+
 params:
   start:   "2022-02-16 19:00:00"
   end:     "2022-03-16 18:00:00"

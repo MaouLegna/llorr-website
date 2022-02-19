@@ -705,7 +705,7 @@ Champion.deck.daily |>
   )  +
   labs(x = "Date",
        y = "PlayRate",
-       title = "Evolution of Play Rate over time - Master"
+       title = "Evolution of Play Rate over time - from Seasonal Players"
        # caption = glue::glue("{params$patch}
        #                      Ranked games from {params$start} UTC to {params$end} UTC
        #                      Metadata of games collected with RiotGames API")
