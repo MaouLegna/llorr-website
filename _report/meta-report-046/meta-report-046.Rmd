@@ -3,7 +3,7 @@ params:
   ind: "MR046"
   patch: "Patch 3.02 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°46)"
-  description: ""
+  description: "OOOOH WAAAAWEEE WAPAWOO!"
   #"Quarantaquattro Yuumi entrano a Bandle..."
   cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05BC161-full.png"
   start: "2022-02-16 19:00:00" #UTC tz / 'current' week start
@@ -158,6 +158,7 @@ LoR.Melt.Temp.RMD <- LoR.Match.DT.RMD |>
 if (LoR.Melt.Temp.RMD[ is.na(playerDeck), .N ]!=0) print("If you are seeing this message - there are missing decks!")
 if (LoR.Melt.Temp.RMD[ is.na(playerID), .N ]!=0)   print("If you are seeing this message - there are missing accounts!")
 ```
+
 # Data
 
 ```{r nGames-data}
@@ -171,31 +172,17 @@ nGames    <- LoR.Melt.Temp.RMD[,.N]
 nSeasonal <- LoR.Account.RMD[seasonal=="seasonal",.N]
 ```
 
-Number of Players: **`r nSeasonal`** Master
-
-```{r players-by-the-numbers}
-#| layout="l-body"
-
-LoR.Account.RMD |>
-  filter(seasonal=="seasonal") |>
-  select(activeShard) |>
-  mutate(across(everything(), str_to_title)) |>
-  tbl_summary(label = list(activeShard = "Shard")) |>
-  bold_labels() |>
-  as_gt() |>
-  tab_options(
-    data_row.padding = px(1.2),
-    table.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   ) -> nPlayers
- 
-nPlayers
-
-gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
-```
+Number of Players: **`r nSeasonal`** - Players from the last Seasonal Tournament
 
 Number of (Ranked) matches analysed **`r format(nGames/2,scientific = F)`** or **`r format(nGames,scientific = F)`** games.
+
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
+
+::: l-page
+::::: panelset
+::: panel
+
+### Games {.panel-name}
 
 ```{r table-nGames-data}
 #| layout="l-body"
@@ -241,9 +228,38 @@ nGames_tbl |>
 gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisible()
 ```
 
-Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
+:::
 
-[^1]: HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"
+::: panel
+
+### Players {.panel-name}
+
+```{r players-by-the-numbers}
+#| layout="l-body"
+
+LoR.Account.RMD |>
+  filter(seasonal=="seasonal") |>
+  select(activeShard) |>
+  mutate(across(everything(), str_to_title)) |>
+  tbl_summary(label = list(activeShard = "Shard")) |>
+  modify_header(label ~ "**Players**") |>
+  bold_labels() |>
+  as_gt() |>
+  tab_options(
+    data_row.padding = px(1.2),
+    table.background.color = "whitesmoke",
+    table.font.color = "black",
+    table.font.color.light = "black"
+   ) -> nPlayers
+ 
+nPlayers
+
+gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
+```
+
+:::
+:::::
+:::
 
 # Regions
 
@@ -883,6 +899,8 @@ gtWinning <- LoR.Melt.Temp.RMD[order(game_start_time_utc)][, counter := rowid(rl
     column_labels.border.top.color = "white",
     table.border.top.color = "white",
     table.border.bottom.color = "white",
+    table.font.color = "black",
+    table.font.color.light = "black",
     data_row.padding = px(3),
     source_notes.font.size = 12,
     heading.align = "left",
@@ -900,14 +918,10 @@ gtWinning <- LoR.Melt.Temp.RMD[order(game_start_time_utc)][, counter := rowid(rl
     )
 
 gtWinning |>
- tab_options(
-    table.background.color = "whitesmoke",
-    column_labels.background.color = "whitesmoke",
-    table.font.color = "black",
-    table.font.color.light = "black"
-   )
+ tab_options(table.background.color = "whitesmoke",
+             column_labels.background.color = "whitesmoke")
 
-gtsave(gtWinning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible()
+gtsave(gtWinning, glue::glue("images/{params$ind}-top_win.png") ) |> invisible()
 ```
 
 # Cards Presence
