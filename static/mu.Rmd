@@ -49,8 +49,9 @@ LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),
 # load Games DT
 LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
-  map(data.table::fread) |>
-  reduce(rbind) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  # map(data.table::fread) |>
+  # reduce(rbind) |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   select(-contains("factions"))
 ```
@@ -428,7 +429,7 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to bA1ance for the recent support (ᐛ)ᕗ (January/February 2022)
+Special thanks to Trinathan and bA1ance for the recent support (ᐛ)ᕗ 
 
 ```{r update-Shiny}
 # TopCC <- LoR.Melt.Master.RMD |>
