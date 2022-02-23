@@ -25,27 +25,27 @@ draft: FALSE
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo = FALSE,
-  eval = TRUE,
-  warning = FALSE,
-  error   = FALSE,
-  message = FALSE,
-  comment = NA,
-  R.options = list(width = 140,digits.secs=6),
-  dev.args  = list(bg = 'transparent'),
-  fig.align = 'center',
-  fig.width = 12,
-  fig.height= 8,
-  layout="l-body-outset"
-  # preview=FALSE,
-  # engine.path = list(python = 'C:/anaconda/')
+  echo       = FALSE,
+  eval       = TRUE,
+  warning    = FALSE,
+  error      = FALSE,
+  message    = FALSE,
+  comment    = NA,
+  R.options  = list(width = 140, digits.secs=6),
+  dev.args   = list(bg = 'whitesmoke'),
+  fig.align  = 'center',
+  fig.width  = 12,
+  fig.height = 8,
+  fig.path   = glue::glue("images/"),
+  layout     = "l-page",
+  preview    = TRUE
 )
 
+#' R Option
 options(scipen = 999)
-source(file.path("C:","LlorR","scripts","lor_main.R" ))
+source(file.path("C:","LlorR","scripts","lor_main.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
-
 xaringanExtra::use_panelset()
 ```
 
@@ -69,8 +69,16 @@ f.ref <- function(x) {
 
 ```{r load-data}
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
-noxpnz <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/NoxPnZ.csv",na.strings = c("",NA))
+Noxpnz              <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/NoxPnZ.csv",na.strings = c("",NA))
+Ionia               <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/Ionia.csv",na.strings = c("",NA))
 ```
+
+```{r}
+images <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
+
+knitr::include_graphics(images)  
+```
+
 
 ```{r}
 # MonoDeckDT <-
