@@ -309,7 +309,8 @@ Master |>
    ) -> nPlayer_tbl
  
 nPlayer_tbl |>
-  gtsave(glue::glue("images/{params$ind}-nPlayers.png"))
+  gtsave(glue::glue("images/{params$ind}-nPlayers.png")) |>
+  invisible()
 
 nPlayer_tbl
 ```
