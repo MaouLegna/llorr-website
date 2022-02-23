@@ -10,7 +10,7 @@ description: |
 base_url: https://www.llorr-stats.com
 author:
   - name: Valentino (Legna) Vazzoler
-date: 12-25-2021
+date: 12-25-1990
 output:
  distill::distill_article:
     toc: true
@@ -18,7 +18,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-slug: legna2021archetype03
+# slug: legna2022archetype04
 draft: FALSE
 # bibliography: references.bib
 ---
@@ -48,24 +48,23 @@ source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
-
-```{r style}
+```{r}
 xaringanExtra::style_panelset_tabs(
   font_family = "Helvetica",
   active_foreground = "white",
   hover_foreground = "black",
   hover_border_color = "black",
   active_background = "#007fff")
-
-table_nums  <- captioner::captioner(prefix = "Tab.")
-figure_nums <- captioner::captioner(prefix = "Fig.")
-
-f.ref <- function(x) {
-  stringr::str_extract(table_nums(x), "[^:]*")
-}
 ```
 
-# Introduction
+```{r function}
+# table_nums  <- captioner::captioner(prefix = "Tab.")
+# figure_nums <- captioner::captioner(prefix = "Fig.")
+# 
+# f.ref <- function(x) {
+#   stringr::str_extract(table_nums(x), "[^:]*")
+# }
+```
 
 ```{r load-data}
 example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
@@ -73,12 +72,30 @@ Noxpnz              <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 Ionia               <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/Ionia.csv",na.strings = c("",NA))
 ```
 
-```{r}
-images <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
-
-knitr::include_graphics(images)  
+```{r example-read-img}
+# images <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
+# knitr::include_graphics(images)
 ```
 
+```{r read-img}
+#| results='asis'
+
+# files <- list.files(path = file.path("C:","LlorR","images","decks","NoxPnZ"), pattern = "png", full.names = TRUE)
+images_files <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
+# images_label <- list.files(path = file.path("C:","LlorR","images","decks","NoxPnZ"), pattern = "png", full.names = FALSE)
+images_label <- Noxpnz$deck_code
+
+
+for (i in 1:length(images_files)) {
+  # i = 1
+  # print(images_label[i])
+  print(glue::glue("Deck {i}: {images_label[i]}"))
+  
+  # cat(paste0("![image_label[i]](", files[i], ")\n"))
+  cat(glue("![{images_label[i]}]({images_files[i]})\n"))
+  
+}
+```
 
 ```{r}
 # MonoDeckDT <-
@@ -116,12 +133,5 @@ knitr::include_graphics(images)
 #               select(deck_code,archetype_self),by="deck_code") |>
 #   select(deck_code,archetype,archetype_self,count,everything()) |>
 #   fwrite("Ionia.csv",quote = TRUE)
-
-
-
-
-
 ```
-
-
 

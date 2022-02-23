@@ -2,7 +2,9 @@ naptime::naptime( lubridate::as_datetime( lubridate::today(tzone = "CET")+lubrid
 
 source(file.path("C:","LlorR","scripts","dataIO","lor_deck_v3.R"))
 data.table::fwrite(LoR.Deck, file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"))
-# rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/_report/meta-report-046/meta-report-046.Rmd',  encoding = 'UTF-8')
+
+
+rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/_report/meta-report-046/meta-report-046.Rmd',  encoding = 'UTF-8')
 
 tictoc::tic()
 

@@ -23,7 +23,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 02-23-1900
+date: 02-23-2022
 output:
  distill::distill_article:
     toc: true
@@ -90,7 +90,19 @@ LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pa
   distinct(puuid,.keep_all = T)
 
 # load Games DT
-LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_S12(.*)csv$"), full.names = T) |>
+LoR.Temp.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_S12(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+
+# load Games DT
+LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+
+# load Games DT
+LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
@@ -128,9 +140,9 @@ NA.master.ladder   <- NROW(master.NA)
 APAC.master.ladder <- NROW(master.APAC)
 ```
 
-```{r prepare-data-master}
+```{r prepare-data-temp}
 # Melt tbl
-LoR.Melt.Temp.RMD <- LoR.Match.DT.RMD |>
+LoR.Melt.Temp.RMD <- LoR.Temp.DT.RMD |>
   filter(game_type == "Ranked") |>
   # filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC")-days(7),as.POSIXct(params$end,"UTC")-days(7)) ) |>
   filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
@@ -154,6 +166,39 @@ LoR.Melt.Temp.RMD <- LoR.Match.DT.RMD |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
 ```
 
+```{r prepare-data-master}
+# Melt tbl
+LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
+  filter(game_type == "Ranked") |>
+  # filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC")-days(7),as.POSIXct(params$end,"UTC")-days(7)) ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               ) |>
+  as.data.table()
+```
+
+```{r prepare-data-diamond}
+# Melt tbl
+LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
+  filter(game_type == "Ranked") |>
+  # filter( game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC")-days(7),as.POSIXct(params$end,"UTC")-days(7)) ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+               names_to = c(".value"),
+               names_pattern = "(.*)_[0-9]"
+               ) |>
+  as.data.table()
+```
+
+
 ```{r check-value}
 if (LoR.Melt.Temp.RMD[ is.na(playerDeck), .N ]!=0) print("If you are seeing this message - there are missing decks!")
 if (LoR.Melt.Temp.RMD[ is.na(playerID), .N ]!=0)   print("If you are seeing this message - there are missing accounts!")
@@ -167,7 +212,10 @@ max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
   pull(game_start_time_utc) |>
   format(format = "%Y-%m-%d %H:%M:%S")
 #   
-gt.tbl <- table_bythenumbers(LoR.Match.DT.RMD)
+tbl.temp    <- table_bythenumbers(LoR.Temp.DT.RMD)
+tbl.master  <- table_bythenumbers(LoR.Match.DT.RMD)
+tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
+
 nGames    <- LoR.Melt.Temp.RMD[,.N]
 nSeasonal <- LoR.Account.RMD[seasonal=="seasonal",.N]
 ```
@@ -186,8 +234,10 @@ Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
 ```{r table-nGames-data}
 #| layout="l-body"
-
-nGames_tbl <- gt.tbl |>
+nGames_tbl <- tbl_merge(
+  tbls = list(tbl.temp,tbl.master,tbl.diamond),
+    tab_spanner = c("**Seasonal Players**","**Master**", "**~HighDiamond**")
+  ) |>
   modify_footnote(
     update = label ~
       md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
@@ -237,24 +287,31 @@ gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisi
 ```{r players-by-the-numbers}
 #| layout="l-body"
 
-LoR.Account.RMD |>
-  filter(seasonal=="seasonal") |>
-  select(activeShard) |>
+Master <- LoR.Account.RMD[!is.na(master),.(activeShard,rank = master)]
+Seasonal <- LoR.Account.RMD[seasonal=="seasonal",.(activeShard,rank = seasonal)]
+
+Master |>
+  bind_rows(Seasonal) |>
+  select(activeShard,rank) |>
   mutate(across(everything(), str_to_title)) |>
-  tbl_summary(label = list(activeShard = "Shard")) |>
-  modify_header(label ~ "**Players**") |>
+  mutate(rank = factor(rank, levels = c("Master","Diamond","Seasonal") ) ) |>
+  tbl_summary(by = activeShard,
+               label = list(rank = "Player Rank")) |>
+  modify_header(label ~ "**Shard/Server**") |>
   bold_labels() |>
+  # modify_caption( glue::glue("{params$patch} - Players Info") ) |>
   as_gt() |>
   tab_options(
     data_row.padding = px(1.2),
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
-   ) -> nPlayers
+   ) -> nPlayer_tbl
  
-nPlayers
+nPlayer_tbl |>
+  gtsave(glue::glue("images/{params$ind}-nPlayers.png"))
 
-gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
+nPlayer_tbl
 ```
 
 :::
@@ -278,12 +335,14 @@ Region.Freq <- freq_by_faction(LoR.Melt.Temp.RMD)
 #| fig.width=12,
 #| fig.height=8
 
-plot_freq(
+plot_freq_inclusion <- plot_freq(
   Region.Freq,
   nGames,
   subtitle = "number of times a region is included in a deck",
   caption = general.caption
   )
+
+plot_freq_inclusion
 ```
 
 The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ \[0,1\] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
@@ -319,7 +378,7 @@ Region.Freq.byCards <- freq_by_cards(LoR.Melt.Temp.RMD)
 #| fig.width=12,
 #| fig.height=8
 
-plot_freq(
+plot_freq_bycards <- plot_freq(
   Region.Freq.byCards,
   nGames,
   subtitle = "number of times a card within a region is included in a deck",
@@ -330,6 +389,8 @@ plot_freq(
                        Source: Metadata of games collected with RiotGames API
                        Last Update: {now(tzone='UTC')}")
   )
+
+plot_freq_bycards
 ```
 :::
 
@@ -478,8 +539,7 @@ plot_daily(
   Champion.deck.daily,
   decks = fct_values,
   title = "Evolution of Play Rate over time - Seasonal Players",
-  limit = .15,
-  end   = as_datetime("2022-02-18 12:00:00")
+  limit = .15
   ) -> meta_evo
 
 meta_evo
@@ -1025,9 +1085,13 @@ TopPlayed.PbyReg
 Cards that couldn't find place even in a meme deck.
 
 ```{r missingCards}
+missing.cards <- LoR.Card$cardCode[LoR.Card$name %!in% TableAllCards$card]
+
+if (length(missing.cards)>0) {
+  
 LoR.Card |>
   as.data.table() |>
-  filter( cardCode %in% LoR.Card$cardCode[LoR.Card$name %!in% TableAllCards$card] ) |>
+  filter( cardCode %in% missing.cards ) |>
   mutate( Region = str_sub(cardCode,3,4) ) |>
   group_by(Region) |>
   mutate(n = row_number(),
@@ -1063,7 +1127,21 @@ LoR.Card |>
       SH = colDef( style = list ( background = data_regions$colorRegion[10], fontWeight = "bold", color = "#404040" ) )
     ),
     defaultColDef = colDef( minWidth = 125 ) 
-  )
+  )  
+  
+} else {
+  
+  tibble(
+    mag = "This is an happy week, everyone found home"
+  ) |>
+  gt() |>
+    tab_options(
+      column_labels.hidden = T
+    )
+  
+}
+
+
 ```
 :::
 :::
