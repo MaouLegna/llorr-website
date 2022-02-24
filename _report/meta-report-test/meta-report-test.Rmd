@@ -39,45 +39,13 @@ knitr::opts_chunk$set(
 ```{r not-region}
 plot(mtcars)
 ```
+:::{.callout-note}
+Note that there are five types of callouts, including:
+`note`, `tip`, `warning`, `caution`, and `important`.
+:::
 
-```{r}
-knitr::include_graphics(path = file.path("images","MRXX-not-region-1.png") )
-```
+:::{.callout-tip}
+## Tip With Caption
 
-```{r download-grid}
-# downloadthis::download_this(
-#   file.path("images","MRXX-not-region-1.png"),
-#   button_label = "Download MU grid as .png",
-#   button_type = "primary",
-#   has_icon = TRUE,
-#   icon = "fa fa-save"
-# )
-
-downloadthis::download_file(
-  path = file.path("images","MRXX-not-region-1.png"),
-  output_name = "Files from downloadthis",
-  button_label = "Download files",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-```
-
-```{r twitter-meta}
-#| echo=FALSE
-metathis::meta() |>
-  metathis::meta_description(
-    glue::glue("{params$patch} - {params$description}")
-  ) |> 
-  metathis::meta_viewport() |> 
-  metathis::meta_social(
-    title = params$title,
-    url = "https://www.llorr-stats.com/",
-    image = params$cardlurl,
-    og_type = "website",
-    og_author = "Legna",
-    twitter_card_type = "summary",
-    twitter_creator = "@Maou_Legna"
-  )
-```
+This is an example of a callout with a caption.
+:::
