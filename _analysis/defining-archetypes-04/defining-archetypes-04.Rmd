@@ -48,6 +48,7 @@ source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
+
 ```{r}
 xaringanExtra::style_panelset_tabs(
   font_family = "Helvetica",
@@ -81,21 +82,30 @@ Ionia               <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 #| results='asis'
 
 # files <- list.files(path = file.path("C:","LlorR","images","decks","NoxPnZ"), pattern = "png", full.names = TRUE)
-images_files <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
 # images_label <- list.files(path = file.path("C:","LlorR","images","decks","NoxPnZ"), pattern = "png", full.names = FALSE)
-images_label <- Noxpnz$deck_code
 
-
-for (i in 1:length(images_files)) {
-  # i = 1
-  # print(images_label[i])
-  print(glue::glue("Deck {i}: {images_label[i]}"))
-  
-  # cat(paste0("![image_label[i]](", files[i], ")\n"))
-  cat(glue("![{images_label[i]}]({images_files[i]})\n"))
-  
-}
+# images_files <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
+# images_label <- Noxpnz$deck_code
+# 
+# 
+# for (i in 1:length(images_files)) {
+#   # i = 1
+#   # print(images_label[i])
+#   print(glue::glue("Deck {i}: {images_label[i]}"))
+#   
+#   # cat(paste0("![image_label[i]](", files[i], ")\n"))
+#   cat(glue("![{images_label[i]}]({images_files[i]})\n"))
+#   
+# }
 ```
+
+```{r}
+
+Noxpnz |>
+  tabyl(archetype_cluster)
+
+```
+
 
 ```{r}
 # MonoDeckDT <-
