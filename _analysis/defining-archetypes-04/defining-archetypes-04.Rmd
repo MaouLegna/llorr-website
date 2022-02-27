@@ -68,7 +68,11 @@ xaringanExtra::style_panelset_tabs(
 ```
 
 ```{r load-data}
-example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
+example_archetye_03       <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
+Count <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03_games.csv",na.strings = c("",NA)) |>
+  count(deck_code) |>
+  as.data.table()
+
 Noxpnz              <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/NoxPnZ.csv",na.strings = c("",NA))
 Ionia               <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/Ionia.csv",na.strings = c("",NA))
 ```
@@ -76,9 +80,7 @@ Ionia               <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 ```{r example-read-img}
 # images <- file.path("C:","LlorR","images","decks","NoxPnZ",glue("{Noxpnz$deck_code}.png"))
 # knitr::include_graphics(images)
-```
 
-```{r read-img}
 #| results='asis'
 
 # files <- list.files(path = file.path("C:","LlorR","images","decks","NoxPnZ"), pattern = "png", full.names = TRUE)
@@ -100,6 +102,13 @@ Ionia               <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 ```
 
 ```{r}
+Noxpnz <-  Noxpnz |>
+  left_join(Count, by = "deck_code")
+
+example_archetye_03 |>
+  filter(is.na(n) & factions=="NX,PZ") |>
+  tabyl(archetype_cluster)
+
 
 Noxpnz |>
   tabyl(archetype_cluster)
