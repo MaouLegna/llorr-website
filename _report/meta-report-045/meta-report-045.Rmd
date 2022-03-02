@@ -786,15 +786,15 @@ CC.table.Master |>
       apac     = colDef(name = "Apac",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
       europe   = colDef(name = "Europe",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
       )
-    )
-  # reactablefmtr::add_source(element_text(glue::glue("Data from Master Only.
-  #                                                   Source: Metadata of games collected with RiotGames API.
-  #                                                   Last Update: {now(tzone='UTC')}")), background_color = "whitesmoke", font_family = "Chivo")
+    ) |>
+  reactablefmtr::add_source(element_text(glue::glue("Data from Master Only.
+                                                    Source: Metadata of games collected with RiotGames API.
+                                                    Last Update: {now(tzone='UTC')}")), background_color = "whitesmoke", font_family = "Chivo")
 ```
 :::
 
 ::: panel
-### from \~HighDiamond {.panel-name}
+### from HighDiamond {.panel-name}
 
 ```{r table-Champion-PR-new}
 CC.table.Diamond |>
@@ -822,10 +822,10 @@ CC.table.Diamond |>
       apac     = colDef(name = "Apac",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
       europe   = colDef(name = "Europe",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
       )
-    )
-  # reactablefmtr::add_source(element_text(glue::glue("Data from ~HighDiamond Only.
-  #                                                   Source: Metadata of games collected with RiotGames API
-  #                                                   Last Update: {now(tzone='UTC')}.")), background_color = "whitesmoke", font_family = "Chivo")
+    ) |>
+  reactablefmtr::add_source(element_text(glue::glue("Data from ~HighDiamond Only.
+                                                    Source: Metadata of games collected with RiotGames API
+                                                    Last Update: {now(tzone='UTC')}.")), background_color = "whitesmoke", font_family = "Chivo")
 ```
 :::
 :::

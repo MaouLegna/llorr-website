@@ -1,19 +1,18 @@
 ---
-title: "Match Ups Data(from Patch 3.02 a Curious Journey)"
+title: "Match Ups Data(from Patch 3.20 a Curious Journey)"
 author: "by Legna"
-base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     navbar:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
-
 params:
-  start:   "2022-02-16 19:00:00"
-  end:     "2022-03-16 18:00:00"
-  minMUGames: 5  # min number of games for a MU
-  nGrid: 12      # how many MU to plot
+  # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
+  start:   "2022-02-16 19:00:00" #UTC tz / 2.21 Balance
+  end:     "2022-03-16 18:00:00" #UTC tz / 2.21 Balance
+  minMUGames: 10 # min number of games for a MU
+  nGrid: 15      # how many MU to plot
 ---
 
 ```{r setup, include=FALSE}
@@ -29,7 +28,8 @@ knitr::opts_chunk$set(
   fig.align  = 'center',
   fig.width  = 12,
   fig.height = 8,
-  fig.path   = glue::glue("images/"),
+  # fig.path   = "figures/prefix-"
+  # fig.path   = glue::glue("images/{params$ind}-"),
   layout     = "l-page",
   preview    = TRUE
 )
@@ -47,13 +47,23 @@ xaringanExtra::use_panelset()
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 # load Games DT
-LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_S12(.*)csv$"), full.names = T) |>
+LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+
+# load Games DT
+LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
+  str_subset(pattern = "Keys",negate = T) |>
+  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+
+# load Games DT
+LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   # map(data.table::fread) |>
   # reduce(rbind) |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
-  select(-contains("factions"))
+  mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) )
 ```
 
 ```{r constants}
@@ -65,11 +75,28 @@ LastUpdate.box <- flexdashboard::valueBox(
 ```
 
 ```{r archetype-fix}
+# Limit the Deck DT to make the fixes much faster
+# deck_filter <- do.call("rbind", mget(ls(pattern="\\.DT.RMD$")) ) |>
+#   #' Base filters
+#   filter( game_type=="Ranked" ) |>
+#   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
+#   select(deck_code_1,deck_code_2) |>
+#   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
+#   filter(decks!="") |>
+#   distinct(decks)
+# 
+# LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
+
+#' Archetype-Fix
+#'##############
 source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
+
+# LoR.Deck.RMD[ ,tabyl(archetype_pretty) ]
+
+#' Archetype names fix
+######################
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
-
-# Seasonal Players {data-icon="fa-table"}
 
 ```{r prepara-data}
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
@@ -89,47 +116,40 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   left_join(
     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
     by=c("opponent_deck_code"="deck_code"))
+
+# Additional tbl
+LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
+  filter(game_type == "Ranked"  ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+  pivot_longer(
+    cols = c(ends_with("_1"),ends_with("_2")),
+    names_to = c(".value"),
+    names_pattern = "(.*)_[0-9]"
+    ) |>
+  as.data.table() |>
+  left_join(LoR.Deck.RMD, by="deck_code") |>
+  rename(playerDeck=archetype) |>
+  left_join(
+    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+    by=c("opponent_deck_code"="deck_code"))
 ```
 
-```{r process-MU-seasonal}
-# WR tbl
-WR.DT <- LoR.Melt.Master.RMD |>
-  filter(game_outcome!="tie") |>
-  select( playerDeck,opponentDeck,game_outcome) |>
-  group_by(playerDeck) |>
-  summarise( 
-    nWin   = sum(game_outcome=="win"),
-    nGames = n(),
-    WR=mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  mutate(playrate = nGames/sum(nGames) ) |>
-  as.data.table()
+# Master {data-icon="fa-table"}
 
+```{r process-MU-master}
+# WR tbl
+WR.DT <- win_rates(LoR.Melt.Master.RMD,server = F)
+
+# MU tbl
 MUtbl <- LoR.Melt.Master.RMD |>
-  filter(game_outcome != "tie" ) |>
-  select(playerDeck,opponentDeck,game_outcome,server) |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise( 
-    muWin   = sum(game_outcome=="win"),
-    muGames = n(),
-    muWR=mean(game_outcome=="win")
-    # factions = unique(factions)
-    ) |>
-  ungroup() |>
-  filter(muGames >= params$minMUGames) |>
-  mutate(CI=map2_df(.x=muWin,.y = muGames, .f = ~binom::binom.confint(.x,.y,0.95,methods="exact")[,c("lower","upper")] )) |>
-  chop(CI) |>
-  unnest(CI) |>
-  mutate( 
-    okCI = map2_lgl(.x = lower,.y = upper, ~ !between(0.50,.x,.y) ) ,
-    direction = ifelse(muWR>0.50,"POS","NEG"),
+  match_ups(params$minMUGames) |>
+  mutate(
     direction = replace(direction,direction==0.50,"TIE"),
-    CI := glue::glue("({scales::percent(lower,accuracy = 0.1)}-{scales::percent(upper,accuracy = 0.1)})" ),
-    mirror = ifelse(playerDeck==opponentDeck,"Yes","No" )
+    mirror = if_else(playerDeck==opponentDeck,"Yes","No" )
     ) |>
-  # removing ~extra variables
-  select(-lower,-upper) |>
   left_join(WR.DT[,.(playerDeck,playrate)],by="playerDeck") |>
   left_join(WR.DT[,.(playerDeck,opponentPR=playrate)],by=c("opponentDeck"="playerDeck") )
 ```
@@ -139,7 +159,8 @@ MUtbl <- LoR.Melt.Master.RMD |>
 ### Filters
 
 ```{r filters}
-data <- crosstalk::SharedData$new( MUtbl )
+data <- crosstalk::SharedData$new( MUtbl |>
+                                     select(-LCI,-UCI))
 
 crosstalk::filter_select("playerDeck", "Player's Deck", data, ~playerDeck)
 crosstalk::filter_select("opponentDeck", "Opponent's Deck", data, ~opponentDeck)
@@ -192,10 +213,9 @@ data |>
         minWidth = 200
         ),
       playrate = colDef(name = "Player PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
-      # factions = colDef(name = "Regions"),
       CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
-      LCI       = colDef(show=F), # lower
-      UCI       = colDef(show=F), # lower
+      # LCI       = colDef(show=F), # lower
+      # UCI       = colDef(show=F), # upper
       direction = colDef(show=F),
       okCI      = colDef(show=F),
       mirror    = colDef(show=F),
@@ -226,39 +246,161 @@ flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
 LastUpdate.box
 ```
 
+# ~HighDiamond {data-icon="fa-gem"}
+
+```{r process-MU-diamond}
+# WR tbl
+WR.DT.diamond <- win_rates(LoR.Melt.Diamond.RMD,server = F)
+
+# MU tbl
+MUtbl.diamond <- LoR.Melt.Diamond.RMD |>
+  match_ups(params$minMUGames) |>
+  mutate(
+    direction = replace(direction,direction==0.50,"TIE"),
+    mirror = if_else(playerDeck==opponentDeck,"Yes","No" )
+    ) |>
+  left_join(WR.DT.diamond[,.(playerDeck,playrate)],by="playerDeck") |>
+  left_join(WR.DT.diamond[,.(playerDeck,opponentPR=playrate)],by=c("opponentDeck"="playerDeck") )
+```
+
+## Inputs {.sidebar}
+
+### Filters
+
+```{r filters-diamond}
+data.diamond <- crosstalk::SharedData$new( MUtbl.diamond |>
+                                             select(-LCI,-UCI))
+
+crosstalk::filter_select("playerDeck", "Player's Deck", data.diamond, ~playerDeck)
+crosstalk::filter_select("opponentDeck", "Opponent's Deck", data.diamond, ~opponentDeck)
+crosstalk::filter_slider("muWin",   "#Win",  data.diamond, ~muWin,   step = 50 ,min = 0)
+crosstalk::filter_slider("muGames", "#Games",data.diamond, ~muGames, step = 100,min = 0)
+crosstalk::filter_slider("muWR", "WinRate", data.diamond, ~muWR,step=0.01,min = 0,max = 1)
+crosstalk::filter_slider("playrate", "Player PlayRate", data.diamond, ~playrate,step=0.01,min = 0,max = round(max(MUtbl$playrate),4) )
+crosstalk::filter_slider("opponentPR", "Opponent PlayRate", data.diamond, ~opponentPR,step=0.01,min = 0,max = round(max(MUtbl$opponentPR),4) )
+crosstalk::filter_select("direction", "MU-Direction", data.diamond, ~direction)
+crosstalk::filter_checkbox("mirror", "Mirror", data.diamond, ~mirror, inline = TRUE)
+```
+
+## Row {data-heigth="750"}
+
+### MU table
+
+```{r print-react-MU-diamond}
+data.diamond |>
+  reactable(
+    bordered = TRUE,
+    highlight = TRUE,
+    striped = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table height
+    fullWidth = T, # don't fill the page
+    defaultPageSize = 20,
+    wrap = TRUE,
+    defaultSorted = list(muGames = "desc"),
+    # filterable = TRUE,
+    defaultColDef = colDef( style = list(fontFamily = "Roboto", fontSize = "13px"), align = "center" ),
+    columns = list(
+      playerDeck   = colDef(name = "Player",minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black") ),
+      opponentDeck = colDef(name = "Opponent"  ,minWidth = 120, style = list(fontSize = "11px", fontWeight = "bold", color="black")),
+      muWin    = colDef(name = "#Win" ), # , style = list( fontSize = "13px")
+      muGames  = colDef(name = "#Games",defaultSortOrder = "desc"),
+      muWR  = colDef(
+        name = "Win Rate",
+        # defaultSortOrder = "desc",
+        cell = function(value) {
+          label <- paste0(round(value * 100,1), "%")
+          bar_chart_pos_neg(label, value)
+          },
+        align = "center",
+        minWidth = 200
+        ),
+      playrate = colDef(name = "Player PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") ),
+      # factions = colDef(name = "Regions"),
+      CI       = colDef(name = "CI",minWidth = 120, style = list(fontSize = "13px")),
+      # LCI       = colDef(show=F), # lower
+      # UCI       = colDef(show=F), # lower
+      direction = colDef(show=F),
+      okCI      = colDef(show=F),
+      mirror    = colDef(show=F),
+      opponentPR = colDef(name = "Opponent PlayRate",format = colFormat(percent = TRUE,digits = 1), style = list( fontSize = "13px") )
+      )
+    )
+```
+
+## Row
+
+### Box MU
+
+```{r}
+nGames.diamond = MUtbl.diamond |>
+  summarise(n = sum(muGames)) |>
+  pull()
+
+flexdashboard::valueBox(glue::glue("{nGames.diamond} Ranked Games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Diamond.RMD)} - min {params$minMUGames} games"),
+                        icon = "fa-table",
+                        color = "#FA7404")
+```
+
+### Last Update
+
+```{r}
+LastUpdate.box
+```
+
 # Grid {data-icon="fa-file-image"}
 
 ## Row {data-heigth="850"}
 
 ### MU Grid
 
-```{r create-mu-tbl}
+```{r get-WR-Top}
 # Last 7 days most played
 TopCC <- LoR.Melt.Master.RMD |>
-  filter( game_start_time_utc >= now()-days(7) ) |>
+  filter(game_start_time_utc >= now()-days(7)) |>
   count(playerDeck) |>
   slice_max(n, n = params$nGrid,with_ties = F ) |> 
   pull(playerDeck)
+```
 
-MUtbl.Master <- tibble::tibble( 
+```{r mu}
+TopMUtbl.Master <- tibble::tibble( 
   playerDeck = rep(TopCC,each=params$nGrid),
   opponentDeck = rep(TopCC,params$nGrid)
   ) |> 
-  left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-  mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) )
+  left_join(MUtbl, by = c("playerDeck","opponentDeck")) |>
+  mutate(muWR = replace(muWR, muGames < params$minMUGames, NA))
 
-grid <- matrix(MUtbl.Master$muWR,
+TopMUtbl.Diamond <- tibble::tibble( 
+  playerDeck = rep(TopCC,each=params$nGrid),
+  opponentDeck = rep(TopCC,params$nGrid)
+  ) |> 
+  left_join(MUtbl.diamond, by = c("playerDeck","opponentDeck")) |>
+  mutate(muWR = replace(muWR, muGames < params$minMUGames, NA ))
+```
+
+```{r create-grid}
+grid <- matrix(TopMUtbl.Master$muWR,
                nrow = params$nGrid,
                ncol = params$nGrid, byrow = T)
 
 diag(grid) <- NA
 colnames(grid) <- TopCC
+
+grid.plus <- matrix(TopMUtbl.Diamond$muWR,
+                    nrow = params$nGrid,
+                    ncol = params$nGrid, byrow = T)
+
+diag(grid.plus) <- NA
+# colnames(grid.diamond) <- sprintf("%s.v2",TopCC)
 ```
 
-```{r gt-grid}
+```{r}
 MU.grid.gt <- grid |>
+  bind_cols(grid.plus) |>
   as.data.table() |>
-  add_column(name = colnames(grid),.before = 1 ) |>
+  add_column(name = colnames(grid),.before = 1) |>
   rename(" "=1) |>
   gt() |>
   gtExtras::gt_color_rows(2:(params$nGrid+1),
@@ -269,8 +411,39 @@ MU.grid.gt <- grid |>
   fmt_percent(
     columns = -1,
     decimals = 1
-  ) |>
-# MUgrid.gt.final <- MUgrid.gt |>
+  )
+
+
+for (i in 1:params$nGrid ) {
+  
+  # MUgrid.gt <- MUgrid.gt |>
+  #   gtExtras::gt_merge_stack(col1 = !!TopCC[i], col2 = !!sprintf("%s.v2",TopCC[i]) )
+  
+  MU.grid.gt <- MU.grid.gt |>
+    cols_merge(
+      columns = c(i+1,params$nGrid+i+1),
+      hide_columns = (params$nGrid+i+1),
+      # pattern = "{1}&mdash;{2}"
+      ) |>
+    text_transform(
+      locations = cells_body(
+        columns = (i+1)
+        ),
+      fn = function(x){
+        percent <- word(x, 1)
+        frac <- word(x, -1)
+        glue::glue(
+          #595959 #grey35 / #7f7f7f #grey50
+          "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{percent}</div>
+           <div style='line-height:10px'><span style='color:#7f7f7f;font-size:9px'>{frac}</span></div>"
+        )
+        }
+      )
+  
+}
+
+MU.grid.gt <- 
+  MU.grid.gt |>
   cols_align(
     align = "center",
     columns = -1
@@ -310,8 +483,8 @@ MU.grid.gt <- grid |>
       }
     ) |>
   tab_source_note(
-  source_note = md(glue::glue("MatchUp values from Ranked games of Magic Disadventure Seasonal Tournament players
-                              Order of the Archetypes based on the playrate.
+  source_note = md(glue::glue("MatchUp values from Ranked games with Master (upper) and ~HighDiamond (bottom) Ranked players.
+                              Decks and order of the Archetypes based on the playrate over the last 7 days.
                               Source: Metadata of games collected with RiotGames API")
   ))
 
@@ -335,10 +508,19 @@ gtsave(data = MU.grid.gt,"images/mugrid.png",vwidth = 1500, vheight = 1000) |> i
 ### Box MU
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games - Seasonal Players"),
-                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Master.RMD)} - min 10 games"),
+flexdashboard::valueBox(glue::glue("{nGames} Master - Ranked Games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Master.RMD)} - min {params$minMUGames} games"),
                         icon = "fa-table",
                         color = "#FA7404")
+```
+
+### Box MU
+
+```{r}
+flexdashboard::valueBox(glue::glue("{nGames.diamond} Diamond - Ranked Games"),
+                        caption = glue::glue("out of a total of {NROW(LoR.Melt.Diamond.RMD)} - min {params$minMUGames} games"),
+                        icon = "fa-table",
+                        color = "#A88B32")
 ```
 
 ### Last Update
@@ -349,10 +531,6 @@ LastUpdate.box
 
 ![](images/mugrid.png)
 
-```{r}
-# knitr::include_graphics(path = "./images/mugrid.png")
-```
-
 # Grid 3.00/3.01 (Magic Disadventure) {data-icon="fa-file-image"}
 
 ![](images/mugrid_300_301.png)
@@ -361,37 +539,55 @@ LastUpdate.box
 
 ## Download {data-width="250"}
 
-### Match Ups Data
-
-```{r download-master}
+```{r}
 MUtbl |>
   filter(muGames >= params$minMUGames) |>
   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
-  downloadthis::download_this(
-    button_label = glue("Download MU (Master) data as .csv
-                        min {params$minMUGames} games"),
+  data.table::fwrite(file.path("data/MatchUps.csv"))
+
+MUtbl.diamond |>
+  filter(muGames >= params$minMUGames) |>
+  select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
+  data.table::fwrite(file.path("data/MatchUps-HighDiamond.csv"))
+```
+
+
+### Match Ups Data - Master
+
+```{r download-master}
+file.path("data/MatchUps.csv") |>
+  downloadthis::download_file(
+    button_label = glue("Download MU (Master) data as .csv"),
     output_name = "mutable",
     button_type = "success",
     has_icon = TRUE,
-    icon = "fa fa-save")
+    icon = "fa fa-save"
+  )
+```
+### Match Ups Data - HighDiamond
 
-# MUtbl |>
-#   select(playerDeck,opponentDeck,muWin,muGames,muWR) |>
-#   jsonlite::write_json("MU.json")
+```{r download-diamond}
+file.path("data/MatchUps-HighDiamond.csv") |>
+  downloadthis::download_file(
+    button_label = glue("Download MU (HighDiamond) data as .csv"),
+    output_name = "mutable",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+  )
 ```
 
 ### Match Ups Grid
 
 ```{r}
-downloadthis::download_file(
-  path = file.path("images/mugrid.png"),
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"),
-  button_label = "Download MU grid as .png",
-  button_type = "primary",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+file.path("images/mugrid.png") |>
+  downloadthis::download_file(
+    button_label = "Download MU grid as .png",
+    button_type = "primary",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    self_contained = FALSE
+  )
 ```
 
 ## Column {data-width="750"}
@@ -429,7 +625,7 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to Trinathan and bA1ance for the recent support (ᐛ)ᕗ 
+Special thanks to Jump, bA1ance and Trinathan and for the recent support (ᐛ)ᕗ 
 
 ```{r update-Shiny}
 # TopCC <- LoR.Melt.Master.RMD |>
