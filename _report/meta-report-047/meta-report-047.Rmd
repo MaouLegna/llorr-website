@@ -221,6 +221,8 @@ Number of (Ranked) **Master** matches analysed **`r format(nGames.Master/2,scien
 
 Number of (Ranked) **\~HighDiamond** matches analysed **`r format(nGames.Diamond/2,scientific = F)`** or **`r format(nGames.Diamond,scientific = F)`** games.
 
+Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
+
 ::: l-page
 ::::: panelset
 ::: panel
@@ -305,9 +307,6 @@ gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
 :::
 :::::
 :::
-
-
-Last Update: `r format(Sys.time(),format = "%Y-%m-%d %H:%M")`
 
 # Regions
 
