@@ -435,7 +435,7 @@ for (i in 1:params$nGrid ) {
         glue::glue(
           #595959 #grey35 / #7f7f7f #grey50
           "<div style='line-height:12px'><span style='font-weight:bold;color:#595959;font-variant:small-caps;font-size:14px'>{percent}</div>
-           <div style='line-height:10px'><span style='color:#7f7f7f;font-size:9px'>{frac}</span></div>"
+           <div style='line-height:10px'><span style='color:#7f7f7f;font-size:10px'>{frac}</span></div>"
         )
         }
       )
