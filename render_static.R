@@ -13,3 +13,25 @@ rmarkdown::render_site(encoding = 'UTF-8')
 
 tictoc::toc()
 Sys.time()
+
+
+# -------------------------------------------------------------------------
+
+# distill::create_post(
+#   "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°XX)",
+#   collection = "report",
+#   author = "Valentino (Legna) Vazzoler",
+#   slug = "meta-report-048",
+#   date = "2021-12-31",
+#   date_prefix = NULL,
+#   draft = TRUE,
+#   edit = interactive()
+# )
+# 
+# "Patch 3.2 - Week 2 - Meta Report
+# ~18k Matches or ~36k Master Games
+# ~78k Matches or ~156k HighDiamond Games
+# 
+# Master:
+#   EU: 119 / NA: 131 / APAC: 123
+# ~HighDiamond: 1191"
