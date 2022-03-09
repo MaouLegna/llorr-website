@@ -333,7 +333,7 @@ plot_freq(
   )
 ```
 
-The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ \[0,1\] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
+The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $\in [0,1]$ and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
 :::
 
 ::: panel
@@ -358,7 +358,7 @@ Region.Freq.byCards <- freq_by_cards(LoR.Melt.Master.RMD)
 ```
 
 ::: l-page
-::: panelset
+::::: panelset
 ::: panel
 ### Plot {.panel-name}
 
@@ -392,7 +392,7 @@ table_freq_gt(Region.Freq.byCards) |>
   tab_source_note( source_note = general.caption )
 ```
 :::
-:::
+:::::
 :::
 
 # Champions Combinations
@@ -1272,7 +1272,7 @@ gtfix |>
 
 #### Credits
 
-Special thanks to bA1ance for the recent support (ᐛ)ᕗ (January/February 2022)
+Special thanks to Jump, bA1ance and for the recent support (ᐛ)ᕗ 
 
 # Legal bla bla
 
