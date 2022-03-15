@@ -24,7 +24,7 @@ end
 #   "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°XX)",
 #   collection = "report",
 #   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-048",
+#   slug = "meta-report-049",
 #   date = "2021-12-31",
 #   date_prefix = NULL,
 #   draft = TRUE,
