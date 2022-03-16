@@ -3,7 +3,7 @@ params:
   ind: "MR049"
   patch: "Patch 3.3 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°49)"
-  description: "Long have we waited, Ezreal activated"
+  description: "Long (Broken) turns have we waited, Tri-Beam Activated"
   cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05PZ012-full.png"
   start: "2022-03-09 18:00:00" #UTC tz / 'current' week start
   end:   "2022-03-16 18:00:00" #UTC tz / 'current' week end
@@ -110,7 +110,7 @@ deck_filter <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
 
 LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
 
-source(file.path("C:","LlorR","scripts","functions","lor_archetype_rmd.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
