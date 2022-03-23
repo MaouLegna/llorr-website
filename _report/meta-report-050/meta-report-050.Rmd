@@ -4,7 +4,7 @@ params:
   patch: "Patch 3.3 - Week 4"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°50)"
   description: "Don't Do That. Don't Give Us Hope (Rubin Zoo)"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/-full.png"
+  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/05DE009-full.png"
   start: "2022-03-16 18:00:00" #UTC tz / 'current' week start
   end:   "2022-03-23 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -21,7 +21,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 03-23-1990
+date: 03-23-2022
 output:
  distill::distill_article:
     toc: true
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
