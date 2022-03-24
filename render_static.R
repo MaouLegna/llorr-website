@@ -1,4 +1,11 @@
-naptime::naptime( lubridate::as_datetime( lubridate::today(tzone = "CET")+lubridate::days(1),tz = "CET") )
+naptime::naptime( 
+  # today at 0
+  lubridate::as_datetime( 
+    # tomorrow at 0
+    lubridate::today(tzone = "CET") + 
+      # at 3
+      lubridate::days(1),tz = "CET") + hours(3)
+  ) {
 
 source(file.path("C:","LlorR","scripts","dataIO","lor_deck_v3.R"))
 data.table::fwrite(LoR.Deck, file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"))
@@ -17,6 +24,7 @@ end <- Sys.time()
 start
 end
 
+}
 
 # -------------------------------------------------------------------------
 
