@@ -19,7 +19,7 @@ output:
     self_contained: false
 citation: false
 # slug: legna2022archetype04
-draft: FALSE
+draft: TRUE
 # bibliography: references.bib
 ---
 
@@ -68,7 +68,7 @@ xaringanExtra::style_panelset_tabs(
 ```
 
 ```{r load-data}
-example_archetye_03       <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
+example_archetye_03 <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/example_archetye_03.csv",na.strings = c("",NA))
 Noxpnz              <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/R/llorr-website/data/NoxPnZ.csv",na.strings = c("",NA))
 ```
 
@@ -97,14 +97,14 @@ Noxpnz              <- data.table::fread("C:/Users/Valentino Vazzoler/Documents/
 ```
 
 ```{r}
-Noxpnz <-  Noxpnz |>
-  left_join(example_archetye_03[,.(deck_code,n)], by = "deck_code")
-
-Ionia <-  Ionia |>
-  left_join(example_archetye_03[,.(deck_code,n)], by = "deck_code")
-
-Noxpnz |>
-  tabyl(archetype_cluster)
+# Noxpnz <-  Noxpnz |>
+#   left_join(example_archetye_03[,.(deck_code,n)], by = "deck_code")
+# 
+# Ionia <-  Ionia |>
+#   left_join(example_archetye_03[,.(deck_code,n)], by = "deck_code")
+# 
+# Noxpnz |>
+#   tabyl(archetype_cluster)
 
 ```
 
