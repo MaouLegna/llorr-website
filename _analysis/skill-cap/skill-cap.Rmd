@@ -80,6 +80,82 @@ xaringanExtra::style_panelset_tabs(
   active_background  = "#007fff"
   )
 ```
+```{r function}
+plot_master_curve <- function(deck,deck_name,lq=0.05,uq=0.95) {
+  
+  # deck <- galio_decks[1]
+  # deck_name <- galio_decks[1]
+  # lq = 0.05
+  # uq = 0.95
+  
+  # deck_to_search <- deck
+
+  LoR.Melt.Games.RMD |> 
+    filter(game_outcome != "tie") |>
+    filter(playerPuuid %in% puuid_seasonal) |>
+    filter(playerDeck %in% deck) |>
+    summarise(meanWR = mean(game_outcome=="win")) |>
+    pull(meanWR) -> mean_wr
+
+  LoR.Melt.Games.RMD |> 
+    filter(game_outcome != "tie") |>
+    filter(playerDeck %in% galio_decks[1]) |>
+    filter(playerPuuid %in% puuid_seasonal) |>
+    pull(game_start_time_utc)
+    
+    arrange(playerPuuid,game_start_time_utc) |>
+    mutate(game_outcome = (factor(game_outcome) |> as.numeric()-1) ) |>
+    # mutate
+    group_by(playerPuuid) |>
+    mutate(nGames = row_number() ) |>
+    arrange(playerPuuid,game_start_time_utc) |>
+    mutate(nWin = cumsum(game_outcome)) |>
+    ungroup() |>
+    mutate(meanWR = nWin/nGames) |>
+    group_by(playerPuuid) |>
+    slice_max(nGames) |>
+    ungroup() |>
+    group_by(nGames) |>
+    summarise(meanWR = mean(meanWR)) -> data
+  
+  data |>
+    filter( between(nGames, quantile(nGames,lq,names = F), quantile(nGames,uq,names = F) ) ) |>
+    ggplot(aes(x = nGames, y = meanWR)) +
+    geom_line() +
+    geom_smooth(method = "lm", formula = 'y ~ x + I(x^2)', size = 1) +
+    geom_hline(yintercept = mean_wr, color="red") +
+    labs(x="Total Games",
+         y="Win Rate",
+         title = glue("{deck_name} - Mastery Curve"),
+         caption = glue("Constructed games from Seasonal Players
+                        The data under the {lq*100}th percentile and over the {uq*100}th percentile are removed ") ) +
+    theme_539() +
+    scale_x_continuous(n.breaks = 10) +
+    scale_y_continuous(
+      n.breaks = 10,
+      labels = scales::percent_format(accuracy = 1)
+    ) -> plot
+  
+  ggplot(data, aes(x = nGames)) +
+    geom_density(binwidth = 10,color="black",fill="steelblue") +
+    scale_x_continuous(n.breaks = 10) +
+    scale_y_continuous(
+      labels = scales::percent_format(accuracy = 1)
+    ) +
+    labs(
+      title = "#Games Density",
+      subtitle = glue("Density Plot of games played with {deck}"),
+      x = "#Games"
+    ) -> plot_hist
+      
+    # hist(main=glue("Number of Games with {deck_name}"),breaks=15,xlab = "#Games") -> hist
+  
+  list("mastery_curve"=plot,
+       "histogram"=plot_hist)
+  
+}
+```
+
 
 ```{r raw-data}
 # load DeckDT
@@ -154,113 +230,8 @@ LoR.Melt.Games.RMD <- LoR.Temp.DT.RMD |>
   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
 ```
 
-```{r}
-LoR.Melt.Games.RMD |>
-  filter(str_detect(playerDeck,"Galio")) |>
-  tabyl(playerDeck) |>
-  slice_max(n, n = 5) |>
-  pull(playerDeck) -> galio_decks
+# Gnar-Timelines
 
-
-plot_master_curve <- function(deck,deck_name,lq=0.05,uq=0.95) {
-  
-  # deck <- galio_decks[1]
-  # deck_name <- galio_decks[1]
-  # lq = 0.05
-  # uq = 0.95
-  
-  # deck_to_search <- deck
-
-  LoR.Melt.Games.RMD |> 
-    filter(game_outcome != "tie") |>
-    filter(playerPuuid %in% puuid_seasonal) |>
-    filter(playerDeck %in% deck) |>
-    summarise(meanWR = mean(game_outcome=="win")) |>
-    pull(meanWR) -> mean_wr
-
-  LoR.Melt.Games.RMD |> 
-    filter(game_outcome != "tie") |>
-    filter(playerDeck %in% deck) |>
-    filter(playerPuuid %in% puuid_seasonal) |>
-    arrange(playerPuuid,game_start_time_utc) |>
-    mutate(game_outcome = (factor(game_outcome) |> as.numeric()-1) ) |>
-    # mutate
-    group_by(playerPuuid) |>
-    mutate(nGames = row_number() ) |>
-    arrange(playerPuuid,game_start_time_utc) |>
-    mutate(nWin = cumsum(game_outcome)) |>
-    ungroup() |>
-    mutate(meanWR = nWin/nGames) |>
-    group_by(playerPuuid) |>
-    slice_max(nGames) |>
-    ungroup() |>
-    group_by(nGames) |>
-    summarise(meanWR = mean(meanWR)) -> data
-  
-  data |>
-    filter( between(nGames, quantile(nGames,lq,names = F), quantile(nGames,uq,names = F) ) ) |>
-    ggplot(aes(x = nGames, y = meanWR)) +
-    geom_line() +
-    geom_smooth(method = "lm", formula = 'y ~ x + I(x^2)', size = 1) +
-    geom_hline(yintercept = mean_wr, color="red") +
-    labs(x="Total Games",
-         y="Win Rate",
-         title = glue("{deck_name} - Mastery Curve"),
-         caption = glue("Constructed games from Seasonal Players
-                        The data under the {lq*100}th percentile and over the {uq*100}th percentile are removed ") ) +
-    theme_539() +
-    scale_x_continuous(n.breaks = 10) +
-    scale_y_continuous(
-      n.breaks = 10,
-      labels = scales::percent_format(accuracy = 1)
-    ) -> plot
-  
-  ggplot(data, aes(x = nGames)) +
-    geom_density(binwidth = 10,color="black",fill="steelblue") +
-    scale_x_continuous(n.breaks = 10) +
-    scale_y_continuous(
-      labels = scales::percent_format(accuracy = 1)
-    ) +
-    labs(
-      title = "#Games Density",
-      subtitle = glue("Density Plot of games played with {deck}"),
-      x = "#Games"
-    ) -> plot_hist
-      
-    # hist(main=glue("Number of Games with {deck_name}"),breaks=15,xlab = "#Games") -> hist
-  
-  list("mastery_curve"=plot,
-       "histogram"=plot_hist)
-  
-}
-
-# galio_1 <- plot_master_curve(galio_decks[1],galio_decks[1],lq = 0.05,uq = 0.95)
-
-map(galio_decks, ~plot_master_curve(.x,.x,lq = 0.05,uq = 0.95) )
-```
-
-```{r}
-deck <- galio_decks[1] 
-plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
-ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_1.png", width = 12,height = 8  )
-ggsave(plot = plots$histogram,filename = "games_galio_1.png", width = 12,height = 8  )
-
-deck <- galio_decks[2] 
-plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
-ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_2.png", width = 12,height = 8  )
-ggsave(plot = plots$histogram,filename = "games_galio_2.png", width = 12,height = 8  )
-
-deck <- galio_decks[3] # Braum Galio
-plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
-
-ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_3.png", width = 12,height = 8  )
-ggsave(plot = plots$histogram,filename = "games_galio_3.png", width = 12,height = 8  )
-
-deck <- galio_decks[4] 
-plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
-ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_4.png", width = 12,height = 8  )
-ggsave(plot = plots$histogram,filename = "games_galio_4.png", width = 12,height = 8  )
-```
 
 
 ```{r mastery-timeline}
@@ -299,20 +270,27 @@ LoR.Melt.Games.RMD |>
   filter( between(nGames, quantile(nGames,0.05,names = F), quantile(nGames,0.90,names = F) ) ) |>
   ggplot(aes(x = nGames, y = meanWR)) +
   geom_line() +
-  geom_smooth(method = "lm", formula = 'y ~ x + I(x^2) + I(x^3)', size = 1) +
+  geom_smooth(method = "loess", formula = 'y ~ x') +
+  # geom_smooth(method = "lm", formula = 'y ~ x + I(x^2) + I(x^3)', size = 1) +
   geom_hline(yintercept = gnar_mean_wr, color="red") +
+  geom_segment(aes( x=20, y=gnar_mean_wr+0.2,xend=20,yend=gnar_mean_wr ),arrow = arrow( length = unit(0.03,"npc") ) ) +
+  geom_label(aes(x=20,y=gnar_mean_wr+0.2,alpha="semitransparent"),label="Mean Win Rate \n of Gnar-Timelines",size=3.5,fill="#FDCE2A" ) +
   labs(x="Total Games",
        y="Win Rate",
        title="Cavemen Time - Mastery Curve",
        subtitle = "Mastery Curve on Gnar Timelines decks",
-       caption = glue("Constructed games from Seasonal Players
-                      The data under the 5th percentile and over the 90th percentile are removed ") ) +
+       caption = glue("Constructed games from Seasonal Players (n={length(puuid_seasonal)})
+                      The data under the 5th percentile and over the 90th percentile are removed
+                      The estimated Mastery-Curve is a linear model with up to the third polynomial") ) +
   theme_539() +
   scale_x_continuous(n.breaks = 10) +
   scale_y_continuous(
     n.breaks = 10,
     labels = scales::percent_format(accuracy = 1)
-  ) -> plot_cavemen_time
+  ) +
+  theme(legend.position = "none") -> plot_cavemen_time
+
+plot_cavemen_time 
   
 ggsave(plot = plot_cavemen_time,filename = "mastery_curve_timeline.png", width = 12,height = 8  )
 
@@ -324,5 +302,65 @@ LoR.Melt.Games.RMD |>
   mutate(Date = as_date(game_start_time_utc)) |>
   pull(Date) |>
   summary()
+
+
+LoR.Melt.Games.RMD |> 
+  filter(game_outcome != "tie") |>
+  filter(deck_code %in% gnar_timeline_decks) |>
+  filter(playerPuuid %in% puuid_seasonal) |>
+  arrange(playerPuuid,game_start_time_utc) |>
+  mutate(game_outcome = (factor(game_outcome) |> as.numeric()-1) ) |>
+  # mutate
+  group_by(playerPuuid) |>
+  mutate(nGames = row_number() ) |>
+  arrange(playerPuuid,game_start_time_utc) |>
+  mutate(nWin = cumsum(game_outcome)) |>
+  ungroup() |>
+  mutate(meanWR = nWin/nGames) |>
+  group_by(playerPuuid) |>
+  slice_max(nGames) |>
+  ungroup() |>
+  group_by(nGames) |>
+  summarise(meanWR = mean(meanWR)) |>
+  filter( between(nGames, quantile(nGames,0.05,names = F), quantile(nGames,0.90,names = F) ) ) -> data
+
+model <- lm(meanWR~nGames+I(nGames^2)+I(nGames^3),data = data)
+summary(model)
+
+
 ```
 
+# Galio
+
+```{r}
+LoR.Melt.Games.RMD |>
+  filter(str_detect(playerDeck,"Galio")) |>
+  tabyl(playerDeck) |>
+  slice_max(n, n = 5) |>
+  pull(playerDeck) -> galio_decks
+
+# galio_1 <- plot_master_curve(galio_decks[1],galio_decks[1],lq = 0.05,uq = 0.95)
+
+map(galio_decks, ~plot_master_curve(.x,.x,lq = 0.05,uq = 0.95) )
+
+deck <- galio_decks[1] 
+plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
+ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_1.png", width = 12,height = 8  )
+ggsave(plot = plots$histogram,filename = "games_galio_1.png", width = 12,height = 8  )
+
+deck <- galio_decks[2] 
+plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
+ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_2.png", width = 12,height = 8  )
+ggsave(plot = plots$histogram,filename = "games_galio_2.png", width = 12,height = 8  )
+
+deck <- galio_decks[3] # Braum Galio
+plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
+
+ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_3.png", width = 12,height = 8  )
+ggsave(plot = plots$histogram,filename = "games_galio_3.png", width = 12,height = 8  )
+
+deck <- galio_decks[4] 
+plots <- plot_master_curve(deck,deck,lq = 0.05,uq = 0.95)
+ggsave(plot = plots$mastery_curve,filename = "mastery_curve_galio_4.png", width = 12,height = 8  )
+ggsave(plot = plots$histogram,filename = "games_galio_4.png", width = 12,height = 8  )
+```
