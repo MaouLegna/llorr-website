@@ -11,7 +11,7 @@ output:
     vertical_layout: fill
 params:
   start:   "2022-02-16 19:00:00"
-  end:     "2022-03-16 18:00:00"
+  # end:     "2023-12-31 18:00:00"
   minMUGames: 10
 ---
 
@@ -52,7 +52,8 @@ LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), p
   filter(game_type == "Ranked"  ) |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   mutate(source = "Master") |>
-  mutate(source = factor(source,levels = c("Diamond","Master")))
+  mutate(source = factor(source,levels = c("Diamond","Master"))) |>
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
 LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
@@ -61,7 +62,8 @@ LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"),
   filter(game_type == "Ranked"  ) |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   mutate(source = "Diamond") |>
-  mutate(source = factor(source,levels = c("Diamond","Master")))
+  mutate(source = factor(source,levels = c("Diamond","Master")))  |>
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
 LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>

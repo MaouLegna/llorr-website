@@ -227,6 +227,8 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
 ```
 
 ```{r}
+nMU <- 30
+
 MasterOnly <- LoR.Melt.Master.RMD |>
   anti_join(
     LoR.Melt.Temp.RMD |>
@@ -248,17 +250,120 @@ DiamondOnly <- LoR.Melt.Diamond.RMD |>
 MasterOnly |>
   bind_rows(DiamondOnly) |>
   count(playerDeck) |>
-  slice_max(n,n=30) |>
-  pull(playerDeck) -> decks
+  slice_max(n,n=nMU) |>
+  pull(playerDeck) -> decks_top
 
 MU_Master <-  MasterOnly |>
   match_ups() |>
   filter(playerDeck %in% decks & opponentDeck %in% decks) |>
-  filter(playerDeck != opponentDeck)
+  filter(playerDeck != opponentDeck) |>
+  add_column(rank = "master")
 
 MU_Diamond <- DiamondOnly |>
   match_ups() |>
   filter(playerDeck %in% decks & opponentDeck %in% decks) |>
-  filter(playerDeck != opponentDeck)
+  filter(playerDeck != opponentDeck)  |>
+  add_column(rank = "diamond")
+```
+
+```{r}
+pd <- position_dodge(0.1) # move them .05 to the left and right
+
+decks <- 
+
+deck  <- "Senna/Veigar"
+
+MU_Master |>
+  filter(playerDeck == deck) |>
+  filter(muGames >= 100) |>
+  pull(opponentDeck) -> deck_min_100
+
+# decks <- decks_top
+decks <- decks_top[1:10]
+# decks <- deck_min_100
+
+MU_Master |>
+  filter(playerDeck==deck) |>
+  filter(opponentDeck %in% decks) |>
+  rename(muMaster=muWR) |>
+  mutate(w = muGames/sum(muGames)) |>
+  select(1,2,5,last_col()) |>
+  left_join(
+    MU_Diamond |>
+      filter(playerDeck==deck) |>
+      filter(opponentDeck %in% decks) |>
+      rename(muDiamond=muWR) |>
+      mutate(w = muGames/sum(muGames)) |>
+      select(1,2,5),
+      # select(1,2,5,last_col()),
+    by = c("playerDeck","opponentDeck")
+  ) |>
+  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+  arrange(opponentDeck) |>
+  mutate(diffMU = muMaster-muDiamond) |>
+  # pull(diffMU) -> vec_diff
+  mutate(mean_diffMU = cummean(diffMU)) |>
+  select(opponentDeck,mean_diffMU) |>
+  mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
+
+MU_Master |>
+  bind_rows(MU_Diamond) |>
+  filter(playerDeck==deck) |>
+  filter(opponentDeck %in% decks) |>
+  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+  mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
+  # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
+  ggplot(aes(x = opponentDeck,y=muWR)) +
+  geom_errorbar(aes(ymin=LCI,ymax=UCI,color=rank),
+                position = position_dodge(0.3),width = 0.2) +
+  geom_point(aes(color = rank), position = position_dodge(0.3)) +
+  geom_line( data=diffDT,aes(y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
+  expand_limits(y=0) +
+  scale_y_continuous(
+    breaks=seq(0,1,0.25),
+    # Add a second axis and specify its features
+    labels = scales::percent_format(accuracy = 1),
+    sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.06,0.01), name="Win Rate difference")
+  ) +
+  labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
+       subtitle = "Difference in Win-Rates",
+       caption = "Left Y-axis are the win-rates") +
+  theme_Publication() +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
+  scale_colour_Publication() -> p
+
+
+MU_Master |>
+  bind_rows(MU_Diamond) |>
+  filter(playerDeck==deck) |>
+  filter(opponentDeck %in% decks) |>
+  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+  mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
+  # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
+  ggplot() +
+  geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
+                position = position_dodge(0.3),width = 0.2) +
+  geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
+  geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
+  geom_label_repel(
+    data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
+    family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
+    segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, bg.color = "grey50", fill = "#f0f0f0", label.padding = 0, label.size = 0
+  ) +
+  expand_limits(y=0) +
+  scale_y_continuous(
+    breaks=seq(0,1,0.25),
+    # Add a second axis and specify its features
+    labels = scales::percent_format(accuracy = 1),
+    sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.06,0.01), name="Win Rate difference")
+  ) +
+  labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
+       subtitle = "Difference in Win-Rates",
+       caption = "Left Y-axis are the win-rates") +
+  theme_Publication() +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
+  scale_colour_Publication()
+
+
 ```
 

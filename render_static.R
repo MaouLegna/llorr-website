@@ -1,13 +1,13 @@
 while (TRUE) {
   
-  if (exists("giorno")) {
-    giorno <- floor_date(today(),"days") + hours(27)
+  if (!exists("giorno")) {
+    giorno <- lubridate::floor_date(lubridate::today(),"days") + lubridate::hours(27)
   }
   
   naptime::naptime(giorno)
   
   # Update the decks
-  source(file.path("C:","LlorR","scripts","dataIO","lor_deck_v3.R"))
+  source(file.path("C:","LlorR","scripts","dataIO","lor_deck_v3.R"), encoding = "UTF-8", local = TRUE)
   data.table::fwrite(LoR.Deck, file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"))
   
   start <- Sys.time()
@@ -26,7 +26,7 @@ while (TRUE) {
   message(start)
   message(end)
   
-  giorno <- floor_date(today(),"days") + hours(27)
+  giorno <- lubridate::floor_date(lubridate::today(),"days") + lubridate::hours(27)
   
 }
 

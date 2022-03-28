@@ -10,7 +10,7 @@ output:
 params:
   # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
   start:   "2022-02-16 19:00:00" #UTC tz / 2.21 Balance
-  end:     "2022-03-16 18:00:00" #UTC tz / 2.21 Balance
+  # end:     "2023-12-31 18:00:00" #UTC tz / 2.21 Balance
   minMUGames: 10 # min number of games for a MU
   nGrid: 15      # how many MU to plot
 ---
@@ -50,13 +50,17 @@ LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),
 LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
+  filter(game_type == "Ranked"  ) |>
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
 LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )  |>
+  filter(game_type == "Ranked"  ) |>
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
 LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
@@ -100,8 +104,7 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 
 ```{r prepara-data}
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
-  filter(game_type == "Ranked"  ) |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -120,7 +123,8 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
 # Additional tbl
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
   filter(game_type == "Ranked"  ) |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -625,7 +629,7 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to Trinathan, Jump, bA1ance and for the recent support (ᐛ)ᕗ 
+Special thanks to Jump, bA1ance and for the recent support (ᐛ)ᕗ 
 
 ```{r update-Shiny}
 # TopCC <- LoR.Melt.Master.RMD |>
