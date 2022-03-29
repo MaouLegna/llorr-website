@@ -1,7 +1,7 @@
 while (TRUE) {
   
   if (!exists("giorno")) {
-    giorno <- lubridate::floor_date(lubridate::today(),"days") + lubridate::hours(27)
+    giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
   }
   
   naptime::naptime(giorno)
@@ -26,7 +26,7 @@ while (TRUE) {
   message(start)
   message(end)
   
-  giorno <- lubridate::floor_date(lubridate::today(),"days") + lubridate::hours(27)
+  giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
   
 }
 
