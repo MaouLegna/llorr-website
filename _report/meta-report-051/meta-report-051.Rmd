@@ -3,8 +3,8 @@ params:
   ind: "MR051"
   patch: "Patch 3.3 - Week 5"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°51)"
-  description: "To the (Ex) Most Fluffable Scientist Cat Rioter"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/-full.png"
+  description: "To the (Ex) Most Fluffable Evil? Mind Swapped Feline Rioter"
+  cardlurl: "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01PZ023-full.png"
   start: "2022-03-23 18:00:00" #UTC tz / 'current' week start
   end:   "2022-03-30 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
