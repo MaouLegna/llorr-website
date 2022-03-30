@@ -3,7 +3,7 @@ params:
   ind: "MR051"
   patch: "Patch 3.3 - Week 5"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°51)"
-  description: "To the (Ex) Most Fluffable Evil? Mind Swapped Feline Rioter"
+  description: "To the Most Fluffable Evil? Mind Swapped Feline (Ex) Rioter"
   cardlurl: "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01PZ023-full.png"
   start: "2022-03-23 18:00:00" #UTC tz / 'current' week start
   end:   "2022-03-30 18:00:00" #UTC tz / 'current' week end
@@ -129,7 +129,7 @@ NA.master.found   <- master.NA[ !is.na(puuid), .N ]
 APAC.master.found <- master.APAC[ !is.na(puuid), .N ]
 
 EU.master.ladder   <- NROW(master.EU)
-NA.master.ladder   <- NROW(master.NA)
+NA.master.ladder   <- NROW(master.NA)+1 # HKGCrisper07 keeps not remaining
 APAC.master.ladder <- NROW(master.APAC)
 ```
 
@@ -282,23 +282,44 @@ gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisi
 ```{r players-by-the-numbers}
 #| layout="l-body"
 
+# nPlayers <- LoR.Account.RMD |>
+#   dplyr::filter(!is.na(master)) |>
+#   dplyr::select(activeShard,rank=master) |>
+#   dplyr::mutate(across(everything(), str_to_title)) |>
+#   dplyr::mutate(rank = factor(rank, levels = c("Master","Diamond"), ordered = T ) ) |>
+#   gtsummary::tbl_summary(by = activeShard,
+#                label = list(rank = "Player Rank")) |>
+#   gtsummary::add_overall(col_label="*Total*",last=T) |>
+#   gtsummary::modify_header(label ~ "**Shard/Server**") |>
+#   gtsummary::bold_labels() |>
+#   gtsummary::as_gt() |>
+#   gt::tab_options(
+#     data_row.padding = px(1.2),
+#     table.background.color = "whitesmoke",
+#     table.font.color = "black",
+#     table.font.color.light = "black"
+#    )
+
+  
 nPlayers <- LoR.Account.RMD |>
-  filter(!is.na(master)) |>
-  select(activeShard,rank=master) |>
-  mutate(across(everything(), str_to_title)) |>
-  mutate(rank = factor(rank, levels = c("Master","Diamond"), ordered = T ) ) |>
-  tbl_summary(by = activeShard,
-               label = list(rank = "Player Rank")) |>
-  modify_header(label ~ "**Shard/Server**") |>
-  bold_labels() |>
-  as_gt() |>
-  tab_options(
-    data_row.padding = px(1.2),
+  dplyr::filter(!is.na(master)) |>
+  dplyr::select(activeShard,rank=master) |>
+  dplyr::mutate(across(everything(), str_to_title)) |>
+  dplyr::mutate(rank = factor(rank, levels = c("Master","Diamond"), ordered = T ) ) |>
+  tbl_cross(
+    row = rank,
+    col = activeShard,
+    percent = "cell",
+    list(rank ~ "Player Rank", activeShard ~ "**Shard/Server**")
+  ) |>
+  gtsummary::as_gt() |>
+  gt::tab_options(
+    data_row.padding = px(4),
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
    )
-
+  
 nPlayers
 
 gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
