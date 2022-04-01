@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (from Patch 3.2 a Curious Journey)"
+title: "Meta & Decks (from Patch 3.4 - Late March Patch)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -10,7 +10,7 @@ output:
     orientation: row
     vertical_layout: fill
 params:
-  start:   "2022-02-16 19:00:00"
+  start:   "2022-03-30 19:00:00"
   # end:     "2023-12-31 18:00:00"
   minMUGames: 10
 ---
@@ -52,8 +52,7 @@ LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), p
   filter(game_type == "Ranked"  ) |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   mutate(source = "Master") |>
-  mutate(source = factor(source,levels = c("Diamond","Master"))) |>
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  mutate(source = factor(source,levels = c("Diamond","Master")))
 
 # load Games DT
 LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
@@ -92,7 +91,9 @@ p = 0.01 # if I want to use the standard meta deck threshold
 
 ntopPR  <- 12 # meta evolution decks
 seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
-seqDate <- seqDate[-length(seqDate)]
+
+one_day_check <- length(seqDate)>1
+if (one_day_check) seqDate <- seqDate[-length(seqDate)]
 ```
 
 
@@ -138,6 +139,7 @@ LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
 # Bind games
 LoR.Melt.Matches.RMD <- LoR.Melt.Master.RMD |>
   bind_rows(LoR.Melt.Diamond.RMD) |>
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
   distinct(match_key,playerPuuid,.keep_all = T)
 ```
 
@@ -578,6 +580,8 @@ LastUpdate.box
 # Fresh Stats (last 24 hours) {data-icon="fa-table"}
 
 ```{r}
+#| eval = one_day_check
+
 LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
   filter(game_start_time_utc %within% interval(today()+hours(18)-days(2),today()+hours(18)-days(1)) )
 ```
@@ -587,6 +591,8 @@ LoR.Melt.Matches.RMD <- LoR.Melt.Matches.RMD |>
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
+#| eval = one_day_check
+
 WR.DT.24h <- LoR.Melt.Matches.RMD |>
   win_rates(details = T,server = F) |>
   filter(playerDeck %!in% c(fct_meta,fct_meta,fct_underdog,fct_underdog) ) |>
@@ -611,6 +617,8 @@ deckCodeTbl.24hrs  <- LoR.Melt.Matches.RMD |>
 
 
 ```{r 24hrs-react-winRate}
+#| eval = one_day_check
+
 with_tooltip <- function(value, tooltip) {
   htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
             title = tooltip, value)
@@ -671,6 +679,8 @@ WR.DT.24h |>
 ### Time Frame
 
 ```{r}
+#| eval = one_day_check
+
 flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
                         caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),
                         icon = "fa-clock",
@@ -683,6 +693,8 @@ flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
 
 
 ```{r}
+#| eval = one_day_check
+
 LastUpdate.box
 ```
 
@@ -1083,4 +1095,4 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to Trinathan, Jump, bA1ance and for the recent support (ᐛ)ᕗ 
+Special thanks to bA1ance (March) and for the recent support (ᐛ)ᕗ 

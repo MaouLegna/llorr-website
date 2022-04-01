@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data(from Patch 3.2 a Curious Journey)"
+title: "Match Ups Data (from Patch 3.4 - Late March Patch)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -8,8 +8,8 @@ output:
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
 params:
-  # hotfix:   "2021-12-14 18:00:00" #UTC tz / 2.21 Hotfix
-  start:   "2022-02-16 19:00:00" #UTC tz / 2.21 Balance
+  start:   "2022-03-30 19:00:00"
+  # start:   "2022-02-16 19:00:00"
   # end:     "2023-12-31 18:00:00" #UTC tz / 2.21 Balance
   minMUGames: 10 # min number of games for a MU
   nGrid: 15      # how many MU to plot
@@ -629,7 +629,7 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to Jump, bA1ance and for the recent support (ᐛ)ᕗ 
+Special thanks to bA1ance (March) and for the recent support (ᐛ)ᕗ 
 
 ```{r update-Shiny}
 # TopCC <- LoR.Melt.Master.RMD |>
