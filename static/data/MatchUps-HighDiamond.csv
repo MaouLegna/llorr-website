@@ -1,1494 +1,2075 @@
 playerDeck,opponentDeck,muWin,muGames,muWR
-Ahri/Akshan,SunDisc,8,16,0.5
-Ahri/Kennen (BW/IO),SunDisc,2,14,0.142857142857143
-Ahri/Kennen (IO/SH),SunDisc,13,26,0.5
-Ahri/Kennen (IO/SI),SunDisc,6,10,0.6
-Ahri/Lulu (IO/PZ),Riven/Viktor,8,11,0.727272727272727
-Ahri/Lulu (IO/PZ),SunDisc,22,50,0.44
-Akshan (PZ/SH),SunDisc,4,11,0.363636363636364
-Akshan/Aphelios,Aphelios/Viktor,11,20,0.55
-Akshan/Aphelios,Pantheon/Yuumi (DE/MT),6,10,0.6
-Akshan/Aphelios,SunDisc,21,105,0.2
-Akshan/Aphelios,Tri-Beam (NX/PZ),4,13,0.307692307692308
-Akshan/Ekko,SunDisc,10,27,0.37037037037037
-Akshan/Ekko,Tri-Beam (NX/PZ),4,10,0.4
-Akshan/Gnar,SunDisc,6,16,0.375
+Ahri/Akshan,SunDisc,9,18,0.5
+Ahri/Kennen (BW/IO),SunDisc,2,16,0.125
+Ahri/Kennen (IO/SH),SunDisc,16,35,0.457142857142857
+Ahri/Kennen (IO/SI),SunDisc,8,15,0.533333333333333
+Ahri/Lulu (IO/PZ),Riven/Viktor,9,14,0.642857142857143
+Ahri/Lulu (IO/PZ),SunDisc,27,62,0.435483870967742
+Ahri/Lulu (IO/PZ),Tri-Beam (NX/PZ),2,12,0.166666666666667
+Akshan (PZ/SH),SunDisc,4,12,0.333333333333333
+Akshan/Aphelios,Aphelios/Viktor,12,21,0.571428571428571
+Akshan/Aphelios,Pantheon/Yuumi (DE/MT),8,12,0.666666666666667
+Akshan/Aphelios,Riven/Viktor,5,13,0.384615384615385
+Akshan/Aphelios,SunDisc,21,116,0.181034482758621
+Akshan/Aphelios,Tri-Beam (NX/PZ),4,14,0.285714285714286
+Akshan/Ekko,SunDisc,10,29,0.344827586206897
+Akshan/Ekko,Tri-Beam (NX/PZ),4,11,0.363636363636364
+Akshan/Gnar,SunDisc,7,23,0.304347826086957
 Akshan/Gnar/Renekton,SunDisc,7,11,0.636363636363636
-Akshan/Karma,SunDisc,22,53,0.415094339622642
-Akshan/Karma,Tri-Beam (NX/PZ),10,14,0.714285714285714
-Akshan/Lee Sin,Aphelios/Viktor,7,10,0.7
-Akshan/Lee Sin,Azir/Irelia,2,11,0.181818181818182
-Akshan/Lee Sin,SunDisc,34,74,0.45945945945946
+Akshan/Karma,SunDisc,30,64,0.46875
+Akshan/Karma,Tri-Beam (NX/PZ),14,19,0.736842105263158
+Akshan/Lee Sin,Aphelios/Viktor,7,11,0.636363636363636
+Akshan/Lee Sin,Aurelion Sol/Tryndamere,5,10,0.5
+Akshan/Lee Sin,Aurelion Sol/Zoe (FR/MT),4,10,0.4
+Akshan/Lee Sin,Azir/Irelia,3,13,0.230769230769231
+Akshan/Lee Sin,Riven/Viktor,7,12,0.583333333333333
+Akshan/Lee Sin,SunDisc,44,100,0.44
+Akshan/Lee Sin,Tri-Beam (NX/PZ),5,13,0.384615384615385
 Akshan/Lucian,SunDisc,5,10,0.5
-Akshan/Pantheon,SunDisc,7,12,0.583333333333333
-Akshan/Renekton (BC/SH),SunDisc,7,13,0.538461538461538
-Akshan/Sivir (DE/SH),Aphelios/Viktor,28,48,0.583333333333333
-Akshan/Sivir (DE/SH),Aurelion Sol/Trundle,10,15,0.666666666666667
-Akshan/Sivir (DE/SH),Aurelion Sol/Tryndamere,13,21,0.619047619047619
-Akshan/Sivir (DE/SH),Aurelion Sol/Zoe (FR/MT),20,37,0.540540540540541
-Akshan/Sivir (DE/SH),Azir/Irelia,25,39,0.641025641025641
-Akshan/Sivir (DE/SH),Caitlyn/Teemo (BC/PZ),14,16,0.875
-Akshan/Sivir (DE/SH),Darius/Gnar (FR/NX),8,11,0.727272727272727
-Akshan/Sivir (DE/SH),Draven/Rumble (NX/PZ),9,16,0.5625
-Akshan/Sivir (DE/SH),Elise (NX/SI),16,31,0.516129032258065
-Akshan/Sivir (DE/SH),Fizz/Lulu (BC/PZ),4,11,0.363636363636364
-Akshan/Sivir (DE/SH),Gnar/Teemo/Tristana (BC/DE),3,10,0.3
-Akshan/Sivir (DE/SH),Gnar/Trundle (FR/PZ),7,13,0.538461538461538
+Akshan/Pantheon,SunDisc,7,16,0.4375
+Akshan/Renekton (BC/SH),SunDisc,9,22,0.409090909090909
+Akshan/Sivir (DE/SH),Akshan/Sivir (DE/SH),5,10,0.5
+Akshan/Sivir (DE/SH),Akshan/Viktor,8,11,0.727272727272727
+Akshan/Sivir (DE/SH),Anivia (FR/SI),5,10,0.5
+Akshan/Sivir (DE/SH),Aphelios/Viktor,33,58,0.568965517241379
+Akshan/Sivir (DE/SH),Aphelios/Viktor/Zoe,8,10,0.8
+Akshan/Sivir (DE/SH),Aurelion Sol/Trundle,13,19,0.68421052631579
+Akshan/Sivir (DE/SH),Aurelion Sol/Tryndamere,17,28,0.607142857142857
+Akshan/Sivir (DE/SH),Aurelion Sol/Zoe (FR/MT),24,55,0.436363636363636
+Akshan/Sivir (DE/SH),Azir/Irelia,29,48,0.604166666666667
+Akshan/Sivir (DE/SH),BandleTree,11,13,0.846153846153846
+Akshan/Sivir (DE/SH),Caitlyn/Teemo (BC/PZ),18,21,0.857142857142857
+Akshan/Sivir (DE/SH),Darius/Gnar (FR/NX),8,15,0.533333333333333
+Akshan/Sivir (DE/SH),Draven/Rumble (NX/PZ),11,20,0.55
+Akshan/Sivir (DE/SH),Draven/Viktor,5,11,0.454545454545455
+Akshan/Sivir (DE/SH),Ekko/Zilean,5,10,0.5
+Akshan/Sivir (DE/SH),Elise (NX/SI),20,39,0.512820512820513
+Akshan/Sivir (DE/SH),Fizz/Lulu (BC/PZ),9,21,0.428571428571429
+Akshan/Sivir (DE/SH),Gnar/Teemo/Tristana (BC/DE),4,14,0.285714285714286
+Akshan/Sivir (DE/SH),Gnar/Trundle (FR/PZ),9,16,0.5625
 Akshan/Sivir (DE/SH),Kindred/Viego (IO/SI),6,16,0.375
+Akshan/Sivir (DE/SH),Lissandra/Trundle (FR/SI),5,10,0.5
 Akshan/Sivir (DE/SH),Lulu/Rumble (BC/PZ),7,10,0.7
-Akshan/Sivir (DE/SH),Miss Fortune/Quinn,16,24,0.666666666666667
-Akshan/Sivir (DE/SH),Pantheon/Yuumi (DE/MT),21,36,0.583333333333333
-Akshan/Sivir (DE/SH),Pyke/Rek'Sai,11,23,0.478260869565217
-Akshan/Sivir (DE/SH),Riven/Viktor,12,27,0.444444444444444
-Akshan/Sivir (DE/SH),Senna/Veigar,16,20,0.8
-Akshan/Sivir (DE/SH),SunDisc,153,378,0.404761904761905
-Akshan/Sivir (DE/SH),Taliyah/Ziggs,8,21,0.380952380952381
-Akshan/Sivir (DE/SH),Tri-Beam (NX/PZ),31,76,0.407894736842105
-Akshan/Sivir (FR/SH),SunDisc,12,24,0.5
+Akshan/Sivir (DE/SH),Miss Fortune/Quinn,20,30,0.666666666666667
+Akshan/Sivir (DE/SH),Pantheon/Taric/Yuumi (DE/MT),6,11,0.545454545454545
+Akshan/Sivir (DE/SH),Pantheon/Yuumi (DE/MT),24,44,0.545454545454545
+Akshan/Sivir (DE/SH),Pyke/Rek'Sai,14,28,0.5
+Akshan/Sivir (DE/SH),Riven/Viktor,27,58,0.46551724137931
+Akshan/Sivir (DE/SH),Senna/Veigar,20,28,0.714285714285714
+Akshan/Sivir (DE/SH),SunDisc,194,464,0.418103448275862
+Akshan/Sivir (DE/SH),Taliyah/Ziggs,9,27,0.333333333333333
+Akshan/Sivir (DE/SH),Tri-Beam (NX/PZ),34,90,0.377777777777778
+Akshan/Sivir (DE/SH),Trundle/Tryndamere (FR/SI),8,18,0.444444444444444
+Akshan/Sivir (FR/SH),SunDisc,14,30,0.466666666666667
 Akshan/Taliyah (FR/SH),SunDisc,6,16,0.375
 Akshan/Twisted Fate,SunDisc,4,10,0.4
-Akshan/Udyr,SunDisc,4,11,0.363636363636364
-Akshan/Viktor,Aphelios/Viktor,5,22,0.227272727272727
-Akshan/Viktor,Aurelion Sol/Zoe (FR/MT),8,13,0.615384615384615
-Akshan/Viktor,Azir/Irelia,10,15,0.666666666666667
-Akshan/Viktor,Elise (NX/SI),5,11,0.454545454545455
-Akshan/Viktor,Pantheon/Yuumi (DE/MT),8,15,0.533333333333333
-Akshan/Viktor,Riven/Viktor,5,27,0.185185185185185
-Akshan/Viktor,SunDisc,104,151,0.688741721854305
-Akshan/Viktor,Tri-Beam (NX/PZ),18,36,0.5
-Anivia (FR/SI),Aphelios/Viktor,11,17,0.647058823529412
-Anivia (FR/SI),Aurelion Sol/Zoe (FR/MT),3,10,0.3
-Anivia (FR/SI),Azir/Irelia,2,14,0.142857142857143
-Anivia (FR/SI),SunDisc,25,114,0.219298245614035
-Anivia (FR/SI),Tri-Beam (NX/PZ),17,22,0.772727272727273
+Akshan/Udyr,SunDisc,4,12,0.333333333333333
+Akshan/Viktor,Akshan/Sivir (DE/SH),3,11,0.272727272727273
+Akshan/Viktor,Aphelios/Viktor,13,38,0.342105263157895
+Akshan/Viktor,Aurelion Sol/Trundle,7,11,0.636363636363636
+Akshan/Viktor,Aurelion Sol/Zoe (FR/MT),15,29,0.517241379310345
+Akshan/Viktor,Azir/Irelia,15,24,0.625
+Akshan/Viktor,Darius/Gnar (FR/NX),6,11,0.545454545454545
+Akshan/Viktor,Draven/Rumble,8,12,0.666666666666667
+Akshan/Viktor,Draven/Rumble (NX/PZ),6,10,0.6
+Akshan/Viktor,Draven/Viktor,4,11,0.363636363636364
+Akshan/Viktor,Elise (NX/SI),16,25,0.64
+Akshan/Viktor,Fizz/Lulu (BC/PZ),7,12,0.583333333333333
+Akshan/Viktor,Gnar/Ziggs (BC/NX),6,11,0.545454545454545
+Akshan/Viktor,Miss Fortune/Quinn,8,16,0.5
+Akshan/Viktor,Pantheon/Yuumi (DE/MT),9,22,0.409090909090909
+Akshan/Viktor,Pyke/Rek'Sai,8,15,0.533333333333333
+Akshan/Viktor,Riven/Viktor,16,66,0.242424242424242
+Akshan/Viktor,Senna/Veigar,3,11,0.272727272727273
+Akshan/Viktor,SunDisc,159,240,0.6625
+Akshan/Viktor,Taliyah/Ziggs,7,14,0.5
+Akshan/Viktor,Tri-Beam (NX/PZ),28,62,0.451612903225806
+Akshan/Viktor,Trundle/Tryndamere (FR/SI),3,11,0.272727272727273
+Anivia (FR/SI),Akshan/Sivir (DE/SH),5,10,0.5
+Anivia (FR/SI),Aphelios/Viktor,15,24,0.625
+Anivia (FR/SI),Aurelion Sol/Tryndamere,0,13,0
+Anivia (FR/SI),Aurelion Sol/Zoe (FR/MT),7,17,0.411764705882353
+Anivia (FR/SI),Azir/Irelia,2,16,0.125
+Anivia (FR/SI),Elise (NX/SI),7,12,0.583333333333333
+Anivia (FR/SI),Pantheon/Yuumi (DE/MT),3,11,0.272727272727273
+Anivia (FR/SI),Riven/Viktor,8,21,0.380952380952381
+Anivia (FR/SI),Senna/Veigar,5,10,0.5
+Anivia (FR/SI),SunDisc,27,142,0.190140845070423
+Anivia (FR/SI),Tri-Beam (NX/PZ),22,29,0.758620689655172
+Aphelios/Aurelion Sol (FR/MT),SunDisc,8,10,0.8
 Aphelios/Aurelion Sol/Vi/Viktor,SunDisc,7,10,0.7
 Aphelios/Aurelion Sol/Zoe (FR/MT),SunDisc,9,19,0.473684210526316
+Aphelios/Diana (BC/MT),SunDisc,3,10,0.3
 Aphelios/Diana (MT/NX),SunDisc,7,11,0.636363636363636
-Aphelios/Diana (MT/SI),Aphelios/Viktor,9,32,0.28125
-Aphelios/Diana (MT/SI),Aurelion Sol/Zoe (FR/MT),4,13,0.307692307692308
-Aphelios/Diana (MT/SI),Azir/Irelia,11,19,0.578947368421053
-Aphelios/Diana (MT/SI),BandleTree,4,11,0.363636363636364
-Aphelios/Diana (MT/SI),Caitlyn/Teemo (BC/PZ),3,10,0.3
-Aphelios/Diana (MT/SI),Elise (NX/SI),11,15,0.733333333333333
-Aphelios/Diana (MT/SI),Miss Fortune/Quinn,5,18,0.277777777777778
-Aphelios/Diana (MT/SI),Pantheon/Yuumi (DE/MT),8,18,0.444444444444444
-Aphelios/Diana (MT/SI),Pyke/Rek'Sai,5,12,0.416666666666667
-Aphelios/Diana (MT/SI),Riven/Viktor,6,12,0.5
-Aphelios/Diana (MT/SI),Senna/Veigar,3,10,0.3
-Aphelios/Diana (MT/SI),SunDisc,59,220,0.268181818181818
-Aphelios/Diana (MT/SI),Tri-Beam (NX/PZ),17,42,0.404761904761905
-Aphelios/Ezreal,SunDisc,8,34,0.235294117647059
-Aphelios/Karma,SunDisc,6,17,0.352941176470588
-Aphelios/Kindred,SunDisc,3,17,0.176470588235294
-Aphelios/Lee Sin,SunDisc,18,55,0.327272727272727
+Aphelios/Diana (MT/SI),Aphelios/Viktor,11,35,0.314285714285714
+Aphelios/Diana (MT/SI),Aurelion Sol/Trundle,6,13,0.461538461538462
+Aphelios/Diana (MT/SI),Aurelion Sol/Zoe (FR/MT),7,21,0.333333333333333
+Aphelios/Diana (MT/SI),Azir/Irelia,11,23,0.478260869565217
+Aphelios/Diana (MT/SI),BandleTree,4,12,0.333333333333333
+Aphelios/Diana (MT/SI),Caitlyn/Teemo (BC/PZ),3,12,0.25
+Aphelios/Diana (MT/SI),Darius/Gnar (FR/NX),3,11,0.272727272727273
+Aphelios/Diana (MT/SI),Draven/Viktor,8,10,0.8
+Aphelios/Diana (MT/SI),Elise (NX/SI),16,22,0.727272727272727
+Aphelios/Diana (MT/SI),Fizz/Lulu (BC/PZ),5,13,0.384615384615385
+Aphelios/Diana (MT/SI),Miss Fortune/Quinn,5,20,0.25
+Aphelios/Diana (MT/SI),Pantheon/Yuumi (DE/MT),15,27,0.555555555555556
+Aphelios/Diana (MT/SI),Pyke/Rek'Sai,6,14,0.428571428571429
+Aphelios/Diana (MT/SI),Riven/Viktor,13,26,0.5
+Aphelios/Diana (MT/SI),Senna/Veigar,5,12,0.416666666666667
+Aphelios/Diana (MT/SI),SunDisc,69,249,0.27710843373494
+Aphelios/Diana (MT/SI),Tri-Beam (NX/PZ),22,49,0.448979591836735
+Aphelios/Diana (MT/SI),Trundle/Tryndamere (FR/SI),5,11,0.454545454545455
+Aphelios/Ezreal,SunDisc,8,36,0.222222222222222
+Aphelios/Karma,SunDisc,6,18,0.333333333333333
+Aphelios/Kindred,SunDisc,3,22,0.136363636363636
+Aphelios/Lee Sin,SunDisc,18,56,0.321428571428571
 Aphelios/Lee Sin,Tri-Beam (NX/PZ),4,12,0.333333333333333
-Aphelios/Lux,Aphelios/Viktor,6,13,0.461538461538462
-Aphelios/Lux,SunDisc,12,54,0.222222222222222
-Aphelios/Lux,Tri-Beam (NX/PZ),3,11,0.272727272727273
-Aphelios/Lux/Zoe,Aphelios/Viktor,13,22,0.590909090909091
-Aphelios/Lux/Zoe,SunDisc,16,82,0.195121951219512
-Aphelios/Lux/Zoe,Tri-Beam (NX/PZ),3,12,0.25
-Aphelios/Nami,SunDisc,15,49,0.306122448979592
-Aphelios/Swain,SunDisc,9,27,0.333333333333333
-Aphelios/Twisted Fate,SunDisc,0,19,0
+Aphelios/Lux,Aphelios/Viktor,8,16,0.5
+Aphelios/Lux,SunDisc,13,61,0.213114754098361
+Aphelios/Lux,Tri-Beam (NX/PZ),5,14,0.357142857142857
+Aphelios/Lux/Zoe,Aphelios/Viktor,13,24,0.541666666666667
+Aphelios/Lux/Zoe,SunDisc,19,89,0.213483146067416
+Aphelios/Lux/Zoe,Tri-Beam (NX/PZ),3,13,0.230769230769231
+Aphelios/Nami,SunDisc,22,62,0.354838709677419
+Aphelios/Swain,SunDisc,13,36,0.361111111111111
+Aphelios/Swain,Tri-Beam (NX/PZ),5,12,0.416666666666667
+Aphelios/Twisted Fate,SunDisc,2,27,0.0740740740740741
 Aphelios/Vi,SunDisc,3,13,0.230769230769231
-Aphelios/Vi/Viktor,SunDisc,13,28,0.464285714285714
-Aphelios/Vi/Zoe,SunDisc,21,42,0.5
-Aphelios/Viktor,Akshan/Aphelios,9,20,0.45
-Aphelios/Viktor,Akshan/Lee Sin,3,10,0.3
-Aphelios/Viktor,Akshan/Sivir (DE/SH),20,48,0.416666666666667
-Aphelios/Viktor,Akshan/Viktor,17,22,0.772727272727273
-Aphelios/Viktor,Anivia (FR/SI),6,17,0.352941176470588
-Aphelios/Viktor,Aphelios/Diana (MT/SI),23,32,0.71875
-Aphelios/Viktor,Aphelios/Lux,7,13,0.538461538461538
-Aphelios/Viktor,Aphelios/Lux/Zoe,9,22,0.409090909090909
-Aphelios/Viktor,Aphelios/Viktor,115,230,0.5
-Aphelios/Viktor,Aphelios/Viktor/Zoe,9,26,0.346153846153846
-Aphelios/Viktor,Aphelios/Zoe (MT/SI),13,18,0.722222222222222
-Aphelios/Viktor,Aurelion Sol/Trundle,23,47,0.48936170212766
-Aphelios/Viktor,Aurelion Sol/Tryndamere,52,88,0.590909090909091
-Aphelios/Viktor,Aurelion Sol/Zoe (FR/MT),76,141,0.539007092198582
-Aphelios/Viktor,Azir/Irelia,43,105,0.40952380952381
-Aphelios/Viktor,BandleTree,34,58,0.586206896551724
-Aphelios/Viktor,Caitlyn/Swain,6,15,0.4
-Aphelios/Viktor,Caitlyn/Teemo (BC/PZ),60,91,0.659340659340659
-Aphelios/Viktor,Championless (FR/PZ),12,17,0.705882352941177
-Aphelios/Viktor,Championless (NX/PZ),10,14,0.714285714285714
-Aphelios/Viktor,Darius/Gnar (FR/NX),25,55,0.454545454545455
-Aphelios/Viktor,Draven/Rumble,14,22,0.636363636363636
-Aphelios/Viktor,Draven/Rumble (NX/PZ),41,66,0.621212121212121
-Aphelios/Viktor,Draven/Rumble/Sion,9,16,0.5625
-Aphelios/Viktor,Draven/Viktor,12,22,0.545454545454545
-Aphelios/Viktor,Ekko/Zilean,21,31,0.67741935483871
-Aphelios/Viktor,Elise (NX/SI),73,113,0.646017699115044
-Aphelios/Viktor,Fizz/Lulu (BC/PZ),29,75,0.386666666666667
-Aphelios/Viktor,Fizz/Riven (BC/NX),6,15,0.4
-Aphelios/Viktor,Galio/Lulu/Poppy (BC/DE),12,28,0.428571428571429
-Aphelios/Viktor,Gangplank/Miss Fortune (BW/NX),7,14,0.5
-Aphelios/Viktor,Gangplank/Sejuani,8,25,0.32
-Aphelios/Viktor,Gnar/Swain,7,15,0.466666666666667
-Aphelios/Viktor,Gnar/Teemo/Tristana (BC/DE),22,42,0.523809523809524
+Aphelios/Vi/Viktor,SunDisc,21,39,0.538461538461538
+Aphelios/Vi/Viktor,Tri-Beam (NX/PZ),3,13,0.230769230769231
+Aphelios/Vi/Zoe,Riven/Viktor,10,20,0.5
+Aphelios/Vi/Zoe,SunDisc,37,78,0.474358974358974
+Aphelios/Vi/Zoe,Tri-Beam (NX/PZ),5,11,0.454545454545455
+Aphelios/Viktor,Akshan/Aphelios,9,21,0.428571428571429
+Aphelios/Viktor,Akshan/Lee Sin,4,11,0.363636363636364
+Aphelios/Viktor,Akshan/Sivir (DE/SH),25,58,0.431034482758621
+Aphelios/Viktor,Akshan/Viktor,25,38,0.657894736842105
+Aphelios/Viktor,Anivia (FR/SI),9,24,0.375
+Aphelios/Viktor,Aphelios/Diana (MT/SI),24,35,0.685714285714286
+Aphelios/Viktor,Aphelios/Lux,8,16,0.5
+Aphelios/Viktor,Aphelios/Lux/Zoe,11,24,0.458333333333333
+Aphelios/Viktor,Aphelios/Viktor,140,280,0.5
+Aphelios/Viktor,Aphelios/Viktor/Zoe,14,36,0.388888888888889
+Aphelios/Viktor,Aphelios/Yasuo,6,10,0.6
+Aphelios/Viktor,Aphelios/Zoe (MT/SI),22,32,0.6875
+Aphelios/Viktor,Aurelion Sol/Braum,8,13,0.615384615384615
+Aphelios/Viktor,Aurelion Sol/Trundle,30,68,0.441176470588235
+Aphelios/Viktor,Aurelion Sol/Tryndamere,67,114,0.587719298245614
+Aphelios/Viktor,Aurelion Sol/Tryndamere/Zoe,5,10,0.5
+Aphelios/Viktor,Aurelion Sol/Zoe (FR/MT),109,210,0.519047619047619
+Aphelios/Viktor,Azir/Irelia,65,159,0.408805031446541
+Aphelios/Viktor,BandleTree,40,69,0.579710144927536
+Aphelios/Viktor,Caitlyn/Swain,6,17,0.352941176470588
+Aphelios/Viktor,Caitlyn/Teemo (BC/PZ),82,128,0.640625
+Aphelios/Viktor,Championless (FR/PZ),15,25,0.6
+Aphelios/Viktor,Championless (NX/PZ),12,18,0.666666666666667
+Aphelios/Viktor,Darius/Gnar (FR/NX),34,76,0.447368421052632
+Aphelios/Viktor,Diana/Nocturne,11,14,0.785714285714286
+Aphelios/Viktor,Dragons (DE/MT),4,11,0.363636363636364
+Aphelios/Viktor,Draven/Rumble,20,34,0.588235294117647
+Aphelios/Viktor,Draven/Rumble (NX/PZ),51,85,0.6
+Aphelios/Viktor,Draven/Rumble/Sion,11,27,0.407407407407407
+Aphelios/Viktor,Draven/Viktor,31,47,0.659574468085106
+Aphelios/Viktor,Ekko/Zilean,26,42,0.619047619047619
+Aphelios/Viktor,Elise (NX/SI),110,168,0.654761904761905
+Aphelios/Viktor,Fiora (DE/FR),7,10,0.7
+Aphelios/Viktor,Fizz/Gnar/Tristana (BC/DE),5,11,0.454545454545455
+Aphelios/Viktor,Fizz/Lulu (BC/PZ),53,119,0.445378151260504
+Aphelios/Viktor,Fizz/Riven (BC/NX),9,20,0.45
+Aphelios/Viktor,Galio/Lulu/Poppy (BC/DE),17,36,0.472222222222222
+Aphelios/Viktor,Galio/Poppy,5,11,0.454545454545455
+Aphelios/Viktor,Galio/Soraka,10,11,0.909090909090909
+Aphelios/Viktor,Gangplank/Miss Fortune (BW/NX),14,32,0.4375
+Aphelios/Viktor,Gangplank/Sejuani,14,46,0.304347826086957
+Aphelios/Viktor,Gnar/Swain,12,21,0.571428571428571
+Aphelios/Viktor,Gnar/Teemo/Tristana (BC/DE),29,54,0.537037037037037
 Aphelios/Viktor,Gnar/Trundle (FR/IO),9,14,0.642857142857143
-Aphelios/Viktor,Gnar/Trundle (FR/PZ),22,42,0.523809523809524
-Aphelios/Viktor,Gnar/Ziggs (BC/NX),24,38,0.631578947368421
-Aphelios/Viktor,Jarvan IV/Shen,8,24,0.333333333333333
-Aphelios/Viktor,Jayce/Lux,3,10,0.3
-Aphelios/Viktor,Kindred/Viego (IO/SI),21,46,0.456521739130435
-Aphelios/Viktor,LeBlanc/Sivir,6,10,0.6
+Aphelios/Viktor,Gnar/Trundle (FR/PZ),25,51,0.490196078431373
+Aphelios/Viktor,Gnar/Ziggs (BC/NX),31,46,0.673913043478261
+Aphelios/Viktor,Hecarim/Lucian,6,11,0.545454545454545
+Aphelios/Viktor,Heimerdinger/Jayce (PZ/SI),3,10,0.3
+Aphelios/Viktor,Jarvan IV/Shen,10,28,0.357142857142857
+Aphelios/Viktor,Jayce/Lux,5,16,0.3125
+Aphelios/Viktor,Kindred/Viego (IO/SI),26,60,0.433333333333333
+Aphelios/Viktor,LeBlanc/Sivir,7,13,0.538461538461538
 Aphelios/Viktor,Leona/Yasuo,10,15,0.666666666666667
-Aphelios/Viktor,Lissandra/Trundle (FR/SI),9,17,0.529411764705882
-Aphelios/Viktor,Lulu/Rumble (BC/PZ),9,16,0.5625
-Aphelios/Viktor,Maokai/Nautilus,9,30,0.3
-Aphelios/Viktor,Miss Fortune/Quinn,42,81,0.518518518518519
-Aphelios/Viktor,Mistwraith Allegiance,6,10,0.6
-Aphelios/Viktor,Pantheon/Taric/Yuumi (DE/MT),11,31,0.354838709677419
-Aphelios/Viktor,Pantheon/Yuumi (DE/MT),64,117,0.547008547008547
-Aphelios/Viktor,Pyke/Rek'Sai,46,77,0.597402597402597
+Aphelios/Viktor,Lissandra/Taliyah,8,12,0.666666666666667
+Aphelios/Viktor,Lissandra/Trundle (FR/SI),12,22,0.545454545454545
+Aphelios/Viktor,Lulu/Rumble (BC/PZ),10,20,0.5
+Aphelios/Viktor,Maokai/Nautilus,13,40,0.325
+Aphelios/Viktor,Miss Fortune/Quinn,55,106,0.518867924528302
+Aphelios/Viktor,Mistwraith Allegiance,8,13,0.615384615384615
+Aphelios/Viktor,Nami/Twisted Fate (BW/PZ),5,11,0.454545454545455
+Aphelios/Viktor,Pantheon/Taric (DE/MT),4,10,0.4
+Aphelios/Viktor,Pantheon/Taric/Yuumi (DE/MT),14,42,0.333333333333333
+Aphelios/Viktor,Pantheon/Yuumi (DE/MT),80,152,0.526315789473684
+Aphelios/Viktor,Pyke/Rek'Sai,61,97,0.628865979381443
 Aphelios/Viktor,Riven/Rumble/Sion,6,12,0.5
-Aphelios/Viktor,Riven/Viktor,67,132,0.507575757575758
-Aphelios/Viktor,Rumble/Sion,14,24,0.583333333333333
-Aphelios/Viktor,Senna/Veigar,37,80,0.4625
-Aphelios/Viktor,SunDisc,731,1473,0.496266123557366
-Aphelios/Viktor,Taliyah/Ziggs,34,87,0.390804597701149
-Aphelios/Viktor,Teemo (NX/PZ),12,15,0.8
-Aphelios/Viktor,Tri-Beam (NX/PZ),141,279,0.505376344086022
-Aphelios/Viktor,Trundle/Tryndamere (FR/SI),16,27,0.592592592592593
+Aphelios/Viktor,Riven/Viktor,158,282,0.560283687943262
+Aphelios/Viktor,Rumble/Sion,16,30,0.533333333333333
+Aphelios/Viktor,Rumble/Viktor,6,10,0.6
+Aphelios/Viktor,Senna/Veigar,47,108,0.435185185185185
+Aphelios/Viktor,SunDisc,895,1816,0.49284140969163
+Aphelios/Viktor,Taliyah/Ziggs,47,124,0.379032258064516
+Aphelios/Viktor,Teemo (NX/PZ),14,17,0.823529411764706
+Aphelios/Viktor,Tri-Beam (NX/PZ),173,370,0.467567567567568
+Aphelios/Viktor,Trundle/Tryndamere (FR/SI),27,59,0.457627118644068
+Aphelios/Viktor,Vi/Viktor (PZ/SI),7,15,0.466666666666667
+Aphelios/Viktor,Viego (SI/SH),7,12,0.583333333333333
 Aphelios/Viktor,Viktor - Shellfolk,12,19,0.631578947368421
-Aphelios/Viktor,Viktor/Zoe,11,25,0.44
-Aphelios/Viktor,Xerath/Zilean (BC/SH),6,16,0.375
+Aphelios/Viktor,Viktor/Zoe,13,29,0.448275862068966
+Aphelios/Viktor,Xerath/Zilean (BC/SH),10,23,0.434782608695652
 Aphelios/Viktor/Yuumi (MT/PZ),SunDisc,4,13,0.307692307692308
-Aphelios/Viktor/Zoe,Aphelios/Viktor,17,26,0.653846153846154
-Aphelios/Viktor/Zoe,Aurelion Sol/Zoe (FR/MT),7,12,0.583333333333333
-Aphelios/Viktor/Zoe,Azir/Irelia,6,11,0.545454545454545
-Aphelios/Viktor/Zoe,Caitlyn/Teemo (BC/PZ),6,10,0.6
-Aphelios/Viktor/Zoe,Miss Fortune/Quinn,5,10,0.5
-Aphelios/Viktor/Zoe,Pantheon/Yuumi (DE/MT),8,18,0.444444444444444
-Aphelios/Viktor/Zoe,Riven/Viktor,6,13,0.461538461538462
-Aphelios/Viktor/Zoe,Senna/Veigar,3,13,0.230769230769231
-Aphelios/Viktor/Zoe,SunDisc,81,163,0.496932515337423
-Aphelios/Viktor/Zoe,Tri-Beam (NX/PZ),15,30,0.5
-Aphelios/Yasuo,SunDisc,28,89,0.314606741573034
-Aphelios/Yasuo,Tri-Beam (NX/PZ),9,16,0.5625
-Aphelios/Zoe,SunDisc,6,16,0.375
-Aphelios/Zoe (BC/MT),SunDisc,8,22,0.363636363636364
+Aphelios/Viktor/Zoe,Akshan/Sivir (DE/SH),2,10,0.2
+Aphelios/Viktor/Zoe,Aphelios/Viktor,22,36,0.611111111111111
+Aphelios/Viktor/Zoe,Aurelion Sol/Zoe (FR/MT),11,18,0.611111111111111
+Aphelios/Viktor/Zoe,Azir/Irelia,10,18,0.555555555555556
+Aphelios/Viktor/Zoe,Caitlyn/Teemo (BC/PZ),8,12,0.666666666666667
+Aphelios/Viktor/Zoe,Draven/Viktor,7,10,0.7
+Aphelios/Viktor/Zoe,Elise (NX/SI),9,16,0.5625
+Aphelios/Viktor/Zoe,Fizz/Lulu (BC/PZ),7,11,0.636363636363636
+Aphelios/Viktor/Zoe,Miss Fortune/Quinn,5,11,0.454545454545455
+Aphelios/Viktor/Zoe,Pantheon/Yuumi (DE/MT),11,24,0.458333333333333
+Aphelios/Viktor/Zoe,Riven/Viktor,16,31,0.516129032258065
+Aphelios/Viktor/Zoe,Senna/Veigar,3,16,0.1875
+Aphelios/Viktor/Zoe,SunDisc,104,205,0.507317073170732
+Aphelios/Viktor/Zoe,Taliyah/Ziggs,11,17,0.647058823529412
+Aphelios/Viktor/Zoe,Tri-Beam (NX/PZ),18,42,0.428571428571429
+Aphelios/Yasuo,Aphelios/Viktor,4,10,0.4
+Aphelios/Yasuo,Riven/Viktor,3,11,0.272727272727273
+Aphelios/Yasuo,SunDisc,30,96,0.3125
+Aphelios/Yasuo,Tri-Beam (NX/PZ),10,18,0.555555555555556
+Aphelios/Zoe,SunDisc,8,20,0.4
+Aphelios/Zoe (BC/MT),SunDisc,12,27,0.444444444444444
 Aphelios/Zoe (BW/MT),SunDisc,4,10,0.4
-Aphelios/Zoe (DE/MT),SunDisc,5,16,0.3125
-Aphelios/Zoe (FR/MT),SunDisc,14,30,0.466666666666667
-Aphelios/Zoe (IO/MT),SunDisc,14,31,0.451612903225806
-Aphelios/Zoe (MT/NX),SunDisc,11,25,0.44
-Aphelios/Zoe (MT/PZ),SunDisc,14,34,0.411764705882353
-Aphelios/Zoe (MT/SI),Aphelios/Viktor,5,18,0.277777777777778
-Aphelios/Zoe (MT/SI),Aurelion Sol/Zoe (FR/MT),4,14,0.285714285714286
-Aphelios/Zoe (MT/SI),Caitlyn/Teemo (BC/PZ),4,10,0.4
-Aphelios/Zoe (MT/SI),Pantheon/Yuumi (DE/MT),8,13,0.615384615384615
-Aphelios/Zoe (MT/SI),SunDisc,39,96,0.40625
-Aphelios/Zoe (MT/SI),Tri-Beam (NX/PZ),11,21,0.523809523809524
-Ashe/LeBlanc,SunDisc,27,55,0.490909090909091
-Aurelion Sol/Braum,SunDisc,38,60,0.633333333333333
-Aurelion Sol/Braum/Trundle,SunDisc,13,17,0.764705882352941
-Aurelion Sol/Braum/Tryndamere,SunDisc,17,29,0.586206896551724
+Aphelios/Zoe (DE/MT),SunDisc,5,17,0.294117647058824
+Aphelios/Zoe (FR/MT),SunDisc,21,47,0.446808510638298
+Aphelios/Zoe (IO/MT),SunDisc,17,41,0.414634146341463
+Aphelios/Zoe (MT/NX),Riven/Viktor,6,10,0.6
+Aphelios/Zoe (MT/NX),SunDisc,17,36,0.472222222222222
+Aphelios/Zoe (MT/PZ),SunDisc,14,35,0.4
+Aphelios/Zoe (MT/SH),SunDisc,3,11,0.272727272727273
+Aphelios/Zoe (MT/SI),Aphelios/Viktor,10,32,0.3125
+Aphelios/Zoe (MT/SI),Aphelios/Zoe (MT/SI),5,10,0.5
+Aphelios/Zoe (MT/SI),Aurelion Sol/Tryndamere,1,12,0.0833333333333333
+Aphelios/Zoe (MT/SI),Aurelion Sol/Zoe (FR/MT),6,22,0.272727272727273
+Aphelios/Zoe (MT/SI),Azir/Irelia,7,17,0.411764705882353
+Aphelios/Zoe (MT/SI),Caitlyn/Teemo (BC/PZ),5,16,0.3125
+Aphelios/Zoe (MT/SI),Darius/Gnar (FR/NX),5,11,0.454545454545455
+Aphelios/Zoe (MT/SI),Elise (NX/SI),7,14,0.5
+Aphelios/Zoe (MT/SI),Miss Fortune/Quinn,4,12,0.333333333333333
+Aphelios/Zoe (MT/SI),Pantheon/Yuumi (DE/MT),9,18,0.5
+Aphelios/Zoe (MT/SI),Pyke/Rek'Sai,5,11,0.454545454545455
+Aphelios/Zoe (MT/SI),Riven/Viktor,17,41,0.414634146341463
+Aphelios/Zoe (MT/SI),SunDisc,68,164,0.414634146341463
+Aphelios/Zoe (MT/SI),Taliyah/Ziggs,5,11,0.454545454545455
+Aphelios/Zoe (MT/SI),Tri-Beam (NX/PZ),24,45,0.533333333333333
+Aphelios/Zoe (MT/SI),Trundle/Tryndamere (FR/SI),2,11,0.181818181818182
+Ashe/LeBlanc,Riven/Viktor,3,12,0.25
+Ashe/LeBlanc,SunDisc,31,70,0.442857142857143
+Aurelion Sol/Braum,Aphelios/Viktor,5,13,0.384615384615385
+Aurelion Sol/Braum,SunDisc,43,71,0.605633802816901
+Aurelion Sol/Braum,Tri-Beam (NX/PZ),6,11,0.545454545454545
+Aurelion Sol/Braum/Trundle,SunDisc,19,26,0.730769230769231
+Aurelion Sol/Braum/Tryndamere,SunDisc,19,31,0.612903225806452
 Aurelion Sol/Lissandra/Trundle,SunDisc,4,10,0.4
-Aurelion Sol/Lissandra/Tryndamere,Azir/Irelia,1,11,0.0909090909090909
-Aurelion Sol/Lissandra/Tryndamere,SunDisc,56,84,0.666666666666667
-Aurelion Sol/Thresh,SunDisc,6,21,0.285714285714286
-Aurelion Sol/Trundle,Akshan/Sivir (DE/SH),5,15,0.333333333333333
-Aurelion Sol/Trundle,Aphelios/Viktor,24,47,0.51063829787234
-Aurelion Sol/Trundle,Aurelion Sol/Trundle,9,18,0.5
-Aurelion Sol/Trundle,Aurelion Sol/Tryndamere,9,17,0.529411764705882
-Aurelion Sol/Trundle,Aurelion Sol/Zoe (FR/MT),21,38,0.552631578947369
-Aurelion Sol/Trundle,Azir/Irelia,4,17,0.235294117647059
-Aurelion Sol/Trundle,BandleTree,11,12,0.916666666666667
-Aurelion Sol/Trundle,Caitlyn/Teemo (BC/PZ),5,19,0.263157894736842
-Aurelion Sol/Trundle,Darius/Gnar (FR/NX),4,14,0.285714285714286
-Aurelion Sol/Trundle,Draven/Rumble (NX/PZ),6,12,0.5
-Aurelion Sol/Trundle,Elise (NX/SI),7,20,0.35
-Aurelion Sol/Trundle,Fizz/Lulu (BC/PZ),5,12,0.416666666666667
-Aurelion Sol/Trundle,Jarvan IV/Shen,4,10,0.4
+Aurelion Sol/Lissandra/Tryndamere,Aurelion Sol/Tryndamere,7,10,0.7
+Aurelion Sol/Lissandra/Tryndamere,Azir/Irelia,1,13,0.0769230769230769
+Aurelion Sol/Lissandra/Tryndamere,SunDisc,58,92,0.630434782608696
+Aurelion Sol/Lissandra/Tryndamere,Tri-Beam (NX/PZ),7,10,0.7
+Aurelion Sol/Thresh,SunDisc,6,23,0.260869565217391
+Aurelion Sol/Trundle,Akshan/Sivir (DE/SH),6,19,0.315789473684211
+Aurelion Sol/Trundle,Akshan/Viktor,4,11,0.363636363636364
+Aurelion Sol/Trundle,Aphelios/Diana (MT/SI),7,13,0.538461538461538
+Aurelion Sol/Trundle,Aphelios/Viktor,38,68,0.558823529411765
+Aurelion Sol/Trundle,Aurelion Sol/Trundle,11,22,0.5
+Aurelion Sol/Trundle,Aurelion Sol/Tryndamere,11,22,0.5
+Aurelion Sol/Trundle,Aurelion Sol/Zoe (FR/MT),28,53,0.528301886792453
+Aurelion Sol/Trundle,Azir/Irelia,7,30,0.233333333333333
+Aurelion Sol/Trundle,BandleTree,13,15,0.866666666666667
+Aurelion Sol/Trundle,Caitlyn/Teemo (BC/PZ),9,25,0.36
+Aurelion Sol/Trundle,Darius/Gnar (FR/NX),6,20,0.3
+Aurelion Sol/Trundle,Draven/Rumble,8,10,0.8
+Aurelion Sol/Trundle,Draven/Rumble (NX/PZ),7,16,0.4375
+Aurelion Sol/Trundle,Draven/Viktor,6,17,0.352941176470588
+Aurelion Sol/Trundle,Ekko/Zilean,3,10,0.3
+Aurelion Sol/Trundle,Elise (NX/SI),13,35,0.371428571428571
+Aurelion Sol/Trundle,Fizz/Lulu (BC/PZ),6,17,0.352941176470588
+Aurelion Sol/Trundle,Gnar/Teemo/Tristana (BC/DE),3,10,0.3
+Aurelion Sol/Trundle,Jarvan IV/Shen,5,11,0.454545454545455
 Aurelion Sol/Trundle,Kindred/Viego (IO/SI),3,11,0.272727272727273
-Aurelion Sol/Trundle,Miss Fortune/Quinn,6,18,0.333333333333333
-Aurelion Sol/Trundle,Pantheon/Yuumi (DE/MT),14,28,0.5
-Aurelion Sol/Trundle,Pyke/Rek'Sai,4,12,0.333333333333333
-Aurelion Sol/Trundle,Riven/Viktor,5,25,0.2
-Aurelion Sol/Trundle,SunDisc,163,287,0.56794425087108
-Aurelion Sol/Trundle,Taliyah/Ziggs,11,18,0.611111111111111
-Aurelion Sol/Trundle,Tri-Beam (NX/PZ),43,67,0.641791044776119
-Aurelion Sol/Trundle,Xerath/Zilean (BC/SH),7,10,0.7
-Aurelion Sol/Trundle/Tryndamere,SunDisc,19,34,0.558823529411765
-Aurelion Sol/Trundle/Tryndamere/Zoe,SunDisc,6,12,0.5
-Aurelion Sol/Trundle/Zoe,SunDisc,9,14,0.642857142857143
-Aurelion Sol/Tryndamere,Akshan/Sivir (DE/SH),8,21,0.380952380952381
-Aurelion Sol/Tryndamere,Aphelios/Viktor,36,88,0.409090909090909
-Aurelion Sol/Tryndamere,Aurelion Sol/Trundle,8,17,0.470588235294118
-Aurelion Sol/Tryndamere,Aurelion Sol/Tryndamere,11,22,0.5
-Aurelion Sol/Tryndamere,Aurelion Sol/Zoe (FR/MT),23,49,0.469387755102041
-Aurelion Sol/Tryndamere,Azir/Irelia,10,47,0.212765957446809
-Aurelion Sol/Tryndamere,BandleTree,10,13,0.769230769230769
-Aurelion Sol/Tryndamere,Caitlyn/Teemo (BC/PZ),8,21,0.380952380952381
-Aurelion Sol/Tryndamere,Darius/Gnar (FR/NX),4,16,0.25
-Aurelion Sol/Tryndamere,Draven/Rumble (NX/PZ),4,18,0.222222222222222
-Aurelion Sol/Tryndamere,Elise (NX/SI),15,43,0.348837209302326
-Aurelion Sol/Tryndamere,Fizz/Lulu (BC/PZ),11,23,0.478260869565217
+Aurelion Sol/Trundle,Miss Fortune/Quinn,6,22,0.272727272727273
+Aurelion Sol/Trundle,Pantheon/Yuumi (DE/MT),23,44,0.522727272727273
+Aurelion Sol/Trundle,Pyke/Rek'Sai,9,22,0.409090909090909
+Aurelion Sol/Trundle,Riven/Viktor,14,65,0.215384615384615
+Aurelion Sol/Trundle,Senna/Veigar,12,17,0.705882352941177
+Aurelion Sol/Trundle,SunDisc,228,404,0.564356435643564
+Aurelion Sol/Trundle,Taliyah/Ziggs,15,27,0.555555555555556
+Aurelion Sol/Trundle,Tri-Beam (NX/PZ),61,91,0.67032967032967
+Aurelion Sol/Trundle,Trundle/Tryndamere (FR/SI),8,11,0.727272727272727
+Aurelion Sol/Trundle,Xerath/Zilean (BC/SH),9,12,0.75
+Aurelion Sol/Trundle/Tryndamere,SunDisc,25,43,0.581395348837209
+Aurelion Sol/Trundle/Tryndamere/Zoe,SunDisc,7,13,0.538461538461538
+Aurelion Sol/Trundle/Zoe,SunDisc,11,18,0.611111111111111
+Aurelion Sol/Tryndamere,Akshan/Lee Sin,5,10,0.5
+Aurelion Sol/Tryndamere,Akshan/Sivir (DE/SH),11,28,0.392857142857143
+Aurelion Sol/Tryndamere,Anivia (FR/SI),13,13,1
+Aurelion Sol/Tryndamere,Aphelios/Viktor,47,114,0.412280701754386
+Aurelion Sol/Tryndamere,Aphelios/Zoe (MT/SI),11,12,0.916666666666667
+Aurelion Sol/Tryndamere,Aurelion Sol/Lissandra/Tryndamere,3,10,0.3
+Aurelion Sol/Tryndamere,Aurelion Sol/Trundle,11,22,0.5
+Aurelion Sol/Tryndamere,Aurelion Sol/Tryndamere,18,36,0.5
+Aurelion Sol/Tryndamere,Aurelion Sol/Zoe (FR/MT),33,71,0.464788732394366
+Aurelion Sol/Tryndamere,Azir/Irelia,17,70,0.242857142857143
+Aurelion Sol/Tryndamere,BandleTree,12,15,0.8
+Aurelion Sol/Tryndamere,Caitlyn/Teemo (BC/PZ),11,37,0.297297297297297
+Aurelion Sol/Tryndamere,Championless (FR/PZ),7,10,0.7
+Aurelion Sol/Tryndamere,Darius/Gnar (FR/NX),5,23,0.217391304347826
+Aurelion Sol/Tryndamere,Draven/Rumble,2,10,0.2
+Aurelion Sol/Tryndamere,Draven/Rumble (NX/PZ),6,27,0.222222222222222
+Aurelion Sol/Tryndamere,Draven/Rumble/Sion (NX/PZ),5,10,0.5
+Aurelion Sol/Tryndamere,Draven/Viktor,7,13,0.538461538461538
+Aurelion Sol/Tryndamere,Ekko/Zilean,8,16,0.5
+Aurelion Sol/Tryndamere,Elise (NX/SI),23,56,0.410714285714286
+Aurelion Sol/Tryndamere,Fizz/Lulu (BC/PZ),14,33,0.424242424242424
 Aurelion Sol/Tryndamere,Galio/Lulu/Poppy (BC/DE),6,20,0.3
-Aurelion Sol/Tryndamere,Gangplank/Sejuani,5,11,0.454545454545455
-Aurelion Sol/Tryndamere,Gnar/Teemo/Tristana (BC/DE),7,19,0.368421052631579
-Aurelion Sol/Tryndamere,Gnar/Trundle (FR/PZ),8,16,0.5
-Aurelion Sol/Tryndamere,Gnar/Ziggs (BC/NX),4,14,0.285714285714286
-Aurelion Sol/Tryndamere,Kindred/Viego (IO/SI),5,20,0.25
-Aurelion Sol/Tryndamere,Miss Fortune/Quinn,9,26,0.346153846153846
-Aurelion Sol/Tryndamere,Pantheon/Yuumi (DE/MT),27,54,0.5
-Aurelion Sol/Tryndamere,Pyke/Rek'Sai,10,35,0.285714285714286
-Aurelion Sol/Tryndamere,Riven/Viktor,18,40,0.45
-Aurelion Sol/Tryndamere,Senna/Veigar,19,20,0.95
-Aurelion Sol/Tryndamere,SunDisc,285,499,0.571142284569138
-Aurelion Sol/Tryndamere,Taliyah/Ziggs,10,19,0.526315789473684
-Aurelion Sol/Tryndamere,Tri-Beam (NX/PZ),63,92,0.684782608695652
-Aurelion Sol/Tryndamere,Trundle/Tryndamere (FR/SI),9,12,0.75
-Aurelion Sol/Tryndamere/Zoe,SunDisc,33,55,0.6
-Aurelion Sol/Zoe (FR/MT),Akshan/Sivir (DE/SH),17,37,0.45945945945946
-Aurelion Sol/Zoe (FR/MT),Akshan/Viktor,5,13,0.384615384615385
-Aurelion Sol/Zoe (FR/MT),Anivia (FR/SI),7,10,0.7
-Aurelion Sol/Zoe (FR/MT),Aphelios/Diana (MT/SI),9,13,0.692307692307692
-Aurelion Sol/Zoe (FR/MT),Aphelios/Viktor,65,141,0.460992907801419
-Aurelion Sol/Zoe (FR/MT),Aphelios/Viktor/Zoe,5,12,0.416666666666667
-Aurelion Sol/Zoe (FR/MT),Aphelios/Zoe (MT/SI),10,14,0.714285714285714
-Aurelion Sol/Zoe (FR/MT),Aurelion Sol/Trundle,17,38,0.447368421052632
-Aurelion Sol/Zoe (FR/MT),Aurelion Sol/Tryndamere,26,49,0.530612244897959
-Aurelion Sol/Zoe (FR/MT),Aurelion Sol/Zoe (FR/MT),61,122,0.5
-Aurelion Sol/Zoe (FR/MT),Azir/Irelia,18,69,0.260869565217391
-Aurelion Sol/Zoe (FR/MT),BandleTree,17,26,0.653846153846154
-Aurelion Sol/Zoe (FR/MT),Caitlyn/Teemo (BC/PZ),13,41,0.317073170731707
-Aurelion Sol/Zoe (FR/MT),Darius/Gnar (FR/NX),10,35,0.285714285714286
-Aurelion Sol/Zoe (FR/MT),Draven/Rumble,9,21,0.428571428571429
-Aurelion Sol/Zoe (FR/MT),Draven/Rumble (NX/PZ),17,39,0.435897435897436
-Aurelion Sol/Zoe (FR/MT),Draven/Rumble/Sion,6,11,0.545454545454545
-Aurelion Sol/Zoe (FR/MT),Ekko/Zilean,10,16,0.625
-Aurelion Sol/Zoe (FR/MT),Elise (NX/SI),18,61,0.295081967213115
-Aurelion Sol/Zoe (FR/MT),Fizz/Lulu (BC/PZ),24,47,0.51063829787234
-Aurelion Sol/Zoe (FR/MT),Fizz/Riven (BC/NX),2,11,0.181818181818182
-Aurelion Sol/Zoe (FR/MT),Galio/Lulu/Poppy (BC/DE),8,18,0.444444444444444
-Aurelion Sol/Zoe (FR/MT),Gangplank/Miss Fortune (BW/NX),6,10,0.6
-Aurelion Sol/Zoe (FR/MT),Gangplank/Sejuani,8,16,0.5
-Aurelion Sol/Zoe (FR/MT),Gnar/Swain,4,11,0.363636363636364
-Aurelion Sol/Zoe (FR/MT),Gnar/Teemo/Tristana (BC/DE),12,25,0.48
-Aurelion Sol/Zoe (FR/MT),Gnar/Trundle (FR/PZ),9,18,0.5
-Aurelion Sol/Zoe (FR/MT),Gnar/Ziggs (BC/NX),8,35,0.228571428571429
-Aurelion Sol/Zoe (FR/MT),Kindred/Viego (IO/SI),9,22,0.409090909090909
-Aurelion Sol/Zoe (FR/MT),Lissandra/Trundle (FR/SI),10,16,0.625
+Aurelion Sol/Tryndamere,Gangplank/Sejuani,8,17,0.470588235294118
+Aurelion Sol/Tryndamere,Gnar/Swain,5,12,0.416666666666667
+Aurelion Sol/Tryndamere,Gnar/Teemo/Tristana (BC/DE),7,22,0.318181818181818
+Aurelion Sol/Tryndamere,Gnar/Trundle (FR/PZ),10,19,0.526315789473684
+Aurelion Sol/Tryndamere,Gnar/Ziggs (BC/NX),6,18,0.333333333333333
+Aurelion Sol/Tryndamere,Jarvan IV/Shen,4,12,0.333333333333333
+Aurelion Sol/Tryndamere,Kindred/Viego (IO/SI),6,26,0.230769230769231
+Aurelion Sol/Tryndamere,Miss Fortune/Quinn,12,38,0.315789473684211
+Aurelion Sol/Tryndamere,Pantheon/Taric/Yuumi (DE/MT),6,10,0.6
+Aurelion Sol/Tryndamere,Pantheon/Yuumi (DE/MT),34,65,0.523076923076923
+Aurelion Sol/Tryndamere,Pyke/Rek'Sai,12,45,0.266666666666667
+Aurelion Sol/Tryndamere,Riven/Viktor,25,86,0.290697674418605
+Aurelion Sol/Tryndamere,Senna/Veigar,26,27,0.962962962962963
+Aurelion Sol/Tryndamere,SunDisc,361,631,0.572107765451664
+Aurelion Sol/Tryndamere,Taliyah/Ziggs,17,32,0.53125
+Aurelion Sol/Tryndamere,Tri-Beam (NX/PZ),82,119,0.689075630252101
+Aurelion Sol/Tryndamere,Trundle/Tryndamere (FR/SI),15,20,0.75
+Aurelion Sol/Tryndamere/Zoe,Aphelios/Viktor,5,10,0.5
+Aurelion Sol/Tryndamere/Zoe,Riven/Viktor,2,10,0.2
+Aurelion Sol/Tryndamere/Zoe,SunDisc,38,70,0.542857142857143
+Aurelion Sol/Tryndamere/Zoe,Tri-Beam (NX/PZ),8,10,0.8
+Aurelion Sol/Zoe (FR/MT),Akshan/Lee Sin,6,10,0.6
+Aurelion Sol/Zoe (FR/MT),Akshan/Sivir (DE/SH),31,55,0.563636363636364
+Aurelion Sol/Zoe (FR/MT),Akshan/Viktor,14,29,0.482758620689655
+Aurelion Sol/Zoe (FR/MT),Anivia (FR/SI),10,17,0.588235294117647
+Aurelion Sol/Zoe (FR/MT),Aphelios/Diana (MT/SI),14,21,0.666666666666667
+Aurelion Sol/Zoe (FR/MT),Aphelios/Viktor,101,210,0.480952380952381
+Aurelion Sol/Zoe (FR/MT),Aphelios/Viktor/Zoe,7,18,0.388888888888889
+Aurelion Sol/Zoe (FR/MT),Aphelios/Zoe (MT/SI),16,22,0.727272727272727
+Aurelion Sol/Zoe (FR/MT),Aurelion Sol/Trundle,25,53,0.471698113207547
+Aurelion Sol/Zoe (FR/MT),Aurelion Sol/Tryndamere,38,71,0.535211267605634
+Aurelion Sol/Zoe (FR/MT),Aurelion Sol/Zoe (FR/MT),96,192,0.5
+Aurelion Sol/Zoe (FR/MT),Azir/Irelia,30,118,0.254237288135593
+Aurelion Sol/Zoe (FR/MT),BandleTree,29,42,0.690476190476191
+Aurelion Sol/Zoe (FR/MT),Caitlyn/Swain,11,11,1
+Aurelion Sol/Zoe (FR/MT),Caitlyn/Teemo (BC/PZ),27,71,0.380281690140845
+Aurelion Sol/Zoe (FR/MT),Darius/Gnar (FR/NX),16,53,0.30188679245283
+Aurelion Sol/Zoe (FR/MT),Diana/Nocturne,6,10,0.6
+Aurelion Sol/Zoe (FR/MT),Draven/Rumble,18,42,0.428571428571429
+Aurelion Sol/Zoe (FR/MT),Draven/Rumble (NX/PZ),28,70,0.4
+Aurelion Sol/Zoe (FR/MT),Draven/Rumble/Sion,7,17,0.411764705882353
+Aurelion Sol/Zoe (FR/MT),Draven/Sion (NX/PZ),6,10,0.6
+Aurelion Sol/Zoe (FR/MT),Draven/Viktor,9,27,0.333333333333333
+Aurelion Sol/Zoe (FR/MT),Ekko/Zilean,16,28,0.571428571428571
+Aurelion Sol/Zoe (FR/MT),Elise (NX/SI),37,105,0.352380952380952
+Aurelion Sol/Zoe (FR/MT),Fiora (DE/FR),8,10,0.8
+Aurelion Sol/Zoe (FR/MT),Fizz/Lulu (BC/PZ),41,78,0.525641025641026
+Aurelion Sol/Zoe (FR/MT),Fizz/Riven (BC/NX),10,23,0.434782608695652
+Aurelion Sol/Zoe (FR/MT),Galio/Lulu/Poppy (BC/DE),11,28,0.392857142857143
+Aurelion Sol/Zoe (FR/MT),Gangplank/Miss Fortune (BW/NX),11,23,0.478260869565217
+Aurelion Sol/Zoe (FR/MT),Gangplank/Miss Fortune/Twisted Fate (BW/NX),6,13,0.461538461538462
+Aurelion Sol/Zoe (FR/MT),Gangplank/Sejuani,10,25,0.4
+Aurelion Sol/Zoe (FR/MT),Gnar/Swain,8,16,0.5
+Aurelion Sol/Zoe (FR/MT),Gnar/Teemo/Tristana (BC/DE),14,31,0.451612903225806
+Aurelion Sol/Zoe (FR/MT),Gnar/Trundle (FR/PZ),14,24,0.583333333333333
+Aurelion Sol/Zoe (FR/MT),Gnar/Ziggs (BC/NX),9,41,0.219512195121951
+Aurelion Sol/Zoe (FR/MT),Jarvan IV/Shen,6,11,0.545454545454545
+Aurelion Sol/Zoe (FR/MT),Kindred/Viego (IO/SI),13,32,0.40625
+Aurelion Sol/Zoe (FR/MT),Lissandra/Trundle (FR/SI),13,19,0.68421052631579
 Aurelion Sol/Zoe (FR/MT),Lulu/Rumble (BC/PZ),4,12,0.333333333333333
-Aurelion Sol/Zoe (FR/MT),Maokai/Nautilus,6,11,0.545454545454545
-Aurelion Sol/Zoe (FR/MT),Miss Fortune/Quinn,12,36,0.333333333333333
-Aurelion Sol/Zoe (FR/MT),Nami/Twisted Fate (BW/PZ),6,10,0.6
-Aurelion Sol/Zoe (FR/MT),Pantheon/Taric/Yuumi (DE/MT),4,17,0.235294117647059
-Aurelion Sol/Zoe (FR/MT),Pantheon/Yuumi (DE/MT),41,85,0.482352941176471
-Aurelion Sol/Zoe (FR/MT),Pyke/Rek'Sai,12,45,0.266666666666667
-Aurelion Sol/Zoe (FR/MT),Riven/Viktor,32,71,0.450704225352113
-Aurelion Sol/Zoe (FR/MT),Rumble/Sion,6,15,0.4
-Aurelion Sol/Zoe (FR/MT),Senna/Veigar,17,22,0.772727272727273
-Aurelion Sol/Zoe (FR/MT),SunDisc,496,935,0.53048128342246
-Aurelion Sol/Zoe (FR/MT),Taliyah/Ziggs,22,55,0.4
-Aurelion Sol/Zoe (FR/MT),Teemo (NX/PZ),7,14,0.5
-Aurelion Sol/Zoe (FR/MT),Tri-Beam (NX/PZ),126,180,0.7
-Aurelion Sol/Zoe (FR/MT),Trundle/Tryndamere (FR/SI),13,25,0.52
-Azir/Irelia,Akshan/Lee Sin,9,11,0.818181818181818
-Azir/Irelia,Akshan/Sivir (DE/SH),14,39,0.358974358974359
-Azir/Irelia,Akshan/Viktor,5,15,0.333333333333333
-Azir/Irelia,Anivia (FR/SI),12,14,0.857142857142857
-Azir/Irelia,Aphelios/Diana (MT/SI),8,19,0.421052631578947
-Azir/Irelia,Aphelios/Viktor,62,105,0.590476190476191
-Azir/Irelia,Aphelios/Viktor/Zoe,5,11,0.454545454545455
-Azir/Irelia,Aurelion Sol/Lissandra/Tryndamere,10,11,0.909090909090909
-Azir/Irelia,Aurelion Sol/Trundle,13,17,0.764705882352941
-Azir/Irelia,Aurelion Sol/Tryndamere,37,47,0.787234042553192
-Azir/Irelia,Aurelion Sol/Zoe (FR/MT),51,69,0.739130434782609
-Azir/Irelia,Azir/Irelia,25,50,0.5
-Azir/Irelia,BandleTree,12,22,0.545454545454545
-Azir/Irelia,Caitlyn/Swain,3,10,0.3
-Azir/Irelia,Caitlyn/Teemo (BC/PZ),16,34,0.470588235294118
-Azir/Irelia,Darius/Gnar (FR/NX),12,26,0.461538461538462
-Azir/Irelia,Draven/Rumble,6,14,0.428571428571429
-Azir/Irelia,Draven/Rumble (NX/PZ),9,31,0.290322580645161
-Azir/Irelia,Draven/Rumble/Sion (NX/PZ),6,10,0.6
-Azir/Irelia,Draven/Sion (NX/PZ),4,12,0.333333333333333
-Azir/Irelia,Draven/Viktor,0,10,0
-Azir/Irelia,Ekko/Zilean,9,19,0.473684210526316
-Azir/Irelia,Elise (NX/SI),22,64,0.34375
-Azir/Irelia,Fizz/Lulu (BC/PZ),3,26,0.115384615384615
-Azir/Irelia,Fizz/Riven (BC/NX),8,13,0.615384615384615
-Azir/Irelia,Galio/Lulu/Poppy (BC/DE),4,17,0.235294117647059
-Azir/Irelia,Gangplank/Miss Fortune (BW/NX),4,13,0.307692307692308
-Azir/Irelia,Gangplank/Sejuani,7,11,0.636363636363636
-Azir/Irelia,Gnar/Swain,4,14,0.285714285714286
-Azir/Irelia,Gnar/Teemo/Tristana (BC/DE),13,26,0.5
-Azir/Irelia,Gnar/Trundle (FR/PZ),14,25,0.56
-Azir/Irelia,Gnar/Ziggs (BC/NX),2,16,0.125
-Azir/Irelia,Jarvan IV/Shen,5,11,0.454545454545455
-Azir/Irelia,Kindred/Viego (IO/SI),9,18,0.5
-Azir/Irelia,Lulu/Rumble (BC/PZ),3,10,0.3
-Azir/Irelia,Maokai/Nautilus,5,12,0.416666666666667
-Azir/Irelia,Miss Fortune/Quinn,7,33,0.212121212121212
-Azir/Irelia,Pantheon/Taric/Yuumi (DE/MT),13,18,0.722222222222222
-Azir/Irelia,Pantheon/Yuumi (DE/MT),44,75,0.586666666666667
-Azir/Irelia,Pyke/Rek'Sai,7,18,0.388888888888889
-Azir/Irelia,Riven/Viktor,26,64,0.40625
-Azir/Irelia,Rumble/Sion,4,10,0.4
-Azir/Irelia,Senna/Veigar,23,33,0.696969696969697
-Azir/Irelia,SunDisc,495,727,0.680880330123797
-Azir/Irelia,Taliyah/Ziggs,28,36,0.777777777777778
-Azir/Irelia,Tri-Beam (NX/PZ),34,119,0.285714285714286
-Azir/Irelia,Trundle/Tryndamere (FR/SI),11,17,0.647058823529412
-Azir/Lucian,SunDisc,4,13,0.307692307692308
-Azir/Sivir (NX/SH),SunDisc,9,14,0.642857142857143
+Aurelion Sol/Zoe (FR/MT),Maokai/Nautilus,11,18,0.611111111111111
+Aurelion Sol/Zoe (FR/MT),Miss Fortune/Quinn,19,53,0.358490566037736
+Aurelion Sol/Zoe (FR/MT),Mistwraith Allegiance,8,11,0.727272727272727
+Aurelion Sol/Zoe (FR/MT),Nami/Twisted Fate (BW/PZ),7,13,0.538461538461538
+Aurelion Sol/Zoe (FR/MT),Pantheon/Taric/Yuumi (DE/MT),6,25,0.24
+Aurelion Sol/Zoe (FR/MT),Pantheon/Yuumi (DE/MT),57,113,0.504424778761062
+Aurelion Sol/Zoe (FR/MT),Pyke/Rek'Sai,22,64,0.34375
+Aurelion Sol/Zoe (FR/MT),Riven/Viktor,84,210,0.4
+Aurelion Sol/Zoe (FR/MT),Rumble/Sion,7,20,0.35
+Aurelion Sol/Zoe (FR/MT),Rumble/Viktor,4,11,0.363636363636364
+Aurelion Sol/Zoe (FR/MT),Senna/Veigar,34,48,0.708333333333333
+Aurelion Sol/Zoe (FR/MT),SunDisc,699,1303,0.536454336147352
+Aurelion Sol/Zoe (FR/MT),Taliyah/Ziggs,45,99,0.454545454545455
+Aurelion Sol/Zoe (FR/MT),Teemo (NX/PZ),8,19,0.421052631578947
+Aurelion Sol/Zoe (FR/MT),Tri-Beam (NX/PZ),175,262,0.66793893129771
+Aurelion Sol/Zoe (FR/MT),Trundle/Tryndamere (FR/SI),20,51,0.392156862745098
+Aurelion Sol/Zoe (FR/MT),Vi/Viktor (PZ/SI),4,15,0.266666666666667
+Aurelion Sol/Zoe (FR/MT),Viktor - Shellfolk,4,10,0.4
+Aurelion Sol/Zoe (FR/MT),Xerath/Zilean (BC/SH),7,13,0.538461538461538
+Azir/Hecarim,SunDisc,4,10,0.4
+Azir/Irelia,Akshan/Lee Sin,10,13,0.769230769230769
+Azir/Irelia,Akshan/Sivir (DE/SH),19,48,0.395833333333333
+Azir/Irelia,Akshan/Viktor,9,24,0.375
+Azir/Irelia,Anivia (FR/SI),14,16,0.875
+Azir/Irelia,Aphelios/Diana (MT/SI),12,23,0.521739130434783
+Azir/Irelia,Aphelios/Viktor,94,159,0.591194968553459
+Azir/Irelia,Aphelios/Viktor/Zoe,8,18,0.444444444444444
+Azir/Irelia,Aphelios/Zoe (MT/SI),10,17,0.588235294117647
+Azir/Irelia,Aurelion Sol/Lissandra/Tryndamere,12,13,0.923076923076923
+Azir/Irelia,Aurelion Sol/Trundle,23,30,0.766666666666667
+Azir/Irelia,Aurelion Sol/Tryndamere,53,70,0.757142857142857
+Azir/Irelia,Aurelion Sol/Zoe (FR/MT),88,118,0.745762711864407
+Azir/Irelia,Azir/Irelia,42,84,0.5
+Azir/Irelia,BandleTree,15,30,0.5
+Azir/Irelia,Caitlyn/Swain,4,12,0.333333333333333
+Azir/Irelia,Caitlyn/Teemo (BC/PZ),24,47,0.51063829787234
+Azir/Irelia,Championless (FR/PZ),12,14,0.857142857142857
+Azir/Irelia,Darius/Gnar (FR/NX),17,39,0.435897435897436
+Azir/Irelia,Draven/Rumble,10,25,0.4
+Azir/Irelia,Draven/Rumble (NX/PZ),16,51,0.313725490196078
+Azir/Irelia,Draven/Rumble/Sion (NX/PZ),7,12,0.583333333333333
+Azir/Irelia,Draven/Sion (NX/PZ),5,15,0.333333333333333
+Azir/Irelia,Draven/Viktor,8,32,0.25
+Azir/Irelia,Ekko/Zilean,14,37,0.378378378378378
+Azir/Irelia,Elise (NX/SI),29,94,0.308510638297872
+Azir/Irelia,Fizz/Lulu (BC/PZ),13,49,0.26530612244898
+Azir/Irelia,Fizz/Riven (BC/NX),10,19,0.526315789473684
+Azir/Irelia,Galio/Lulu/Poppy (BC/DE),6,20,0.3
+Azir/Irelia,Gangplank/Miss Fortune (BW/NX),5,23,0.217391304347826
+Azir/Irelia,Gangplank/Sejuani,10,16,0.625
+Azir/Irelia,Gnar/Swain,4,15,0.266666666666667
+Azir/Irelia,Gnar/Teemo/Tristana (BC/DE),17,35,0.485714285714286
+Azir/Irelia,Gnar/Trundle (FR/PZ),19,32,0.59375
+Azir/Irelia,Gnar/Ziggs (BC/NX),4,28,0.142857142857143
+Azir/Irelia,Jarvan IV/Shen,7,13,0.538461538461538
+Azir/Irelia,Kindred/Viego (IO/SI),14,26,0.538461538461538
+Azir/Irelia,LeBlanc/Sivir,3,10,0.3
+Azir/Irelia,Lissandra/Trundle (FR/SI),7,13,0.538461538461538
+Azir/Irelia,Lulu/Rumble (BC/PZ),3,13,0.230769230769231
+Azir/Irelia,Maokai/Nautilus,5,14,0.357142857142857
+Azir/Irelia,Miss Fortune/Quinn,12,48,0.25
+Azir/Irelia,Pantheon/Taric/Yuumi (DE/MT),16,25,0.64
+Azir/Irelia,Pantheon/Yuumi (DE/MT),49,85,0.576470588235294
+Azir/Irelia,Pyke/Rek'Sai,12,30,0.4
+Azir/Irelia,Riven/Viktor,73,165,0.442424242424243
+Azir/Irelia,Rumble/Sion,6,13,0.461538461538462
+Azir/Irelia,Senna/Veigar,32,50,0.64
+Azir/Irelia,SunDisc,652,971,0.671472708547889
+Azir/Irelia,Taliyah/Ziggs,42,58,0.724137931034483
+Azir/Irelia,Teemo (NX/PZ),2,10,0.2
+Azir/Irelia,Tri-Beam (NX/PZ),53,170,0.311764705882353
+Azir/Irelia,Trundle/Tryndamere (FR/SI),32,44,0.727272727272727
+Azir/Irelia,Vi/Viktor (PZ/SI),7,13,0.538461538461538
+Azir/Irelia,Viktor/Zoe,3,10,0.3
+Azir/Irelia,Xerath/Zilean (BC/SH),7,12,0.583333333333333
+Azir/Lucian,SunDisc,7,17,0.411764705882353
+Azir/Sivir (NX/SH),SunDisc,13,19,0.68421052631579
 Azir/Xerath (BC/SH),SunDisc,1,10,0.1
-BandleTree,Aphelios/Diana (MT/SI),7,11,0.636363636363636
-BandleTree,Aphelios/Viktor,24,58,0.413793103448276
-BandleTree,Aurelion Sol/Trundle,1,12,0.0833333333333333
-BandleTree,Aurelion Sol/Tryndamere,3,13,0.230769230769231
-BandleTree,Aurelion Sol/Zoe (FR/MT),9,26,0.346153846153846
-BandleTree,Azir/Irelia,10,22,0.454545454545455
-BandleTree,BandleTree,7,14,0.5
-BandleTree,Caitlyn/Teemo (BC/PZ),12,23,0.521739130434783
-BandleTree,Darius/Gnar (FR/NX),6,13,0.461538461538462
-BandleTree,Draven/Rumble,3,10,0.3
-BandleTree,Ekko/Zilean,6,10,0.6
-BandleTree,Elise (NX/SI),7,23,0.304347826086957
-BandleTree,Fizz/Lulu (BC/PZ),3,14,0.214285714285714
-BandleTree,Gnar/Teemo/Tristana (BC/DE),3,11,0.272727272727273
+BandleTree,Akshan/Sivir (DE/SH),2,13,0.153846153846154
+BandleTree,Aphelios/Diana (MT/SI),8,12,0.666666666666667
+BandleTree,Aphelios/Viktor,29,69,0.420289855072464
+BandleTree,Aurelion Sol/Trundle,2,15,0.133333333333333
+BandleTree,Aurelion Sol/Tryndamere,3,15,0.2
+BandleTree,Aurelion Sol/Zoe (FR/MT),13,42,0.30952380952381
+BandleTree,Azir/Irelia,15,30,0.5
+BandleTree,BandleTree,8,16,0.5
+BandleTree,Caitlyn/Teemo (BC/PZ),14,27,0.518518518518519
+BandleTree,Championless (FR/PZ),3,11,0.272727272727273
+BandleTree,Darius/Gnar (FR/NX),9,18,0.5
+BandleTree,Draven/Rumble,3,14,0.214285714285714
+BandleTree,Draven/Rumble (NX/PZ),4,11,0.363636363636364
+BandleTree,Draven/Viktor,5,14,0.357142857142857
+BandleTree,Ekko/Zilean,6,12,0.5
+BandleTree,Elise (NX/SI),13,33,0.393939393939394
+BandleTree,Fizz/Lulu (BC/PZ),8,26,0.307692307692308
+BandleTree,Gnar/Teemo/Tristana (BC/DE),3,12,0.25
 BandleTree,Gnar/Trundle (FR/PZ),3,15,0.2
-BandleTree,Gnar/Ziggs (BC/NX),5,13,0.384615384615385
-BandleTree,Kindred/Viego (IO/SI),10,11,0.909090909090909
-BandleTree,Miss Fortune/Quinn,10,29,0.344827586206897
-BandleTree,Pantheon/Yuumi (DE/MT),24,34,0.705882352941177
-BandleTree,Riven/Viktor,9,23,0.391304347826087
-BandleTree,Senna/Veigar,9,17,0.529411764705882
-BandleTree,SunDisc,173,336,0.514880952380952
-BandleTree,Taliyah/Ziggs,6,20,0.3
-BandleTree,Tri-Beam (NX/PZ),22,50,0.44
+BandleTree,Gnar/Ziggs (BC/NX),7,16,0.4375
+BandleTree,Jayce/Lux,4,10,0.4
+BandleTree,Kindred/Viego (IO/SI),11,13,0.846153846153846
+BandleTree,Miss Fortune/Quinn,12,34,0.352941176470588
+BandleTree,Pantheon/Yuumi (DE/MT),27,39,0.692307692307692
+BandleTree,Pyke/Rek'Sai,7,11,0.636363636363636
+BandleTree,Riven/Viktor,21,58,0.362068965517241
+BandleTree,Senna/Veigar,11,19,0.578947368421053
+BandleTree,SunDisc,211,409,0.515892420537897
+BandleTree,Taliyah/Ziggs,9,26,0.346153846153846
+BandleTree,Tri-Beam (NX/PZ),28,63,0.444444444444444
 Braum (FR/MT),SunDisc,5,13,0.384615384615385
-Braum (FR/PZ),SunDisc,17,26,0.653846153846154
-Braum/Galio,SunDisc,16,51,0.313725490196078
-Braum/Jarvan IV,SunDisc,7,15,0.466666666666667
-Braum/Swain,SunDisc,6,11,0.545454545454545
+Braum (FR/PZ),SunDisc,27,44,0.613636363636364
+Braum/Galio,SunDisc,20,66,0.303030303030303
+Braum/Galio,Tri-Beam (NX/PZ),4,10,0.4
+Braum/Jarvan IV,SunDisc,8,21,0.380952380952381
+Braum/Swain,SunDisc,8,13,0.615384615384615
 Braum/Vi,SunDisc,6,12,0.5
-Braum/Vladimir,SunDisc,28,50,0.56
-Caitlyn/Ezreal (NX/PZ),SunDisc,33,54,0.611111111111111
-Caitlyn/Ezreal (NX/PZ),Tri-Beam (NX/PZ),8,12,0.666666666666667
-Caitlyn/Ezreal (PZ/SH),SunDisc,5,13,0.384615384615385
-Caitlyn/Kindred/Vi,SunDisc,21,30,0.7
-Caitlyn/Senna,SunDisc,5,20,0.25
-Caitlyn/Swain,Aphelios/Viktor,9,15,0.6
-Caitlyn/Swain,Azir/Irelia,7,10,0.7
-Caitlyn/Swain,Pantheon/Yuumi (DE/MT),7,11,0.636363636363636
-Caitlyn/Swain,SunDisc,32,68,0.470588235294118
-Caitlyn/Swain,Tri-Beam (NX/PZ),8,17,0.470588235294118
-Caitlyn/Teemo (BC/PZ),Akshan/Sivir (DE/SH),2,16,0.125
-Caitlyn/Teemo (BC/PZ),Aphelios/Diana (MT/SI),7,10,0.7
-Caitlyn/Teemo (BC/PZ),Aphelios/Viktor,31,91,0.340659340659341
-Caitlyn/Teemo (BC/PZ),Aphelios/Viktor/Zoe,4,10,0.4
-Caitlyn/Teemo (BC/PZ),Aphelios/Zoe (MT/SI),6,10,0.6
-Caitlyn/Teemo (BC/PZ),Aurelion Sol/Trundle,14,19,0.736842105263158
-Caitlyn/Teemo (BC/PZ),Aurelion Sol/Tryndamere,13,21,0.619047619047619
-Caitlyn/Teemo (BC/PZ),Aurelion Sol/Zoe (FR/MT),28,41,0.682926829268293
-Caitlyn/Teemo (BC/PZ),Azir/Irelia,18,34,0.529411764705882
-Caitlyn/Teemo (BC/PZ),BandleTree,11,23,0.478260869565217
-Caitlyn/Teemo (BC/PZ),Caitlyn/Teemo (BC/PZ),6,12,0.5
-Caitlyn/Teemo (BC/PZ),Darius/Gnar (FR/NX),5,18,0.277777777777778
-Caitlyn/Teemo (BC/PZ),Draven/Rumble (NX/PZ),5,13,0.384615384615385
-Caitlyn/Teemo (BC/PZ),Draven/Viktor,2,10,0.2
-Caitlyn/Teemo (BC/PZ),Elise (NX/SI),17,41,0.414634146341463
-Caitlyn/Teemo (BC/PZ),Fizz/Lulu (BC/PZ),6,17,0.352941176470588
-Caitlyn/Teemo (BC/PZ),Gangplank/Sejuani,6,11,0.545454545454545
-Caitlyn/Teemo (BC/PZ),Gnar/Teemo/Tristana (BC/DE),8,16,0.5
-Caitlyn/Teemo (BC/PZ),Jarvan IV/Shen,5,12,0.416666666666667
-Caitlyn/Teemo (BC/PZ),Kindred/Viego (IO/SI),8,15,0.533333333333333
-Caitlyn/Teemo (BC/PZ),Miss Fortune/Quinn,7,21,0.333333333333333
+Braum/Vladimir,Riven/Viktor,1,11,0.0909090909090909
+Braum/Vladimir,SunDisc,31,58,0.53448275862069
+Braum/Vladimir,Tri-Beam (NX/PZ),4,10,0.4
+Caitlyn/Ezreal (NX/PZ),Riven/Viktor,4,16,0.25
+Caitlyn/Ezreal (NX/PZ),SunDisc,44,69,0.63768115942029
+Caitlyn/Ezreal (NX/PZ),Tri-Beam (NX/PZ),8,13,0.615384615384615
+Caitlyn/Ezreal (PZ/SH),SunDisc,5,15,0.333333333333333
+Caitlyn/Kindred/Vi,SunDisc,24,33,0.727272727272727
+Caitlyn/Senna,SunDisc,6,27,0.222222222222222
+Caitlyn/Swain,Aphelios/Viktor,11,17,0.647058823529412
+Caitlyn/Swain,Aurelion Sol/Zoe (FR/MT),0,11,0
+Caitlyn/Swain,Azir/Irelia,8,12,0.666666666666667
+Caitlyn/Swain,Elise (NX/SI),6,10,0.6
+Caitlyn/Swain,Pantheon/Yuumi (DE/MT),7,12,0.583333333333333
+Caitlyn/Swain,Riven/Viktor,4,14,0.285714285714286
+Caitlyn/Swain,SunDisc,36,78,0.461538461538462
+Caitlyn/Swain,Tri-Beam (NX/PZ),12,23,0.521739130434783
+Caitlyn/Teemo (BC/PZ),Akshan/Sivir (DE/SH),3,21,0.142857142857143
+Caitlyn/Teemo (BC/PZ),Aphelios/Diana (MT/SI),9,12,0.75
+Caitlyn/Teemo (BC/PZ),Aphelios/Viktor,46,128,0.359375
+Caitlyn/Teemo (BC/PZ),Aphelios/Viktor/Zoe,4,12,0.333333333333333
+Caitlyn/Teemo (BC/PZ),Aphelios/Zoe (MT/SI),11,16,0.6875
+Caitlyn/Teemo (BC/PZ),Aurelion Sol/Trundle,16,25,0.64
+Caitlyn/Teemo (BC/PZ),Aurelion Sol/Tryndamere,26,37,0.702702702702703
+Caitlyn/Teemo (BC/PZ),Aurelion Sol/Zoe (FR/MT),44,71,0.619718309859155
+Caitlyn/Teemo (BC/PZ),Azir/Irelia,23,47,0.48936170212766
+Caitlyn/Teemo (BC/PZ),BandleTree,13,27,0.481481481481482
+Caitlyn/Teemo (BC/PZ),Caitlyn/Teemo (BC/PZ),18,36,0.5
+Caitlyn/Teemo (BC/PZ),Darius/Gnar (FR/NX),11,30,0.366666666666667
+Caitlyn/Teemo (BC/PZ),Draven/Rumble,7,15,0.466666666666667
+Caitlyn/Teemo (BC/PZ),Draven/Rumble (NX/PZ),9,24,0.375
+Caitlyn/Teemo (BC/PZ),Draven/Rumble/Sion,6,10,0.6
+Caitlyn/Teemo (BC/PZ),Draven/Viktor,12,26,0.461538461538462
+Caitlyn/Teemo (BC/PZ),Ekko/Zilean,4,14,0.285714285714286
+Caitlyn/Teemo (BC/PZ),Elise (NX/SI),24,61,0.39344262295082
+Caitlyn/Teemo (BC/PZ),Fizz/Lulu (BC/PZ),8,28,0.285714285714286
+Caitlyn/Teemo (BC/PZ),Galio/Lulu/Poppy (BC/DE),1,11,0.0909090909090909
+Caitlyn/Teemo (BC/PZ),Gangplank/Miss Fortune (BW/NX),5,13,0.384615384615385
+Caitlyn/Teemo (BC/PZ),Gangplank/Miss Fortune/Twisted Fate (BW/NX),2,10,0.2
+Caitlyn/Teemo (BC/PZ),Gangplank/Sejuani,10,17,0.588235294117647
+Caitlyn/Teemo (BC/PZ),Gnar/Teemo/Tristana (BC/DE),10,24,0.416666666666667
+Caitlyn/Teemo (BC/PZ),Gnar/Ziggs (BC/NX),4,14,0.285714285714286
+Caitlyn/Teemo (BC/PZ),Jarvan IV/Shen,8,15,0.533333333333333
+Caitlyn/Teemo (BC/PZ),Kindred/Viego (IO/SI),9,16,0.5625
+Caitlyn/Teemo (BC/PZ),Lissandra/Trundle (FR/SI),7,10,0.7
+Caitlyn/Teemo (BC/PZ),Maokai/Nautilus,10,12,0.833333333333333
+Caitlyn/Teemo (BC/PZ),Miss Fortune/Quinn,16,41,0.390243902439024
 Caitlyn/Teemo (BC/PZ),Pantheon/Taric/Yuumi (DE/MT),8,20,0.4
-Caitlyn/Teemo (BC/PZ),Pantheon/Yuumi (DE/MT),13,44,0.295454545454545
-Caitlyn/Teemo (BC/PZ),Pyke/Rek'Sai,13,28,0.464285714285714
-Caitlyn/Teemo (BC/PZ),Riven/Viktor,14,45,0.311111111111111
-Caitlyn/Teemo (BC/PZ),Senna/Veigar,20,35,0.571428571428571
-Caitlyn/Teemo (BC/PZ),SunDisc,292,497,0.587525150905433
-Caitlyn/Teemo (BC/PZ),Taliyah/Ziggs,18,33,0.545454545454545
-Caitlyn/Teemo (BC/PZ),Tri-Beam (NX/PZ),38,114,0.333333333333333
-Caitlyn/Teemo (BC/PZ),Trundle/Tryndamere (FR/SI),9,16,0.5625
-Caitlyn/Teemo (FR/PZ),SunDisc,13,30,0.433333333333333
-Caitlyn/Teemo (NX/PZ),SunDisc,5,10,0.5
-Championless (BC/PZ),SunDisc,30,72,0.416666666666667
-Championless (BC/PZ),Tri-Beam (NX/PZ),8,11,0.727272727272727
+Caitlyn/Teemo (BC/PZ),Pantheon/Yuumi (DE/MT),16,61,0.262295081967213
+Caitlyn/Teemo (BC/PZ),Pyke/Rek'Sai,18,37,0.486486486486487
+Caitlyn/Teemo (BC/PZ),Riven/Viktor,36,116,0.310344827586207
+Caitlyn/Teemo (BC/PZ),Rumble/Sion,7,14,0.5
+Caitlyn/Teemo (BC/PZ),Senna/Veigar,29,49,0.591836734693878
+Caitlyn/Teemo (BC/PZ),SunDisc,384,662,0.580060422960725
+Caitlyn/Teemo (BC/PZ),Taliyah/Ziggs,29,47,0.617021276595745
+Caitlyn/Teemo (BC/PZ),Tri-Beam (NX/PZ),56,159,0.352201257861635
+Caitlyn/Teemo (BC/PZ),Trundle/Tryndamere (FR/SI),15,30,0.5
+Caitlyn/Teemo (BC/PZ),Xerath/Zilean (BC/SH),7,10,0.7
+Caitlyn/Teemo (FR/PZ),Riven/Viktor,1,11,0.0909090909090909
+Caitlyn/Teemo (FR/PZ),SunDisc,20,44,0.454545454545455
+Caitlyn/Teemo (NX/PZ),SunDisc,8,13,0.615384615384615
+Championless (BC/PZ),Pantheon/Yuumi (DE/MT),2,12,0.166666666666667
+Championless (BC/PZ),SunDisc,35,82,0.426829268292683
+Championless (BC/PZ),Tri-Beam (NX/PZ),10,14,0.714285714285714
 Championless (BC/SI),SunDisc,10,13,0.769230769230769
-Championless (FR/PZ),Aphelios/Viktor,5,17,0.294117647058824
-Championless (FR/PZ),Pantheon/Yuumi (DE/MT),3,12,0.25
-Championless (FR/PZ),Riven/Viktor,2,10,0.2
-Championless (FR/PZ),SunDisc,56,108,0.518518518518519
-Championless (FR/PZ),Tri-Beam (NX/PZ),12,21,0.571428571428571
-Championless (FR/SI),SunDisc,2,20,0.1
-Championless (NX/PZ),Aphelios/Viktor,4,14,0.285714285714286
-Championless (NX/PZ),SunDisc,62,77,0.805194805194805
-Championless (NX/PZ),Tri-Beam (NX/PZ),11,13,0.846153846153846
-Championless (NX/SI),SunDisc,5,11,0.454545454545455
-Championless (PZ/SI),SunDisc,5,13,0.384615384615385
-Darius (FR/NX),SunDisc,6,16,0.375
+Championless (BW/NX),SunDisc,4,11,0.363636363636364
+Championless (FR/PZ),Aphelios/Viktor,10,25,0.4
+Championless (FR/PZ),Aurelion Sol/Tryndamere,3,10,0.3
+Championless (FR/PZ),Azir/Irelia,2,14,0.142857142857143
+Championless (FR/PZ),BandleTree,8,11,0.727272727272727
+Championless (FR/PZ),Elise (NX/SI),1,12,0.0833333333333333
+Championless (FR/PZ),Pantheon/Yuumi (DE/MT),3,14,0.214285714285714
+Championless (FR/PZ),Riven/Viktor,4,21,0.19047619047619
+Championless (FR/PZ),SunDisc,71,136,0.522058823529412
+Championless (FR/PZ),Taliyah/Ziggs,7,10,0.7
+Championless (FR/PZ),Tri-Beam (NX/PZ),12,23,0.521739130434783
+Championless (FR/SI),SunDisc,2,24,0.0833333333333333
+Championless (NX/PZ),Aphelios/Viktor,6,18,0.333333333333333
+Championless (NX/PZ),Riven/Viktor,1,10,0.1
+Championless (NX/PZ),SunDisc,68,87,0.781609195402299
+Championless (NX/PZ),Tri-Beam (NX/PZ),15,19,0.789473684210526
+Championless (NX/SI),SunDisc,6,13,0.461538461538462
+Championless (PZ/SH),SunDisc,8,13,0.615384615384615
+Championless (PZ/SI),SunDisc,5,15,0.333333333333333
+Darius (FR/NX),SunDisc,9,23,0.391304347826087
 Darius (NX/SH),SunDisc,8,11,0.727272727272727
-Darius/Elise,SunDisc,21,32,0.65625
-Darius/Gnar (FR/NX),Akshan/Sivir (DE/SH),3,11,0.272727272727273
-Darius/Gnar (FR/NX),Aphelios/Viktor,30,55,0.545454545454545
-Darius/Gnar (FR/NX),Aurelion Sol/Trundle,10,14,0.714285714285714
-Darius/Gnar (FR/NX),Aurelion Sol/Tryndamere,12,16,0.75
-Darius/Gnar (FR/NX),Aurelion Sol/Zoe (FR/MT),25,35,0.714285714285714
-Darius/Gnar (FR/NX),Azir/Irelia,14,26,0.538461538461538
-Darius/Gnar (FR/NX),BandleTree,7,13,0.538461538461538
-Darius/Gnar (FR/NX),Caitlyn/Teemo (BC/PZ),13,18,0.722222222222222
-Darius/Gnar (FR/NX),Draven/Rumble (NX/PZ),3,12,0.25
-Darius/Gnar (FR/NX),Elise (NX/SI),15,34,0.441176470588235
-Darius/Gnar (FR/NX),Fizz/Lulu (BC/PZ),7,16,0.4375
-Darius/Gnar (FR/NX),Gnar/Teemo/Tristana (BC/DE),6,12,0.5
-Darius/Gnar (FR/NX),Kindred/Viego (IO/SI),7,11,0.636363636363636
-Darius/Gnar (FR/NX),Miss Fortune/Quinn,14,33,0.424242424242424
-Darius/Gnar (FR/NX),Pantheon/Taric/Yuumi (DE/MT),4,12,0.333333333333333
-Darius/Gnar (FR/NX),Pantheon/Yuumi (DE/MT),20,32,0.625
-Darius/Gnar (FR/NX),Pyke/Rek'Sai,3,11,0.272727272727273
-Darius/Gnar (FR/NX),Riven/Viktor,10,34,0.294117647058824
-Darius/Gnar (FR/NX),Senna/Veigar,6,16,0.375
-Darius/Gnar (FR/NX),SunDisc,213,351,0.606837606837607
-Darius/Gnar (FR/NX),Taliyah/Ziggs,14,30,0.466666666666667
-Darius/Gnar (FR/NX),Tri-Beam (NX/PZ),35,73,0.479452054794521
-Darius/Gnar (FR/NX),Trundle/Tryndamere (FR/SI),8,11,0.727272727272727
+Darius/Elise,Riven/Viktor,3,11,0.272727272727273
+Darius/Elise,SunDisc,30,48,0.625
+Darius/Elise,Tri-Beam (NX/PZ),4,11,0.363636363636364
+Darius/Gnar (FR/NX),Akshan/Sivir (DE/SH),7,15,0.466666666666667
+Darius/Gnar (FR/NX),Akshan/Viktor,5,11,0.454545454545455
+Darius/Gnar (FR/NX),Aphelios/Diana (MT/SI),8,11,0.727272727272727
+Darius/Gnar (FR/NX),Aphelios/Viktor,42,76,0.552631578947369
+Darius/Gnar (FR/NX),Aphelios/Zoe (MT/SI),6,11,0.545454545454545
+Darius/Gnar (FR/NX),Aurelion Sol/Trundle,14,20,0.7
+Darius/Gnar (FR/NX),Aurelion Sol/Tryndamere,18,23,0.782608695652174
+Darius/Gnar (FR/NX),Aurelion Sol/Zoe (FR/MT),37,53,0.69811320754717
+Darius/Gnar (FR/NX),Azir/Irelia,22,39,0.564102564102564
+Darius/Gnar (FR/NX),BandleTree,9,18,0.5
+Darius/Gnar (FR/NX),Caitlyn/Teemo (BC/PZ),19,30,0.633333333333333
+Darius/Gnar (FR/NX),Darius/Gnar (FR/NX),6,12,0.5
+Darius/Gnar (FR/NX),Draven/Rumble,5,13,0.384615384615385
+Darius/Gnar (FR/NX),Draven/Rumble (NX/PZ),5,17,0.294117647058824
+Darius/Gnar (FR/NX),Draven/Viktor,7,12,0.583333333333333
+Darius/Gnar (FR/NX),Ekko/Zilean,7,12,0.583333333333333
+Darius/Gnar (FR/NX),Elise (NX/SI),24,53,0.452830188679245
+Darius/Gnar (FR/NX),Fizz/Lulu (BC/PZ),10,28,0.357142857142857
+Darius/Gnar (FR/NX),Gnar/Teemo/Tristana (BC/DE),8,14,0.571428571428571
+Darius/Gnar (FR/NX),Kindred/Viego (IO/SI),8,13,0.615384615384615
+Darius/Gnar (FR/NX),Maokai/Nautilus,4,10,0.4
+Darius/Gnar (FR/NX),Miss Fortune/Quinn,19,42,0.452380952380952
+Darius/Gnar (FR/NX),Pantheon/Taric/Yuumi (DE/MT),6,15,0.4
+Darius/Gnar (FR/NX),Pantheon/Yuumi (DE/MT),23,43,0.534883720930233
+Darius/Gnar (FR/NX),Pyke/Rek'Sai,6,14,0.428571428571429
+Darius/Gnar (FR/NX),Riven/Viktor,34,81,0.419753086419753
+Darius/Gnar (FR/NX),Rumble/Sion,7,12,0.583333333333333
+Darius/Gnar (FR/NX),Senna/Veigar,10,22,0.454545454545455
+Darius/Gnar (FR/NX),SunDisc,265,441,0.600907029478458
+Darius/Gnar (FR/NX),Taliyah/Ziggs,15,35,0.428571428571429
+Darius/Gnar (FR/NX),Tri-Beam (NX/PZ),45,92,0.489130434782609
+Darius/Gnar (FR/NX),Trundle/Tryndamere (FR/SI),17,25,0.68
 Darius/Jinx,SunDisc,9,13,0.692307692307692
+Darius/Miss Fortune,SunDisc,4,11,0.363636363636364
 Darius/Tryndamere,SunDisc,10,15,0.666666666666667
 Darius/Ziggs (NX/SH),SunDisc,16,17,0.941176470588235
-Diana/Nocturne,SunDisc,19,24,0.791666666666667
-Dragons (DE/MT),SunDisc,22,48,0.458333333333333
-Dragons (DE/MT),Tri-Beam (NX/PZ),5,11,0.454545454545455
-Draven/Hecarim,SunDisc,6,10,0.6
-Draven/Jinx,SunDisc,31,50,0.62
-Draven/Rumble,Aphelios/Viktor,8,22,0.363636363636364
-Draven/Rumble,Aurelion Sol/Zoe (FR/MT),12,21,0.571428571428571
-Draven/Rumble,Azir/Irelia,8,14,0.571428571428571
-Draven/Rumble,BandleTree,7,10,0.7
-Draven/Rumble,Elise (NX/SI),6,16,0.375
-Draven/Rumble,Gnar/Teemo/Tristana (BC/DE),7,12,0.583333333333333
-Draven/Rumble,Miss Fortune/Quinn,10,18,0.555555555555556
-Draven/Rumble,Pantheon/Yuumi (DE/MT),2,15,0.133333333333333
-Draven/Rumble,Riven/Viktor,8,15,0.533333333333333
-Draven/Rumble,SunDisc,94,199,0.472361809045226
-Draven/Rumble,Taliyah/Ziggs,4,11,0.363636363636364
-Draven/Rumble,Tri-Beam (NX/PZ),14,50,0.28
+Diana/Nocturne,Aphelios/Viktor,3,14,0.214285714285714
+Diana/Nocturne,Aurelion Sol/Zoe (FR/MT),4,10,0.4
+Diana/Nocturne,Riven/Viktor,8,15,0.533333333333333
+Diana/Nocturne,SunDisc,30,44,0.681818181818182
+Diana/Nocturne,Tri-Beam (NX/PZ),2,11,0.181818181818182
+Diana/Zoe (BC/MT),SunDisc,4,10,0.4
+Dragons (DE/MT),Aphelios/Viktor,7,11,0.636363636363636
+Dragons (DE/MT),SunDisc,30,63,0.476190476190476
+Dragons (DE/MT),Tri-Beam (NX/PZ),7,13,0.538461538461538
+Draven/Hecarim,SunDisc,7,13,0.538461538461538
+Draven/Jinx,SunDisc,41,69,0.594202898550725
+Draven/Jinx,Tri-Beam (NX/PZ),6,13,0.461538461538462
+Draven/Rumble,Akshan/Viktor,4,12,0.333333333333333
+Draven/Rumble,Aphelios/Viktor,14,34,0.411764705882353
+Draven/Rumble,Aurelion Sol/Trundle,2,10,0.2
+Draven/Rumble,Aurelion Sol/Tryndamere,8,10,0.8
+Draven/Rumble,Aurelion Sol/Zoe (FR/MT),24,42,0.571428571428571
+Draven/Rumble,Azir/Irelia,15,25,0.6
+Draven/Rumble,BandleTree,11,14,0.785714285714286
+Draven/Rumble,Caitlyn/Teemo (BC/PZ),8,15,0.533333333333333
+Draven/Rumble,Darius/Gnar (FR/NX),8,13,0.615384615384615
+Draven/Rumble,Ekko/Zilean,5,10,0.5
+Draven/Rumble,Elise (NX/SI),8,22,0.363636363636364
+Draven/Rumble,Gnar/Teemo/Tristana (BC/DE),10,18,0.555555555555556
+Draven/Rumble,Kindred/Viego (IO/SI),6,12,0.5
+Draven/Rumble,Miss Fortune/Quinn,11,20,0.55
+Draven/Rumble,Pantheon/Yuumi (DE/MT),6,25,0.24
+Draven/Rumble,Pyke/Rek'Sai,5,14,0.357142857142857
+Draven/Rumble,Riven/Viktor,14,43,0.325581395348837
+Draven/Rumble,Senna/Veigar,4,12,0.333333333333333
+Draven/Rumble,SunDisc,133,279,0.476702508960574
+Draven/Rumble,Taliyah/Ziggs,6,17,0.352941176470588
+Draven/Rumble,Tri-Beam (NX/PZ),22,70,0.314285714285714
+Draven/Rumble,Trundle/Tryndamere (FR/SI),6,10,0.6
 Draven/Rumble (DE/NX),SunDisc,25,34,0.735294117647059
-Draven/Rumble (NX/PZ),Akshan/Sivir (DE/SH),7,16,0.4375
-Draven/Rumble (NX/PZ),Aphelios/Viktor,25,66,0.378787878787879
-Draven/Rumble (NX/PZ),Aurelion Sol/Trundle,6,12,0.5
-Draven/Rumble (NX/PZ),Aurelion Sol/Tryndamere,14,18,0.777777777777778
-Draven/Rumble (NX/PZ),Aurelion Sol/Zoe (FR/MT),22,39,0.564102564102564
-Draven/Rumble (NX/PZ),Azir/Irelia,22,31,0.709677419354839
-Draven/Rumble (NX/PZ),Caitlyn/Teemo (BC/PZ),8,13,0.615384615384615
-Draven/Rumble (NX/PZ),Darius/Gnar (FR/NX),9,12,0.75
-Draven/Rumble (NX/PZ),Draven/Rumble (NX/PZ),5,10,0.5
-Draven/Rumble (NX/PZ),Elise (NX/SI),14,23,0.608695652173913
-Draven/Rumble (NX/PZ),Fizz/Lulu (BC/PZ),7,17,0.411764705882353
-Draven/Rumble (NX/PZ),Galio/Lulu/Poppy (BC/DE),7,11,0.636363636363636
-Draven/Rumble (NX/PZ),Gnar/Ziggs (BC/NX),7,10,0.7
-Draven/Rumble (NX/PZ),Jarvan IV/Shen,7,12,0.583333333333333
-Draven/Rumble (NX/PZ),Kindred/Viego (IO/SI),7,15,0.466666666666667
-Draven/Rumble (NX/PZ),Miss Fortune/Quinn,9,20,0.45
-Draven/Rumble (NX/PZ),Pantheon/Taric/Yuumi (DE/MT),11,13,0.846153846153846
-Draven/Rumble (NX/PZ),Pantheon/Yuumi (DE/MT),13,26,0.5
-Draven/Rumble (NX/PZ),Pyke/Rek'Sai,6,16,0.375
-Draven/Rumble (NX/PZ),Riven/Viktor,19,42,0.452380952380952
-Draven/Rumble (NX/PZ),Senna/Veigar,8,13,0.615384615384615
-Draven/Rumble (NX/PZ),SunDisc,242,383,0.631853785900783
-Draven/Rumble (NX/PZ),Taliyah/Ziggs,10,21,0.476190476190476
-Draven/Rumble (NX/PZ),Tri-Beam (NX/PZ),24,49,0.489795918367347
-Draven/Rumble (NX/PZ),Trundle/Tryndamere (FR/SI),7,15,0.466666666666667
-Draven/Rumble/Sion,Aphelios/Viktor,7,16,0.4375
-Draven/Rumble/Sion,Aurelion Sol/Zoe (FR/MT),5,11,0.454545454545455
-Draven/Rumble/Sion,Miss Fortune/Quinn,5,14,0.357142857142857
-Draven/Rumble/Sion,Pantheon/Yuumi (DE/MT),2,12,0.166666666666667
-Draven/Rumble/Sion,SunDisc,61,131,0.465648854961832
-Draven/Rumble/Sion,Tri-Beam (NX/PZ),13,25,0.52
-Draven/Rumble/Sion (NX/PZ),Azir/Irelia,4,10,0.4
-Draven/Rumble/Sion (NX/PZ),SunDisc,51,78,0.653846153846154
-Draven/Rumble/Viktor (NX/PZ),SunDisc,22,28,0.785714285714286
-Draven/Sion (NX/PZ),Azir/Irelia,8,12,0.666666666666667
-Draven/Sion (NX/PZ),SunDisc,28,72,0.388888888888889
-Draven/Sion (NX/PZ),Tri-Beam (NX/PZ),11,19,0.578947368421053
-Draven/Sion/Vi,SunDisc,12,23,0.521739130434783
-Draven/Viktor,Aphelios/Viktor,10,22,0.454545454545455
-Draven/Viktor,Azir/Irelia,10,10,1
-Draven/Viktor,Caitlyn/Teemo (BC/PZ),8,10,0.8
-Draven/Viktor,Elise (NX/SI),6,13,0.461538461538462
-Draven/Viktor,Fizz/Lulu (BC/PZ),7,12,0.583333333333333
-Draven/Viktor,Pantheon/Yuumi (DE/MT),4,12,0.333333333333333
-Draven/Viktor,Pyke/Rek'Sai,6,10,0.6
-Draven/Viktor,Riven/Viktor,7,14,0.5
-Draven/Viktor,SunDisc,95,148,0.641891891891892
-Draven/Viktor,Tri-Beam (NX/PZ),12,22,0.545454545454545
-Draven/Viktor,Trundle/Tryndamere (FR/SI),3,11,0.272727272727273
-Ekko/Jinx (PZ/SH),SunDisc,8,12,0.666666666666667
-Ekko/Sivir/Vi,SunDisc,4,12,0.333333333333333
-Ekko/Viktor/Zilean,SunDisc,8,15,0.533333333333333
-Ekko/Zilean,Aphelios/Viktor,10,31,0.32258064516129
-Ekko/Zilean,Aurelion Sol/Zoe (FR/MT),6,16,0.375
-Ekko/Zilean,Azir/Irelia,10,19,0.526315789473684
-Ekko/Zilean,BandleTree,4,10,0.4
-Ekko/Zilean,Elise (NX/SI),6,11,0.545454545454545
-Ekko/Zilean,Kindred/Viego (IO/SI),5,11,0.454545454545455
-Ekko/Zilean,Pantheon/Yuumi (DE/MT),5,12,0.416666666666667
-Ekko/Zilean,Pyke/Rek'Sai,5,14,0.357142857142857
-Ekko/Zilean,SunDisc,78,197,0.395939086294416
-Ekko/Zilean,Taliyah/Ziggs,4,13,0.307692307692308
-Ekko/Zilean,Tri-Beam (NX/PZ),17,33,0.515151515151515
-Elise (NX/SI),Akshan/Sivir (DE/SH),15,31,0.483870967741936
-Elise (NX/SI),Akshan/Viktor,6,11,0.545454545454545
-Elise (NX/SI),Aphelios/Diana (MT/SI),4,15,0.266666666666667
-Elise (NX/SI),Aphelios/Viktor,40,113,0.353982300884956
-Elise (NX/SI),Aurelion Sol/Trundle,13,20,0.65
-Elise (NX/SI),Aurelion Sol/Tryndamere,28,43,0.651162790697675
-Elise (NX/SI),Aurelion Sol/Zoe (FR/MT),43,61,0.704918032786885
-Elise (NX/SI),Azir/Irelia,42,64,0.65625
-Elise (NX/SI),BandleTree,16,23,0.695652173913044
-Elise (NX/SI),Caitlyn/Teemo (BC/PZ),24,41,0.585365853658537
-Elise (NX/SI),Darius/Gnar (FR/NX),19,34,0.558823529411765
-Elise (NX/SI),Draven/Rumble,10,16,0.625
-Elise (NX/SI),Draven/Rumble (NX/PZ),9,23,0.391304347826087
-Elise (NX/SI),Draven/Viktor,7,13,0.538461538461538
-Elise (NX/SI),Ekko/Zilean,5,11,0.454545454545455
-Elise (NX/SI),Elise (NX/SI),39,78,0.5
-Elise (NX/SI),Fizz/Lulu (BC/PZ),8,33,0.242424242424242
-Elise (NX/SI),Galio/Lulu/Poppy (BC/DE),11,18,0.611111111111111
-Elise (NX/SI),Gangplank/Miss Fortune (BW/NX),10,17,0.588235294117647
-Elise (NX/SI),Gangplank/Sejuani,11,17,0.647058823529412
-Elise (NX/SI),Gnar/Swain,5,10,0.5
-Elise (NX/SI),Gnar/Teemo/Tristana (BC/DE),7,23,0.304347826086957
-Elise (NX/SI),Gnar/Trundle (FR/PZ),12,21,0.571428571428571
-Elise (NX/SI),Gnar/Ziggs (BC/NX),8,20,0.4
-Elise (NX/SI),Jarvan IV/Shen,8,20,0.4
-Elise (NX/SI),Kindred/Viego (IO/SI),13,29,0.448275862068966
-Elise (NX/SI),Miss Fortune/Quinn,20,43,0.465116279069768
-Elise (NX/SI),Pantheon/Taric/Yuumi (DE/MT),18,28,0.642857142857143
-Elise (NX/SI),Pantheon/Yuumi (DE/MT),50,63,0.793650793650794
-Elise (NX/SI),Pyke/Rek'Sai,22,34,0.647058823529412
-Elise (NX/SI),Riven/Viktor,23,75,0.306666666666667
-Elise (NX/SI),Senna/Veigar,13,36,0.361111111111111
-Elise (NX/SI),SunDisc,556,840,0.661904761904762
-Elise (NX/SI),Taliyah/Ziggs,19,31,0.612903225806452
-Elise (NX/SI),Tri-Beam (NX/PZ),61,155,0.393548387096774
-Elise (NX/SI),Trundle/Tryndamere (FR/SI),8,21,0.380952380952381
-Elise (NX/SI),Viktor - Shellfolk,4,12,0.333333333333333
-Elise (NX/SI),Xerath/Zilean (BC/SH),5,11,0.454545454545455
-Elise (PZ/SI),SunDisc,11,19,0.578947368421053
-Elise/Kindred/Vi,SunDisc,18,33,0.545454545454545
-Elise/Teemo,SunDisc,5,14,0.357142857142857
-Elise/Twisted Fate,SunDisc,6,14,0.428571428571429
+Draven/Rumble (NX/PZ),Akshan/Sivir (DE/SH),9,20,0.45
+Draven/Rumble (NX/PZ),Akshan/Viktor,4,10,0.4
+Draven/Rumble (NX/PZ),Aphelios/Viktor,34,85,0.4
+Draven/Rumble (NX/PZ),Aurelion Sol/Trundle,9,16,0.5625
+Draven/Rumble (NX/PZ),Aurelion Sol/Tryndamere,21,27,0.777777777777778
+Draven/Rumble (NX/PZ),Aurelion Sol/Zoe (FR/MT),42,70,0.6
+Draven/Rumble (NX/PZ),Azir/Irelia,35,51,0.686274509803922
+Draven/Rumble (NX/PZ),BandleTree,7,11,0.636363636363636
+Draven/Rumble (NX/PZ),Caitlyn/Teemo (BC/PZ),15,24,0.625
+Draven/Rumble (NX/PZ),Darius/Gnar (FR/NX),12,17,0.705882352941177
+Draven/Rumble (NX/PZ),Draven/Rumble (NX/PZ),7,14,0.5
+Draven/Rumble (NX/PZ),Draven/Viktor,5,11,0.454545454545455
+Draven/Rumble (NX/PZ),Ekko/Zilean,9,16,0.5625
+Draven/Rumble (NX/PZ),Elise (NX/SI),22,41,0.536585365853659
+Draven/Rumble (NX/PZ),Fizz/Lulu (BC/PZ),9,27,0.333333333333333
+Draven/Rumble (NX/PZ),Galio/Lulu/Poppy (BC/DE),8,13,0.615384615384615
+Draven/Rumble (NX/PZ),Gnar/Ziggs (BC/NX),8,12,0.666666666666667
+Draven/Rumble (NX/PZ),Jarvan IV/Shen,9,14,0.642857142857143
+Draven/Rumble (NX/PZ),Kindred/Viego (IO/SI),9,19,0.473684210526316
+Draven/Rumble (NX/PZ),Lulu/Rumble (BC/PZ),3,11,0.272727272727273
+Draven/Rumble (NX/PZ),Miss Fortune/Quinn,9,22,0.409090909090909
+Draven/Rumble (NX/PZ),Pantheon/Taric/Yuumi (DE/MT),14,17,0.823529411764706
+Draven/Rumble (NX/PZ),Pantheon/Yuumi (DE/MT),21,41,0.51219512195122
+Draven/Rumble (NX/PZ),Pyke/Rek'Sai,13,29,0.448275862068966
+Draven/Rumble (NX/PZ),Riven/Viktor,41,89,0.460674157303371
+Draven/Rumble (NX/PZ),Senna/Veigar,11,19,0.578947368421053
+Draven/Rumble (NX/PZ),SunDisc,307,485,0.63298969072165
+Draven/Rumble (NX/PZ),Taliyah/Ziggs,13,26,0.5
+Draven/Rumble (NX/PZ),Tri-Beam (NX/PZ),37,79,0.468354430379747
+Draven/Rumble (NX/PZ),Trundle/Tryndamere (FR/SI),9,21,0.428571428571429
+Draven/Rumble/Sion,Aphelios/Viktor,16,27,0.592592592592593
+Draven/Rumble/Sion,Aurelion Sol/Zoe (FR/MT),10,17,0.588235294117647
+Draven/Rumble/Sion,Caitlyn/Teemo (BC/PZ),4,10,0.4
+Draven/Rumble/Sion,Elise (NX/SI),3,11,0.272727272727273
+Draven/Rumble/Sion,Fizz/Lulu (BC/PZ),4,11,0.363636363636364
+Draven/Rumble/Sion,Miss Fortune/Quinn,8,20,0.4
+Draven/Rumble/Sion,Pantheon/Yuumi (DE/MT),5,17,0.294117647058824
+Draven/Rumble/Sion,Riven/Viktor,9,20,0.45
+Draven/Rumble/Sion,Senna/Veigar,7,10,0.7
+Draven/Rumble/Sion,SunDisc,81,169,0.479289940828402
+Draven/Rumble/Sion,Tri-Beam (NX/PZ),14,27,0.518518518518519
+Draven/Rumble/Sion (NX/PZ),Aurelion Sol/Tryndamere,5,10,0.5
+Draven/Rumble/Sion (NX/PZ),Azir/Irelia,5,12,0.416666666666667
+Draven/Rumble/Sion (NX/PZ),Riven/Viktor,5,10,0.5
+Draven/Rumble/Sion (NX/PZ),SunDisc,60,95,0.631578947368421
+Draven/Rumble/Sion (NX/PZ),Tri-Beam (NX/PZ),4,12,0.333333333333333
+Draven/Rumble/Viktor (NX/PZ),SunDisc,29,37,0.783783783783784
+Draven/Sion (NX/PZ),Aurelion Sol/Zoe (FR/MT),4,10,0.4
+Draven/Sion (NX/PZ),Azir/Irelia,10,15,0.666666666666667
+Draven/Sion (NX/PZ),Riven/Viktor,1,11,0.0909090909090909
+Draven/Sion (NX/PZ),SunDisc,36,90,0.4
+Draven/Sion (NX/PZ),Tri-Beam (NX/PZ),16,27,0.592592592592593
+Draven/Sion (NX/PZ),Trundle/Tryndamere (FR/SI),4,10,0.4
+Draven/Sion/Vi,SunDisc,12,26,0.461538461538462
+Draven/Viktor,Akshan/Sivir (DE/SH),6,11,0.545454545454545
+Draven/Viktor,Akshan/Viktor,7,11,0.636363636363636
+Draven/Viktor,Aphelios/Diana (MT/SI),2,10,0.2
+Draven/Viktor,Aphelios/Viktor,16,47,0.340425531914894
+Draven/Viktor,Aphelios/Viktor/Zoe,3,10,0.3
+Draven/Viktor,Aurelion Sol/Trundle,11,17,0.647058823529412
+Draven/Viktor,Aurelion Sol/Tryndamere,6,13,0.461538461538462
+Draven/Viktor,Aurelion Sol/Zoe (FR/MT),18,27,0.666666666666667
+Draven/Viktor,Azir/Irelia,24,32,0.75
+Draven/Viktor,BandleTree,9,14,0.642857142857143
+Draven/Viktor,Caitlyn/Teemo (BC/PZ),14,26,0.538461538461538
+Draven/Viktor,Darius/Gnar (FR/NX),5,12,0.416666666666667
+Draven/Viktor,Draven/Rumble (NX/PZ),6,11,0.545454545454545
+Draven/Viktor,Draven/Viktor,6,12,0.5
+Draven/Viktor,Elise (NX/SI),17,29,0.586206896551724
+Draven/Viktor,Fizz/Lulu (BC/PZ),9,17,0.529411764705882
+Draven/Viktor,Gnar/Teemo/Tristana (BC/DE),8,12,0.666666666666667
+Draven/Viktor,Pantheon/Taric/Yuumi (DE/MT),7,11,0.636363636363636
+Draven/Viktor,Pantheon/Yuumi (DE/MT),12,30,0.4
+Draven/Viktor,Pyke/Rek'Sai,10,18,0.555555555555556
+Draven/Viktor,Riven/Viktor,43,80,0.5375
+Draven/Viktor,Senna/Veigar,7,16,0.4375
+Draven/Viktor,SunDisc,180,267,0.674157303370787
+Draven/Viktor,Taliyah/Ziggs,6,11,0.545454545454545
+Draven/Viktor,Tri-Beam (NX/PZ),24,51,0.470588235294118
+Draven/Viktor,Trundle/Tryndamere (FR/SI),7,21,0.333333333333333
+Ekko/Jinx (PZ/SH),SunDisc,9,13,0.692307692307692
+Ekko/Sivir/Vi,SunDisc,4,13,0.307692307692308
+Ekko/Sivir/Zilean,SunDisc,3,10,0.3
+Ekko/Viktor/Zilean,SunDisc,12,24,0.5
+Ekko/Zilean,Akshan/Sivir (DE/SH),5,10,0.5
+Ekko/Zilean,Aphelios/Viktor,16,42,0.380952380952381
+Ekko/Zilean,Aurelion Sol/Trundle,7,10,0.7
+Ekko/Zilean,Aurelion Sol/Tryndamere,8,16,0.5
+Ekko/Zilean,Aurelion Sol/Zoe (FR/MT),12,28,0.428571428571429
+Ekko/Zilean,Azir/Irelia,23,37,0.621621621621622
+Ekko/Zilean,BandleTree,6,12,0.5
+Ekko/Zilean,Caitlyn/Teemo (BC/PZ),10,14,0.714285714285714
+Ekko/Zilean,Darius/Gnar (FR/NX),5,12,0.416666666666667
+Ekko/Zilean,Draven/Rumble,5,10,0.5
+Ekko/Zilean,Draven/Rumble (NX/PZ),7,16,0.4375
+Ekko/Zilean,Ekko/Zilean,5,10,0.5
+Ekko/Zilean,Elise (NX/SI),14,26,0.538461538461538
+Ekko/Zilean,Fizz/Lulu (BC/PZ),6,10,0.6
+Ekko/Zilean,Kindred/Viego (IO/SI),6,13,0.461538461538462
+Ekko/Zilean,Miss Fortune/Quinn,5,17,0.294117647058824
+Ekko/Zilean,Pantheon/Yuumi (DE/MT),9,18,0.5
+Ekko/Zilean,Pyke/Rek'Sai,8,23,0.347826086956522
+Ekko/Zilean,Riven/Viktor,10,40,0.25
+Ekko/Zilean,Senna/Veigar,5,12,0.416666666666667
+Ekko/Zilean,SunDisc,107,270,0.396296296296296
+Ekko/Zilean,Taliyah/Ziggs,6,21,0.285714285714286
+Ekko/Zilean,Tri-Beam (NX/PZ),23,50,0.46
+Ekko/Zilean,Trundle/Tryndamere (FR/SI),5,13,0.384615384615385
+Elise (NX/SI),Akshan/Sivir (DE/SH),19,39,0.487179487179487
+Elise (NX/SI),Akshan/Viktor,9,25,0.36
+Elise (NX/SI),Anivia (FR/SI),5,12,0.416666666666667
+Elise (NX/SI),Aphelios/Diana (MT/SI),6,22,0.272727272727273
+Elise (NX/SI),Aphelios/Viktor,58,168,0.345238095238095
+Elise (NX/SI),Aphelios/Viktor/Zoe,7,16,0.4375
+Elise (NX/SI),Aphelios/Zoe (MT/SI),7,14,0.5
+Elise (NX/SI),Aurelion Sol/Trundle,22,35,0.628571428571429
+Elise (NX/SI),Aurelion Sol/Tryndamere,33,56,0.589285714285714
+Elise (NX/SI),Aurelion Sol/Zoe (FR/MT),68,105,0.647619047619048
+Elise (NX/SI),Azir/Irelia,65,94,0.691489361702128
+Elise (NX/SI),BandleTree,20,33,0.606060606060606
+Elise (NX/SI),Caitlyn/Swain,4,10,0.4
+Elise (NX/SI),Caitlyn/Teemo (BC/PZ),37,61,0.60655737704918
+Elise (NX/SI),Championless (FR/PZ),11,12,0.916666666666667
+Elise (NX/SI),Darius/Gnar (FR/NX),29,53,0.547169811320755
+Elise (NX/SI),Draven/Rumble,14,22,0.636363636363636
+Elise (NX/SI),Draven/Rumble (NX/PZ),19,41,0.463414634146342
+Elise (NX/SI),Draven/Rumble/Sion,8,11,0.727272727272727
+Elise (NX/SI),Draven/Viktor,12,29,0.413793103448276
+Elise (NX/SI),Ekko/Zilean,12,26,0.461538461538462
+Elise (NX/SI),Elise (NX/SI),50,100,0.5
+Elise (NX/SI),Fizz/Lulu (BC/PZ),17,58,0.293103448275862
+Elise (NX/SI),Fizz/Riven (BC/NX),5,10,0.5
+Elise (NX/SI),Galio/Lulu/Poppy (BC/DE),15,23,0.652173913043478
+Elise (NX/SI),Gangplank/Miss Fortune (BW/NX),12,24,0.5
+Elise (NX/SI),Gangplank/Sejuani,20,33,0.606060606060606
+Elise (NX/SI),Gnar/Swain,7,15,0.466666666666667
+Elise (NX/SI),Gnar/Teemo/Tristana (BC/DE),10,31,0.32258064516129
+Elise (NX/SI),Gnar/Trundle (FR/PZ),14,26,0.538461538461538
+Elise (NX/SI),Gnar/Ziggs (BC/NX),12,25,0.48
+Elise (NX/SI),Jarvan IV/Shen,8,21,0.380952380952381
+Elise (NX/SI),Kindred/Viego (IO/SI),16,34,0.470588235294118
+Elise (NX/SI),Lissandra/Trundle (FR/SI),2,11,0.181818181818182
+Elise (NX/SI),Maokai/Nautilus,8,12,0.666666666666667
+Elise (NX/SI),Miss Fortune/Quinn,30,60,0.5
+Elise (NX/SI),Nami/Twisted Fate (BW/PZ),4,10,0.4
+Elise (NX/SI),Pantheon/Taric/Yuumi (DE/MT),21,33,0.636363636363636
+Elise (NX/SI),Pantheon/Yuumi (DE/MT),61,87,0.701149425287356
+Elise (NX/SI),Pyke/Rek'Sai,26,40,0.65
+Elise (NX/SI),Riven/Viktor,48,163,0.294478527607362
+Elise (NX/SI),Rumble/Sion,9,10,0.9
+Elise (NX/SI),Rumble/Viktor,4,10,0.4
+Elise (NX/SI),Senna/Veigar,23,57,0.403508771929825
+Elise (NX/SI),SunDisc,700,1065,0.657276995305164
+Elise (NX/SI),Taliyah/Ziggs,38,57,0.666666666666667
+Elise (NX/SI),Teemo (NX/PZ),7,12,0.583333333333333
+Elise (NX/SI),Tri-Beam (NX/PZ),82,211,0.388625592417062
+Elise (NX/SI),Trundle/Tryndamere (FR/SI),14,33,0.424242424242424
+Elise (NX/SI),Viktor - Shellfolk,5,13,0.384615384615385
+Elise (NX/SI),Viktor/Zoe,4,11,0.363636363636364
+Elise (NX/SI),Xerath/Zilean (BC/SH),7,17,0.411764705882353
+Elise (PZ/SI),SunDisc,19,36,0.527777777777778
+Elise (PZ/SI),Tri-Beam (NX/PZ),7,12,0.583333333333333
+Elise/Ezreal/Kindred,SunDisc,4,11,0.363636363636364
+Elise/Kalista (FR/SI),SunDisc,4,12,0.333333333333333
+Elise/Kindred (PZ/SI),SunDisc,7,10,0.7
+Elise/Kindred/Vi,SunDisc,20,41,0.487804878048781
+Elise/Kindred/Vi,Tri-Beam (NX/PZ),9,15,0.6
+Elise/Teemo,SunDisc,10,21,0.476190476190476
+Elise/Twisted Fate,SunDisc,7,17,0.411764705882353
+Ezreal (PZ/SI),SunDisc,2,11,0.181818181818182
 Ezreal/Jayce (FR/PZ),SunDisc,2,14,0.142857142857143
-Ezreal/Karma,SunDisc,13,48,0.270833333333333
-Ezreal/Karma,Tri-Beam (NX/PZ),6,11,0.545454545454545
-Ezreal/Renekton,SunDisc,9,20,0.45
-Ezreal/Swain,SunDisc,16,28,0.571428571428571
-Ezreal/Teemo (FR/PZ),SunDisc,8,17,0.470588235294118
-Ezreal/Twisted Fate,SunDisc,2,10,0.2
-Fiora (DE/FR),SunDisc,19,46,0.41304347826087
-Fiora (DE/FR),Tri-Beam (NX/PZ),3,10,0.3
-Fiora (DE/SH),SunDisc,5,16,0.3125
-Fizz/Gnar (BC/PZ),SunDisc,22,41,0.536585365853659
-Fizz/Gnar/Tristana (BC/DE),SunDisc,21,38,0.552631578947369
-Fizz/Gnar/Tristana (BC/DE),Tri-Beam (NX/PZ),8,13,0.615384615384615
-Fizz/Lee Sin (BC/IO),SunDisc,28,49,0.571428571428571
-Fizz/Lee Sin (BC/IO),Tri-Beam (NX/PZ),7,12,0.583333333333333
-Fizz/Lulu (BC/PZ),Akshan/Sivir (DE/SH),7,11,0.636363636363636
-Fizz/Lulu (BC/PZ),Aphelios/Viktor,46,75,0.613333333333333
-Fizz/Lulu (BC/PZ),Aurelion Sol/Trundle,7,12,0.583333333333333
-Fizz/Lulu (BC/PZ),Aurelion Sol/Tryndamere,12,23,0.521739130434783
-Fizz/Lulu (BC/PZ),Aurelion Sol/Zoe (FR/MT),23,47,0.48936170212766
-Fizz/Lulu (BC/PZ),Azir/Irelia,23,26,0.884615384615385
-Fizz/Lulu (BC/PZ),BandleTree,11,14,0.785714285714286
-Fizz/Lulu (BC/PZ),Caitlyn/Teemo (BC/PZ),11,17,0.647058823529412
-Fizz/Lulu (BC/PZ),Darius/Gnar (FR/NX),9,16,0.5625
-Fizz/Lulu (BC/PZ),Draven/Rumble (NX/PZ),10,17,0.588235294117647
-Fizz/Lulu (BC/PZ),Draven/Viktor,5,12,0.416666666666667
-Fizz/Lulu (BC/PZ),Elise (NX/SI),25,33,0.757575757575758
-Fizz/Lulu (BC/PZ),Fizz/Lulu (BC/PZ),15,30,0.5
-Fizz/Lulu (BC/PZ),Gangplank/Sejuani,8,13,0.615384615384615
-Fizz/Lulu (BC/PZ),Gnar/Teemo/Tristana (BC/DE),9,12,0.75
-Fizz/Lulu (BC/PZ),Gnar/Trundle (FR/PZ),6,10,0.6
-Fizz/Lulu (BC/PZ),Gnar/Ziggs (BC/NX),10,17,0.588235294117647
-Fizz/Lulu (BC/PZ),Kindred/Viego (IO/SI),6,11,0.545454545454545
-Fizz/Lulu (BC/PZ),Miss Fortune/Quinn,10,19,0.526315789473684
-Fizz/Lulu (BC/PZ),Pantheon/Yuumi (DE/MT),18,27,0.666666666666667
-Fizz/Lulu (BC/PZ),Pyke/Rek'Sai,13,24,0.541666666666667
-Fizz/Lulu (BC/PZ),Riven/Viktor,26,47,0.553191489361702
-Fizz/Lulu (BC/PZ),Rumble/Sion,8,11,0.727272727272727
-Fizz/Lulu (BC/PZ),SunDisc,231,413,0.559322033898305
-Fizz/Lulu (BC/PZ),Taliyah/Ziggs,14,26,0.538461538461538
-Fizz/Lulu (BC/PZ),Tri-Beam (NX/PZ),49,106,0.462264150943396
-Fizz/Lulu/Teemo (BC/PZ),SunDisc,14,25,0.56
-Fizz/Nami (BW/PZ),SunDisc,7,11,0.636363636363636
-Fizz/Riven (BC/NX),Aphelios/Viktor,9,15,0.6
-Fizz/Riven (BC/NX),Aurelion Sol/Zoe (FR/MT),9,11,0.818181818181818
-Fizz/Riven (BC/NX),Azir/Irelia,5,13,0.384615384615385
-Fizz/Riven (BC/NX),Pantheon/Yuumi (DE/MT),5,11,0.454545454545455
-Fizz/Riven (BC/NX),Riven/Viktor,4,10,0.4
-Fizz/Riven (BC/NX),SunDisc,68,104,0.653846153846154
-Fizz/Riven (BC/NX),Taliyah/Ziggs,8,10,0.8
-Fizz/Riven (BC/NX),Tri-Beam (NX/PZ),7,18,0.388888888888889
-Fizz/Yuumi (BC/NX),SunDisc,14,20,0.7
+Ezreal/Karma,SunDisc,13,52,0.25
+Ezreal/Karma,Tri-Beam (NX/PZ),6,12,0.5
+Ezreal/Renekton,SunDisc,11,27,0.407407407407407
+Ezreal/Swain,SunDisc,18,32,0.5625
+Ezreal/Teemo (FR/PZ),SunDisc,11,20,0.55
+Ezreal/Twisted Fate,SunDisc,2,11,0.181818181818182
+Fiora (DE/FR),Aphelios/Viktor,3,10,0.3
+Fiora (DE/FR),Aurelion Sol/Zoe (FR/MT),2,10,0.2
+Fiora (DE/FR),Riven/Viktor,5,15,0.333333333333333
+Fiora (DE/FR),SunDisc,32,70,0.457142857142857
+Fiora (DE/FR),Tri-Beam (NX/PZ),3,17,0.176470588235294
+Fiora (DE/SH),SunDisc,7,20,0.35
+Fiora/Jarvan IV/Shen,SunDisc,5,11,0.454545454545455
+Fiora/Yuumi (DE/MT),SunDisc,4,11,0.363636363636364
+Fizz/Gnar (BC/PZ),Riven/Viktor,8,11,0.727272727272727
+Fizz/Gnar (BC/PZ),SunDisc,26,47,0.553191489361702
+Fizz/Gnar/Tristana (BC/DE),Aphelios/Viktor,6,11,0.545454545454545
+Fizz/Gnar/Tristana (BC/DE),Riven/Viktor,10,20,0.5
+Fizz/Gnar/Tristana (BC/DE),SunDisc,43,72,0.597222222222222
+Fizz/Gnar/Tristana (BC/DE),Tri-Beam (NX/PZ),12,25,0.48
+Fizz/Lee Sin (BC/IO),Riven/Viktor,6,13,0.461538461538462
+Fizz/Lee Sin (BC/IO),SunDisc,31,62,0.5
+Fizz/Lee Sin (BC/IO),Tri-Beam (NX/PZ),9,15,0.6
+Fizz/Lulu (BC/PZ),Akshan/Sivir (DE/SH),12,21,0.571428571428571
+Fizz/Lulu (BC/PZ),Akshan/Viktor,5,12,0.416666666666667
+Fizz/Lulu (BC/PZ),Aphelios/Diana (MT/SI),8,13,0.615384615384615
+Fizz/Lulu (BC/PZ),Aphelios/Viktor,66,119,0.554621848739496
+Fizz/Lulu (BC/PZ),Aphelios/Viktor/Zoe,4,11,0.363636363636364
+Fizz/Lulu (BC/PZ),Aurelion Sol/Trundle,11,17,0.647058823529412
+Fizz/Lulu (BC/PZ),Aurelion Sol/Tryndamere,19,33,0.575757575757576
+Fizz/Lulu (BC/PZ),Aurelion Sol/Zoe (FR/MT),37,78,0.474358974358974
+Fizz/Lulu (BC/PZ),Azir/Irelia,36,49,0.73469387755102
+Fizz/Lulu (BC/PZ),BandleTree,18,26,0.692307692307692
+Fizz/Lulu (BC/PZ),Caitlyn/Teemo (BC/PZ),20,28,0.714285714285714
+Fizz/Lulu (BC/PZ),Darius/Gnar (FR/NX),18,28,0.642857142857143
+Fizz/Lulu (BC/PZ),Draven/Rumble (NX/PZ),18,27,0.666666666666667
+Fizz/Lulu (BC/PZ),Draven/Rumble/Sion,7,11,0.636363636363636
+Fizz/Lulu (BC/PZ),Draven/Viktor,8,17,0.470588235294118
+Fizz/Lulu (BC/PZ),Ekko/Zilean,4,10,0.4
+Fizz/Lulu (BC/PZ),Elise (NX/SI),41,58,0.706896551724138
+Fizz/Lulu (BC/PZ),Fizz/Lulu (BC/PZ),28,56,0.5
+Fizz/Lulu (BC/PZ),Gangplank/Miss Fortune (BW/NX),13,17,0.764705882352941
+Fizz/Lulu (BC/PZ),Gangplank/Sejuani,11,18,0.611111111111111
+Fizz/Lulu (BC/PZ),Gnar/Teemo/Tristana (BC/DE),12,23,0.521739130434783
+Fizz/Lulu (BC/PZ),Gnar/Trundle (FR/PZ),6,11,0.545454545454545
+Fizz/Lulu (BC/PZ),Gnar/Ziggs (BC/NX),14,23,0.608695652173913
+Fizz/Lulu (BC/PZ),Jarvan IV/Shen,2,10,0.2
+Fizz/Lulu (BC/PZ),Kindred/Viego (IO/SI),10,19,0.526315789473684
+Fizz/Lulu (BC/PZ),Miss Fortune/Quinn,14,28,0.5
+Fizz/Lulu (BC/PZ),Pantheon/Taric/Yuumi (DE/MT),8,12,0.666666666666667
+Fizz/Lulu (BC/PZ),Pantheon/Yuumi (DE/MT),36,49,0.73469387755102
+Fizz/Lulu (BC/PZ),Pyke/Rek'Sai,18,32,0.5625
+Fizz/Lulu (BC/PZ),Riven/Viktor,58,118,0.491525423728814
+Fizz/Lulu (BC/PZ),Rumble/Sion,9,12,0.75
+Fizz/Lulu (BC/PZ),Senna/Veigar,7,17,0.411764705882353
+Fizz/Lulu (BC/PZ),SunDisc,317,577,0.549393414211439
+Fizz/Lulu (BC/PZ),Taliyah/Ziggs,23,43,0.534883720930233
+Fizz/Lulu (BC/PZ),Tri-Beam (NX/PZ),76,158,0.481012658227848
+Fizz/Lulu (BC/PZ),Trundle/Tryndamere (FR/SI),7,16,0.4375
+Fizz/Lulu/Teemo (BC/PZ),SunDisc,15,29,0.517241379310345
+Fizz/Nami (BW/PZ),SunDisc,8,12,0.666666666666667
+Fizz/Riven (BC/NX),Aphelios/Viktor,11,20,0.55
+Fizz/Riven (BC/NX),Aurelion Sol/Zoe (FR/MT),13,23,0.565217391304348
+Fizz/Riven (BC/NX),Azir/Irelia,9,19,0.473684210526316
+Fizz/Riven (BC/NX),Elise (NX/SI),5,10,0.5
+Fizz/Riven (BC/NX),Galio/Lulu/Poppy (BC/DE),7,10,0.7
+Fizz/Riven (BC/NX),Pantheon/Yuumi (DE/MT),5,12,0.416666666666667
+Fizz/Riven (BC/NX),Riven/Viktor,13,29,0.448275862068966
+Fizz/Riven (BC/NX),SunDisc,102,151,0.675496688741722
+Fizz/Riven (BC/NX),Taliyah/Ziggs,12,16,0.75
+Fizz/Riven (BC/NX),Tri-Beam (NX/PZ),14,28,0.5
+Fizz/Teemo/Tristana (BC/DE),SunDisc,8,13,0.615384615384615
+Fizz/Yuumi (BC/NX),SunDisc,15,21,0.714285714285714
 Fizz/Zed (BC/IO),SunDisc,7,11,0.636363636363636
-Galio/Gnar (DE/FR),SunDisc,16,37,0.432432432432432
-Galio/Jarvan IV/Shen,SunDisc,14,30,0.466666666666667
-Galio/Lulu/Poppy (BC/DE),Aphelios/Viktor,16,28,0.571428571428571
+Galio/Gnar (DE/FR),SunDisc,16,44,0.363636363636364
+Galio/Jarvan IV/Shen,SunDisc,14,32,0.4375
+Galio/Lulu/Poppy (BC/DE),Aphelios/Viktor,19,36,0.527777777777778
 Galio/Lulu/Poppy (BC/DE),Aurelion Sol/Tryndamere,14,20,0.7
-Galio/Lulu/Poppy (BC/DE),Aurelion Sol/Zoe (FR/MT),10,18,0.555555555555556
-Galio/Lulu/Poppy (BC/DE),Azir/Irelia,13,17,0.764705882352941
-Galio/Lulu/Poppy (BC/DE),Draven/Rumble (NX/PZ),4,11,0.363636363636364
-Galio/Lulu/Poppy (BC/DE),Elise (NX/SI),7,18,0.388888888888889
-Galio/Lulu/Poppy (BC/DE),Miss Fortune/Quinn,4,10,0.4
-Galio/Lulu/Poppy (BC/DE),Pantheon/Yuumi (DE/MT),7,22,0.318181818181818
-Galio/Lulu/Poppy (BC/DE),Riven/Viktor,6,15,0.4
-Galio/Lulu/Poppy (BC/DE),Senna/Veigar,12,15,0.8
-Galio/Lulu/Poppy (BC/DE),SunDisc,120,213,0.563380281690141
-Galio/Lulu/Poppy (BC/DE),Taliyah/Ziggs,2,10,0.2
-Galio/Lulu/Poppy (BC/DE),Tri-Beam (NX/PZ),6,36,0.166666666666667
-Galio/Poppy,SunDisc,13,23,0.565217391304348
-Galio/Shen,SunDisc,5,15,0.333333333333333
-Galio/Soraka,SunDisc,31,47,0.659574468085106
-Gangplank/Miss Fortune (BW/NX),Aphelios/Viktor,7,14,0.5
-Gangplank/Miss Fortune (BW/NX),Aurelion Sol/Zoe (FR/MT),4,10,0.4
-Gangplank/Miss Fortune (BW/NX),Azir/Irelia,9,13,0.692307692307692
-Gangplank/Miss Fortune (BW/NX),Elise (NX/SI),7,17,0.411764705882353
-Gangplank/Miss Fortune (BW/NX),SunDisc,84,112,0.75
-Gangplank/Miss Fortune (BW/NX),Taliyah/Ziggs,7,10,0.7
-Gangplank/Miss Fortune (BW/NX),Tri-Beam (NX/PZ),9,17,0.529411764705882
-Gangplank/Miss Fortune/Twisted Fate (BW/NX),SunDisc,45,71,0.633802816901409
-Gangplank/Miss Fortune/Twisted Fate (BW/NX),Tri-Beam (NX/PZ),5,11,0.454545454545455
-Gangplank/Sejuani,Aphelios/Viktor,17,25,0.68
-Gangplank/Sejuani,Aurelion Sol/Tryndamere,6,11,0.545454545454545
-Gangplank/Sejuani,Aurelion Sol/Zoe (FR/MT),8,16,0.5
-Gangplank/Sejuani,Azir/Irelia,4,11,0.363636363636364
-Gangplank/Sejuani,Caitlyn/Teemo (BC/PZ),5,11,0.454545454545455
-Gangplank/Sejuani,Elise (NX/SI),6,17,0.352941176470588
-Gangplank/Sejuani,Fizz/Lulu (BC/PZ),5,13,0.384615384615385
-Gangplank/Sejuani,Pantheon/Yuumi (DE/MT),3,14,0.214285714285714
-Gangplank/Sejuani,Riven/Viktor,8,17,0.470588235294118
-Gangplank/Sejuani,SunDisc,111,197,0.563451776649746
-Gangplank/Sejuani,Taliyah/Ziggs,6,11,0.545454545454545
-Gangplank/Sejuani,Tri-Beam (NX/PZ),23,39,0.58974358974359
-Gangplank/Twisted Fate,SunDisc,7,13,0.538461538461538
-Gangplank/Twisted Fate (BW/NX),SunDisc,6,15,0.4
-Gnar/Lux,SunDisc,3,16,0.1875
-Gnar/Renekton/Sejuani (FR/SH),SunDisc,6,14,0.428571428571429
-Gnar/Sejuani,SunDisc,7,19,0.368421052631579
-Gnar/Swain,Aphelios/Viktor,8,15,0.533333333333333
-Gnar/Swain,Aurelion Sol/Zoe (FR/MT),7,11,0.636363636363636
-Gnar/Swain,Azir/Irelia,10,14,0.714285714285714
-Gnar/Swain,Elise (NX/SI),5,10,0.5
-Gnar/Swain,Pantheon/Yuumi (DE/MT),7,11,0.636363636363636
-Gnar/Swain,Riven/Viktor,6,11,0.545454545454545
-Gnar/Swain,SunDisc,58,127,0.456692913385827
-Gnar/Swain,Tri-Beam (NX/PZ),7,23,0.304347826086957
-Gnar/Teemo/Tristana (BC/DE),Akshan/Sivir (DE/SH),7,10,0.7
-Gnar/Teemo/Tristana (BC/DE),Aphelios/Viktor,20,42,0.476190476190476
-Gnar/Teemo/Tristana (BC/DE),Aurelion Sol/Tryndamere,12,19,0.631578947368421
-Gnar/Teemo/Tristana (BC/DE),Aurelion Sol/Zoe (FR/MT),13,25,0.52
-Gnar/Teemo/Tristana (BC/DE),Azir/Irelia,13,26,0.5
-Gnar/Teemo/Tristana (BC/DE),BandleTree,8,11,0.727272727272727
-Gnar/Teemo/Tristana (BC/DE),Caitlyn/Teemo (BC/PZ),8,16,0.5
-Gnar/Teemo/Tristana (BC/DE),Darius/Gnar (FR/NX),6,12,0.5
-Gnar/Teemo/Tristana (BC/DE),Draven/Rumble,5,12,0.416666666666667
-Gnar/Teemo/Tristana (BC/DE),Elise (NX/SI),16,23,0.695652173913044
-Gnar/Teemo/Tristana (BC/DE),Fizz/Lulu (BC/PZ),3,12,0.25
-Gnar/Teemo/Tristana (BC/DE),Gnar/Trundle (FR/PZ),5,10,0.5
-Gnar/Teemo/Tristana (BC/DE),Miss Fortune/Quinn,9,19,0.473684210526316
-Gnar/Teemo/Tristana (BC/DE),Pantheon/Taric/Yuumi (DE/MT),3,11,0.272727272727273
-Gnar/Teemo/Tristana (BC/DE),Pantheon/Yuumi (DE/MT),6,18,0.333333333333333
-Gnar/Teemo/Tristana (BC/DE),Pyke/Rek'Sai,7,13,0.538461538461538
-Gnar/Teemo/Tristana (BC/DE),Riven/Viktor,11,29,0.379310344827586
-Gnar/Teemo/Tristana (BC/DE),Senna/Veigar,11,17,0.647058823529412
-Gnar/Teemo/Tristana (BC/DE),SunDisc,170,314,0.54140127388535
-Gnar/Teemo/Tristana (BC/DE),Taliyah/Ziggs,8,16,0.5
-Gnar/Teemo/Tristana (BC/DE),Tri-Beam (NX/PZ),21,51,0.411764705882353
-Gnar/Teemo/Ziggs (BC/NX),SunDisc,10,13,0.769230769230769
-Gnar/Tristana (BC/DE),SunDisc,7,15,0.466666666666667
+Galio/Lulu/Poppy (BC/DE),Aurelion Sol/Zoe (FR/MT),17,28,0.607142857142857
+Galio/Lulu/Poppy (BC/DE),Azir/Irelia,14,20,0.7
+Galio/Lulu/Poppy (BC/DE),Caitlyn/Teemo (BC/PZ),10,11,0.909090909090909
+Galio/Lulu/Poppy (BC/DE),Draven/Rumble (NX/PZ),5,13,0.384615384615385
+Galio/Lulu/Poppy (BC/DE),Elise (NX/SI),8,23,0.347826086956522
+Galio/Lulu/Poppy (BC/DE),Fizz/Riven (BC/NX),3,10,0.3
+Galio/Lulu/Poppy (BC/DE),Galio/Lulu/Poppy (BC/DE),5,10,0.5
+Galio/Lulu/Poppy (BC/DE),Gnar/Trundle (FR/PZ),4,11,0.363636363636364
+Galio/Lulu/Poppy (BC/DE),Miss Fortune/Quinn,7,14,0.5
+Galio/Lulu/Poppy (BC/DE),Pantheon/Yuumi (DE/MT),7,24,0.291666666666667
+Galio/Lulu/Poppy (BC/DE),Riven/Viktor,12,35,0.342857142857143
+Galio/Lulu/Poppy (BC/DE),Senna/Veigar,18,23,0.782608695652174
+Galio/Lulu/Poppy (BC/DE),SunDisc,139,250,0.556
+Galio/Lulu/Poppy (BC/DE),Taliyah/Ziggs,2,12,0.166666666666667
+Galio/Lulu/Poppy (BC/DE),Tri-Beam (NX/PZ),8,42,0.19047619047619
+Galio/Poppy,Aphelios/Viktor,6,11,0.545454545454545
+Galio/Poppy,SunDisc,14,27,0.518518518518519
+Galio/Shen,SunDisc,5,16,0.3125
+Galio/Soraka,Aphelios/Viktor,1,11,0.0909090909090909
+Galio/Soraka,Riven/Viktor,8,13,0.615384615384615
+Galio/Soraka,SunDisc,37,58,0.637931034482759
+Galio/Soraka,Tri-Beam (NX/PZ),3,10,0.3
+Galio/Soraka/Taric,SunDisc,6,10,0.6
+Galio/Udyr,SunDisc,5,12,0.416666666666667
+Gangplank/Gnar/Sejuani (BW/FR),SunDisc,7,12,0.583333333333333
+Gangplank/Miss Fortune (BW/NX),Aphelios/Viktor,18,32,0.5625
+Gangplank/Miss Fortune (BW/NX),Aurelion Sol/Zoe (FR/MT),12,23,0.521739130434783
+Gangplank/Miss Fortune (BW/NX),Azir/Irelia,18,23,0.782608695652174
+Gangplank/Miss Fortune (BW/NX),Caitlyn/Teemo (BC/PZ),8,13,0.615384615384615
+Gangplank/Miss Fortune (BW/NX),Elise (NX/SI),12,24,0.5
+Gangplank/Miss Fortune (BW/NX),Fizz/Lulu (BC/PZ),4,17,0.235294117647059
+Gangplank/Miss Fortune (BW/NX),Miss Fortune/Quinn,5,13,0.384615384615385
+Gangplank/Miss Fortune (BW/NX),Pantheon/Yuumi (DE/MT),5,14,0.357142857142857
+Gangplank/Miss Fortune (BW/NX),Pyke/Rek'Sai,5,11,0.454545454545455
+Gangplank/Miss Fortune (BW/NX),Riven/Viktor,20,40,0.5
+Gangplank/Miss Fortune (BW/NX),SunDisc,134,186,0.720430107526882
+Gangplank/Miss Fortune (BW/NX),Taliyah/Ziggs,11,14,0.785714285714286
+Gangplank/Miss Fortune (BW/NX),Tri-Beam (NX/PZ),18,40,0.45
+Gangplank/Miss Fortune/Twisted Fate (BW/NX),Aurelion Sol/Zoe (FR/MT),7,13,0.538461538461538
+Gangplank/Miss Fortune/Twisted Fate (BW/NX),Caitlyn/Teemo (BC/PZ),8,10,0.8
+Gangplank/Miss Fortune/Twisted Fate (BW/NX),Pyke/Rek'Sai,6,11,0.545454545454545
+Gangplank/Miss Fortune/Twisted Fate (BW/NX),Riven/Viktor,9,23,0.391304347826087
+Gangplank/Miss Fortune/Twisted Fate (BW/NX),SunDisc,55,88,0.625
+Gangplank/Miss Fortune/Twisted Fate (BW/NX),Tri-Beam (NX/PZ),11,22,0.5
+Gangplank/Sejuani,Aphelios/Viktor,32,46,0.695652173913044
+Gangplank/Sejuani,Aurelion Sol/Tryndamere,9,17,0.529411764705882
+Gangplank/Sejuani,Aurelion Sol/Zoe (FR/MT),15,25,0.6
+Gangplank/Sejuani,Azir/Irelia,6,16,0.375
+Gangplank/Sejuani,Caitlyn/Teemo (BC/PZ),7,17,0.411764705882353
+Gangplank/Sejuani,Elise (NX/SI),13,33,0.393939393939394
+Gangplank/Sejuani,Fizz/Lulu (BC/PZ),7,18,0.388888888888889
+Gangplank/Sejuani,Gangplank/Sejuani,7,14,0.5
+Gangplank/Sejuani,Miss Fortune/Quinn,3,12,0.25
+Gangplank/Sejuani,Pantheon/Taric/Yuumi (DE/MT),3,11,0.272727272727273
+Gangplank/Sejuani,Pantheon/Yuumi (DE/MT),7,22,0.318181818181818
+Gangplank/Sejuani,Pyke/Rek'Sai,6,10,0.6
+Gangplank/Sejuani,Riven/Viktor,19,44,0.431818181818182
+Gangplank/Sejuani,Senna/Veigar,6,12,0.5
+Gangplank/Sejuani,SunDisc,157,278,0.564748201438849
+Gangplank/Sejuani,Taliyah/Ziggs,7,17,0.411764705882353
+Gangplank/Sejuani,Tri-Beam (NX/PZ),33,62,0.532258064516129
+Gangplank/Sejuani,Trundle/Tryndamere (FR/SI),6,12,0.5
+Gangplank/Twisted Fate,SunDisc,11,23,0.478260869565217
+Gangplank/Twisted Fate (BC/BW),SunDisc,6,12,0.5
+Gangplank/Twisted Fate (BW/NX),SunDisc,7,16,0.4375
+Gangplank/Twisted Fate (BW/PZ),SunDisc,8,14,0.571428571428571
+Gnar/Lux,SunDisc,3,17,0.176470588235294
+Gnar/Renekton/Sejuani (FR/SH),SunDisc,6,15,0.4
+Gnar/Sejuani,SunDisc,8,26,0.307692307692308
+Gnar/Swain,Aphelios/Viktor,9,21,0.428571428571429
+Gnar/Swain,Aurelion Sol/Tryndamere,7,12,0.583333333333333
+Gnar/Swain,Aurelion Sol/Zoe (FR/MT),8,16,0.5
+Gnar/Swain,Azir/Irelia,11,15,0.733333333333333
+Gnar/Swain,Elise (NX/SI),8,15,0.533333333333333
+Gnar/Swain,Pantheon/Yuumi (DE/MT),8,13,0.615384615384615
+Gnar/Swain,Riven/Viktor,9,18,0.5
+Gnar/Swain,SunDisc,70,143,0.48951048951049
+Gnar/Swain,Tri-Beam (NX/PZ),9,28,0.321428571428571
+Gnar/Teemo/Tristana (BC/DE),Akshan/Sivir (DE/SH),10,14,0.714285714285714
+Gnar/Teemo/Tristana (BC/DE),Aphelios/Viktor,25,54,0.462962962962963
+Gnar/Teemo/Tristana (BC/DE),Aurelion Sol/Trundle,7,10,0.7
+Gnar/Teemo/Tristana (BC/DE),Aurelion Sol/Tryndamere,15,22,0.681818181818182
+Gnar/Teemo/Tristana (BC/DE),Aurelion Sol/Zoe (FR/MT),17,31,0.548387096774194
+Gnar/Teemo/Tristana (BC/DE),Azir/Irelia,18,35,0.514285714285714
+Gnar/Teemo/Tristana (BC/DE),BandleTree,9,12,0.75
+Gnar/Teemo/Tristana (BC/DE),Caitlyn/Teemo (BC/PZ),14,24,0.583333333333333
+Gnar/Teemo/Tristana (BC/DE),Darius/Gnar (FR/NX),6,14,0.428571428571429
+Gnar/Teemo/Tristana (BC/DE),Draven/Rumble,8,18,0.444444444444444
+Gnar/Teemo/Tristana (BC/DE),Draven/Viktor,4,12,0.333333333333333
+Gnar/Teemo/Tristana (BC/DE),Elise (NX/SI),21,31,0.67741935483871
+Gnar/Teemo/Tristana (BC/DE),Fizz/Lulu (BC/PZ),11,23,0.478260869565217
+Gnar/Teemo/Tristana (BC/DE),Gnar/Trundle (FR/PZ),6,13,0.461538461538462
+Gnar/Teemo/Tristana (BC/DE),Gnar/Ziggs (BC/NX),5,13,0.384615384615385
+Gnar/Teemo/Tristana (BC/DE),Lulu/Rumble (BC/PZ),4,10,0.4
+Gnar/Teemo/Tristana (BC/DE),Miss Fortune/Quinn,12,24,0.5
+Gnar/Teemo/Tristana (BC/DE),Pantheon/Taric/Yuumi (DE/MT),6,15,0.4
+Gnar/Teemo/Tristana (BC/DE),Pantheon/Yuumi (DE/MT),7,24,0.291666666666667
+Gnar/Teemo/Tristana (BC/DE),Pyke/Rek'Sai,11,22,0.5
+Gnar/Teemo/Tristana (BC/DE),Riven/Viktor,20,65,0.307692307692308
+Gnar/Teemo/Tristana (BC/DE),Senna/Veigar,12,22,0.545454545454545
+Gnar/Teemo/Tristana (BC/DE),SunDisc,201,373,0.53887399463807
+Gnar/Teemo/Tristana (BC/DE),Taliyah/Ziggs,13,27,0.481481481481482
+Gnar/Teemo/Tristana (BC/DE),Tri-Beam (NX/PZ),31,70,0.442857142857143
+Gnar/Teemo/Tristana (BC/DE),Trundle/Tryndamere (FR/SI),7,14,0.5
+Gnar/Teemo/Ziggs (BC/NX),SunDisc,12,18,0.666666666666667
+Gnar/Tristana (BC/DE),SunDisc,7,16,0.4375
 Gnar/Trundle (FR/IO),Aphelios/Viktor,5,14,0.357142857142857
 Gnar/Trundle (FR/IO),Pantheon/Yuumi (DE/MT),6,10,0.6
-Gnar/Trundle (FR/IO),SunDisc,21,60,0.35
-Gnar/Trundle (FR/PZ),Akshan/Sivir (DE/SH),6,13,0.461538461538462
-Gnar/Trundle (FR/PZ),Aphelios/Viktor,20,42,0.476190476190476
-Gnar/Trundle (FR/PZ),Aurelion Sol/Tryndamere,8,16,0.5
-Gnar/Trundle (FR/PZ),Aurelion Sol/Zoe (FR/MT),9,18,0.5
-Gnar/Trundle (FR/PZ),Azir/Irelia,11,25,0.44
+Gnar/Trundle (FR/IO),SunDisc,23,69,0.333333333333333
+Gnar/Trundle (FR/PZ),Akshan/Sivir (DE/SH),7,16,0.4375
+Gnar/Trundle (FR/PZ),Aphelios/Viktor,26,51,0.509803921568627
+Gnar/Trundle (FR/PZ),Aurelion Sol/Tryndamere,9,19,0.473684210526316
+Gnar/Trundle (FR/PZ),Aurelion Sol/Zoe (FR/MT),10,24,0.416666666666667
+Gnar/Trundle (FR/PZ),Azir/Irelia,13,32,0.40625
 Gnar/Trundle (FR/PZ),BandleTree,12,15,0.8
-Gnar/Trundle (FR/PZ),Elise (NX/SI),9,21,0.428571428571429
-Gnar/Trundle (FR/PZ),Fizz/Lulu (BC/PZ),4,10,0.4
-Gnar/Trundle (FR/PZ),Gnar/Teemo/Tristana (BC/DE),5,10,0.5
-Gnar/Trundle (FR/PZ),Miss Fortune/Quinn,4,16,0.25
-Gnar/Trundle (FR/PZ),Pantheon/Yuumi (DE/MT),10,21,0.476190476190476
-Gnar/Trundle (FR/PZ),Pyke/Rek'Sai,6,10,0.6
-Gnar/Trundle (FR/PZ),Riven/Viktor,10,23,0.434782608695652
+Gnar/Trundle (FR/PZ),Elise (NX/SI),12,26,0.461538461538462
+Gnar/Trundle (FR/PZ),Fizz/Lulu (BC/PZ),5,11,0.454545454545455
+Gnar/Trundle (FR/PZ),Galio/Lulu/Poppy (BC/DE),7,11,0.636363636363636
+Gnar/Trundle (FR/PZ),Gnar/Teemo/Tristana (BC/DE),7,13,0.538461538461538
+Gnar/Trundle (FR/PZ),Maokai/Nautilus,3,10,0.3
+Gnar/Trundle (FR/PZ),Miss Fortune/Quinn,6,19,0.315789473684211
+Gnar/Trundle (FR/PZ),Pantheon/Yuumi (DE/MT),14,30,0.466666666666667
+Gnar/Trundle (FR/PZ),Pyke/Rek'Sai,8,14,0.571428571428571
+Gnar/Trundle (FR/PZ),Riven/Viktor,17,44,0.386363636363636
 Gnar/Trundle (FR/PZ),Senna/Veigar,9,13,0.692307692307692
-Gnar/Trundle (FR/PZ),SunDisc,122,281,0.434163701067616
+Gnar/Trundle (FR/PZ),SunDisc,140,333,0.42042042042042
 Gnar/Trundle (FR/PZ),Taliyah/Ziggs,5,15,0.333333333333333
-Gnar/Trundle (FR/PZ),Tri-Beam (NX/PZ),29,61,0.475409836065574
-Gnar/Trundle (FR/PZ),Trundle/Tryndamere (FR/SI),4,11,0.363636363636364
-Gnar/Ziggs (BC/NX),Aphelios/Viktor,14,38,0.368421052631579
-Gnar/Ziggs (BC/NX),Aurelion Sol/Tryndamere,10,14,0.714285714285714
-Gnar/Ziggs (BC/NX),Aurelion Sol/Zoe (FR/MT),27,35,0.771428571428571
-Gnar/Ziggs (BC/NX),Azir/Irelia,14,16,0.875
-Gnar/Ziggs (BC/NX),BandleTree,8,13,0.615384615384615
-Gnar/Ziggs (BC/NX),Draven/Rumble (NX/PZ),3,10,0.3
-Gnar/Ziggs (BC/NX),Elise (NX/SI),12,20,0.6
-Gnar/Ziggs (BC/NX),Fizz/Lulu (BC/PZ),7,17,0.411764705882353
-Gnar/Ziggs (BC/NX),Miss Fortune/Quinn,5,13,0.384615384615385
-Gnar/Ziggs (BC/NX),Pantheon/Yuumi (DE/MT),17,23,0.739130434782609
-Gnar/Ziggs (BC/NX),Pyke/Rek'Sai,8,12,0.666666666666667
-Gnar/Ziggs (BC/NX),Riven/Viktor,7,18,0.388888888888889
-Gnar/Ziggs (BC/NX),Senna/Veigar,5,11,0.454545454545455
-Gnar/Ziggs (BC/NX),SunDisc,130,211,0.616113744075829
-Gnar/Ziggs (BC/NX),Taliyah/Ziggs,5,11,0.454545454545455
-Gnar/Ziggs (BC/NX),Tri-Beam (NX/PZ),18,55,0.327272727272727
-Hecarim/Lucian,SunDisc,32,59,0.542372881355932
+Gnar/Trundle (FR/PZ),Tri-Beam (NX/PZ),35,70,0.5
+Gnar/Trundle (FR/PZ),Trundle/Tryndamere (FR/SI),5,13,0.384615384615385
+Gnar/Viktor,SunDisc,6,15,0.4
+Gnar/Ziggs (BC/NX),Akshan/Viktor,5,11,0.454545454545455
+Gnar/Ziggs (BC/NX),Aphelios/Viktor,15,46,0.326086956521739
+Gnar/Ziggs (BC/NX),Aurelion Sol/Tryndamere,12,18,0.666666666666667
+Gnar/Ziggs (BC/NX),Aurelion Sol/Zoe (FR/MT),32,41,0.780487804878049
+Gnar/Ziggs (BC/NX),Azir/Irelia,24,28,0.857142857142857
+Gnar/Ziggs (BC/NX),BandleTree,9,16,0.5625
+Gnar/Ziggs (BC/NX),Caitlyn/Teemo (BC/PZ),10,14,0.714285714285714
+Gnar/Ziggs (BC/NX),Draven/Rumble (NX/PZ),4,12,0.333333333333333
+Gnar/Ziggs (BC/NX),Elise (NX/SI),13,25,0.52
+Gnar/Ziggs (BC/NX),Fizz/Lulu (BC/PZ),9,23,0.391304347826087
+Gnar/Ziggs (BC/NX),Gnar/Teemo/Tristana (BC/DE),8,13,0.615384615384615
+Gnar/Ziggs (BC/NX),Miss Fortune/Quinn,6,15,0.4
+Gnar/Ziggs (BC/NX),Pantheon/Yuumi (DE/MT),24,30,0.8
+Gnar/Ziggs (BC/NX),Pyke/Rek'Sai,11,15,0.733333333333333
+Gnar/Ziggs (BC/NX),Riven/Viktor,10,40,0.25
+Gnar/Ziggs (BC/NX),Senna/Veigar,8,15,0.533333333333333
+Gnar/Ziggs (BC/NX),SunDisc,164,268,0.611940298507463
+Gnar/Ziggs (BC/NX),Taliyah/Ziggs,9,21,0.428571428571429
+Gnar/Ziggs (BC/NX),Tri-Beam (NX/PZ),30,74,0.405405405405405
+Hecarim/Lucian,Aphelios/Viktor,5,11,0.454545454545455
+Hecarim/Lucian,SunDisc,38,71,0.535211267605634
 Heimerdinger/Jayce (BC/PZ),SunDisc,6,17,0.352941176470588
-Heimerdinger/Jayce (IO/PZ),SunDisc,6,12,0.5
-Heimerdinger/Jayce (PZ/SI),SunDisc,14,34,0.411764705882353
-Heimerdinger/Lee Sin/Vi/Viktor,SunDisc,16,23,0.695652173913044
-Heimerdinger/Viktor (BC/PZ),SunDisc,8,11,0.727272727272727
-Irelia/Miss Fortune,SunDisc,5,13,0.384615384615385
-Jarvan IV/Renekton,SunDisc,9,18,0.5
-Jarvan IV/Shen,Aphelios/Viktor,16,24,0.666666666666667
-Jarvan IV/Shen,Aurelion Sol/Trundle,6,10,0.6
-Jarvan IV/Shen,Azir/Irelia,6,11,0.545454545454545
-Jarvan IV/Shen,Caitlyn/Teemo (BC/PZ),7,12,0.583333333333333
-Jarvan IV/Shen,Draven/Rumble (NX/PZ),5,12,0.416666666666667
-Jarvan IV/Shen,Elise (NX/SI),12,20,0.6
+Heimerdinger/Jayce (IO/PZ),SunDisc,6,14,0.428571428571429
+Heimerdinger/Jayce (PZ/SI),Aphelios/Viktor,7,10,0.7
+Heimerdinger/Jayce (PZ/SI),SunDisc,15,41,0.365853658536585
+Heimerdinger/Lee Sin/Vi/Viktor,SunDisc,17,24,0.708333333333333
+Heimerdinger/Viktor (BC/PZ),SunDisc,9,12,0.75
+Heimerdinger/Viktor (IO/PZ),SunDisc,6,10,0.6
+Irelia/Miss Fortune,SunDisc,7,16,0.4375
+Jarvan IV/Renekton,SunDisc,10,19,0.526315789473684
+Jarvan IV/Renekton/Sivir,SunDisc,9,22,0.409090909090909
+Jarvan IV/Shen,Aphelios/Viktor,18,28,0.642857142857143
+Jarvan IV/Shen,Aurelion Sol/Trundle,6,11,0.545454545454545
+Jarvan IV/Shen,Aurelion Sol/Tryndamere,8,12,0.666666666666667
+Jarvan IV/Shen,Aurelion Sol/Zoe (FR/MT),5,11,0.454545454545455
+Jarvan IV/Shen,Azir/Irelia,6,13,0.461538461538462
+Jarvan IV/Shen,Caitlyn/Teemo (BC/PZ),7,15,0.466666666666667
+Jarvan IV/Shen,Draven/Rumble (NX/PZ),5,14,0.357142857142857
+Jarvan IV/Shen,Elise (NX/SI),13,21,0.619047619047619
+Jarvan IV/Shen,Fizz/Lulu (BC/PZ),8,10,0.8
 Jarvan IV/Shen,Miss Fortune/Quinn,9,16,0.5625
-Jarvan IV/Shen,Riven/Viktor,7,13,0.538461538461538
-Jarvan IV/Shen,SunDisc,63,158,0.39873417721519
-Jarvan IV/Shen,Tri-Beam (NX/PZ),12,27,0.444444444444444
-Jayce/Lux,Aphelios/Viktor,7,10,0.7
-Jayce/Lux,SunDisc,24,58,0.413793103448276
+Jarvan IV/Shen,Riven/Viktor,14,23,0.608695652173913
+Jarvan IV/Shen,SunDisc,67,185,0.362162162162162
+Jarvan IV/Shen,Taliyah/Ziggs,2,11,0.181818181818182
+Jarvan IV/Shen,Tri-Beam (NX/PZ),19,35,0.542857142857143
+Jayce/Lux,Aphelios/Viktor,11,16,0.6875
+Jayce/Lux,BandleTree,6,10,0.6
+Jayce/Lux,Riven/Viktor,4,13,0.307692307692308
+Jayce/Lux,SunDisc,32,81,0.395061728395062
 Jayce/Tryndamere,SunDisc,6,13,0.461538461538462
 Jinx/Lulu,SunDisc,6,11,0.545454545454545
-Jinx/Lulu (BC/PZ),SunDisc,5,11,0.454545454545455
-Jinx/Rumble,SunDisc,25,39,0.641025641025641
-Kalista/Maokai (BW/SI),SunDisc,2,12,0.166666666666667
-Kalista/Viego/Yuumi,SunDisc,8,16,0.5
-Karma/Viktor,SunDisc,5,10,0.5
-Kindred/Nasus,SunDisc,14,28,0.5
+Jinx/Lulu (BC/PZ),SunDisc,5,12,0.416666666666667
+Jinx/Rumble,SunDisc,27,45,0.6
+Kalista (PZ/SI),SunDisc,1,10,0.1
+Kalista/Maokai (BW/SI),SunDisc,2,13,0.153846153846154
+Kalista/Viego/Yuumi,SunDisc,9,19,0.473684210526316
+Karma/Viktor,SunDisc,7,13,0.538461538461538
+Katarina/Yasuo,SunDisc,2,10,0.2
+Kindred/Nasus,SunDisc,17,33,0.515151515151515
+Kindred/Vi,SunDisc,1,10,0.1
 Kindred/Viego (IO/SI),Akshan/Sivir (DE/SH),10,16,0.625
-Kindred/Viego (IO/SI),Aphelios/Viktor,25,46,0.543478260869565
+Kindred/Viego (IO/SI),Aphelios/Viktor,34,60,0.566666666666667
 Kindred/Viego (IO/SI),Aurelion Sol/Trundle,8,11,0.727272727272727
-Kindred/Viego (IO/SI),Aurelion Sol/Tryndamere,15,20,0.75
-Kindred/Viego (IO/SI),Aurelion Sol/Zoe (FR/MT),13,22,0.590909090909091
-Kindred/Viego (IO/SI),Azir/Irelia,9,18,0.5
-Kindred/Viego (IO/SI),BandleTree,1,11,0.0909090909090909
-Kindred/Viego (IO/SI),Caitlyn/Teemo (BC/PZ),7,15,0.466666666666667
-Kindred/Viego (IO/SI),Darius/Gnar (FR/NX),4,11,0.363636363636364
-Kindred/Viego (IO/SI),Draven/Rumble (NX/PZ),8,15,0.533333333333333
-Kindred/Viego (IO/SI),Ekko/Zilean,6,11,0.545454545454545
-Kindred/Viego (IO/SI),Elise (NX/SI),16,29,0.551724137931035
-Kindred/Viego (IO/SI),Fizz/Lulu (BC/PZ),5,11,0.454545454545455
-Kindred/Viego (IO/SI),Miss Fortune/Quinn,6,13,0.461538461538462
-Kindred/Viego (IO/SI),Pantheon/Yuumi (DE/MT),10,26,0.384615384615385
-Kindred/Viego (IO/SI),Pyke/Rek'Sai,11,20,0.55
-Kindred/Viego (IO/SI),Riven/Viktor,7,22,0.318181818181818
-Kindred/Viego (IO/SI),Senna/Veigar,8,24,0.333333333333333
-Kindred/Viego (IO/SI),SunDisc,117,323,0.362229102167183
-Kindred/Viego (IO/SI),Taliyah/Ziggs,6,15,0.4
-Kindred/Viego (IO/SI),Tri-Beam (NX/PZ),14,46,0.304347826086957
-Kindred/Viego (IO/SI),Trundle/Tryndamere (FR/SI),6,11,0.545454545454545
-LeBlanc/Sivir,Aphelios/Viktor,4,10,0.4
-LeBlanc/Sivir,SunDisc,42,81,0.518518518518519
-LeBlanc/Sivir,Tri-Beam (NX/PZ),2,11,0.181818181818182
-Lee Sin/Riven,SunDisc,5,10,0.5
-Lee Sin/Viktor,SunDisc,22,37,0.594594594594595
-Lee Sin/Viktor,Tri-Beam (NX/PZ),7,11,0.636363636363636
-Lee Sin/Zoe,SunDisc,15,34,0.441176470588235
-Lee Sin/Zoe,Tri-Beam (NX/PZ),3,10,0.3
+Kindred/Viego (IO/SI),Aurelion Sol/Tryndamere,20,26,0.769230769230769
+Kindred/Viego (IO/SI),Aurelion Sol/Zoe (FR/MT),19,32,0.59375
+Kindred/Viego (IO/SI),Azir/Irelia,12,26,0.461538461538462
+Kindred/Viego (IO/SI),BandleTree,2,13,0.153846153846154
+Kindred/Viego (IO/SI),Caitlyn/Teemo (BC/PZ),7,16,0.4375
+Kindred/Viego (IO/SI),Darius/Gnar (FR/NX),5,13,0.384615384615385
+Kindred/Viego (IO/SI),Draven/Rumble,6,12,0.5
+Kindred/Viego (IO/SI),Draven/Rumble (NX/PZ),10,19,0.526315789473684
+Kindred/Viego (IO/SI),Ekko/Zilean,7,13,0.538461538461538
+Kindred/Viego (IO/SI),Elise (NX/SI),18,34,0.529411764705882
+Kindred/Viego (IO/SI),Fizz/Lulu (BC/PZ),9,19,0.473684210526316
+Kindred/Viego (IO/SI),Kindred/Viego (IO/SI),5,10,0.5
+Kindred/Viego (IO/SI),Miss Fortune/Quinn,13,21,0.619047619047619
+Kindred/Viego (IO/SI),Pantheon/Taric/Yuumi (DE/MT),8,10,0.8
+Kindred/Viego (IO/SI),Pantheon/Yuumi (DE/MT),12,32,0.375
+Kindred/Viego (IO/SI),Pyke/Rek'Sai,15,26,0.576923076923077
+Kindred/Viego (IO/SI),Riven/Viktor,15,53,0.283018867924528
+Kindred/Viego (IO/SI),Senna/Veigar,9,26,0.346153846153846
+Kindred/Viego (IO/SI),SunDisc,130,374,0.347593582887701
+Kindred/Viego (IO/SI),Taliyah/Ziggs,8,20,0.4
+Kindred/Viego (IO/SI),Tri-Beam (NX/PZ),18,59,0.305084745762712
+Kindred/Viego (IO/SI),Trundle/Tryndamere (FR/SI),8,15,0.533333333333333
+LeBlanc (FR/NX),SunDisc,8,14,0.571428571428571
+LeBlanc/Sivir,Aphelios/Viktor,6,13,0.461538461538462
+LeBlanc/Sivir,Azir/Irelia,7,10,0.7
+LeBlanc/Sivir,Riven/Viktor,5,11,0.454545454545455
+LeBlanc/Sivir,SunDisc,48,94,0.51063829787234
+LeBlanc/Sivir,Tri-Beam (NX/PZ),4,15,0.266666666666667
+Lee Sin/Riven,SunDisc,5,12,0.416666666666667
+Lee Sin/Viktor,Riven/Viktor,7,10,0.7
+Lee Sin/Viktor,SunDisc,29,49,0.591836734693878
+Lee Sin/Viktor,Tri-Beam (NX/PZ),8,16,0.5
+Lee Sin/Zoe,SunDisc,18,44,0.409090909090909
+Lee Sin/Zoe,Tri-Beam (NX/PZ),5,14,0.357142857142857
 Leona/Yasuo,Aphelios/Viktor,5,15,0.333333333333333
-Leona/Yasuo,SunDisc,37,92,0.402173913043478
-Leona/Yasuo,Tri-Beam (NX/PZ),2,16,0.125
-Lissandra/Taliyah,SunDisc,21,49,0.428571428571429
-Lissandra/Taliyah,Tri-Beam (NX/PZ),10,16,0.625
-Lissandra/Trundle (FR/IO),SunDisc,21,28,0.75
+Leona/Yasuo,Pantheon/Yuumi (DE/MT),6,10,0.6
+Leona/Yasuo,SunDisc,40,98,0.408163265306122
+Leona/Yasuo,Tri-Beam (NX/PZ),2,17,0.117647058823529
+Lissandra/Taliyah,Aphelios/Viktor,4,12,0.333333333333333
+Lissandra/Taliyah,SunDisc,26,58,0.448275862068966
+Lissandra/Taliyah,Tri-Beam (NX/PZ),11,17,0.647058823529412
+Lissandra/Trundle (FR/IO),SunDisc,21,30,0.7
 Lissandra/Trundle (FR/PZ),SunDisc,14,30,0.466666666666667
-Lissandra/Trundle (FR/SI),Aphelios/Viktor,8,17,0.470588235294118
-Lissandra/Trundle (FR/SI),Aurelion Sol/Zoe (FR/MT),6,16,0.375
-Lissandra/Trundle (FR/SI),Pantheon/Yuumi (DE/MT),3,10,0.3
-Lissandra/Trundle (FR/SI),Riven/Viktor,4,13,0.307692307692308
-Lissandra/Trundle (FR/SI),SunDisc,30,119,0.252100840336134
-Lissandra/Trundle (FR/SI),Tri-Beam (NX/PZ),12,28,0.428571428571429
-Lucian/Miss Fortune,SunDisc,6,15,0.4
-Lucian/Zed,SunDisc,23,38,0.605263157894737
+Lissandra/Trundle (FR/SI),Akshan/Sivir (DE/SH),5,10,0.5
+Lissandra/Trundle (FR/SI),Aphelios/Viktor,10,22,0.454545454545455
+Lissandra/Trundle (FR/SI),Aurelion Sol/Zoe (FR/MT),6,19,0.315789473684211
+Lissandra/Trundle (FR/SI),Azir/Irelia,6,13,0.461538461538462
+Lissandra/Trundle (FR/SI),Caitlyn/Teemo (BC/PZ),3,10,0.3
+Lissandra/Trundle (FR/SI),Elise (NX/SI),9,11,0.818181818181818
+Lissandra/Trundle (FR/SI),Pantheon/Yuumi (DE/MT),4,12,0.333333333333333
+Lissandra/Trundle (FR/SI),Riven/Viktor,11,24,0.458333333333333
+Lissandra/Trundle (FR/SI),Senna/Veigar,5,10,0.5
+Lissandra/Trundle (FR/SI),SunDisc,36,142,0.253521126760563
+Lissandra/Trundle (FR/SI),Tri-Beam (NX/PZ),14,34,0.411764705882353
+Lissandra/Tryndamere (DE/FR),SunDisc,3,10,0.3
+Lucian/Miss Fortune,SunDisc,6,16,0.375
+Lucian/Zed,SunDisc,24,41,0.585365853658537
 Lulu/Rumble (BC/PZ),Akshan/Sivir (DE/SH),3,10,0.3
-Lulu/Rumble (BC/PZ),Aphelios/Viktor,7,16,0.4375
+Lulu/Rumble (BC/PZ),Aphelios/Viktor,10,20,0.5
 Lulu/Rumble (BC/PZ),Aurelion Sol/Zoe (FR/MT),8,12,0.666666666666667
-Lulu/Rumble (BC/PZ),Azir/Irelia,7,10,0.7
-Lulu/Rumble (BC/PZ),Miss Fortune/Quinn,4,10,0.4
-Lulu/Rumble (BC/PZ),SunDisc,71,133,0.533834586466166
-Lulu/Rumble (BC/PZ),Taliyah/Ziggs,8,11,0.727272727272727
-Lulu/Rumble (BC/PZ),Tri-Beam (NX/PZ),8,20,0.4
-Lulu/Zed (DE/IO),SunDisc,15,23,0.652173913043478
-Malphite/Taliyah,SunDisc,9,25,0.36
-Maokai/Nautilus,Aphelios/Viktor,21,30,0.7
-Maokai/Nautilus,Aurelion Sol/Zoe (FR/MT),5,11,0.454545454545455
-Maokai/Nautilus,Azir/Irelia,7,12,0.583333333333333
-Maokai/Nautilus,Miss Fortune/Quinn,6,12,0.5
-Maokai/Nautilus,Pantheon/Yuumi (DE/MT),8,10,0.8
-Maokai/Nautilus,Riven/Viktor,6,15,0.4
-Maokai/Nautilus,SunDisc,73,150,0.486666666666667
-Maokai/Nautilus,Taliyah/Ziggs,6,10,0.6
-Maokai/Nautilus,Tri-Beam (NX/PZ),22,29,0.758620689655172
-Marauder,SunDisc,3,12,0.25
-Miss Fortune (BW/NX),SunDisc,8,11,0.727272727272727
-Miss Fortune/Quinn,Akshan/Sivir (DE/SH),8,24,0.333333333333333
-Miss Fortune/Quinn,Aphelios/Diana (MT/SI),13,18,0.722222222222222
-Miss Fortune/Quinn,Aphelios/Viktor,39,81,0.481481481481482
-Miss Fortune/Quinn,Aphelios/Viktor/Zoe,5,10,0.5
-Miss Fortune/Quinn,Aurelion Sol/Trundle,12,18,0.666666666666667
-Miss Fortune/Quinn,Aurelion Sol/Tryndamere,17,26,0.653846153846154
-Miss Fortune/Quinn,Aurelion Sol/Zoe (FR/MT),24,36,0.666666666666667
-Miss Fortune/Quinn,Azir/Irelia,26,33,0.787878787878788
-Miss Fortune/Quinn,BandleTree,19,29,0.655172413793103
-Miss Fortune/Quinn,Caitlyn/Teemo (BC/PZ),14,21,0.666666666666667
-Miss Fortune/Quinn,Darius/Gnar (FR/NX),19,33,0.575757575757576
-Miss Fortune/Quinn,Draven/Rumble,8,18,0.444444444444444
-Miss Fortune/Quinn,Draven/Rumble (NX/PZ),11,20,0.55
-Miss Fortune/Quinn,Draven/Rumble/Sion,9,14,0.642857142857143
-Miss Fortune/Quinn,Elise (NX/SI),23,43,0.534883720930233
-Miss Fortune/Quinn,Fizz/Lulu (BC/PZ),9,19,0.473684210526316
-Miss Fortune/Quinn,Galio/Lulu/Poppy (BC/DE),6,10,0.6
-Miss Fortune/Quinn,Gnar/Teemo/Tristana (BC/DE),10,19,0.526315789473684
-Miss Fortune/Quinn,Gnar/Trundle (FR/PZ),12,16,0.75
-Miss Fortune/Quinn,Gnar/Ziggs (BC/NX),8,13,0.615384615384615
+Lulu/Rumble (BC/PZ),Azir/Irelia,10,13,0.769230769230769
+Lulu/Rumble (BC/PZ),Draven/Rumble (NX/PZ),8,11,0.727272727272727
+Lulu/Rumble (BC/PZ),Gnar/Teemo/Tristana (BC/DE),6,10,0.6
+Lulu/Rumble (BC/PZ),Miss Fortune/Quinn,5,14,0.357142857142857
+Lulu/Rumble (BC/PZ),Riven/Viktor,5,13,0.384615384615385
+Lulu/Rumble (BC/PZ),SunDisc,87,158,0.550632911392405
+Lulu/Rumble (BC/PZ),Taliyah/Ziggs,14,18,0.777777777777778
+Lulu/Rumble (BC/PZ),Tri-Beam (NX/PZ),9,24,0.375
+Lulu/Zed (DE/IO),SunDisc,18,30,0.6
+Malphite/Taliyah,SunDisc,12,30,0.4
+Malphite/Yasuo,SunDisc,4,14,0.285714285714286
+Maokai/Nautilus,Aphelios/Viktor,27,40,0.675
+Maokai/Nautilus,Aurelion Sol/Zoe (FR/MT),7,18,0.388888888888889
+Maokai/Nautilus,Azir/Irelia,9,14,0.642857142857143
+Maokai/Nautilus,Caitlyn/Teemo (BC/PZ),2,12,0.166666666666667
+Maokai/Nautilus,Darius/Gnar (FR/NX),6,10,0.6
+Maokai/Nautilus,Elise (NX/SI),4,12,0.333333333333333
+Maokai/Nautilus,Gnar/Trundle (FR/PZ),7,10,0.7
+Maokai/Nautilus,Miss Fortune/Quinn,6,14,0.428571428571429
+Maokai/Nautilus,Pantheon/Yuumi (DE/MT),13,19,0.68421052631579
+Maokai/Nautilus,Riven/Viktor,12,34,0.352941176470588
+Maokai/Nautilus,Senna/Veigar,7,10,0.7
+Maokai/Nautilus,SunDisc,98,201,0.487562189054726
+Maokai/Nautilus,Taliyah/Ziggs,9,16,0.5625
+Maokai/Nautilus,Tri-Beam (NX/PZ),26,38,0.68421052631579
+Marauder,SunDisc,4,14,0.285714285714286
+Miss Fortune (BW/NX),Riven/Viktor,8,11,0.727272727272727
+Miss Fortune (BW/NX),SunDisc,18,22,0.818181818181818
+Miss Fortune (BW/NX),Tri-Beam (NX/PZ),4,11,0.363636363636364
+Miss Fortune/Quinn,Akshan/Sivir (DE/SH),10,30,0.333333333333333
+Miss Fortune/Quinn,Akshan/Viktor,8,16,0.5
+Miss Fortune/Quinn,Aphelios/Diana (MT/SI),15,20,0.75
+Miss Fortune/Quinn,Aphelios/Viktor,51,106,0.481132075471698
+Miss Fortune/Quinn,Aphelios/Viktor/Zoe,6,11,0.545454545454545
+Miss Fortune/Quinn,Aphelios/Zoe (MT/SI),8,12,0.666666666666667
+Miss Fortune/Quinn,Aurelion Sol/Trundle,16,22,0.727272727272727
+Miss Fortune/Quinn,Aurelion Sol/Tryndamere,26,38,0.68421052631579
+Miss Fortune/Quinn,Aurelion Sol/Zoe (FR/MT),34,53,0.641509433962264
+Miss Fortune/Quinn,Azir/Irelia,36,48,0.75
+Miss Fortune/Quinn,BandleTree,22,34,0.647058823529412
+Miss Fortune/Quinn,Caitlyn/Teemo (BC/PZ),25,41,0.609756097560976
+Miss Fortune/Quinn,Darius/Gnar (FR/NX),23,42,0.547619047619048
+Miss Fortune/Quinn,Draven/Rumble,9,20,0.45
+Miss Fortune/Quinn,Draven/Rumble (NX/PZ),13,22,0.590909090909091
+Miss Fortune/Quinn,Draven/Rumble/Sion,12,20,0.6
+Miss Fortune/Quinn,Ekko/Zilean,12,17,0.705882352941177
+Miss Fortune/Quinn,Elise (NX/SI),30,60,0.5
+Miss Fortune/Quinn,Fizz/Lulu (BC/PZ),14,28,0.5
+Miss Fortune/Quinn,Galio/Lulu/Poppy (BC/DE),7,14,0.5
+Miss Fortune/Quinn,Gangplank/Miss Fortune (BW/NX),8,13,0.615384615384615
+Miss Fortune/Quinn,Gangplank/Sejuani,9,12,0.75
+Miss Fortune/Quinn,Gnar/Teemo/Tristana (BC/DE),12,24,0.5
+Miss Fortune/Quinn,Gnar/Trundle (FR/PZ),13,19,0.68421052631579
+Miss Fortune/Quinn,Gnar/Ziggs (BC/NX),9,15,0.6
 Miss Fortune/Quinn,Jarvan IV/Shen,7,16,0.4375
-Miss Fortune/Quinn,Kindred/Viego (IO/SI),7,13,0.538461538461538
-Miss Fortune/Quinn,Lulu/Rumble (BC/PZ),6,10,0.6
-Miss Fortune/Quinn,Maokai/Nautilus,6,12,0.5
-Miss Fortune/Quinn,Miss Fortune/Quinn,15,30,0.5
-Miss Fortune/Quinn,Pantheon/Yuumi (DE/MT),23,47,0.48936170212766
-Miss Fortune/Quinn,Pyke/Rek'Sai,18,32,0.5625
-Miss Fortune/Quinn,Riven/Viktor,31,57,0.543859649122807
-Miss Fortune/Quinn,Senna/Veigar,19,27,0.703703703703704
-Miss Fortune/Quinn,SunDisc,327,629,0.519872813990461
-Miss Fortune/Quinn,Taliyah/Ziggs,13,27,0.481481481481482
-Miss Fortune/Quinn,Tri-Beam (NX/PZ),51,126,0.404761904761905
-Miss Fortune/Quinn,Trundle/Tryndamere (FR/SI),5,13,0.384615384615385
-Mistwraith Allegiance,Aphelios/Viktor,4,10,0.4
-Mistwraith Allegiance,SunDisc,27,71,0.380281690140845
-Nami/Twisted Fate (BW/PZ),Aurelion Sol/Zoe (FR/MT),4,10,0.4
-Nami/Twisted Fate (BW/PZ),Riven/Viktor,5,11,0.454545454545455
-Nami/Twisted Fate (BW/PZ),SunDisc,34,67,0.507462686567164
-Nami/Twisted Fate (BW/PZ),Tri-Beam (NX/PZ),5,15,0.333333333333333
-Nami/Viktor,SunDisc,32,55,0.581818181818182
-Nasus/Thresh,SunDisc,4,14,0.285714285714286
-Pantheon/Taric (DE/MT),SunDisc,27,42,0.642857142857143
-Pantheon/Taric (DE/MT),Tri-Beam (NX/PZ),3,10,0.3
-Pantheon/Taric/Yuumi (DE/MT),Aphelios/Viktor,20,31,0.645161290322581
-Pantheon/Taric/Yuumi (DE/MT),Aurelion Sol/Zoe (FR/MT),13,17,0.764705882352941
-Pantheon/Taric/Yuumi (DE/MT),Azir/Irelia,5,18,0.277777777777778
+Miss Fortune/Quinn,Kindred/Viego (IO/SI),8,21,0.380952380952381
+Miss Fortune/Quinn,Lulu/Rumble (BC/PZ),9,14,0.642857142857143
+Miss Fortune/Quinn,Maokai/Nautilus,8,14,0.571428571428571
+Miss Fortune/Quinn,Miss Fortune/Quinn,24,48,0.5
+Miss Fortune/Quinn,Pantheon/Taric/Yuumi (DE/MT),9,17,0.529411764705882
+Miss Fortune/Quinn,Pantheon/Yuumi (DE/MT),25,57,0.43859649122807
+Miss Fortune/Quinn,Pyke/Rek'Sai,25,45,0.555555555555556
+Miss Fortune/Quinn,Riven/Viktor,52,98,0.530612244897959
+Miss Fortune/Quinn,Senna/Veigar,23,38,0.605263157894737
+Miss Fortune/Quinn,SunDisc,397,737,0.538670284938942
+Miss Fortune/Quinn,Taliyah/Ziggs,21,42,0.5
+Miss Fortune/Quinn,Tri-Beam (NX/PZ),62,160,0.3875
+Miss Fortune/Quinn,Trundle/Tryndamere (FR/SI),6,18,0.333333333333333
+Miss Fortune/Riven,SunDisc,7,10,0.7
+Mistwraith Allegiance,Aphelios/Viktor,5,13,0.384615384615385
+Mistwraith Allegiance,Aurelion Sol/Zoe (FR/MT),3,11,0.272727272727273
+Mistwraith Allegiance,Pyke/Rek'Sai,3,10,0.3
+Mistwraith Allegiance,Riven/Viktor,4,14,0.285714285714286
+Mistwraith Allegiance,SunDisc,40,98,0.408163265306122
+Mistwraith Allegiance,Tri-Beam (NX/PZ),6,10,0.6
+Nami/Twisted Fate (BW/PZ),Aphelios/Viktor,6,11,0.545454545454545
+Nami/Twisted Fate (BW/PZ),Aurelion Sol/Zoe (FR/MT),6,13,0.461538461538462
+Nami/Twisted Fate (BW/PZ),Elise (NX/SI),6,10,0.6
+Nami/Twisted Fate (BW/PZ),Riven/Viktor,8,16,0.5
+Nami/Twisted Fate (BW/PZ),SunDisc,36,74,0.486486486486487
+Nami/Twisted Fate (BW/PZ),Tri-Beam (NX/PZ),8,20,0.4
+Nami/Viktor,Riven/Viktor,7,11,0.636363636363636
+Nami/Viktor,SunDisc,37,65,0.569230769230769
+Nami/Viktor,Tri-Beam (NX/PZ),4,10,0.4
+Nasus/Thresh,SunDisc,5,18,0.277777777777778
+Nasus/Viego,SunDisc,5,10,0.5
+Pantheon/Shyvana,SunDisc,7,10,0.7
+Pantheon/Taric (DE/MT),Aphelios/Viktor,6,10,0.6
+Pantheon/Taric (DE/MT),Riven/Viktor,4,14,0.285714285714286
+Pantheon/Taric (DE/MT),SunDisc,36,60,0.6
+Pantheon/Taric (DE/MT),Tri-Beam (NX/PZ),4,15,0.266666666666667
+Pantheon/Taric/Yuumi (DE/MT),Akshan/Sivir (DE/SH),5,11,0.454545454545455
+Pantheon/Taric/Yuumi (DE/MT),Aphelios/Viktor,28,42,0.666666666666667
+Pantheon/Taric/Yuumi (DE/MT),Aurelion Sol/Tryndamere,4,10,0.4
+Pantheon/Taric/Yuumi (DE/MT),Aurelion Sol/Zoe (FR/MT),19,25,0.76
+Pantheon/Taric/Yuumi (DE/MT),Azir/Irelia,9,25,0.36
 Pantheon/Taric/Yuumi (DE/MT),Caitlyn/Teemo (BC/PZ),12,20,0.6
-Pantheon/Taric/Yuumi (DE/MT),Darius/Gnar (FR/NX),8,12,0.666666666666667
-Pantheon/Taric/Yuumi (DE/MT),Draven/Rumble (NX/PZ),2,13,0.153846153846154
-Pantheon/Taric/Yuumi (DE/MT),Elise (NX/SI),10,28,0.357142857142857
-Pantheon/Taric/Yuumi (DE/MT),Gnar/Teemo/Tristana (BC/DE),8,11,0.727272727272727
+Pantheon/Taric/Yuumi (DE/MT),Darius/Gnar (FR/NX),9,15,0.6
+Pantheon/Taric/Yuumi (DE/MT),Draven/Rumble (NX/PZ),3,17,0.176470588235294
+Pantheon/Taric/Yuumi (DE/MT),Draven/Viktor,4,11,0.363636363636364
+Pantheon/Taric/Yuumi (DE/MT),Elise (NX/SI),12,33,0.363636363636364
+Pantheon/Taric/Yuumi (DE/MT),Fizz/Lulu (BC/PZ),4,12,0.333333333333333
+Pantheon/Taric/Yuumi (DE/MT),Gangplank/Sejuani,8,11,0.727272727272727
+Pantheon/Taric/Yuumi (DE/MT),Gnar/Teemo/Tristana (BC/DE),9,15,0.6
+Pantheon/Taric/Yuumi (DE/MT),Kindred/Viego (IO/SI),2,10,0.2
+Pantheon/Taric/Yuumi (DE/MT),Miss Fortune/Quinn,8,17,0.470588235294118
 Pantheon/Taric/Yuumi (DE/MT),Pantheon/Taric/Yuumi (DE/MT),7,14,0.5
-Pantheon/Taric/Yuumi (DE/MT),Pantheon/Yuumi (DE/MT),5,18,0.277777777777778
-Pantheon/Taric/Yuumi (DE/MT),Pyke/Rek'Sai,8,12,0.666666666666667
-Pantheon/Taric/Yuumi (DE/MT),Riven/Viktor,16,21,0.761904761904762
+Pantheon/Taric/Yuumi (DE/MT),Pantheon/Yuumi (DE/MT),10,28,0.357142857142857
+Pantheon/Taric/Yuumi (DE/MT),Pyke/Rek'Sai,12,17,0.705882352941177
+Pantheon/Taric/Yuumi (DE/MT),Riven/Viktor,31,53,0.584905660377359
 Pantheon/Taric/Yuumi (DE/MT),Rumble/Sion,8,10,0.8
-Pantheon/Taric/Yuumi (DE/MT),Senna/Veigar,10,15,0.666666666666667
-Pantheon/Taric/Yuumi (DE/MT),SunDisc,141,241,0.585062240663901
-Pantheon/Taric/Yuumi (DE/MT),Taliyah/Ziggs,3,10,0.3
-Pantheon/Taric/Yuumi (DE/MT),Tri-Beam (NX/PZ),22,52,0.423076923076923
-Pantheon/Yuumi,SunDisc,12,24,0.5
-Pantheon/Yuumi (DE/MT),Akshan/Aphelios,4,10,0.4
-Pantheon/Yuumi (DE/MT),Akshan/Sivir (DE/SH),15,36,0.416666666666667
-Pantheon/Yuumi (DE/MT),Akshan/Viktor,7,15,0.466666666666667
-Pantheon/Yuumi (DE/MT),Aphelios/Diana (MT/SI),10,18,0.555555555555556
-Pantheon/Yuumi (DE/MT),Aphelios/Viktor,53,117,0.452991452991453
-Pantheon/Yuumi (DE/MT),Aphelios/Viktor/Zoe,10,18,0.555555555555556
-Pantheon/Yuumi (DE/MT),Aphelios/Zoe (MT/SI),5,13,0.384615384615385
-Pantheon/Yuumi (DE/MT),Aurelion Sol/Trundle,14,28,0.5
-Pantheon/Yuumi (DE/MT),Aurelion Sol/Tryndamere,27,54,0.5
-Pantheon/Yuumi (DE/MT),Aurelion Sol/Zoe (FR/MT),44,85,0.517647058823529
-Pantheon/Yuumi (DE/MT),Azir/Irelia,31,75,0.413333333333333
-Pantheon/Yuumi (DE/MT),BandleTree,10,34,0.294117647058824
-Pantheon/Yuumi (DE/MT),Caitlyn/Swain,4,11,0.363636363636364
-Pantheon/Yuumi (DE/MT),Caitlyn/Teemo (BC/PZ),31,44,0.704545454545455
-Pantheon/Yuumi (DE/MT),Championless (FR/PZ),9,12,0.75
-Pantheon/Yuumi (DE/MT),Darius/Gnar (FR/NX),12,32,0.375
-Pantheon/Yuumi (DE/MT),Draven/Rumble,13,15,0.866666666666667
-Pantheon/Yuumi (DE/MT),Draven/Rumble (NX/PZ),13,26,0.5
-Pantheon/Yuumi (DE/MT),Draven/Rumble/Sion,10,12,0.833333333333333
-Pantheon/Yuumi (DE/MT),Draven/Viktor,8,12,0.666666666666667
-Pantheon/Yuumi (DE/MT),Ekko/Zilean,7,12,0.583333333333333
-Pantheon/Yuumi (DE/MT),Elise (NX/SI),13,63,0.206349206349206
-Pantheon/Yuumi (DE/MT),Fizz/Lulu (BC/PZ),9,27,0.333333333333333
-Pantheon/Yuumi (DE/MT),Fizz/Riven (BC/NX),6,11,0.545454545454545
-Pantheon/Yuumi (DE/MT),Galio/Lulu/Poppy (BC/DE),15,22,0.681818181818182
-Pantheon/Yuumi (DE/MT),Gangplank/Sejuani,11,14,0.785714285714286
-Pantheon/Yuumi (DE/MT),Gnar/Swain,4,11,0.363636363636364
-Pantheon/Yuumi (DE/MT),Gnar/Teemo/Tristana (BC/DE),12,18,0.666666666666667
+Pantheon/Taric/Yuumi (DE/MT),Senna/Veigar,10,18,0.555555555555556
+Pantheon/Taric/Yuumi (DE/MT),SunDisc,169,291,0.580756013745705
+Pantheon/Taric/Yuumi (DE/MT),Taliyah/Ziggs,8,18,0.444444444444444
+Pantheon/Taric/Yuumi (DE/MT),Tri-Beam (NX/PZ),27,69,0.391304347826087
+Pantheon/Yuumi,SunDisc,14,27,0.518518518518519
+Pantheon/Yuumi (DE/MT),Akshan/Aphelios,4,12,0.333333333333333
+Pantheon/Yuumi (DE/MT),Akshan/Sivir (DE/SH),20,44,0.454545454545455
+Pantheon/Yuumi (DE/MT),Akshan/Viktor,13,22,0.590909090909091
+Pantheon/Yuumi (DE/MT),Anivia (FR/SI),8,11,0.727272727272727
+Pantheon/Yuumi (DE/MT),Aphelios/Diana (MT/SI),12,27,0.444444444444444
+Pantheon/Yuumi (DE/MT),Aphelios/Viktor,72,152,0.473684210526316
+Pantheon/Yuumi (DE/MT),Aphelios/Viktor/Zoe,13,24,0.541666666666667
+Pantheon/Yuumi (DE/MT),Aphelios/Zoe (MT/SI),9,18,0.5
+Pantheon/Yuumi (DE/MT),Aurelion Sol/Trundle,21,44,0.477272727272727
+Pantheon/Yuumi (DE/MT),Aurelion Sol/Tryndamere,31,65,0.476923076923077
+Pantheon/Yuumi (DE/MT),Aurelion Sol/Zoe (FR/MT),56,113,0.495575221238938
+Pantheon/Yuumi (DE/MT),Azir/Irelia,36,85,0.423529411764706
+Pantheon/Yuumi (DE/MT),BandleTree,12,39,0.307692307692308
+Pantheon/Yuumi (DE/MT),Caitlyn/Swain,5,12,0.416666666666667
+Pantheon/Yuumi (DE/MT),Caitlyn/Teemo (BC/PZ),45,61,0.737704918032787
+Pantheon/Yuumi (DE/MT),Championless (BC/PZ),10,12,0.833333333333333
+Pantheon/Yuumi (DE/MT),Championless (FR/PZ),11,14,0.785714285714286
+Pantheon/Yuumi (DE/MT),Darius/Gnar (FR/NX),20,43,0.465116279069768
+Pantheon/Yuumi (DE/MT),Draven/Rumble,19,25,0.76
+Pantheon/Yuumi (DE/MT),Draven/Rumble (NX/PZ),20,41,0.487804878048781
+Pantheon/Yuumi (DE/MT),Draven/Rumble/Sion,12,17,0.705882352941177
+Pantheon/Yuumi (DE/MT),Draven/Viktor,18,30,0.6
+Pantheon/Yuumi (DE/MT),Ekko/Zilean,9,18,0.5
+Pantheon/Yuumi (DE/MT),Elise (NX/SI),26,87,0.298850574712644
+Pantheon/Yuumi (DE/MT),Fizz/Lulu (BC/PZ),13,49,0.26530612244898
+Pantheon/Yuumi (DE/MT),Fizz/Riven (BC/NX),7,12,0.583333333333333
+Pantheon/Yuumi (DE/MT),Galio/Lulu/Poppy (BC/DE),17,24,0.708333333333333
+Pantheon/Yuumi (DE/MT),Gangplank/Miss Fortune (BW/NX),9,14,0.642857142857143
+Pantheon/Yuumi (DE/MT),Gangplank/Sejuani,15,22,0.681818181818182
+Pantheon/Yuumi (DE/MT),Gnar/Swain,5,13,0.384615384615385
+Pantheon/Yuumi (DE/MT),Gnar/Teemo/Tristana (BC/DE),17,24,0.708333333333333
 Pantheon/Yuumi (DE/MT),Gnar/Trundle (FR/IO),4,10,0.4
-Pantheon/Yuumi (DE/MT),Gnar/Trundle (FR/PZ),11,21,0.523809523809524
-Pantheon/Yuumi (DE/MT),Gnar/Ziggs (BC/NX),6,23,0.260869565217391
-Pantheon/Yuumi (DE/MT),Kindred/Viego (IO/SI),16,26,0.615384615384615
-Pantheon/Yuumi (DE/MT),Lissandra/Trundle (FR/SI),7,10,0.7
-Pantheon/Yuumi (DE/MT),Maokai/Nautilus,2,10,0.2
-Pantheon/Yuumi (DE/MT),Miss Fortune/Quinn,24,47,0.51063829787234
-Pantheon/Yuumi (DE/MT),Pantheon/Taric/Yuumi (DE/MT),13,18,0.722222222222222
-Pantheon/Yuumi (DE/MT),Pantheon/Yuumi (DE/MT),32,64,0.5
-Pantheon/Yuumi (DE/MT),Pyke/Rek'Sai,16,34,0.470588235294118
-Pantheon/Yuumi (DE/MT),Riven/Viktor,27,51,0.529411764705882
-Pantheon/Yuumi (DE/MT),Rumble/Sion,5,12,0.416666666666667
-Pantheon/Yuumi (DE/MT),Senna/Veigar,21,44,0.477272727272727
-Pantheon/Yuumi (DE/MT),SunDisc,456,829,0.550060313630881
-Pantheon/Yuumi (DE/MT),Taliyah/Ziggs,21,48,0.4375
-Pantheon/Yuumi (DE/MT),Tri-Beam (NX/PZ),66,174,0.379310344827586
-Pantheon/Yuumi (DE/MT),Trundle/Tryndamere (FR/SI),9,23,0.391304347826087
-Pantheon/Yuumi (DE/MT),Viktor/Zoe,10,14,0.714285714285714
-Pantheon/Yuumi (DE/MT),Xerath/Zilean (BC/SH),9,14,0.642857142857143
-Pyke/Rek'Sai,Akshan/Sivir (DE/SH),12,23,0.521739130434783
-Pyke/Rek'Sai,Aphelios/Diana (MT/SI),7,12,0.583333333333333
-Pyke/Rek'Sai,Aphelios/Viktor,31,77,0.402597402597403
-Pyke/Rek'Sai,Aurelion Sol/Trundle,8,12,0.666666666666667
-Pyke/Rek'Sai,Aurelion Sol/Tryndamere,25,35,0.714285714285714
-Pyke/Rek'Sai,Aurelion Sol/Zoe (FR/MT),33,45,0.733333333333333
-Pyke/Rek'Sai,Azir/Irelia,11,18,0.611111111111111
-Pyke/Rek'Sai,Caitlyn/Teemo (BC/PZ),15,28,0.535714285714286
-Pyke/Rek'Sai,Darius/Gnar (FR/NX),8,11,0.727272727272727
-Pyke/Rek'Sai,Draven/Rumble (NX/PZ),10,16,0.625
-Pyke/Rek'Sai,Draven/Viktor,4,10,0.4
-Pyke/Rek'Sai,Ekko/Zilean,9,14,0.642857142857143
-Pyke/Rek'Sai,Elise (NX/SI),12,34,0.352941176470588
-Pyke/Rek'Sai,Fizz/Lulu (BC/PZ),11,24,0.458333333333333
-Pyke/Rek'Sai,Gnar/Teemo/Tristana (BC/DE),6,13,0.461538461538462
-Pyke/Rek'Sai,Gnar/Trundle (FR/PZ),4,10,0.4
-Pyke/Rek'Sai,Gnar/Ziggs (BC/NX),4,12,0.333333333333333
-Pyke/Rek'Sai,Kindred/Viego (IO/SI),9,20,0.45
-Pyke/Rek'Sai,Miss Fortune/Quinn,14,32,0.4375
-Pyke/Rek'Sai,Pantheon/Taric/Yuumi (DE/MT),4,12,0.333333333333333
-Pyke/Rek'Sai,Pantheon/Yuumi (DE/MT),18,34,0.529411764705882
-Pyke/Rek'Sai,Pyke/Rek'Sai,12,24,0.5
-Pyke/Rek'Sai,Riven/Viktor,15,50,0.3
-Pyke/Rek'Sai,Senna/Veigar,9,18,0.5
-Pyke/Rek'Sai,SunDisc,233,502,0.464143426294821
-Pyke/Rek'Sai,Taliyah/Ziggs,5,27,0.185185185185185
-Pyke/Rek'Sai,Tri-Beam (NX/PZ),51,107,0.476635514018692
-Pyke/Rek'Sai,Trundle/Tryndamere (FR/SI),9,12,0.75
-Rek'Sai,SunDisc,8,11,0.727272727272727
-Riven/Rumble,SunDisc,7,30,0.233333333333333
+Pantheon/Yuumi (DE/MT),Gnar/Trundle (FR/PZ),16,30,0.533333333333333
+Pantheon/Yuumi (DE/MT),Gnar/Ziggs (BC/NX),6,30,0.2
+Pantheon/Yuumi (DE/MT),Kindred/Viego (IO/SI),20,32,0.625
+Pantheon/Yuumi (DE/MT),Leona/Yasuo,4,10,0.4
+Pantheon/Yuumi (DE/MT),Lissandra/Trundle (FR/SI),8,12,0.666666666666667
+Pantheon/Yuumi (DE/MT),Maokai/Nautilus,6,19,0.315789473684211
+Pantheon/Yuumi (DE/MT),Miss Fortune/Quinn,32,57,0.56140350877193
+Pantheon/Yuumi (DE/MT),Pantheon/Taric/Yuumi (DE/MT),18,28,0.642857142857143
+Pantheon/Yuumi (DE/MT),Pantheon/Yuumi (DE/MT),46,92,0.5
+Pantheon/Yuumi (DE/MT),Pyke/Rek'Sai,27,49,0.551020408163265
+Pantheon/Yuumi (DE/MT),Riven/Viktor,75,139,0.539568345323741
+Pantheon/Yuumi (DE/MT),Rumble/Sion,7,14,0.5
+Pantheon/Yuumi (DE/MT),Senna/Veigar,27,57,0.473684210526316
+Pantheon/Yuumi (DE/MT),SunDisc,585,1030,0.567961165048544
+Pantheon/Yuumi (DE/MT),Taliyah/Ziggs,35,70,0.5
+Pantheon/Yuumi (DE/MT),Teemo (NX/PZ),5,12,0.416666666666667
+Pantheon/Yuumi (DE/MT),Tri-Beam (NX/PZ),80,211,0.37914691943128
+Pantheon/Yuumi (DE/MT),Trundle/Tryndamere (FR/SI),16,40,0.4
+Pantheon/Yuumi (DE/MT),Viktor/Zoe,12,17,0.705882352941177
+Pantheon/Yuumi (DE/MT),Xerath/Zilean (BC/SH),9,15,0.6
+Pyke/Rek'Sai,Akshan/Sivir (DE/SH),14,28,0.5
+Pyke/Rek'Sai,Akshan/Viktor,7,15,0.466666666666667
+Pyke/Rek'Sai,Aphelios/Diana (MT/SI),8,14,0.571428571428571
+Pyke/Rek'Sai,Aphelios/Viktor,36,97,0.371134020618557
+Pyke/Rek'Sai,Aphelios/Zoe (MT/SI),6,11,0.545454545454545
+Pyke/Rek'Sai,Aurelion Sol/Trundle,13,22,0.590909090909091
+Pyke/Rek'Sai,Aurelion Sol/Tryndamere,33,45,0.733333333333333
+Pyke/Rek'Sai,Aurelion Sol/Zoe (FR/MT),42,64,0.65625
+Pyke/Rek'Sai,Azir/Irelia,18,30,0.6
+Pyke/Rek'Sai,BandleTree,4,11,0.363636363636364
+Pyke/Rek'Sai,Caitlyn/Teemo (BC/PZ),19,37,0.513513513513514
+Pyke/Rek'Sai,Darius/Gnar (FR/NX),8,14,0.571428571428571
+Pyke/Rek'Sai,Draven/Rumble,9,14,0.642857142857143
+Pyke/Rek'Sai,Draven/Rumble (NX/PZ),16,29,0.551724137931035
+Pyke/Rek'Sai,Draven/Viktor,8,18,0.444444444444444
+Pyke/Rek'Sai,Ekko/Zilean,15,23,0.652173913043478
+Pyke/Rek'Sai,Elise (NX/SI),14,40,0.35
+Pyke/Rek'Sai,Fizz/Lulu (BC/PZ),14,32,0.4375
+Pyke/Rek'Sai,Gangplank/Miss Fortune (BW/NX),6,11,0.545454545454545
+Pyke/Rek'Sai,Gangplank/Miss Fortune/Twisted Fate (BW/NX),5,11,0.454545454545455
+Pyke/Rek'Sai,Gangplank/Sejuani,4,10,0.4
+Pyke/Rek'Sai,Gnar/Teemo/Tristana (BC/DE),11,22,0.5
+Pyke/Rek'Sai,Gnar/Trundle (FR/PZ),6,14,0.428571428571429
+Pyke/Rek'Sai,Gnar/Ziggs (BC/NX),4,15,0.266666666666667
+Pyke/Rek'Sai,Kindred/Viego (IO/SI),11,26,0.423076923076923
+Pyke/Rek'Sai,Miss Fortune/Quinn,20,45,0.444444444444444
+Pyke/Rek'Sai,Mistwraith Allegiance,7,10,0.7
+Pyke/Rek'Sai,Pantheon/Taric/Yuumi (DE/MT),5,17,0.294117647058824
+Pyke/Rek'Sai,Pantheon/Yuumi (DE/MT),22,49,0.448979591836735
+Pyke/Rek'Sai,Pyke/Rek'Sai,14,28,0.5
+Pyke/Rek'Sai,Riven/Viktor,33,96,0.34375
+Pyke/Rek'Sai,Senna/Veigar,12,26,0.461538461538462
+Pyke/Rek'Sai,SunDisc,297,616,0.482142857142857
+Pyke/Rek'Sai,Taliyah/Ziggs,11,46,0.239130434782609
+Pyke/Rek'Sai,Tri-Beam (NX/PZ),63,135,0.466666666666667
+Pyke/Rek'Sai,Trundle/Tryndamere (FR/SI),13,17,0.764705882352941
+Rek'Sai,SunDisc,11,15,0.733333333333333
+Riven/Rumble,SunDisc,12,42,0.285714285714286
 Riven/Rumble/Sion,Aphelios/Viktor,6,12,0.5
-Riven/Rumble/Sion,SunDisc,40,70,0.571428571428571
+Riven/Rumble/Sion,SunDisc,40,71,0.563380281690141
 Riven/Rumble/Sion,Tri-Beam (NX/PZ),9,13,0.692307692307692
-Riven/Viktor,Ahri/Lulu (IO/PZ),3,11,0.272727272727273
-Riven/Viktor,Akshan/Sivir (DE/SH),15,27,0.555555555555556
-Riven/Viktor,Akshan/Viktor,22,27,0.814814814814815
-Riven/Viktor,Aphelios/Diana (MT/SI),6,12,0.5
-Riven/Viktor,Aphelios/Viktor,65,132,0.492424242424242
-Riven/Viktor,Aphelios/Viktor/Zoe,7,13,0.538461538461538
-Riven/Viktor,Aurelion Sol/Trundle,20,25,0.8
-Riven/Viktor,Aurelion Sol/Tryndamere,22,40,0.55
-Riven/Viktor,Aurelion Sol/Zoe (FR/MT),39,71,0.549295774647887
-Riven/Viktor,Azir/Irelia,38,64,0.59375
-Riven/Viktor,BandleTree,14,23,0.608695652173913
-Riven/Viktor,Caitlyn/Teemo (BC/PZ),31,45,0.688888888888889
-Riven/Viktor,Championless (FR/PZ),8,10,0.8
-Riven/Viktor,Darius/Gnar (FR/NX),24,34,0.705882352941177
-Riven/Viktor,Draven/Rumble,7,15,0.466666666666667
-Riven/Viktor,Draven/Rumble (NX/PZ),23,42,0.547619047619048
-Riven/Viktor,Draven/Viktor,7,14,0.5
-Riven/Viktor,Elise (NX/SI),52,75,0.693333333333333
-Riven/Viktor,Fizz/Lulu (BC/PZ),21,47,0.446808510638298
-Riven/Viktor,Fizz/Riven (BC/NX),6,10,0.6
-Riven/Viktor,Galio/Lulu/Poppy (BC/DE),9,15,0.6
-Riven/Viktor,Gangplank/Sejuani,9,17,0.529411764705882
-Riven/Viktor,Gnar/Swain,5,11,0.454545454545455
-Riven/Viktor,Gnar/Teemo/Tristana (BC/DE),18,29,0.620689655172414
-Riven/Viktor,Gnar/Trundle (FR/PZ),13,23,0.565217391304348
-Riven/Viktor,Gnar/Ziggs (BC/NX),11,18,0.611111111111111
-Riven/Viktor,Jarvan IV/Shen,6,13,0.461538461538462
-Riven/Viktor,Kindred/Viego (IO/SI),15,22,0.681818181818182
-Riven/Viktor,Lissandra/Trundle (FR/SI),9,13,0.692307692307692
-Riven/Viktor,Maokai/Nautilus,9,15,0.6
-Riven/Viktor,Miss Fortune/Quinn,26,57,0.456140350877193
-Riven/Viktor,Nami/Twisted Fate (BW/PZ),6,11,0.545454545454545
-Riven/Viktor,Pantheon/Taric/Yuumi (DE/MT),5,21,0.238095238095238
-Riven/Viktor,Pantheon/Yuumi (DE/MT),24,51,0.470588235294118
-Riven/Viktor,Pyke/Rek'Sai,35,50,0.7
-Riven/Viktor,Riven/Viktor,59,118,0.5
-Riven/Viktor,Senna/Veigar,14,28,0.5
-Riven/Viktor,SunDisc,628,862,0.728538283062645
-Riven/Viktor,Taliyah/Ziggs,39,63,0.619047619047619
-Riven/Viktor,Teemo (NX/PZ),10,15,0.666666666666667
-Riven/Viktor,Tri-Beam (NX/PZ),75,174,0.431034482758621
-Riven/Viktor,Trundle/Tryndamere (FR/SI),11,24,0.458333333333333
-Riven/Viktor,Viktor/Zoe,7,12,0.583333333333333
-Rumble/Sion,Aphelios/Viktor,10,24,0.416666666666667
-Rumble/Sion,Aurelion Sol/Zoe (FR/MT),9,15,0.6
-Rumble/Sion,Azir/Irelia,6,10,0.6
-Rumble/Sion,Fizz/Lulu (BC/PZ),3,11,0.272727272727273
+Riven/Viktor,Ahri/Lulu (IO/PZ),5,14,0.357142857142857
+Riven/Viktor,Akshan/Aphelios,8,13,0.615384615384615
+Riven/Viktor,Akshan/Lee Sin,5,12,0.416666666666667
+Riven/Viktor,Akshan/Sivir (DE/SH),31,58,0.53448275862069
+Riven/Viktor,Akshan/Viktor,50,66,0.757575757575758
+Riven/Viktor,Anivia (FR/SI),13,21,0.619047619047619
+Riven/Viktor,Aphelios/Diana (MT/SI),13,26,0.5
+Riven/Viktor,Aphelios/Vi/Zoe,10,20,0.5
+Riven/Viktor,Aphelios/Viktor,124,282,0.439716312056738
+Riven/Viktor,Aphelios/Viktor/Zoe,15,31,0.483870967741936
+Riven/Viktor,Aphelios/Yasuo,8,11,0.727272727272727
+Riven/Viktor,Aphelios/Zoe (MT/NX),4,10,0.4
+Riven/Viktor,Aphelios/Zoe (MT/SI),24,41,0.585365853658537
+Riven/Viktor,Ashe/LeBlanc,9,12,0.75
+Riven/Viktor,Aurelion Sol/Trundle,51,65,0.784615384615385
+Riven/Viktor,Aurelion Sol/Tryndamere,61,86,0.709302325581395
+Riven/Viktor,Aurelion Sol/Tryndamere/Zoe,8,10,0.8
+Riven/Viktor,Aurelion Sol/Zoe (FR/MT),126,210,0.6
+Riven/Viktor,Azir/Irelia,92,165,0.557575757575758
+Riven/Viktor,BandleTree,37,58,0.637931034482759
+Riven/Viktor,Braum/Vladimir,10,11,0.909090909090909
+Riven/Viktor,Caitlyn/Ezreal (NX/PZ),12,16,0.75
+Riven/Viktor,Caitlyn/Swain,10,14,0.714285714285714
+Riven/Viktor,Caitlyn/Teemo (BC/PZ),80,116,0.689655172413793
+Riven/Viktor,Caitlyn/Teemo (FR/PZ),10,11,0.909090909090909
+Riven/Viktor,Championless (FR/PZ),17,21,0.80952380952381
+Riven/Viktor,Championless (NX/PZ),9,10,0.9
+Riven/Viktor,Darius/Elise,8,11,0.727272727272727
+Riven/Viktor,Darius/Gnar (FR/NX),47,81,0.580246913580247
+Riven/Viktor,Diana/Nocturne,7,15,0.466666666666667
+Riven/Viktor,Draven/Rumble,29,43,0.674418604651163
+Riven/Viktor,Draven/Rumble (NX/PZ),48,89,0.539325842696629
+Riven/Viktor,Draven/Rumble/Sion,11,20,0.55
+Riven/Viktor,Draven/Rumble/Sion (NX/PZ),5,10,0.5
+Riven/Viktor,Draven/Sion (NX/PZ),10,11,0.909090909090909
+Riven/Viktor,Draven/Viktor,37,80,0.4625
+Riven/Viktor,Ekko/Zilean,30,40,0.75
+Riven/Viktor,Elise (NX/SI),115,163,0.705521472392638
+Riven/Viktor,Fiora (DE/FR),10,15,0.666666666666667
+Riven/Viktor,Fizz/Gnar (BC/PZ),3,11,0.272727272727273
+Riven/Viktor,Fizz/Gnar/Tristana (BC/DE),10,20,0.5
+Riven/Viktor,Fizz/Lee Sin (BC/IO),7,13,0.538461538461538
+Riven/Viktor,Fizz/Lulu (BC/PZ),60,118,0.508474576271186
+Riven/Viktor,Fizz/Riven (BC/NX),16,29,0.551724137931035
+Riven/Viktor,Galio/Lulu/Poppy (BC/DE),23,35,0.657142857142857
+Riven/Viktor,Galio/Soraka,5,13,0.384615384615385
+Riven/Viktor,Gangplank/Miss Fortune (BW/NX),20,40,0.5
+Riven/Viktor,Gangplank/Miss Fortune/Twisted Fate (BW/NX),14,23,0.608695652173913
+Riven/Viktor,Gangplank/Sejuani,25,44,0.568181818181818
+Riven/Viktor,Gnar/Swain,9,18,0.5
+Riven/Viktor,Gnar/Teemo/Tristana (BC/DE),45,65,0.692307692307692
+Riven/Viktor,Gnar/Trundle (FR/PZ),27,44,0.613636363636364
+Riven/Viktor,Gnar/Ziggs (BC/NX),30,40,0.75
+Riven/Viktor,Jarvan IV/Shen,9,23,0.391304347826087
+Riven/Viktor,Jayce/Lux,9,13,0.692307692307692
+Riven/Viktor,Kindred/Viego (IO/SI),38,53,0.716981132075472
+Riven/Viktor,LeBlanc/Sivir,6,11,0.545454545454545
+Riven/Viktor,Lee Sin/Viktor,3,10,0.3
+Riven/Viktor,Lissandra/Trundle (FR/SI),13,24,0.541666666666667
+Riven/Viktor,Lulu/Rumble (BC/PZ),8,13,0.615384615384615
+Riven/Viktor,Maokai/Nautilus,22,34,0.647058823529412
+Riven/Viktor,Miss Fortune (BW/NX),3,11,0.272727272727273
+Riven/Viktor,Miss Fortune/Quinn,46,98,0.469387755102041
+Riven/Viktor,Mistwraith Allegiance,10,14,0.714285714285714
+Riven/Viktor,Nami/Twisted Fate (BW/PZ),8,16,0.5
+Riven/Viktor,Nami/Viktor,4,11,0.363636363636364
+Riven/Viktor,Pantheon/Taric (DE/MT),10,14,0.714285714285714
+Riven/Viktor,Pantheon/Taric/Yuumi (DE/MT),22,53,0.415094339622642
+Riven/Viktor,Pantheon/Yuumi (DE/MT),64,139,0.460431654676259
+Riven/Viktor,Pyke/Rek'Sai,63,96,0.65625
+Riven/Viktor,Riven/Viktor,242,484,0.5
+Riven/Viktor,Rumble/Sion,12,17,0.705882352941177
+Riven/Viktor,Senna/Veigar,33,77,0.428571428571429
+Riven/Viktor,Sentinel Control,4,12,0.333333333333333
+Riven/Viktor,SunDisc,1183,1628,0.726658476658477
+Riven/Viktor,Swain/Twisted Fate,3,12,0.25
+Riven/Viktor,Taliyah/Ziggs,92,142,0.647887323943662
+Riven/Viktor,Teemo (NX/PZ),16,21,0.761904761904762
+Riven/Viktor,Tri-Beam (NX/PZ),156,374,0.417112299465241
+Riven/Viktor,Trundle/Tryndamere (FR/SI),38,73,0.520547945205479
+Riven/Viktor,Vi/Viktor (PZ/SI),15,34,0.441176470588235
+Riven/Viktor,Viktor - Shellfolk,9,13,0.692307692307692
+Riven/Viktor,Viktor/Zoe,11,18,0.611111111111111
+Riven/Viktor,Xerath/Zilean (BC/SH),12,18,0.666666666666667
+Rumble/Sion,Aphelios/Viktor,14,30,0.466666666666667
+Rumble/Sion,Aurelion Sol/Zoe (FR/MT),13,20,0.65
+Rumble/Sion,Azir/Irelia,7,13,0.538461538461538
+Rumble/Sion,Caitlyn/Teemo (BC/PZ),7,14,0.5
+Rumble/Sion,Darius/Gnar (FR/NX),5,12,0.416666666666667
+Rumble/Sion,Elise (NX/SI),1,10,0.1
+Rumble/Sion,Fizz/Lulu (BC/PZ),3,12,0.25
 Rumble/Sion,Pantheon/Taric/Yuumi (DE/MT),2,10,0.2
-Rumble/Sion,Pantheon/Yuumi (DE/MT),7,12,0.583333333333333
-Rumble/Sion,SunDisc,74,156,0.474358974358974
-Rumble/Sion,Taliyah/Ziggs,2,11,0.181818181818182
-Rumble/Sion,Tri-Beam (NX/PZ),13,34,0.382352941176471
+Rumble/Sion,Pantheon/Yuumi (DE/MT),7,14,0.5
+Rumble/Sion,Riven/Viktor,5,17,0.294117647058824
+Rumble/Sion,SunDisc,84,180,0.466666666666667
+Rumble/Sion,Taliyah/Ziggs,3,14,0.214285714285714
+Rumble/Sion,Tri-Beam (NX/PZ),18,42,0.428571428571429
 Rumble/Vi,SunDisc,8,13,0.615384615384615
-Rumble/Vi/Viktor,SunDisc,5,10,0.5
-Rumble/Viktor,SunDisc,43,83,0.518072289156627
-Rumble/Viktor,Tri-Beam (NX/PZ),6,14,0.428571428571429
-Rumble/Viktor (NX/PZ),SunDisc,10,16,0.625
-Sejuani/Teemo,SunDisc,8,23,0.347826086956522
-Sejuani/Teemo (BC/FR),SunDisc,17,42,0.404761904761905
-Senna/Veigar,Akshan/Sivir (DE/SH),4,20,0.2
-Senna/Veigar,Aphelios/Diana (MT/SI),7,10,0.7
-Senna/Veigar,Aphelios/Viktor,43,80,0.5375
-Senna/Veigar,Aphelios/Viktor/Zoe,10,13,0.769230769230769
-Senna/Veigar,Aurelion Sol/Tryndamere,1,20,0.05
-Senna/Veigar,Aurelion Sol/Zoe (FR/MT),5,22,0.227272727272727
-Senna/Veigar,Azir/Irelia,10,33,0.303030303030303
-Senna/Veigar,BandleTree,8,17,0.470588235294118
-Senna/Veigar,Caitlyn/Teemo (BC/PZ),15,35,0.428571428571429
-Senna/Veigar,Darius/Gnar (FR/NX),10,16,0.625
-Senna/Veigar,Draven/Rumble (NX/PZ),5,13,0.384615384615385
-Senna/Veigar,Elise (NX/SI),23,36,0.638888888888889
-Senna/Veigar,Galio/Lulu/Poppy (BC/DE),3,15,0.2
-Senna/Veigar,Gnar/Teemo/Tristana (BC/DE),6,17,0.352941176470588
+Rumble/Vi/Viktor,SunDisc,6,12,0.5
+Rumble/Viktor,Aphelios/Viktor,4,10,0.4
+Rumble/Viktor,Aurelion Sol/Zoe (FR/MT),7,11,0.636363636363636
+Rumble/Viktor,Elise (NX/SI),6,10,0.6
+Rumble/Viktor,SunDisc,47,91,0.516483516483517
+Rumble/Viktor,Tri-Beam (NX/PZ),6,16,0.375
+Rumble/Viktor (NX/PZ),SunDisc,12,18,0.666666666666667
+Sejuani/Teemo,SunDisc,15,32,0.46875
+Sejuani/Teemo (BC/FR),SunDisc,19,47,0.404255319148936
+Senna/Veigar,Akshan/Sivir (DE/SH),8,28,0.285714285714286
+Senna/Veigar,Akshan/Viktor,8,11,0.727272727272727
+Senna/Veigar,Anivia (FR/SI),5,10,0.5
+Senna/Veigar,Aphelios/Diana (MT/SI),7,12,0.583333333333333
+Senna/Veigar,Aphelios/Viktor,61,108,0.564814814814815
+Senna/Veigar,Aphelios/Viktor/Zoe,13,16,0.8125
+Senna/Veigar,Aurelion Sol/Trundle,5,17,0.294117647058824
+Senna/Veigar,Aurelion Sol/Tryndamere,1,27,0.037037037037037
+Senna/Veigar,Aurelion Sol/Zoe (FR/MT),14,48,0.291666666666667
+Senna/Veigar,Azir/Irelia,18,50,0.36
+Senna/Veigar,BandleTree,8,19,0.421052631578947
+Senna/Veigar,Caitlyn/Teemo (BC/PZ),20,49,0.408163265306122
+Senna/Veigar,Darius/Gnar (FR/NX),12,22,0.545454545454545
+Senna/Veigar,Draven/Rumble,8,12,0.666666666666667
+Senna/Veigar,Draven/Rumble (NX/PZ),8,19,0.421052631578947
+Senna/Veigar,Draven/Rumble/Sion,3,10,0.3
+Senna/Veigar,Draven/Viktor,9,16,0.5625
+Senna/Veigar,Ekko/Zilean,7,12,0.583333333333333
+Senna/Veigar,Elise (NX/SI),34,57,0.596491228070175
+Senna/Veigar,Fizz/Lulu (BC/PZ),10,17,0.588235294117647
+Senna/Veigar,Galio/Lulu/Poppy (BC/DE),5,23,0.217391304347826
+Senna/Veigar,Gangplank/Sejuani,6,12,0.5
+Senna/Veigar,Gnar/Teemo/Tristana (BC/DE),10,22,0.454545454545455
 Senna/Veigar,Gnar/Trundle (FR/PZ),4,13,0.307692307692308
-Senna/Veigar,Gnar/Ziggs (BC/NX),6,11,0.545454545454545
-Senna/Veigar,Kindred/Viego (IO/SI),16,24,0.666666666666667
-Senna/Veigar,Miss Fortune/Quinn,8,27,0.296296296296296
-Senna/Veigar,Pantheon/Taric/Yuumi (DE/MT),5,15,0.333333333333333
-Senna/Veigar,Pantheon/Yuumi (DE/MT),23,44,0.522727272727273
-Senna/Veigar,Pyke/Rek'Sai,9,18,0.5
-Senna/Veigar,Riven/Viktor,14,28,0.5
-Senna/Veigar,Senna/Veigar,11,22,0.5
-Senna/Veigar,SunDisc,97,504,0.192460317460317
-Senna/Veigar,Taliyah/Ziggs,14,24,0.583333333333333
-Senna/Veigar,Tri-Beam (NX/PZ),50,86,0.581395348837209
-Senna/Veigar,Trundle/Tryndamere (FR/SI),6,12,0.5
+Senna/Veigar,Gnar/Ziggs (BC/NX),7,15,0.466666666666667
+Senna/Veigar,Kindred/Viego (IO/SI),17,26,0.653846153846154
+Senna/Veigar,Lissandra/Trundle (FR/SI),5,10,0.5
+Senna/Veigar,Maokai/Nautilus,3,10,0.3
+Senna/Veigar,Miss Fortune/Quinn,15,38,0.394736842105263
+Senna/Veigar,Pantheon/Taric/Yuumi (DE/MT),8,18,0.444444444444444
+Senna/Veigar,Pantheon/Yuumi (DE/MT),30,57,0.526315789473684
+Senna/Veigar,Pyke/Rek'Sai,14,26,0.538461538461538
+Senna/Veigar,Riven/Viktor,44,77,0.571428571428571
+Senna/Veigar,Senna/Veigar,15,30,0.5
+Senna/Veigar,SunDisc,113,609,0.185550082101806
+Senna/Veigar,Taliyah/Ziggs,20,41,0.487804878048781
+Senna/Veigar,Tri-Beam (NX/PZ),60,103,0.58252427184466
+Senna/Veigar,Trundle/Tryndamere (FR/SI),9,22,0.409090909090909
 Senna/Veigar,Viktor/Zoe,4,10,0.4
-Sentinel Control,SunDisc,12,37,0.324324324324324
+Sentinel Control,Riven/Viktor,8,12,0.666666666666667
+Sentinel Control,SunDisc,16,48,0.333333333333333
+Sivir/Swain,SunDisc,7,11,0.636363636363636
 Sivir/Taliyah/Ziggs (NX/SH),SunDisc,9,12,0.75
-Soraka/Tahm Kench,SunDisc,16,28,0.571428571428571
-Soraka/Tahm Kench,Tri-Beam (NX/PZ),5,11,0.454545454545455
-SunDisc,Ahri/Akshan,8,16,0.5
-SunDisc,Ahri/Kennen (BW/IO),12,14,0.857142857142857
-SunDisc,Ahri/Kennen (IO/SH),13,26,0.5
-SunDisc,Ahri/Kennen (IO/SI),4,10,0.4
-SunDisc,Ahri/Lulu (IO/PZ),28,50,0.56
-SunDisc,Akshan (PZ/SH),7,11,0.636363636363636
-SunDisc,Akshan/Aphelios,84,105,0.8
-SunDisc,Akshan/Ekko,17,27,0.62962962962963
-SunDisc,Akshan/Gnar,10,16,0.625
+Soraka/Tahm Kench,SunDisc,19,32,0.59375
+Soraka/Tahm Kench,Tri-Beam (NX/PZ),5,12,0.416666666666667
+SunDisc,Ahri/Akshan,9,18,0.5
+SunDisc,Ahri/Kennen (BW/IO),14,16,0.875
+SunDisc,Ahri/Kennen (IO/SH),19,35,0.542857142857143
+SunDisc,Ahri/Kennen (IO/SI),7,15,0.466666666666667
+SunDisc,Ahri/Lulu (IO/PZ),35,62,0.564516129032258
+SunDisc,Akshan (PZ/SH),8,12,0.666666666666667
+SunDisc,Akshan/Aphelios,95,116,0.818965517241379
+SunDisc,Akshan/Ekko,19,29,0.655172413793103
+SunDisc,Akshan/Gnar,16,23,0.695652173913044
 SunDisc,Akshan/Gnar/Renekton,4,11,0.363636363636364
-SunDisc,Akshan/Karma,31,53,0.584905660377359
-SunDisc,Akshan/Lee Sin,40,74,0.540540540540541
+SunDisc,Akshan/Karma,34,64,0.53125
+SunDisc,Akshan/Lee Sin,56,100,0.56
 SunDisc,Akshan/Lucian,5,10,0.5
-SunDisc,Akshan/Pantheon,5,12,0.416666666666667
-SunDisc,Akshan/Renekton (BC/SH),6,13,0.461538461538462
-SunDisc,Akshan/Sivir (DE/SH),225,378,0.595238095238095
-SunDisc,Akshan/Sivir (FR/SH),12,24,0.5
+SunDisc,Akshan/Pantheon,9,16,0.5625
+SunDisc,Akshan/Renekton (BC/SH),13,22,0.590909090909091
+SunDisc,Akshan/Sivir (DE/SH),270,464,0.581896551724138
+SunDisc,Akshan/Sivir (FR/SH),16,30,0.533333333333333
 SunDisc,Akshan/Taliyah (FR/SH),10,16,0.625
 SunDisc,Akshan/Twisted Fate,6,10,0.6
-SunDisc,Akshan/Udyr,7,11,0.636363636363636
-SunDisc,Akshan/Viktor,47,151,0.311258278145695
-SunDisc,Anivia (FR/SI),89,114,0.780701754385965
+SunDisc,Akshan/Udyr,8,12,0.666666666666667
+SunDisc,Akshan/Viktor,81,240,0.3375
+SunDisc,Anivia (FR/SI),115,142,0.809859154929578
+SunDisc,Aphelios/Aurelion Sol (FR/MT),2,10,0.2
 SunDisc,Aphelios/Aurelion Sol/Vi/Viktor,3,10,0.3
 SunDisc,Aphelios/Aurelion Sol/Zoe (FR/MT),10,19,0.526315789473684
+SunDisc,Aphelios/Diana (BC/MT),7,10,0.7
 SunDisc,Aphelios/Diana (MT/NX),4,11,0.363636363636364
-SunDisc,Aphelios/Diana (MT/SI),161,220,0.731818181818182
-SunDisc,Aphelios/Ezreal,26,34,0.764705882352941
-SunDisc,Aphelios/Karma,11,17,0.647058823529412
-SunDisc,Aphelios/Kindred,14,17,0.823529411764706
-SunDisc,Aphelios/Lee Sin,37,55,0.672727272727273
-SunDisc,Aphelios/Lux,42,54,0.777777777777778
-SunDisc,Aphelios/Lux/Zoe,66,82,0.804878048780488
-SunDisc,Aphelios/Nami,34,49,0.693877551020408
-SunDisc,Aphelios/Swain,18,27,0.666666666666667
-SunDisc,Aphelios/Twisted Fate,19,19,1
+SunDisc,Aphelios/Diana (MT/SI),180,249,0.72289156626506
+SunDisc,Aphelios/Ezreal,28,36,0.777777777777778
+SunDisc,Aphelios/Karma,12,18,0.666666666666667
+SunDisc,Aphelios/Kindred,19,22,0.863636363636364
+SunDisc,Aphelios/Lee Sin,38,56,0.678571428571429
+SunDisc,Aphelios/Lux,48,61,0.786885245901639
+SunDisc,Aphelios/Lux/Zoe,70,89,0.786516853932584
+SunDisc,Aphelios/Nami,40,62,0.645161290322581
+SunDisc,Aphelios/Swain,23,36,0.638888888888889
+SunDisc,Aphelios/Twisted Fate,25,27,0.925925925925926
 SunDisc,Aphelios/Vi,10,13,0.769230769230769
-SunDisc,Aphelios/Vi/Viktor,15,28,0.535714285714286
-SunDisc,Aphelios/Vi/Zoe,21,42,0.5
-SunDisc,Aphelios/Viktor,742,1473,0.503733876442634
+SunDisc,Aphelios/Vi/Viktor,18,39,0.461538461538462
+SunDisc,Aphelios/Vi/Zoe,41,78,0.525641025641026
+SunDisc,Aphelios/Viktor,921,1816,0.50715859030837
 SunDisc,Aphelios/Viktor/Yuumi (MT/PZ),9,13,0.692307692307692
-SunDisc,Aphelios/Viktor/Zoe,82,163,0.503067484662577
-SunDisc,Aphelios/Yasuo,61,89,0.685393258426966
-SunDisc,Aphelios/Zoe,10,16,0.625
-SunDisc,Aphelios/Zoe (BC/MT),14,22,0.636363636363636
+SunDisc,Aphelios/Viktor/Zoe,101,205,0.492682926829268
+SunDisc,Aphelios/Yasuo,66,96,0.6875
+SunDisc,Aphelios/Zoe,12,20,0.6
+SunDisc,Aphelios/Zoe (BC/MT),15,27,0.555555555555556
 SunDisc,Aphelios/Zoe (BW/MT),6,10,0.6
-SunDisc,Aphelios/Zoe (DE/MT),11,16,0.6875
-SunDisc,Aphelios/Zoe (FR/MT),16,30,0.533333333333333
-SunDisc,Aphelios/Zoe (IO/MT),17,31,0.548387096774194
-SunDisc,Aphelios/Zoe (MT/NX),14,25,0.56
-SunDisc,Aphelios/Zoe (MT/PZ),20,34,0.588235294117647
-SunDisc,Aphelios/Zoe (MT/SI),57,96,0.59375
-SunDisc,Ashe/LeBlanc,28,55,0.509090909090909
-SunDisc,Aurelion Sol/Braum,22,60,0.366666666666667
-SunDisc,Aurelion Sol/Braum/Trundle,4,17,0.235294117647059
-SunDisc,Aurelion Sol/Braum/Tryndamere,12,29,0.413793103448276
+SunDisc,Aphelios/Zoe (DE/MT),12,17,0.705882352941177
+SunDisc,Aphelios/Zoe (FR/MT),26,47,0.553191489361702
+SunDisc,Aphelios/Zoe (IO/MT),24,41,0.585365853658537
+SunDisc,Aphelios/Zoe (MT/NX),19,36,0.527777777777778
+SunDisc,Aphelios/Zoe (MT/PZ),21,35,0.6
+SunDisc,Aphelios/Zoe (MT/SH),8,11,0.727272727272727
+SunDisc,Aphelios/Zoe (MT/SI),96,164,0.585365853658537
+SunDisc,Ashe/LeBlanc,39,70,0.557142857142857
+SunDisc,Aurelion Sol/Braum,28,71,0.394366197183099
+SunDisc,Aurelion Sol/Braum/Trundle,7,26,0.269230769230769
+SunDisc,Aurelion Sol/Braum/Tryndamere,12,31,0.387096774193548
 SunDisc,Aurelion Sol/Lissandra/Trundle,6,10,0.6
-SunDisc,Aurelion Sol/Lissandra/Tryndamere,28,84,0.333333333333333
-SunDisc,Aurelion Sol/Thresh,15,21,0.714285714285714
-SunDisc,Aurelion Sol/Trundle,124,287,0.43205574912892
-SunDisc,Aurelion Sol/Trundle/Tryndamere,15,34,0.441176470588235
-SunDisc,Aurelion Sol/Trundle/Tryndamere/Zoe,6,12,0.5
-SunDisc,Aurelion Sol/Trundle/Zoe,5,14,0.357142857142857
-SunDisc,Aurelion Sol/Tryndamere,214,499,0.428857715430862
-SunDisc,Aurelion Sol/Tryndamere/Zoe,22,55,0.4
-SunDisc,Aurelion Sol/Zoe (FR/MT),439,935,0.46951871657754
-SunDisc,Azir/Irelia,232,727,0.319119669876204
-SunDisc,Azir/Lucian,9,13,0.692307692307692
-SunDisc,Azir/Sivir (NX/SH),5,14,0.357142857142857
+SunDisc,Aurelion Sol/Lissandra/Tryndamere,34,92,0.369565217391304
+SunDisc,Aurelion Sol/Thresh,17,23,0.739130434782609
+SunDisc,Aurelion Sol/Trundle,176,404,0.435643564356436
+SunDisc,Aurelion Sol/Trundle/Tryndamere,18,43,0.418604651162791
+SunDisc,Aurelion Sol/Trundle/Tryndamere/Zoe,6,13,0.461538461538462
+SunDisc,Aurelion Sol/Trundle/Zoe,7,18,0.388888888888889
+SunDisc,Aurelion Sol/Tryndamere,270,631,0.427892234548336
+SunDisc,Aurelion Sol/Tryndamere/Zoe,32,70,0.457142857142857
+SunDisc,Aurelion Sol/Zoe (FR/MT),604,1303,0.463545663852648
+SunDisc,Azir/Hecarim,6,10,0.6
+SunDisc,Azir/Irelia,319,971,0.328527291452111
+SunDisc,Azir/Lucian,10,17,0.588235294117647
+SunDisc,Azir/Sivir (NX/SH),6,19,0.315789473684211
 SunDisc,Azir/Xerath (BC/SH),9,10,0.9
-SunDisc,BandleTree,163,336,0.485119047619048
+SunDisc,BandleTree,198,409,0.484107579462103
 SunDisc,Braum (FR/MT),8,13,0.615384615384615
-SunDisc,Braum (FR/PZ),9,26,0.346153846153846
-SunDisc,Braum/Galio,35,51,0.686274509803922
-SunDisc,Braum/Jarvan IV,8,15,0.533333333333333
-SunDisc,Braum/Swain,5,11,0.454545454545455
+SunDisc,Braum (FR/PZ),17,44,0.386363636363636
+SunDisc,Braum/Galio,46,66,0.696969696969697
+SunDisc,Braum/Jarvan IV,13,21,0.619047619047619
+SunDisc,Braum/Swain,5,13,0.384615384615385
 SunDisc,Braum/Vi,6,12,0.5
-SunDisc,Braum/Vladimir,22,50,0.44
-SunDisc,Caitlyn/Ezreal (NX/PZ),21,54,0.388888888888889
-SunDisc,Caitlyn/Ezreal (PZ/SH),8,13,0.615384615384615
-SunDisc,Caitlyn/Kindred/Vi,9,30,0.3
-SunDisc,Caitlyn/Senna,15,20,0.75
-SunDisc,Caitlyn/Swain,36,68,0.529411764705882
-SunDisc,Caitlyn/Teemo (BC/PZ),205,497,0.412474849094567
-SunDisc,Caitlyn/Teemo (FR/PZ),17,30,0.566666666666667
-SunDisc,Caitlyn/Teemo (NX/PZ),5,10,0.5
-SunDisc,Championless (BC/PZ),42,72,0.583333333333333
+SunDisc,Braum/Vladimir,27,58,0.46551724137931
+SunDisc,Caitlyn/Ezreal (NX/PZ),25,69,0.36231884057971
+SunDisc,Caitlyn/Ezreal (PZ/SH),10,15,0.666666666666667
+SunDisc,Caitlyn/Kindred/Vi,9,33,0.272727272727273
+SunDisc,Caitlyn/Senna,21,27,0.777777777777778
+SunDisc,Caitlyn/Swain,42,78,0.538461538461538
+SunDisc,Caitlyn/Teemo (BC/PZ),278,662,0.419939577039275
+SunDisc,Caitlyn/Teemo (FR/PZ),24,44,0.545454545454545
+SunDisc,Caitlyn/Teemo (NX/PZ),5,13,0.384615384615385
+SunDisc,Championless (BC/PZ),47,82,0.573170731707317
 SunDisc,Championless (BC/SI),3,13,0.230769230769231
-SunDisc,Championless (FR/PZ),52,108,0.481481481481482
-SunDisc,Championless (FR/SI),18,20,0.9
-SunDisc,Championless (NX/PZ),15,77,0.194805194805195
-SunDisc,Championless (NX/SI),6,11,0.545454545454545
-SunDisc,Championless (PZ/SI),8,13,0.615384615384615
-SunDisc,Darius (FR/NX),10,16,0.625
+SunDisc,Championless (BW/NX),7,11,0.636363636363636
+SunDisc,Championless (FR/PZ),65,136,0.477941176470588
+SunDisc,Championless (FR/SI),22,24,0.916666666666667
+SunDisc,Championless (NX/PZ),19,87,0.218390804597701
+SunDisc,Championless (NX/SI),7,13,0.538461538461538
+SunDisc,Championless (PZ/SH),5,13,0.384615384615385
+SunDisc,Championless (PZ/SI),10,15,0.666666666666667
+SunDisc,Darius (FR/NX),14,23,0.608695652173913
 SunDisc,Darius (NX/SH),3,11,0.272727272727273
-SunDisc,Darius/Elise,11,32,0.34375
-SunDisc,Darius/Gnar (FR/NX),138,351,0.393162393162393
+SunDisc,Darius/Elise,18,48,0.375
+SunDisc,Darius/Gnar (FR/NX),176,441,0.399092970521542
 SunDisc,Darius/Jinx,4,13,0.307692307692308
+SunDisc,Darius/Miss Fortune,7,11,0.636363636363636
 SunDisc,Darius/Tryndamere,5,15,0.333333333333333
 SunDisc,Darius/Ziggs (NX/SH),1,17,0.0588235294117647
-SunDisc,Diana/Nocturne,5,24,0.208333333333333
-SunDisc,Dragons (DE/MT),26,48,0.541666666666667
-SunDisc,Draven/Hecarim,4,10,0.4
-SunDisc,Draven/Jinx,19,50,0.38
-SunDisc,Draven/Rumble,105,199,0.527638190954774
+SunDisc,Diana/Nocturne,14,44,0.318181818181818
+SunDisc,Diana/Zoe (BC/MT),6,10,0.6
+SunDisc,Dragons (DE/MT),33,63,0.523809523809524
+SunDisc,Draven/Hecarim,6,13,0.461538461538462
+SunDisc,Draven/Jinx,28,69,0.405797101449275
+SunDisc,Draven/Rumble,146,279,0.523297491039427
 SunDisc,Draven/Rumble (DE/NX),9,34,0.264705882352941
-SunDisc,Draven/Rumble (NX/PZ),141,383,0.368146214099217
-SunDisc,Draven/Rumble/Sion,70,131,0.534351145038168
-SunDisc,Draven/Rumble/Sion (NX/PZ),27,78,0.346153846153846
-SunDisc,Draven/Rumble/Viktor (NX/PZ),6,28,0.214285714285714
-SunDisc,Draven/Sion (NX/PZ),44,72,0.611111111111111
-SunDisc,Draven/Sion/Vi,11,23,0.478260869565217
-SunDisc,Draven/Viktor,53,148,0.358108108108108
-SunDisc,Ekko/Jinx (PZ/SH),4,12,0.333333333333333
-SunDisc,Ekko/Sivir/Vi,8,12,0.666666666666667
-SunDisc,Ekko/Viktor/Zilean,7,15,0.466666666666667
-SunDisc,Ekko/Zilean,119,197,0.604060913705584
-SunDisc,Elise (NX/SI),284,840,0.338095238095238
-SunDisc,Elise (PZ/SI),8,19,0.421052631578947
-SunDisc,Elise/Kindred/Vi,15,33,0.454545454545455
-SunDisc,Elise/Teemo,9,14,0.642857142857143
-SunDisc,Elise/Twisted Fate,8,14,0.571428571428571
+SunDisc,Draven/Rumble (NX/PZ),178,485,0.367010309278351
+SunDisc,Draven/Rumble/Sion,88,169,0.520710059171598
+SunDisc,Draven/Rumble/Sion (NX/PZ),35,95,0.368421052631579
+SunDisc,Draven/Rumble/Viktor (NX/PZ),8,37,0.216216216216216
+SunDisc,Draven/Sion (NX/PZ),54,90,0.6
+SunDisc,Draven/Sion/Vi,14,26,0.538461538461538
+SunDisc,Draven/Viktor,87,267,0.325842696629214
+SunDisc,Ekko/Jinx (PZ/SH),4,13,0.307692307692308
+SunDisc,Ekko/Sivir/Vi,9,13,0.692307692307692
+SunDisc,Ekko/Sivir/Zilean,7,10,0.7
+SunDisc,Ekko/Viktor/Zilean,12,24,0.5
+SunDisc,Ekko/Zilean,163,270,0.603703703703704
+SunDisc,Elise (NX/SI),365,1065,0.342723004694836
+SunDisc,Elise (PZ/SI),17,36,0.472222222222222
+SunDisc,Elise/Ezreal/Kindred,7,11,0.636363636363636
+SunDisc,Elise/Kalista (FR/SI),8,12,0.666666666666667
+SunDisc,Elise/Kindred (PZ/SI),3,10,0.3
+SunDisc,Elise/Kindred/Vi,21,41,0.51219512195122
+SunDisc,Elise/Teemo,11,21,0.523809523809524
+SunDisc,Elise/Twisted Fate,10,17,0.588235294117647
+SunDisc,Ezreal (PZ/SI),9,11,0.818181818181818
 SunDisc,Ezreal/Jayce (FR/PZ),12,14,0.857142857142857
-SunDisc,Ezreal/Karma,35,48,0.729166666666667
-SunDisc,Ezreal/Renekton,11,20,0.55
-SunDisc,Ezreal/Swain,12,28,0.428571428571429
-SunDisc,Ezreal/Teemo (FR/PZ),9,17,0.529411764705882
-SunDisc,Ezreal/Twisted Fate,8,10,0.8
-SunDisc,Fiora (DE/FR),27,46,0.586956521739131
-SunDisc,Fiora (DE/SH),11,16,0.6875
-SunDisc,Fizz/Gnar (BC/PZ),19,41,0.463414634146342
-SunDisc,Fizz/Gnar/Tristana (BC/DE),17,38,0.447368421052632
-SunDisc,Fizz/Lee Sin (BC/IO),21,49,0.428571428571429
-SunDisc,Fizz/Lulu (BC/PZ),182,413,0.440677966101695
-SunDisc,Fizz/Lulu/Teemo (BC/PZ),11,25,0.44
-SunDisc,Fizz/Nami (BW/PZ),4,11,0.363636363636364
-SunDisc,Fizz/Riven (BC/NX),36,104,0.346153846153846
-SunDisc,Fizz/Yuumi (BC/NX),6,20,0.3
+SunDisc,Ezreal/Karma,39,52,0.75
+SunDisc,Ezreal/Renekton,16,27,0.592592592592593
+SunDisc,Ezreal/Swain,14,32,0.4375
+SunDisc,Ezreal/Teemo (FR/PZ),9,20,0.45
+SunDisc,Ezreal/Twisted Fate,9,11,0.818181818181818
+SunDisc,Fiora (DE/FR),38,70,0.542857142857143
+SunDisc,Fiora (DE/SH),13,20,0.65
+SunDisc,Fiora/Jarvan IV/Shen,6,11,0.545454545454545
+SunDisc,Fiora/Yuumi (DE/MT),7,11,0.636363636363636
+SunDisc,Fizz/Gnar (BC/PZ),21,47,0.446808510638298
+SunDisc,Fizz/Gnar/Tristana (BC/DE),29,72,0.402777777777778
+SunDisc,Fizz/Lee Sin (BC/IO),31,62,0.5
+SunDisc,Fizz/Lulu (BC/PZ),260,577,0.450606585788562
+SunDisc,Fizz/Lulu/Teemo (BC/PZ),14,29,0.482758620689655
+SunDisc,Fizz/Nami (BW/PZ),4,12,0.333333333333333
+SunDisc,Fizz/Riven (BC/NX),49,151,0.324503311258278
+SunDisc,Fizz/Teemo/Tristana (BC/DE),5,13,0.384615384615385
+SunDisc,Fizz/Yuumi (BC/NX),6,21,0.285714285714286
 SunDisc,Fizz/Zed (BC/IO),4,11,0.363636363636364
-SunDisc,Galio/Gnar (DE/FR),21,37,0.567567567567568
-SunDisc,Galio/Jarvan IV/Shen,16,30,0.533333333333333
-SunDisc,Galio/Lulu/Poppy (BC/DE),93,213,0.436619718309859
-SunDisc,Galio/Poppy,10,23,0.434782608695652
-SunDisc,Galio/Shen,10,15,0.666666666666667
-SunDisc,Galio/Soraka,16,47,0.340425531914894
-SunDisc,Gangplank/Miss Fortune (BW/NX),28,112,0.25
-SunDisc,Gangplank/Miss Fortune/Twisted Fate (BW/NX),26,71,0.366197183098592
-SunDisc,Gangplank/Sejuani,86,197,0.436548223350254
-SunDisc,Gangplank/Twisted Fate,6,13,0.461538461538462
-SunDisc,Gangplank/Twisted Fate (BW/NX),9,15,0.6
-SunDisc,Gnar/Lux,13,16,0.8125
-SunDisc,Gnar/Renekton/Sejuani (FR/SH),8,14,0.571428571428571
-SunDisc,Gnar/Sejuani,12,19,0.631578947368421
-SunDisc,Gnar/Swain,69,127,0.543307086614173
-SunDisc,Gnar/Teemo/Tristana (BC/DE),144,314,0.45859872611465
-SunDisc,Gnar/Teemo/Ziggs (BC/NX),3,13,0.230769230769231
-SunDisc,Gnar/Tristana (BC/DE),8,15,0.533333333333333
-SunDisc,Gnar/Trundle (FR/IO),39,60,0.65
-SunDisc,Gnar/Trundle (FR/PZ),159,281,0.565836298932384
-SunDisc,Gnar/Ziggs (BC/NX),81,211,0.383886255924171
-SunDisc,Hecarim/Lucian,27,59,0.457627118644068
+SunDisc,Galio/Gnar (DE/FR),28,44,0.636363636363636
+SunDisc,Galio/Jarvan IV/Shen,18,32,0.5625
+SunDisc,Galio/Lulu/Poppy (BC/DE),111,250,0.444
+SunDisc,Galio/Poppy,13,27,0.481481481481482
+SunDisc,Galio/Shen,11,16,0.6875
+SunDisc,Galio/Soraka,21,58,0.362068965517241
+SunDisc,Galio/Soraka/Taric,4,10,0.4
+SunDisc,Galio/Udyr,7,12,0.583333333333333
+SunDisc,Gangplank/Gnar/Sejuani (BW/FR),5,12,0.416666666666667
+SunDisc,Gangplank/Miss Fortune (BW/NX),52,186,0.279569892473118
+SunDisc,Gangplank/Miss Fortune/Twisted Fate (BW/NX),33,88,0.375
+SunDisc,Gangplank/Sejuani,121,278,0.435251798561151
+SunDisc,Gangplank/Twisted Fate,12,23,0.521739130434783
+SunDisc,Gangplank/Twisted Fate (BC/BW),6,12,0.5
+SunDisc,Gangplank/Twisted Fate (BW/NX),9,16,0.5625
+SunDisc,Gangplank/Twisted Fate (BW/PZ),6,14,0.428571428571429
+SunDisc,Gnar/Lux,14,17,0.823529411764706
+SunDisc,Gnar/Renekton/Sejuani (FR/SH),9,15,0.6
+SunDisc,Gnar/Sejuani,18,26,0.692307692307692
+SunDisc,Gnar/Swain,73,143,0.510489510489511
+SunDisc,Gnar/Teemo/Tristana (BC/DE),172,373,0.46112600536193
+SunDisc,Gnar/Teemo/Ziggs (BC/NX),6,18,0.333333333333333
+SunDisc,Gnar/Tristana (BC/DE),9,16,0.5625
+SunDisc,Gnar/Trundle (FR/IO),46,69,0.666666666666667
+SunDisc,Gnar/Trundle (FR/PZ),193,333,0.57957957957958
+SunDisc,Gnar/Viktor,9,15,0.6
+SunDisc,Gnar/Ziggs (BC/NX),104,268,0.388059701492537
+SunDisc,Hecarim/Lucian,33,71,0.464788732394366
 SunDisc,Heimerdinger/Jayce (BC/PZ),11,17,0.647058823529412
-SunDisc,Heimerdinger/Jayce (IO/PZ),6,12,0.5
-SunDisc,Heimerdinger/Jayce (PZ/SI),20,34,0.588235294117647
-SunDisc,Heimerdinger/Lee Sin/Vi/Viktor,7,23,0.304347826086957
-SunDisc,Heimerdinger/Viktor (BC/PZ),3,11,0.272727272727273
-SunDisc,Irelia/Miss Fortune,8,13,0.615384615384615
-SunDisc,Jarvan IV/Renekton,9,18,0.5
-SunDisc,Jarvan IV/Shen,95,158,0.60126582278481
-SunDisc,Jayce/Lux,34,58,0.586206896551724
+SunDisc,Heimerdinger/Jayce (IO/PZ),8,14,0.571428571428571
+SunDisc,Heimerdinger/Jayce (PZ/SI),26,41,0.634146341463415
+SunDisc,Heimerdinger/Lee Sin/Vi/Viktor,7,24,0.291666666666667
+SunDisc,Heimerdinger/Viktor (BC/PZ),3,12,0.25
+SunDisc,Heimerdinger/Viktor (IO/PZ),4,10,0.4
+SunDisc,Irelia/Miss Fortune,9,16,0.5625
+SunDisc,Jarvan IV/Renekton,9,19,0.473684210526316
+SunDisc,Jarvan IV/Renekton/Sivir,13,22,0.590909090909091
+SunDisc,Jarvan IV/Shen,118,185,0.637837837837838
+SunDisc,Jayce/Lux,49,81,0.604938271604938
 SunDisc,Jayce/Tryndamere,7,13,0.538461538461538
 SunDisc,Jinx/Lulu,5,11,0.454545454545455
-SunDisc,Jinx/Lulu (BC/PZ),6,11,0.545454545454545
-SunDisc,Jinx/Rumble,14,39,0.358974358974359
-SunDisc,Kalista/Maokai (BW/SI),10,12,0.833333333333333
-SunDisc,Kalista/Viego/Yuumi,8,16,0.5
-SunDisc,Karma/Viktor,5,10,0.5
-SunDisc,Kindred/Nasus,14,28,0.5
-SunDisc,Kindred/Viego (IO/SI),206,323,0.637770897832817
-SunDisc,LeBlanc/Sivir,39,81,0.481481481481482
-SunDisc,Lee Sin/Riven,5,10,0.5
-SunDisc,Lee Sin/Viktor,15,37,0.405405405405405
-SunDisc,Lee Sin/Zoe,19,34,0.558823529411765
-SunDisc,Leona/Yasuo,55,92,0.597826086956522
-SunDisc,Lissandra/Taliyah,28,49,0.571428571428571
-SunDisc,Lissandra/Trundle (FR/IO),7,28,0.25
+SunDisc,Jinx/Lulu (BC/PZ),7,12,0.583333333333333
+SunDisc,Jinx/Rumble,18,45,0.4
+SunDisc,Kalista (PZ/SI),9,10,0.9
+SunDisc,Kalista/Maokai (BW/SI),11,13,0.846153846153846
+SunDisc,Kalista/Viego/Yuumi,10,19,0.526315789473684
+SunDisc,Karma/Viktor,6,13,0.461538461538462
+SunDisc,Katarina/Yasuo,8,10,0.8
+SunDisc,Kindred/Nasus,16,33,0.484848484848485
+SunDisc,Kindred/Vi,9,10,0.9
+SunDisc,Kindred/Viego (IO/SI),244,374,0.6524064171123
+SunDisc,LeBlanc (FR/NX),6,14,0.428571428571429
+SunDisc,LeBlanc/Sivir,46,94,0.48936170212766
+SunDisc,Lee Sin/Riven,7,12,0.583333333333333
+SunDisc,Lee Sin/Viktor,20,49,0.408163265306122
+SunDisc,Lee Sin/Zoe,26,44,0.590909090909091
+SunDisc,Leona/Yasuo,58,98,0.591836734693878
+SunDisc,Lissandra/Taliyah,32,58,0.551724137931035
+SunDisc,Lissandra/Trundle (FR/IO),9,30,0.3
 SunDisc,Lissandra/Trundle (FR/PZ),16,30,0.533333333333333
-SunDisc,Lissandra/Trundle (FR/SI),89,119,0.747899159663866
-SunDisc,Lucian/Miss Fortune,9,15,0.6
-SunDisc,Lucian/Zed,15,38,0.394736842105263
-SunDisc,Lulu/Rumble (BC/PZ),62,133,0.466165413533835
-SunDisc,Lulu/Zed (DE/IO),8,23,0.347826086956522
-SunDisc,Malphite/Taliyah,16,25,0.64
-SunDisc,Maokai/Nautilus,77,150,0.513333333333333
-SunDisc,Marauder,9,12,0.75
-SunDisc,Miss Fortune (BW/NX),3,11,0.272727272727273
-SunDisc,Miss Fortune/Quinn,302,629,0.480127186009539
-SunDisc,Mistwraith Allegiance,44,71,0.619718309859155
-SunDisc,Nami/Twisted Fate (BW/PZ),33,67,0.492537313432836
-SunDisc,Nami/Viktor,23,55,0.418181818181818
-SunDisc,Nasus/Thresh,10,14,0.714285714285714
-SunDisc,Pantheon/Taric (DE/MT),15,42,0.357142857142857
-SunDisc,Pantheon/Taric/Yuumi (DE/MT),100,241,0.4149377593361
-SunDisc,Pantheon/Yuumi,12,24,0.5
-SunDisc,Pantheon/Yuumi (DE/MT),373,829,0.449939686369119
-SunDisc,Pyke/Rek'Sai,269,502,0.535856573705179
-SunDisc,Rek'Sai,3,11,0.272727272727273
-SunDisc,Riven/Rumble,23,30,0.766666666666667
-SunDisc,Riven/Rumble/Sion,30,70,0.428571428571429
-SunDisc,Riven/Viktor,234,862,0.271461716937355
-SunDisc,Rumble/Sion,82,156,0.525641025641026
+SunDisc,Lissandra/Trundle (FR/SI),106,142,0.746478873239437
+SunDisc,Lissandra/Tryndamere (DE/FR),7,10,0.7
+SunDisc,Lucian/Miss Fortune,10,16,0.625
+SunDisc,Lucian/Zed,17,41,0.414634146341463
+SunDisc,Lulu/Rumble (BC/PZ),71,158,0.449367088607595
+SunDisc,Lulu/Zed (DE/IO),12,30,0.4
+SunDisc,Malphite/Taliyah,18,30,0.6
+SunDisc,Malphite/Yasuo,10,14,0.714285714285714
+SunDisc,Maokai/Nautilus,103,201,0.512437810945274
+SunDisc,Marauder,10,14,0.714285714285714
+SunDisc,Miss Fortune (BW/NX),4,22,0.181818181818182
+SunDisc,Miss Fortune/Quinn,340,737,0.461329715061058
+SunDisc,Miss Fortune/Riven,3,10,0.3
+SunDisc,Mistwraith Allegiance,58,98,0.591836734693878
+SunDisc,Nami/Twisted Fate (BW/PZ),38,74,0.513513513513514
+SunDisc,Nami/Viktor,28,65,0.430769230769231
+SunDisc,Nasus/Thresh,13,18,0.722222222222222
+SunDisc,Nasus/Viego,5,10,0.5
+SunDisc,Pantheon/Shyvana,3,10,0.3
+SunDisc,Pantheon/Taric (DE/MT),24,60,0.4
+SunDisc,Pantheon/Taric/Yuumi (DE/MT),122,291,0.419243986254296
+SunDisc,Pantheon/Yuumi,13,27,0.481481481481482
+SunDisc,Pantheon/Yuumi (DE/MT),445,1030,0.432038834951456
+SunDisc,Pyke/Rek'Sai,319,616,0.517857142857143
+SunDisc,Rek'Sai,4,15,0.266666666666667
+SunDisc,Riven/Rumble,30,42,0.714285714285714
+SunDisc,Riven/Rumble/Sion,31,71,0.436619718309859
+SunDisc,Riven/Viktor,445,1628,0.273341523341523
+SunDisc,Rumble/Sion,96,180,0.533333333333333
 SunDisc,Rumble/Vi,5,13,0.384615384615385
-SunDisc,Rumble/Vi/Viktor,5,10,0.5
-SunDisc,Rumble/Viktor,40,83,0.481927710843373
-SunDisc,Rumble/Viktor (NX/PZ),6,16,0.375
-SunDisc,Sejuani/Teemo,15,23,0.652173913043478
-SunDisc,Sejuani/Teemo (BC/FR),25,42,0.595238095238095
-SunDisc,Senna/Veigar,407,504,0.807539682539683
-SunDisc,Sentinel Control,25,37,0.675675675675676
+SunDisc,Rumble/Vi/Viktor,6,12,0.5
+SunDisc,Rumble/Viktor,44,91,0.483516483516484
+SunDisc,Rumble/Viktor (NX/PZ),6,18,0.333333333333333
+SunDisc,Sejuani/Teemo,17,32,0.53125
+SunDisc,Sejuani/Teemo (BC/FR),28,47,0.595744680851064
+SunDisc,Senna/Veigar,496,609,0.814449917898194
+SunDisc,Sentinel Control,32,48,0.666666666666667
+SunDisc,Sivir/Swain,4,11,0.363636363636364
 SunDisc,Sivir/Taliyah/Ziggs (NX/SH),3,12,0.25
-SunDisc,Soraka/Tahm Kench,12,28,0.428571428571429
-SunDisc,SunDisc,5323,10646,0.5
-SunDisc,Swain/Teemo (BC/NX),8,15,0.533333333333333
-SunDisc,Swain/Trundle,16,27,0.592592592592593
-SunDisc,Swain/Twisted Fate,31,50,0.62
+SunDisc,Soraka/Tahm Kench,13,32,0.40625
+SunDisc,SunDisc,6353,12706,0.5
+SunDisc,Swain/Teemo (BC/NX),10,20,0.5
+SunDisc,Swain/Trundle,22,41,0.536585365853659
+SunDisc,Swain/Twisted Fate,38,61,0.622950819672131
 SunDisc,Swain/Yasuo,6,14,0.428571428571429
-SunDisc,Taliyah/Ziggs,242,626,0.386581469648562
-SunDisc,Taliyah/Ziggs (MT/SH),3,10,0.3
-SunDisc,Teemo (BC/PZ),6,10,0.6
-SunDisc,Teemo (NX/PZ),21,101,0.207920792079208
-SunDisc,Teemo/Tristana,6,13,0.461538461538462
+SunDisc,Swain/Zilean,3,20,0.15
+SunDisc,Tahm Kench/Udyr,10,12,0.833333333333333
+SunDisc,Taliyah/Xerath/Ziggs,5,11,0.454545454545455
+SunDisc,Taliyah/Ziggs,326,811,0.401972872996301
+SunDisc,Taliyah/Ziggs (MT/SH),8,16,0.5
+SunDisc,Teemo (BC/PZ),6,15,0.4
+SunDisc,Teemo (NX/PZ),26,122,0.213114754098361
+SunDisc,Teemo/Tristana,6,22,0.272727272727273
 SunDisc,Thresh/Viego (BC/SI),15,22,0.681818181818182
-SunDisc,Thresh/Viego (IO/SI),10,15,0.666666666666667
-SunDisc,Tri-Beam (NX/PZ),1240,2078,0.596727622714148
-SunDisc,Trundle/Tryndamere (DE/FR),14,44,0.318181818181818
-SunDisc,Trundle/Tryndamere (FR/IO),16,29,0.551724137931035
-SunDisc,Trundle/Tryndamere (FR/NX),15,33,0.454545454545455
-SunDisc,Trundle/Tryndamere (FR/SI),141,256,0.55078125
-SunDisc,Twisted Fate (BW/PZ),12,18,0.666666666666667
-SunDisc,Udyr/Viktor,5,20,0.25
-SunDisc,Udyr/Vladimir,11,16,0.6875
-SunDisc,Vi/Viktor (BC/PZ),4,11,0.363636363636364
-SunDisc,Viego (IO/SI),12,16,0.75
-SunDisc,Viego (SI/SH),21,38,0.552631578947369
-SunDisc,Viktor - Shellfolk,51,102,0.5
-SunDisc,Viktor/Zilean,4,10,0.4
-SunDisc,Viktor/Zoe,54,126,0.428571428571429
-SunDisc,Xerath/Zilean (BC/SH),57,112,0.508928571428571
-Swain/Teemo (BC/NX),SunDisc,7,15,0.466666666666667
-Swain/Trundle,SunDisc,11,27,0.407407407407407
-Swain/Twisted Fate,SunDisc,19,50,0.38
+SunDisc,Thresh/Viego (IO/SI),11,17,0.647058823529412
+SunDisc,Tri-Beam (NX/PZ),1505,2530,0.594861660079051
+SunDisc,Trundle/Tryndamere (DE/FR),17,54,0.314814814814815
+SunDisc,Trundle/Tryndamere (FR/IO),18,33,0.545454545454545
+SunDisc,Trundle/Tryndamere (FR/MT),4,12,0.333333333333333
+SunDisc,Trundle/Tryndamere (FR/NX),17,37,0.45945945945946
+SunDisc,Trundle/Tryndamere (FR/SI),222,412,0.538834951456311
+SunDisc,Twisted Fate (BW/IO),6,11,0.545454545454545
+SunDisc,Twisted Fate (BW/PZ),14,23,0.608695652173913
+SunDisc,Udyr/Viktor,7,26,0.269230769230769
+SunDisc,Udyr/Vladimir,12,18,0.666666666666667
+SunDisc,Vi/Viktor (BC/PZ),4,13,0.307692307692308
+SunDisc,Vi/Viktor (PZ/SI),27,69,0.391304347826087
+SunDisc,Viego (IO/SI),15,20,0.75
+SunDisc,Viego (SI/SH),29,55,0.527272727272727
+SunDisc,Viego/Yuumi,4,13,0.307692307692308
+SunDisc,Viktor - Shellfolk,59,119,0.495798319327731
+SunDisc,Viktor (BC/PZ),6,11,0.545454545454545
+SunDisc,Viktor (PZ/SI),6,11,0.545454545454545
+SunDisc,Viktor/Yuumi,5,11,0.454545454545455
+SunDisc,Viktor/Zilean,5,11,0.454545454545455
+SunDisc,Viktor/Zoe,59,139,0.424460431654676
+SunDisc,Xerath/Zilean (BC/SH),69,136,0.507352941176471
+SunDisc,Ziggs (BC/NX),1,11,0.0909090909090909
+Swain/Teemo (BC/NX),SunDisc,10,20,0.5
+Swain/Trundle,SunDisc,19,41,0.463414634146342
+Swain/Twisted Fate,Riven/Viktor,9,12,0.75
+Swain/Twisted Fate,SunDisc,23,61,0.377049180327869
 Swain/Yasuo,SunDisc,8,14,0.571428571428571
-Taliyah/Ziggs,Akshan/Sivir (DE/SH),13,21,0.619047619047619
-Taliyah/Ziggs,Aphelios/Viktor,53,87,0.609195402298851
-Taliyah/Ziggs,Aurelion Sol/Trundle,7,18,0.388888888888889
-Taliyah/Ziggs,Aurelion Sol/Tryndamere,9,19,0.473684210526316
-Taliyah/Ziggs,Aurelion Sol/Zoe (FR/MT),33,55,0.6
-Taliyah/Ziggs,Azir/Irelia,8,36,0.222222222222222
-Taliyah/Ziggs,BandleTree,14,20,0.7
-Taliyah/Ziggs,Caitlyn/Teemo (BC/PZ),15,33,0.454545454545455
-Taliyah/Ziggs,Darius/Gnar (FR/NX),16,30,0.533333333333333
-Taliyah/Ziggs,Draven/Rumble,7,11,0.636363636363636
-Taliyah/Ziggs,Draven/Rumble (NX/PZ),11,21,0.523809523809524
-Taliyah/Ziggs,Ekko/Zilean,9,13,0.692307692307692
-Taliyah/Ziggs,Elise (NX/SI),12,31,0.387096774193548
-Taliyah/Ziggs,Fizz/Lulu (BC/PZ),12,26,0.461538461538462
-Taliyah/Ziggs,Fizz/Riven (BC/NX),2,10,0.2
-Taliyah/Ziggs,Galio/Lulu/Poppy (BC/DE),8,10,0.8
-Taliyah/Ziggs,Gangplank/Miss Fortune (BW/NX),3,10,0.3
-Taliyah/Ziggs,Gangplank/Sejuani,5,11,0.454545454545455
-Taliyah/Ziggs,Gnar/Teemo/Tristana (BC/DE),8,16,0.5
+Swain/Zilean,SunDisc,17,20,0.85
+Tahm Kench/Udyr,SunDisc,2,12,0.166666666666667
+Taliyah/Xerath/Ziggs,SunDisc,6,11,0.545454545454545
+Taliyah/Ziggs,Akshan/Sivir (DE/SH),18,27,0.666666666666667
+Taliyah/Ziggs,Akshan/Viktor,7,14,0.5
+Taliyah/Ziggs,Aphelios/Viktor,77,124,0.620967741935484
+Taliyah/Ziggs,Aphelios/Viktor/Zoe,6,17,0.352941176470588
+Taliyah/Ziggs,Aphelios/Zoe (MT/SI),6,11,0.545454545454545
+Taliyah/Ziggs,Aurelion Sol/Trundle,12,27,0.444444444444444
+Taliyah/Ziggs,Aurelion Sol/Tryndamere,15,32,0.46875
+Taliyah/Ziggs,Aurelion Sol/Zoe (FR/MT),54,99,0.545454545454545
+Taliyah/Ziggs,Azir/Irelia,16,58,0.275862068965517
+Taliyah/Ziggs,BandleTree,17,26,0.653846153846154
+Taliyah/Ziggs,Caitlyn/Teemo (BC/PZ),18,47,0.382978723404255
+Taliyah/Ziggs,Championless (FR/PZ),3,10,0.3
+Taliyah/Ziggs,Darius/Gnar (FR/NX),20,35,0.571428571428571
+Taliyah/Ziggs,Draven/Rumble,11,17,0.647058823529412
+Taliyah/Ziggs,Draven/Rumble (NX/PZ),13,26,0.5
+Taliyah/Ziggs,Draven/Viktor,5,11,0.454545454545455
+Taliyah/Ziggs,Ekko/Zilean,15,21,0.714285714285714
+Taliyah/Ziggs,Elise (NX/SI),19,57,0.333333333333333
+Taliyah/Ziggs,Fizz/Lulu (BC/PZ),20,43,0.465116279069768
+Taliyah/Ziggs,Fizz/Riven (BC/NX),4,16,0.25
+Taliyah/Ziggs,Galio/Lulu/Poppy (BC/DE),10,12,0.833333333333333
+Taliyah/Ziggs,Gangplank/Miss Fortune (BW/NX),3,14,0.214285714285714
+Taliyah/Ziggs,Gangplank/Sejuani,10,17,0.588235294117647
+Taliyah/Ziggs,Gnar/Teemo/Tristana (BC/DE),14,27,0.518518518518519
 Taliyah/Ziggs,Gnar/Trundle (FR/PZ),10,15,0.666666666666667
-Taliyah/Ziggs,Gnar/Ziggs (BC/NX),6,11,0.545454545454545
-Taliyah/Ziggs,Kindred/Viego (IO/SI),9,15,0.6
-Taliyah/Ziggs,Lulu/Rumble (BC/PZ),3,11,0.272727272727273
-Taliyah/Ziggs,Maokai/Nautilus,4,10,0.4
-Taliyah/Ziggs,Miss Fortune/Quinn,14,27,0.518518518518519
-Taliyah/Ziggs,Pantheon/Taric/Yuumi (DE/MT),7,10,0.7
-Taliyah/Ziggs,Pantheon/Yuumi (DE/MT),27,48,0.5625
-Taliyah/Ziggs,Pyke/Rek'Sai,22,27,0.814814814814815
-Taliyah/Ziggs,Riven/Viktor,24,63,0.380952380952381
-Taliyah/Ziggs,Rumble/Sion,9,11,0.818181818181818
-Taliyah/Ziggs,Senna/Veigar,10,24,0.416666666666667
-Taliyah/Ziggs,SunDisc,384,626,0.613418530351438
-Taliyah/Ziggs,Taliyah/Ziggs,22,44,0.5
-Taliyah/Ziggs,Tri-Beam (NX/PZ),66,107,0.616822429906542
-Taliyah/Ziggs,Trundle/Tryndamere (FR/SI),7,10,0.7
-Taliyah/Ziggs,Viktor/Zoe,4,10,0.4
-Taliyah/Ziggs (MT/SH),SunDisc,7,10,0.7
-Teemo (BC/PZ),SunDisc,4,10,0.4
-Teemo (NX/PZ),Aphelios/Viktor,3,15,0.2
-Teemo (NX/PZ),Aurelion Sol/Zoe (FR/MT),7,14,0.5
-Teemo (NX/PZ),Riven/Viktor,5,15,0.333333333333333
-Teemo (NX/PZ),SunDisc,80,101,0.792079207920792
-Teemo (NX/PZ),Tri-Beam (NX/PZ),12,24,0.5
-Teemo/Tristana,SunDisc,7,13,0.538461538461538
+Taliyah/Ziggs,Gnar/Ziggs (BC/NX),12,21,0.571428571428571
+Taliyah/Ziggs,Jarvan IV/Shen,9,11,0.818181818181818
+Taliyah/Ziggs,Kindred/Viego (IO/SI),12,20,0.6
+Taliyah/Ziggs,Lulu/Rumble (BC/PZ),4,18,0.222222222222222
+Taliyah/Ziggs,Maokai/Nautilus,7,16,0.4375
+Taliyah/Ziggs,Miss Fortune/Quinn,21,42,0.5
+Taliyah/Ziggs,Pantheon/Taric/Yuumi (DE/MT),10,18,0.555555555555556
+Taliyah/Ziggs,Pantheon/Yuumi (DE/MT),35,70,0.5
+Taliyah/Ziggs,Pyke/Rek'Sai,35,46,0.760869565217391
+Taliyah/Ziggs,Riven/Viktor,50,142,0.352112676056338
+Taliyah/Ziggs,Rumble/Sion,11,14,0.785714285714286
+Taliyah/Ziggs,Senna/Veigar,21,41,0.51219512195122
+Taliyah/Ziggs,SunDisc,485,811,0.598027127003699
+Taliyah/Ziggs,Taliyah/Ziggs,37,74,0.5
+Taliyah/Ziggs,Tri-Beam (NX/PZ),102,159,0.641509433962264
+Taliyah/Ziggs,Trundle/Tryndamere (FR/SI),15,25,0.6
+Taliyah/Ziggs,Viktor/Zoe,5,11,0.454545454545455
+Taliyah/Ziggs,Xerath/Zilean (BC/SH),9,12,0.75
+Taliyah/Ziggs (MT/SH),SunDisc,8,16,0.5
+Teemo (BC/PZ),SunDisc,9,15,0.6
+Teemo (NX/PZ),Aphelios/Viktor,3,17,0.176470588235294
+Teemo (NX/PZ),Aurelion Sol/Zoe (FR/MT),11,19,0.578947368421053
+Teemo (NX/PZ),Azir/Irelia,8,10,0.8
+Teemo (NX/PZ),Elise (NX/SI),5,12,0.416666666666667
+Teemo (NX/PZ),Pantheon/Yuumi (DE/MT),7,12,0.583333333333333
+Teemo (NX/PZ),Riven/Viktor,5,21,0.238095238095238
+Teemo (NX/PZ),SunDisc,96,122,0.786885245901639
+Teemo (NX/PZ),Tri-Beam (NX/PZ),14,30,0.466666666666667
+Teemo/Tristana,SunDisc,16,22,0.727272727272727
 Thresh/Viego (BC/SI),SunDisc,7,22,0.318181818181818
-Thresh/Viego (IO/SI),SunDisc,5,15,0.333333333333333
-Tri-Beam (NX/PZ),Akshan/Aphelios,9,13,0.692307692307692
-Tri-Beam (NX/PZ),Akshan/Ekko,6,10,0.6
-Tri-Beam (NX/PZ),Akshan/Karma,4,14,0.285714285714286
-Tri-Beam (NX/PZ),Akshan/Sivir (DE/SH),45,76,0.592105263157895
-Tri-Beam (NX/PZ),Akshan/Viktor,18,36,0.5
-Tri-Beam (NX/PZ),Anivia (FR/SI),5,22,0.227272727272727
-Tri-Beam (NX/PZ),Aphelios/Diana (MT/SI),25,42,0.595238095238095
+Thresh/Viego (IO/SI),SunDisc,6,17,0.352941176470588
+Tri-Beam (NX/PZ),Ahri/Lulu (IO/PZ),10,12,0.833333333333333
+Tri-Beam (NX/PZ),Akshan/Aphelios,10,14,0.714285714285714
+Tri-Beam (NX/PZ),Akshan/Ekko,7,11,0.636363636363636
+Tri-Beam (NX/PZ),Akshan/Karma,5,19,0.263157894736842
+Tri-Beam (NX/PZ),Akshan/Lee Sin,8,13,0.615384615384615
+Tri-Beam (NX/PZ),Akshan/Sivir (DE/SH),56,90,0.622222222222222
+Tri-Beam (NX/PZ),Akshan/Viktor,34,62,0.548387096774194
+Tri-Beam (NX/PZ),Anivia (FR/SI),7,29,0.241379310344828
+Tri-Beam (NX/PZ),Aphelios/Diana (MT/SI),27,49,0.551020408163265
 Tri-Beam (NX/PZ),Aphelios/Lee Sin,8,12,0.666666666666667
-Tri-Beam (NX/PZ),Aphelios/Lux,8,11,0.727272727272727
-Tri-Beam (NX/PZ),Aphelios/Lux/Zoe,9,12,0.75
-Tri-Beam (NX/PZ),Aphelios/Viktor,138,279,0.494623655913979
-Tri-Beam (NX/PZ),Aphelios/Viktor/Zoe,15,30,0.5
-Tri-Beam (NX/PZ),Aphelios/Yasuo,7,16,0.4375
-Tri-Beam (NX/PZ),Aphelios/Zoe (MT/SI),10,21,0.476190476190476
-Tri-Beam (NX/PZ),Aurelion Sol/Trundle,24,67,0.358208955223881
-Tri-Beam (NX/PZ),Aurelion Sol/Tryndamere,29,92,0.315217391304348
-Tri-Beam (NX/PZ),Aurelion Sol/Zoe (FR/MT),54,180,0.3
-Tri-Beam (NX/PZ),Azir/Irelia,85,119,0.714285714285714
-Tri-Beam (NX/PZ),BandleTree,28,50,0.56
-Tri-Beam (NX/PZ),Caitlyn/Ezreal (NX/PZ),4,12,0.333333333333333
-Tri-Beam (NX/PZ),Caitlyn/Swain,9,17,0.529411764705882
-Tri-Beam (NX/PZ),Caitlyn/Teemo (BC/PZ),76,114,0.666666666666667
-Tri-Beam (NX/PZ),Championless (BC/PZ),3,11,0.272727272727273
-Tri-Beam (NX/PZ),Championless (FR/PZ),9,21,0.428571428571429
-Tri-Beam (NX/PZ),Championless (NX/PZ),2,13,0.153846153846154
-Tri-Beam (NX/PZ),Darius/Gnar (FR/NX),38,73,0.520547945205479
-Tri-Beam (NX/PZ),Dragons (DE/MT),6,11,0.545454545454545
-Tri-Beam (NX/PZ),Draven/Rumble,36,50,0.72
-Tri-Beam (NX/PZ),Draven/Rumble (NX/PZ),25,49,0.510204081632653
-Tri-Beam (NX/PZ),Draven/Rumble/Sion,12,25,0.48
-Tri-Beam (NX/PZ),Draven/Sion (NX/PZ),8,19,0.421052631578947
-Tri-Beam (NX/PZ),Draven/Viktor,10,22,0.454545454545455
-Tri-Beam (NX/PZ),Ekko/Zilean,16,33,0.484848484848485
-Tri-Beam (NX/PZ),Elise (NX/SI),94,155,0.606451612903226
-Tri-Beam (NX/PZ),Ezreal/Karma,5,11,0.454545454545455
-Tri-Beam (NX/PZ),Fiora (DE/FR),7,10,0.7
-Tri-Beam (NX/PZ),Fizz/Gnar/Tristana (BC/DE),5,13,0.384615384615385
-Tri-Beam (NX/PZ),Fizz/Lee Sin (BC/IO),5,12,0.416666666666667
-Tri-Beam (NX/PZ),Fizz/Lulu (BC/PZ),57,106,0.537735849056604
-Tri-Beam (NX/PZ),Fizz/Riven (BC/NX),11,18,0.611111111111111
-Tri-Beam (NX/PZ),Galio/Lulu/Poppy (BC/DE),30,36,0.833333333333333
-Tri-Beam (NX/PZ),Gangplank/Miss Fortune (BW/NX),8,17,0.470588235294118
-Tri-Beam (NX/PZ),Gangplank/Miss Fortune/Twisted Fate (BW/NX),6,11,0.545454545454545
-Tri-Beam (NX/PZ),Gangplank/Sejuani,16,39,0.41025641025641
-Tri-Beam (NX/PZ),Gnar/Swain,16,23,0.695652173913044
-Tri-Beam (NX/PZ),Gnar/Teemo/Tristana (BC/DE),30,51,0.588235294117647
-Tri-Beam (NX/PZ),Gnar/Trundle (FR/PZ),32,61,0.524590163934426
-Tri-Beam (NX/PZ),Gnar/Ziggs (BC/NX),37,55,0.672727272727273
-Tri-Beam (NX/PZ),Jarvan IV/Shen,15,27,0.555555555555556
-Tri-Beam (NX/PZ),Kindred/Viego (IO/SI),32,46,0.695652173913044
-Tri-Beam (NX/PZ),LeBlanc/Sivir,9,11,0.818181818181818
-Tri-Beam (NX/PZ),Lee Sin/Viktor,4,11,0.363636363636364
-Tri-Beam (NX/PZ),Lee Sin/Zoe,7,10,0.7
-Tri-Beam (NX/PZ),Leona/Yasuo,14,16,0.875
-Tri-Beam (NX/PZ),Lissandra/Taliyah,6,16,0.375
-Tri-Beam (NX/PZ),Lissandra/Trundle (FR/SI),16,28,0.571428571428571
-Tri-Beam (NX/PZ),Lulu/Rumble (BC/PZ),12,20,0.6
-Tri-Beam (NX/PZ),Maokai/Nautilus,7,29,0.241379310344828
-Tri-Beam (NX/PZ),Miss Fortune/Quinn,75,126,0.595238095238095
-Tri-Beam (NX/PZ),Nami/Twisted Fate (BW/PZ),10,15,0.666666666666667
-Tri-Beam (NX/PZ),Pantheon/Taric (DE/MT),7,10,0.7
-Tri-Beam (NX/PZ),Pantheon/Taric/Yuumi (DE/MT),30,52,0.576923076923077
-Tri-Beam (NX/PZ),Pantheon/Yuumi (DE/MT),108,174,0.620689655172414
-Tri-Beam (NX/PZ),Pyke/Rek'Sai,56,107,0.523364485981308
+Tri-Beam (NX/PZ),Aphelios/Lux,9,14,0.642857142857143
+Tri-Beam (NX/PZ),Aphelios/Lux/Zoe,10,13,0.769230769230769
+Tri-Beam (NX/PZ),Aphelios/Swain,7,12,0.583333333333333
+Tri-Beam (NX/PZ),Aphelios/Vi/Viktor,10,13,0.769230769230769
+Tri-Beam (NX/PZ),Aphelios/Vi/Zoe,6,11,0.545454545454545
+Tri-Beam (NX/PZ),Aphelios/Viktor,197,370,0.532432432432433
+Tri-Beam (NX/PZ),Aphelios/Viktor/Zoe,24,42,0.571428571428571
+Tri-Beam (NX/PZ),Aphelios/Yasuo,8,18,0.444444444444444
+Tri-Beam (NX/PZ),Aphelios/Zoe (MT/SI),21,45,0.466666666666667
+Tri-Beam (NX/PZ),Aurelion Sol/Braum,5,11,0.454545454545455
+Tri-Beam (NX/PZ),Aurelion Sol/Lissandra/Tryndamere,3,10,0.3
+Tri-Beam (NX/PZ),Aurelion Sol/Trundle,30,91,0.32967032967033
+Tri-Beam (NX/PZ),Aurelion Sol/Tryndamere,37,119,0.310924369747899
+Tri-Beam (NX/PZ),Aurelion Sol/Tryndamere/Zoe,2,10,0.2
+Tri-Beam (NX/PZ),Aurelion Sol/Zoe (FR/MT),87,262,0.33206106870229
+Tri-Beam (NX/PZ),Azir/Irelia,117,170,0.688235294117647
+Tri-Beam (NX/PZ),BandleTree,35,63,0.555555555555556
+Tri-Beam (NX/PZ),Braum/Galio,6,10,0.6
+Tri-Beam (NX/PZ),Braum/Vladimir,6,10,0.6
+Tri-Beam (NX/PZ),Caitlyn/Ezreal (NX/PZ),5,13,0.384615384615385
+Tri-Beam (NX/PZ),Caitlyn/Swain,11,23,0.478260869565217
+Tri-Beam (NX/PZ),Caitlyn/Teemo (BC/PZ),103,159,0.647798742138365
+Tri-Beam (NX/PZ),Championless (BC/PZ),4,14,0.285714285714286
+Tri-Beam (NX/PZ),Championless (FR/PZ),11,23,0.478260869565217
+Tri-Beam (NX/PZ),Championless (NX/PZ),4,19,0.210526315789474
+Tri-Beam (NX/PZ),Darius/Elise,7,11,0.636363636363636
+Tri-Beam (NX/PZ),Darius/Gnar (FR/NX),47,92,0.510869565217391
+Tri-Beam (NX/PZ),Diana/Nocturne,9,11,0.818181818181818
+Tri-Beam (NX/PZ),Dragons (DE/MT),6,13,0.461538461538462
+Tri-Beam (NX/PZ),Draven/Jinx,7,13,0.538461538461538
+Tri-Beam (NX/PZ),Draven/Rumble,48,70,0.685714285714286
+Tri-Beam (NX/PZ),Draven/Rumble (NX/PZ),42,79,0.531645569620253
+Tri-Beam (NX/PZ),Draven/Rumble/Sion,13,27,0.481481481481482
+Tri-Beam (NX/PZ),Draven/Rumble/Sion (NX/PZ),8,12,0.666666666666667
+Tri-Beam (NX/PZ),Draven/Sion (NX/PZ),11,27,0.407407407407407
+Tri-Beam (NX/PZ),Draven/Viktor,27,51,0.529411764705882
+Tri-Beam (NX/PZ),Ekko/Zilean,27,50,0.54
+Tri-Beam (NX/PZ),Elise (NX/SI),129,211,0.611374407582938
+Tri-Beam (NX/PZ),Elise (PZ/SI),5,12,0.416666666666667
+Tri-Beam (NX/PZ),Elise/Kindred/Vi,6,15,0.4
+Tri-Beam (NX/PZ),Ezreal/Karma,6,12,0.5
+Tri-Beam (NX/PZ),Fiora (DE/FR),14,17,0.823529411764706
+Tri-Beam (NX/PZ),Fizz/Gnar/Tristana (BC/DE),13,25,0.52
+Tri-Beam (NX/PZ),Fizz/Lee Sin (BC/IO),6,15,0.4
+Tri-Beam (NX/PZ),Fizz/Lulu (BC/PZ),82,158,0.518987341772152
+Tri-Beam (NX/PZ),Fizz/Riven (BC/NX),14,28,0.5
+Tri-Beam (NX/PZ),Galio/Lulu/Poppy (BC/DE),34,42,0.80952380952381
+Tri-Beam (NX/PZ),Galio/Soraka,7,10,0.7
+Tri-Beam (NX/PZ),Gangplank/Miss Fortune (BW/NX),22,40,0.55
+Tri-Beam (NX/PZ),Gangplank/Miss Fortune/Twisted Fate (BW/NX),11,22,0.5
+Tri-Beam (NX/PZ),Gangplank/Sejuani,29,62,0.467741935483871
+Tri-Beam (NX/PZ),Gnar/Swain,19,28,0.678571428571429
+Tri-Beam (NX/PZ),Gnar/Teemo/Tristana (BC/DE),39,70,0.557142857142857
+Tri-Beam (NX/PZ),Gnar/Trundle (FR/PZ),35,70,0.5
+Tri-Beam (NX/PZ),Gnar/Ziggs (BC/NX),44,74,0.594594594594595
+Tri-Beam (NX/PZ),Jarvan IV/Shen,16,35,0.457142857142857
+Tri-Beam (NX/PZ),Kindred/Viego (IO/SI),41,59,0.694915254237288
+Tri-Beam (NX/PZ),LeBlanc/Sivir,11,15,0.733333333333333
+Tri-Beam (NX/PZ),Lee Sin/Viktor,8,16,0.5
+Tri-Beam (NX/PZ),Lee Sin/Zoe,9,14,0.642857142857143
+Tri-Beam (NX/PZ),Leona/Yasuo,15,17,0.882352941176471
+Tri-Beam (NX/PZ),Lissandra/Taliyah,6,17,0.352941176470588
+Tri-Beam (NX/PZ),Lissandra/Trundle (FR/SI),20,34,0.588235294117647
+Tri-Beam (NX/PZ),Lulu/Rumble (BC/PZ),15,24,0.625
+Tri-Beam (NX/PZ),Maokai/Nautilus,12,38,0.315789473684211
+Tri-Beam (NX/PZ),Miss Fortune (BW/NX),7,11,0.636363636363636
+Tri-Beam (NX/PZ),Miss Fortune/Quinn,98,160,0.6125
+Tri-Beam (NX/PZ),Mistwraith Allegiance,4,10,0.4
+Tri-Beam (NX/PZ),Nami/Twisted Fate (BW/PZ),12,20,0.6
+Tri-Beam (NX/PZ),Nami/Viktor,6,10,0.6
+Tri-Beam (NX/PZ),Pantheon/Taric (DE/MT),11,15,0.733333333333333
+Tri-Beam (NX/PZ),Pantheon/Taric/Yuumi (DE/MT),42,69,0.608695652173913
+Tri-Beam (NX/PZ),Pantheon/Yuumi (DE/MT),131,211,0.62085308056872
+Tri-Beam (NX/PZ),Pyke/Rek'Sai,72,135,0.533333333333333
 Tri-Beam (NX/PZ),Riven/Rumble/Sion,4,13,0.307692307692308
-Tri-Beam (NX/PZ),Riven/Viktor,99,174,0.568965517241379
-Tri-Beam (NX/PZ),Rumble/Sion,21,34,0.617647058823529
-Tri-Beam (NX/PZ),Rumble/Viktor,8,14,0.571428571428571
-Tri-Beam (NX/PZ),Senna/Veigar,36,86,0.418604651162791
-Tri-Beam (NX/PZ),Soraka/Tahm Kench,6,11,0.545454545454545
-Tri-Beam (NX/PZ),SunDisc,838,2078,0.403272377285852
-Tri-Beam (NX/PZ),Taliyah/Ziggs,41,107,0.383177570093458
-Tri-Beam (NX/PZ),Teemo (NX/PZ),12,24,0.5
-Tri-Beam (NX/PZ),Tri-Beam (NX/PZ),211,422,0.5
-Tri-Beam (NX/PZ),Trundle/Tryndamere (FR/NX),2,12,0.166666666666667
-Tri-Beam (NX/PZ),Trundle/Tryndamere (FR/SI),9,39,0.230769230769231
-Tri-Beam (NX/PZ),Viktor - Shellfolk,10,23,0.434782608695652
-Tri-Beam (NX/PZ),Viktor/Zoe,16,27,0.592592592592593
-Tri-Beam (NX/PZ),Xerath/Zilean (BC/SH),9,30,0.3
-Trundle/Tryndamere (DE/FR),SunDisc,30,44,0.681818181818182
-Trundle/Tryndamere (FR/IO),SunDisc,13,29,0.448275862068966
-Trundle/Tryndamere (FR/NX),SunDisc,18,33,0.545454545454545
-Trundle/Tryndamere (FR/NX),Tri-Beam (NX/PZ),10,12,0.833333333333333
-Trundle/Tryndamere (FR/SI),Aphelios/Viktor,11,27,0.407407407407407
-Trundle/Tryndamere (FR/SI),Aurelion Sol/Tryndamere,3,12,0.25
-Trundle/Tryndamere (FR/SI),Aurelion Sol/Zoe (FR/MT),12,25,0.48
-Trundle/Tryndamere (FR/SI),Azir/Irelia,6,17,0.352941176470588
-Trundle/Tryndamere (FR/SI),Caitlyn/Teemo (BC/PZ),7,16,0.4375
-Trundle/Tryndamere (FR/SI),Darius/Gnar (FR/NX),3,11,0.272727272727273
-Trundle/Tryndamere (FR/SI),Draven/Rumble (NX/PZ),8,15,0.533333333333333
-Trundle/Tryndamere (FR/SI),Draven/Viktor,8,11,0.727272727272727
-Trundle/Tryndamere (FR/SI),Elise (NX/SI),13,21,0.619047619047619
-Trundle/Tryndamere (FR/SI),Gnar/Trundle (FR/PZ),7,11,0.636363636363636
-Trundle/Tryndamere (FR/SI),Kindred/Viego (IO/SI),5,11,0.454545454545455
-Trundle/Tryndamere (FR/SI),Miss Fortune/Quinn,8,13,0.615384615384615
-Trundle/Tryndamere (FR/SI),Pantheon/Yuumi (DE/MT),14,23,0.608695652173913
-Trundle/Tryndamere (FR/SI),Pyke/Rek'Sai,3,12,0.25
-Trundle/Tryndamere (FR/SI),Riven/Viktor,13,24,0.541666666666667
-Trundle/Tryndamere (FR/SI),Senna/Veigar,6,12,0.5
-Trundle/Tryndamere (FR/SI),SunDisc,115,256,0.44921875
-Trundle/Tryndamere (FR/SI),Taliyah/Ziggs,3,10,0.3
-Trundle/Tryndamere (FR/SI),Tri-Beam (NX/PZ),30,39,0.769230769230769
-Twisted Fate (BW/PZ),SunDisc,6,18,0.333333333333333
-Udyr/Viktor,SunDisc,15,20,0.75
-Udyr/Vladimir,SunDisc,5,16,0.3125
-Vi/Viktor (BC/PZ),SunDisc,7,11,0.636363636363636
-Viego (IO/SI),SunDisc,4,16,0.25
-Viego (SI/SH),SunDisc,17,38,0.447368421052632
+Tri-Beam (NX/PZ),Riven/Viktor,218,374,0.582887700534759
+Tri-Beam (NX/PZ),Rumble/Sion,24,42,0.571428571428571
+Tri-Beam (NX/PZ),Rumble/Viktor,10,16,0.625
+Tri-Beam (NX/PZ),Senna/Veigar,43,103,0.41747572815534
+Tri-Beam (NX/PZ),Soraka/Tahm Kench,7,12,0.583333333333333
+Tri-Beam (NX/PZ),SunDisc,1025,2530,0.405138339920949
+Tri-Beam (NX/PZ),Taliyah/Ziggs,57,159,0.358490566037736
+Tri-Beam (NX/PZ),Teemo (NX/PZ),16,30,0.533333333333333
+Tri-Beam (NX/PZ),Tri-Beam (NX/PZ),287,574,0.5
+Tri-Beam (NX/PZ),Trundle/Tryndamere (DE/FR),5,11,0.454545454545455
+Tri-Beam (NX/PZ),Trundle/Tryndamere (FR/NX),3,13,0.230769230769231
+Tri-Beam (NX/PZ),Trundle/Tryndamere (FR/SI),16,71,0.225352112676056
+Tri-Beam (NX/PZ),Udyr/Viktor,7,11,0.636363636363636
+Tri-Beam (NX/PZ),Vi/Viktor (PZ/SI),14,19,0.736842105263158
+Tri-Beam (NX/PZ),Viktor - Shellfolk,14,28,0.5
+Tri-Beam (NX/PZ),Viktor/Zoe,17,28,0.607142857142857
+Tri-Beam (NX/PZ),Xerath/Zilean (BC/SH),13,37,0.351351351351351
+Trundle/Tryndamere (DE/FR),SunDisc,37,54,0.685185185185185
+Trundle/Tryndamere (DE/FR),Tri-Beam (NX/PZ),6,11,0.545454545454545
+Trundle/Tryndamere (FR/IO),SunDisc,15,33,0.454545454545455
+Trundle/Tryndamere (FR/MT),SunDisc,8,12,0.666666666666667
+Trundle/Tryndamere (FR/NX),SunDisc,20,37,0.540540540540541
+Trundle/Tryndamere (FR/NX),Tri-Beam (NX/PZ),10,13,0.769230769230769
+Trundle/Tryndamere (FR/SI),Akshan/Sivir (DE/SH),10,18,0.555555555555556
+Trundle/Tryndamere (FR/SI),Akshan/Viktor,8,11,0.727272727272727
+Trundle/Tryndamere (FR/SI),Aphelios/Diana (MT/SI),6,11,0.545454545454545
+Trundle/Tryndamere (FR/SI),Aphelios/Viktor,32,59,0.542372881355932
+Trundle/Tryndamere (FR/SI),Aphelios/Zoe (MT/SI),9,11,0.818181818181818
+Trundle/Tryndamere (FR/SI),Aurelion Sol/Trundle,3,11,0.272727272727273
+Trundle/Tryndamere (FR/SI),Aurelion Sol/Tryndamere,5,20,0.25
+Trundle/Tryndamere (FR/SI),Aurelion Sol/Zoe (FR/MT),31,51,0.607843137254902
+Trundle/Tryndamere (FR/SI),Azir/Irelia,12,44,0.272727272727273
+Trundle/Tryndamere (FR/SI),Caitlyn/Teemo (BC/PZ),15,30,0.5
+Trundle/Tryndamere (FR/SI),Darius/Gnar (FR/NX),8,25,0.32
+Trundle/Tryndamere (FR/SI),Draven/Rumble,4,10,0.4
+Trundle/Tryndamere (FR/SI),Draven/Rumble (NX/PZ),12,21,0.571428571428571
+Trundle/Tryndamere (FR/SI),Draven/Sion (NX/PZ),6,10,0.6
+Trundle/Tryndamere (FR/SI),Draven/Viktor,14,21,0.666666666666667
+Trundle/Tryndamere (FR/SI),Ekko/Zilean,8,13,0.615384615384615
+Trundle/Tryndamere (FR/SI),Elise (NX/SI),19,33,0.575757575757576
+Trundle/Tryndamere (FR/SI),Fizz/Lulu (BC/PZ),9,16,0.5625
+Trundle/Tryndamere (FR/SI),Gangplank/Sejuani,6,12,0.5
+Trundle/Tryndamere (FR/SI),Gnar/Teemo/Tristana (BC/DE),7,14,0.5
+Trundle/Tryndamere (FR/SI),Gnar/Trundle (FR/PZ),8,13,0.615384615384615
+Trundle/Tryndamere (FR/SI),Kindred/Viego (IO/SI),7,15,0.466666666666667
+Trundle/Tryndamere (FR/SI),Miss Fortune/Quinn,12,18,0.666666666666667
+Trundle/Tryndamere (FR/SI),Pantheon/Yuumi (DE/MT),24,40,0.6
+Trundle/Tryndamere (FR/SI),Pyke/Rek'Sai,4,17,0.235294117647059
+Trundle/Tryndamere (FR/SI),Riven/Viktor,35,73,0.479452054794521
+Trundle/Tryndamere (FR/SI),Senna/Veigar,13,22,0.590909090909091
+Trundle/Tryndamere (FR/SI),SunDisc,190,412,0.461165048543689
+Trundle/Tryndamere (FR/SI),Taliyah/Ziggs,10,25,0.4
+Trundle/Tryndamere (FR/SI),Tri-Beam (NX/PZ),55,71,0.774647887323944
+Trundle/Tryndamere (FR/SI),Trundle/Tryndamere (FR/SI),13,26,0.5
+Twisted Fate (BW/IO),SunDisc,5,11,0.454545454545455
+Twisted Fate (BW/PZ),SunDisc,9,23,0.391304347826087
+Udyr/Viktor,SunDisc,19,26,0.730769230769231
+Udyr/Viktor,Tri-Beam (NX/PZ),4,11,0.363636363636364
+Udyr/Vladimir,SunDisc,6,18,0.333333333333333
+Vi/Viktor (BC/PZ),SunDisc,9,13,0.692307692307692
+Vi/Viktor (PZ/SI),Aphelios/Viktor,8,15,0.533333333333333
+Vi/Viktor (PZ/SI),Aurelion Sol/Zoe (FR/MT),11,15,0.733333333333333
+Vi/Viktor (PZ/SI),Azir/Irelia,6,13,0.461538461538462
+Vi/Viktor (PZ/SI),Riven/Viktor,19,34,0.558823529411765
+Vi/Viktor (PZ/SI),SunDisc,42,69,0.608695652173913
+Vi/Viktor (PZ/SI),Tri-Beam (NX/PZ),5,19,0.263157894736842
+Viego (IO/SI),SunDisc,5,20,0.25
+Viego (SI/SH),Aphelios/Viktor,5,12,0.416666666666667
+Viego (SI/SH),SunDisc,26,55,0.472727272727273
+Viego/Yuumi,SunDisc,9,13,0.692307692307692
 Viktor - Shellfolk,Aphelios/Viktor,7,19,0.368421052631579
-Viktor - Shellfolk,Elise (NX/SI),8,12,0.666666666666667
-Viktor - Shellfolk,SunDisc,51,102,0.5
-Viktor - Shellfolk,Tri-Beam (NX/PZ),13,23,0.565217391304348
-Viktor/Zilean,SunDisc,6,10,0.6
-Viktor/Zoe,Aphelios/Viktor,14,25,0.56
-Viktor/Zoe,Pantheon/Yuumi (DE/MT),4,14,0.285714285714286
-Viktor/Zoe,Riven/Viktor,5,12,0.416666666666667
+Viktor - Shellfolk,Aurelion Sol/Zoe (FR/MT),6,10,0.6
+Viktor - Shellfolk,Elise (NX/SI),8,13,0.615384615384615
+Viktor - Shellfolk,Riven/Viktor,4,13,0.307692307692308
+Viktor - Shellfolk,SunDisc,60,119,0.504201680672269
+Viktor - Shellfolk,Tri-Beam (NX/PZ),14,28,0.5
+Viktor (BC/PZ),SunDisc,5,11,0.454545454545455
+Viktor (PZ/SI),SunDisc,5,11,0.454545454545455
+Viktor/Yuumi,SunDisc,6,11,0.545454545454545
+Viktor/Zilean,SunDisc,6,11,0.545454545454545
+Viktor/Zoe,Aphelios/Viktor,16,29,0.551724137931035
+Viktor/Zoe,Azir/Irelia,7,10,0.7
+Viktor/Zoe,Elise (NX/SI),7,11,0.636363636363636
+Viktor/Zoe,Pantheon/Yuumi (DE/MT),5,17,0.294117647058824
+Viktor/Zoe,Riven/Viktor,7,18,0.388888888888889
 Viktor/Zoe,Senna/Veigar,6,10,0.6
-Viktor/Zoe,SunDisc,72,126,0.571428571428571
-Viktor/Zoe,Taliyah/Ziggs,6,10,0.6
-Viktor/Zoe,Tri-Beam (NX/PZ),11,27,0.407407407407407
-Xerath/Zilean (BC/SH),Aphelios/Viktor,10,16,0.625
-Xerath/Zilean (BC/SH),Aurelion Sol/Trundle,3,10,0.3
-Xerath/Zilean (BC/SH),Elise (NX/SI),6,11,0.545454545454545
-Xerath/Zilean (BC/SH),Pantheon/Yuumi (DE/MT),5,14,0.357142857142857
-Xerath/Zilean (BC/SH),SunDisc,55,112,0.491071428571429
-Xerath/Zilean (BC/SH),Tri-Beam (NX/PZ),21,30,0.7
+Viktor/Zoe,SunDisc,80,139,0.575539568345324
+Viktor/Zoe,Taliyah/Ziggs,6,11,0.545454545454545
+Viktor/Zoe,Tri-Beam (NX/PZ),11,28,0.392857142857143
+Xerath/Zilean (BC/SH),Aphelios/Viktor,13,23,0.565217391304348
+Xerath/Zilean (BC/SH),Aurelion Sol/Trundle,3,12,0.25
+Xerath/Zilean (BC/SH),Aurelion Sol/Zoe (FR/MT),6,13,0.461538461538462
+Xerath/Zilean (BC/SH),Azir/Irelia,5,12,0.416666666666667
+Xerath/Zilean (BC/SH),Caitlyn/Teemo (BC/PZ),3,10,0.3
+Xerath/Zilean (BC/SH),Elise (NX/SI),10,17,0.588235294117647
+Xerath/Zilean (BC/SH),Pantheon/Yuumi (DE/MT),6,15,0.4
+Xerath/Zilean (BC/SH),Riven/Viktor,6,18,0.333333333333333
+Xerath/Zilean (BC/SH),SunDisc,67,136,0.492647058823529
+Xerath/Zilean (BC/SH),Taliyah/Ziggs,3,12,0.25
+Xerath/Zilean (BC/SH),Tri-Beam (NX/PZ),24,37,0.648648648648649
+Ziggs (BC/NX),SunDisc,10,11,0.909090909090909
