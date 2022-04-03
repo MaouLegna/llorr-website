@@ -752,6 +752,8 @@ Champion.deck.daily.diamond <- tibble(
     by = c("playerDeck","intDate") ) |>
   mutate( across(where(is.numeric), ~replace_na(.x, 0)) ) |>
   mutate( game_start_time_utc = as.Date(game_start_time_utc) )
+
+max_freq <- max(c(Champion.deck.daily$freq,Champion.deck.daily.diamond$freq))
 ```
 
 ## Row {data-heigth="750"}
@@ -770,8 +772,8 @@ meta.evo.base <- Champion.deck.daily |>
     expand = c(0, 0),
     # limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)),
     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5),
-    limits = c(0,0.30),
-    breaks = seq(0,0.30,0.05),
+    limits = c(0,0.60),
+    breaks = seq(0,0.60,0.10),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
@@ -843,8 +845,8 @@ meta.evo.diamond.base <- Champion.deck.daily.diamond |>
     expand = c(0, 0),
     # limits = c(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1)),
     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1),signif.ceiling(max(Champion.deck.daily.diamond$freq),1)/5),
-    limits = c(0,0.30),
-    breaks = seq(0,0.30,0.05),
+    limits = c(0,0.60),
+    breaks = seq(0,0.60,0.10),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
