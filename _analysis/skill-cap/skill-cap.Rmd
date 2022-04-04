@@ -23,6 +23,8 @@ bibliography: references.bib
 draft: TRUE
 ---
 
+---
+
 - vS explained the concept of Skill-Cap by looking at the performances/win in the ladder by looking at the differences between Top Legends / DiamondI-IV
 But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity ( which already big if it goes 2/3% )
 They look at the single MU because the meta would easily influence the mean value ( and looking at what I have for PR between the two groups it is an obvious confounder)
@@ -37,6 +39,28 @@ https://www.invenglobal.com/articles/15634/vs-zacho-grandmasters-are-not-immune-
 - But I don't think any deck reached these kinds of numbers where the improvement is by well over 5% from upper Diamond to top legend. Decks rarely if ever reach a 3% overall matchup improvement.
 
 Podcast info: ep.62 ~28:00
+
+---
+
+Ok, so to detail more the concept:
+- vS explained the concept of Skill-Cap by looking at the performances/win in the ladder by looking at the differences between Top Legends / DiamondI-IV
+
+Sometimes the fields is going to influence a deck winrates at different brackets -> if the meta over there is more favorable the wr is expceted to be higher
+
+But after removing all otherr factors and seeing the disparity in MU
+
+But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity ( which already big if it goes 2/3% is alreadu considered extremely high skill-cap it is historically high )
+They look at the single MU because the meta would easily influence the mean value ( and looking at what I have for PR between the two groups it is an obvious confounder)
+
+Now, their example, Contact Rogue had a diff of 7.5% which is crazily high
+
+So, now it's clearer why there is the problem I asked:
+- Because a certain sample size is required also at top MMR  / in addition by taking the games from the start of the "top players" we know we can expect an higher WR because of the relationship between nGames and WR, but then, including games from when they were Plat+ seems wrong because of the definition
+
+Podcast info: ep.62 ~28:00
+
+if something is good only at top100 one can assume it's only the player's skill
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -84,24 +108,6 @@ xaringanExtra::style_panelset_tabs(
 
 
 
-Ok, so to detail more the concept:
-- vS explained the concept of Skill-Cap by looking at the performances/win in the ladder by looking at the differences between Top Legends / DiamondI-IV
-
-Sometimes the fields is going to influence a deck winrates at different brackets -> if the meta over there is more favorable the wr is expceted to be higher
-
-But after removing all otherr factors and seeing the disparity in MU
-
-But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity ( which already big if it goes 2/3% is alreadu considered extremely high skill-cap it is historically high )
-They look at the single MU because the meta would easily influence the mean value ( and looking at what I have for PR between the two groups it is an obvious confounder)
-
-Now, their example, Contact Rogue had a diff of 7.5% which is crazily high
-
-So, now it's clearer why there is the problem I asked:
-- Because a certain sample size is required also at top MMR  / in addition by taking the games from the start of the "top players" we know we can expect an higher WR because of the relationship between nGames and WR, but then, including games from when they were Plat+ seems wrong because of the definition
-
-Podcast info: ep.62 ~28:00
-
-if something is good only at top100 one can assume it's only the player's skill
 
 
 
