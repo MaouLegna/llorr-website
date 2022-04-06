@@ -3,8 +3,8 @@ params:
   ind: "MR052"
   patch: "Patch 3.4 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°52)"
-  description: "33 Changes and Yet I still see Darkness all Over"
-  cardlurl: "https://dd.b.pvp.net/latest/set5/en_us/img/cards/-full.png"
+  description: "Tell the people the Meta you have seen this week! (ALSO ONE YEAR!)"
+  cardlurl: "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH003-full.png"
   start: "2022-03-30 18:00:00" #UTC tz / 'current' week start
   end:   "2022-04-06 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -118,11 +118,21 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 master.EU <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S12_EU.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-master.NA <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S12_NA.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+master.NA <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S12_NA.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8",colClasses = "character")
+
+master.NA <- update_current_master(DT = master.NA,DTA = LoR.Account.RMD,names = lor_leaderboard("americas",names = T),job.server.filter = "americas")
+
+master.NA[ gameName =="HKGCrisper07", time:=as.character("2202-02-24 04:30:00") ]
+master.NA[ gameName =="IanF",         time:=as.character("2022-04-04 22:30:00") ]
+master.NA[ gameName =="HKGCrisper07", time:=as.character("2022-04-04 18:00:00") ]
+master.NA[ gameName =="HKGCrisper07", time:=as.character("2022-04-05 18:00:00") ]
+
+master.NA <- master.NA |>
   filter(time <= as.POSIXct(params$end,"UTC"))
 
-master.APAC <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S12_APAC.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  filter(time <= as.POSIXct(params$end,"UTC"))
+master.APAC <- fread(file.path("C:","LlorR","data","raw","account","LoR_Master_S12_APAC.csv"), header = T, na.strings = c("", NA), encoding = "UTF-8",colClasses = "character")
+  
+master.APAC <- update_current_master(DT = master.APAC,DTA = LoR.Account.RMD,names = lor_leaderboard("sea",names = T),job.server.filter = "sea")
 
 EU.master.found   <- master.EU[ !is.na(puuid), .N ]
 NA.master.found   <- master.NA[ !is.na(puuid), .N ]
@@ -282,23 +292,44 @@ gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisi
 ```{r players-by-the-numbers}
 #| layout="l-body"
 
+# nPlayers <- LoR.Account.RMD |>
+#   dplyr::filter(!is.na(master)) |>
+#   dplyr::select(activeShard,rank=master) |>
+#   dplyr::mutate(across(everything(), str_to_title)) |>
+#   dplyr::mutate(rank = factor(rank, levels = c("Master","Diamond"), ordered = T ) ) |>
+#   gtsummary::tbl_summary(by = activeShard,
+#                label = list(rank = "Player Rank")) |>
+#   gtsummary::add_overall(col_label="*Total*",last=T) |>
+#   gtsummary::modify_header(label ~ "**Shard/Server**") |>
+#   gtsummary::bold_labels() |>
+#   gtsummary::as_gt() |>
+#   gt::tab_options(
+#     data_row.padding = px(1.2),
+#     table.background.color = "whitesmoke",
+#     table.font.color = "black",
+#     table.font.color.light = "black"
+#    )
+
+  
 nPlayers <- LoR.Account.RMD |>
-  filter(!is.na(master)) |>
-  select(activeShard,rank=master) |>
-  mutate(across(everything(), str_to_title)) |>
-  mutate(rank = factor(rank, levels = c("Master","Diamond"), ordered = T ) ) |>
-  tbl_summary(by = activeShard,
-               label = list(rank = "Player Rank")) |>
-  modify_header(label ~ "**Shard/Server**") |>
-  bold_labels() |>
-  as_gt() |>
-  tab_options(
-    data_row.padding = px(1.2),
+  dplyr::filter(!is.na(master)) |>
+  dplyr::select(activeShard,rank=master) |>
+  dplyr::mutate(across(everything(), str_to_title)) |>
+  dplyr::mutate(rank = factor(rank, levels = c("Master","Diamond"), ordered = T ) ) |>
+  tbl_cross(
+    row = rank,
+    col = activeShard,
+    percent = "cell",
+    list(rank ~ "Player Rank", activeShard ~ "**Shard/Server**")
+  ) |>
+  gtsummary::as_gt() |>
+  gt::tab_options(
+    data_row.padding = px(4),
     table.background.color = "whitesmoke",
     table.font.color = "black",
     table.font.color.light = "black"
    )
-
+  
 nPlayers
 
 gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
@@ -594,7 +625,7 @@ plot_daily(
   Champion.deck.daily,
   decks = fct_values,
   title = "Evolution of Play Rate over time - Master",
-  limit = .15
+  limit = .60
   ) -> meta_evo
 
 meta_evo
@@ -625,7 +656,7 @@ plot_daily(
   Champion.deck.daily,
   decks = fct_values,
   title = "Evolution of Play Rate over time - HighDiamond",
-  limit = .15
+  limit = .60
   ) -> meta_evo
 
 meta_evo
