@@ -4,6 +4,7 @@ while (TRUE) {
     giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
   }
   
+  message(giorno)
   naptime::naptime(giorno)
   
   # Update the decks
