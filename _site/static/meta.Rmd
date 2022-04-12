@@ -13,6 +13,7 @@ params:
   start:   "2022-03-30 19:00:00"
   # end:     "2023-12-31 18:00:00"
   minMUGames: 10
+  meta_max: 0.3
 ---
 
 ```{r setup, include=FALSE}
@@ -772,8 +773,8 @@ meta.evo.base <- Champion.deck.daily |>
     expand = c(0, 0),
     # limits = c(0,signif.ceiling(max(Champion.deck.daily$freq),1)),
     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily$freq),1),signif.ceiling(max(Champion.deck.daily$freq),1)/5),
-    limits = c(0,0.60),
-    breaks = seq(0,0.60,0.10),
+    limits = c(0,params$meta_max),
+    breaks = seq(0,params$meta_max,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
@@ -845,8 +846,8 @@ meta.evo.diamond.base <- Champion.deck.daily.diamond |>
     expand = c(0, 0),
     # limits = c(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1)),
     # breaks = seq(0,signif.ceiling(max(Champion.deck.daily.diamond$freq),1),signif.ceiling(max(Champion.deck.daily.diamond$freq),1)/5),
-    limits = c(0,0.60),
-    breaks = seq(0,0.60,0.10),
+    limits = c(0,params$meta_max),
+    breaks = seq(0,params$meta_max,0.05),
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
