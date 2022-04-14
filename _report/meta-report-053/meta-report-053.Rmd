@@ -21,7 +21,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 04-06-2022
+date: 04-13-2022
 output:
  distill::distill_article:
     toc: true
@@ -115,13 +115,13 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r account-info}
-EU.master.found   <- LoR.Account.RMD[ activeShard == "europe" & master == "master", .N ]
-NA.master.found   <- LoR.Account.RMD[ activeShard == "americas" & master == "master", .N ]
-APAC.master.found <- LoR.Account.RMD[ activeShard == "apac" & master == "master", .N ]
+EU.master.found   <- 1120 # LoR.Account.RMD[ activeShard == "europe" & master == "master", .N ]
+NA.master.found   <- 1290 # LoR.Account.RMD[ activeShard == "americas" & master == "master", .N ]
+APAC.master.found <- 1081 # LoR.Account.RMD[ activeShard == "apac" & master == "master", .N ]
 
-EU.master.ladder   <- lorR::lor_leaderboard("europe",names=T) |> length()
-NA.master.ladder   <- lorR::lor_leaderboard("americas",names=T) |> length()
-APAC.master.ladder <- lorR::lor_leaderboard("sea",names=T) |> length() 
+EU.master.ladder   <- 1121 # lorR::lor_leaderboard("europe",names=T) |> length()
+NA.master.ladder   <- 1291 # lorR::lor_leaderboard("americas",names=T) |> length()
+APAC.master.ladder <- 1082 # lorR::lor_leaderboard("sea",names=T) |> length() 
 ```
 
 ```{r prepare-data-master}
@@ -187,7 +187,7 @@ if (any(c(LoR.Melt.Master.RMD[ is.na(playerID), .N ],
 # Data
 
 ```{r nGames-data}
-max_time <- do.call("rbind", mget( ls(pattern="\\.DT.RMD$") ) ) |>
+max_time <- do.call("rbind", mget( ls(pattern=regex("^LoR.Melt")) ) ) |>
   slice_max(game_start_time_utc,n=1,with_ties = F) |>
   pull(game_start_time_utc) |>
   format(format = "%Y-%m-%d %H:%M:%S")
