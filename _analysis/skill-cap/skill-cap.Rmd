@@ -1,8 +1,8 @@
 ---
 params:
   ind: "00"
-  title: "From Curve to Cap"
-  description: "Exploring Clustering Algorithms applied to Archetypes of Legends of Runeterra"
+  title: "From Curve to Gap"
+  description: ""
 title: | 
   `r params$title`
 description: |
@@ -23,7 +23,76 @@ bibliography: references.bib
 draft: TRUE
 ---
 
----
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE,
+  eval       = TRUE,
+  warning    = FALSE,
+  error      = FALSE,
+  message    = FALSE,
+  comment    = NA,
+  R.options  = list(width = 140, digits.secs=6),
+  dev.args   = list(bg = 'whitesmoke'),
+  fig.align  = 'center',
+  fig.width  = 12,
+  fig.height = 8,
+  # fig.path   = "figures/prefix-"
+  fig.path   = glue::glue("images/{params$ind}-"),
+  layout     = "l-page",
+  preview    = TRUE
+)
+
+#' R Option
+options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+xaringanExtra::use_panelset()
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(
+  font_family        = "Helvetica",
+  active_foreground  = "white",
+  hover_foreground   = "black",
+  hover_border_color = "black",
+  active_background  = "#007fff"
+  )
+```
+
+# Introduction
+
+
+When talking in any discussion about any competitive activity a recurring concept that is likely to be bought up.
+
+Skill is a commonly recurring factor bought up in any discussion revolving a competitive activity, be it a sport, a game or anything else
+
+While we usually have a clear idea of the meaning of the *skill* concept, skill is by itself, from a measuring perspective by itself is an ill-defined term similarly to the concept of intelligence.
+
+Be it Legends of Runeterra (LoR), Hearthstone (HS), Magic the Gathering (MtG) or simply any other game, skill is often used a explain the differences between players. To explain a result, skill alongside match-ups, are probably the most
+
+In a previous article <ref> we discussed the concept of mastery-curve to illustrate the potential relationship between effort spent on a deck in number of games with it.
+
+The Mastery-Curve can give an indication of the *skill* a deck may require to be played, but the method fall short to provide an easy to digest difference between group of players.
+
+In this article we try to explore the concept of Skill-Cap explained by
+
+[][https://twitter.com/ZachODR]
+
+define the theory behind it and try to replicate in our own way the concept for LoR in a measure we define as **Skill-Cap Gap** (SCG).
+
+# Skill-Cap - The Vicious (Syndicate) Way
+
+In games with a ladder/rank system a common question is if there is any difference in skill between X at one particular rank vs another rank of choice.
+
+Let us take Hearthstone as an example: if we want to say that at top 1000 Legends players are more proficient than Diamond players with a certain deck a common approach would be to compare such deck win rate (WR) across those ranks and assume the difference in win rate can be 
+
+
+
+Assessing the differences in ski
+
+Comparing WR across different ranks of players if an easy an intuitive task
+
 
 - vS explained the concept of Skill-Cap by looking at the performances/win in the ladder by looking at the differences between Top Legends / DiamondI-IV
 But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity ( which already big if it goes 2/3% )
