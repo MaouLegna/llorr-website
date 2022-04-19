@@ -13,7 +13,7 @@ params:
   start:   "2022-03-30 19:00:00"
   # end:     "2023-12-31 18:00:00"
   minMUGames: 10
-  meta_max: 0.3
+  meta_max: 0.25
 ---
 
 ```{r setup, include=FALSE}
@@ -719,7 +719,7 @@ Champion.deck.daily <- tibble(
         playerDeck = fct_other(playerDeck,keep = top7days) |> fct_infreq(),
         intDate = findInterval(game_start_time_utc, seqDate )
       ) |>
-      filter(playerDeck != "Other" ) |>
+      # filter(playerDeck != "Other" ) |>
       group_by(intDate) |>
       count(playerDeck) |>
       mutate(freq = prop.table(n))|>
@@ -745,7 +745,7 @@ Champion.deck.daily.diamond <- tibble(
         playerDeck = fct_other(playerDeck,keep = top7days.diamond) |> fct_infreq(),
         intDate = findInterval(game_start_time_utc, seqDate )
       ) |>
-      filter( playerDeck != "Other" ) |>
+      # filter( playerDeck != "Other" ) |>
       group_by(intDate) |>
       count(playerDeck) |>
       mutate(freq = prop.table(n))|>
