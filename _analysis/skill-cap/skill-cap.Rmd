@@ -94,36 +94,63 @@ Let us take Hearthstone as an example: if we want to say that at top 1000 Legend
 That would be one of the basic errors when doing such kind of analysis
 
 ```{r vS-example}
-ranks_levels <- c("platinum","diamond","master","top master")
+ranks_levels <- c("platinum","diamond","master")
+n = 1000
+mu_wr1 <- 0.55
+mu_wr2 <- 0.45
+w1_plat    <- 0.40
+w1_diamond <- 0.50
+w1_master  <- 0.56
 
-set.seed(123)
-example <- tibble(
-  outcome = c(
-    sample(x = c(0,1),size = 1000,replace = T,prob = c(0.55,0.45)),
-    sample(x = c(0,1),size = 1000,replace = T,prob = c(0.50,0.50)),
-    sample(x = c(0,1),size = 1000,replace = T,prob = c(0.48,0.52)),
-    sample(x = c(0,1),size = 1000,replace = T,prob = c(0.47,0.53))
-  ),
-  rank = rep(ranks_levels,each=1000),
-  pr   = c(
-    rep(1,700),rep(0,300), # plat
-    rep(1,600),rep(0,400), # dia
-    rep(1,550),rep(0,400), # master
-    rep(1,500),rep(0,500) # top
+simulate_meta <- function(weight,rank) {
+  
+  W <- c(weight,1-weight) 
+  P <- c(mu_wr1,mu_wr2)
+  M <- W %*% t(P) |> round(digits = 3)
+  
+  print(M)
+  tibble(outcome = c( rep(1,M[1,1]*n),rep(0,M[1,2]*n),
+                      rep(0,M[2,1]*n),rep(1,M[2,2]*n) ),
+         mu = c( rep("MU1",sum(M[1,])*n) ,
+                 rep("MU2",sum(M[2,])*n) ),
+         rank = rank
   )
-) |>
-  mutate(rank = factor(rank, levels = ranks_levels,ordered = T))
+}
+
+# rm(weight)
+
+example <- map2_dfr(.x = c(w1_plat,w1_diamond,w1_master),
+         .y = ranks_levels, ~simulate_meta(.x,.y) ) |>
+  mutate(rank = factor(rank,levels = ranks_levels,ordered = T) )
+```
+
+```{r}
+example |>
+  group_by(rank) |>
+  summarise(wr = mean(outcome)) |>
+  ggplot(aes(x = rank,y = wr)) +
+  geom_point() +
+  geom_line(group = 1) +
+  theme_Publication() +
+  scale_y_continuous(
+    limits = c(0.40,0.60)
+  )
 
 example |>
-  group_by(rank,pr) |>
-  summarise(
-    wr = mean(outcome),
-    pr = n()/1000
-  ) |>
-  ungroup() |>
-  mutate( std.wr = wr*(0.5/pr) )
-  
+  group_by(rank) |>
+  summarise(wr = mean(outcome))
 
+example |>
+  tabyl(rank,mu)
+
+example |>
+  group_by(mu) |>
+  summarise(wr = mean(outcome))
+```
+
+
+
+```{r vS-example}
 example |>
   group_by(rank) |>
   summarise(wr = mean(outcome)) |>
@@ -141,13 +168,42 @@ example |>
   . => glm(outcome ~ rank, family = "binomial", .) -> model
 
 # broom::tidy(model, exponentiate = TRUE)
+```
+```{r}
 
 
 
+sample()
+
+tibble(
+  
+  outcome = c(rep(1,1000*mu_wr1),
+              rep(1,1000*(1-mu_wr1)),
+              rep(1,1000*mu_wr2),
+              rep(1,1000*(1-mu_wr2)))
+  
+  
+  
+)
+
+
+
+
+wr <- function(w1,p1) {
+  1-p1-w1+2*w1*p1
+}
+
+wr(w1 = .1,p1 = .7)
+
+lapply(seq(0.01,1,0.01), function(x) wr(x,.6) )
+
+# 38/39 - 51 - 64
 
 
 
 ```
+
+
 
 
 
