@@ -1,7 +1,7 @@
 ---
 params:
   ind: "SkillCap"
-  title: "From Curve to Gap"
+  title: "From Curve to Gap. On difference of win rates at different ranks"
   description: ""
 title: | 
   `r params$title`
@@ -19,7 +19,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: false
-bibliography: references.bib
+# bibliography: references.bib
 draft: TRUE
 ---
 
@@ -42,8 +42,8 @@ knitr::opts_chunk$set(
   preview    = TRUE
 )
 
-#' R Option
-options(scipen = 999)
+# R Option
+# options(scipen = 999)
 source(file.path("C:","LlorR","scripts","lor_main.R" ))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
@@ -60,8 +60,40 @@ xaringanExtra::style_panelset_tabs(
   )
 ```
 
-# Introduction
+```{r twitter-meta, echo = FALSE}
+metathis::meta() |>
+  metathis::meta_description(params$description) |>
+  metathis::meta_viewport() |>
+  metathis::meta_social(
+    title = params$title,
+    url = "https://www.llorr-stats.com/",
+    image = "images/archetypes/A02_APheatmap.png",
+    image_alt = "APclusterHeatmap",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
 
+```{r functions}
+simulate_meta <- function(weight,rank,n) {
+  
+  W <- c(weight,1-weight) 
+  P <- c(mu_wr1,mu_wr2)
+  M <- W %*% t(P) |> round(digits = 3)
+  
+  # print(M)
+  tibble(outcome = c( rep(1,M[1,1]*n),rep(0,M[1,2]*n),
+                      rep(0,M[2,1]*n),rep(1,M[2,2]*n) ),
+         mu = c( rep("MU1",sum(M[1,])*n) ,
+                 rep("MU2",sum(M[2,])*n) ),
+         rank = rank
+  )
+}
+```
+
+# Introduction
 
 When talking in any discussion about any competitive activity a recurring concept that is likely to be bought up.
 
@@ -75,11 +107,11 @@ In a previous article <ref> we discussed the concept of mastery-curve to illustr
 
 The Mastery-Curve can give an indication of the *skill* a deck may require to be played, but the method fall short to provide an easy to digest difference between group of players.
 
-In this article we try to explore the concept of Skill-Cap explained by
-
-[][https://twitter.com/ZachODR]
+In this article we try to explore the concept of Skill-Cap explained by [ZachO](https://twitter.com/ZachODR){.uri}
 
 define the theory behind it and try to replicate in our own way the concept for LoR in a measure we define as **Skill-Cap Gap** (SCG).
+
+> Disclaimer: The definition and methodology by which the Skill-cap is defined by Zach.O is merely obtained by reading and listening to the media where he talked about it and that we found. We couldn't reach him for confirmation so it's possible that something is lacking.
 
 # Measuring the Skill-Cap
 
@@ -91,306 +123,307 @@ Let us take Hearthstone as an example: if we want to say that at top 1000 Legend
 
 **WRONG**
 
-That would be one of the basic errors when doing such kind of analysis
+That would be one of the basic errors when doing such kind of analysis.
+
+We created an example to illustrate what can easily go wrong:
 
 ```{r vS-example}
+# to check some values
+# wr <- function(w1,p1) {
+#   1-p1-w1+2*w1*p1
+# }
+# 
+# lapply(seq(0.01,1,0.01), function(x) wr(x,.6) )
+
 ranks_levels <- c("platinum","diamond","master")
-n = 1000
+Ranks_levels <- c("Platinum","Diamond","Master")
+
+n = 10000
 mu_wr1 <- 0.55
 mu_wr2 <- 0.45
 w1_plat    <- 0.40
-w1_diamond <- 0.50
-w1_master  <- 0.56
+w1_diamond <- 0.54
+w1_master  <- 0.58
 
-simulate_meta <- function(weight,rank) {
-  
-  W <- c(weight,1-weight) 
-  P <- c(mu_wr1,mu_wr2)
-  M <- W %*% t(P) |> round(digits = 3)
-  
-  print(M)
-  tibble(outcome = c( rep(1,M[1,1]*n),rep(0,M[1,2]*n),
-                      rep(0,M[2,1]*n),rep(1,M[2,2]*n) ),
-         mu = c( rep("MU1",sum(M[1,])*n) ,
-                 rep("MU2",sum(M[2,])*n) ),
-         rank = rank
-  )
-}
-
-# rm(weight)
-
-example <- map2_dfr(.x = c(w1_plat,w1_diamond,w1_master),
-         .y = ranks_levels, ~simulate_meta(.x,.y) ) |>
-  mutate(rank = factor(rank,levels = ranks_levels,ordered = T) )
+example <- pmap_dfr(.l = list(weights = c(w1_plat,w1_diamond,w1_master),
+                              ranks = ranks_levels,
+                              n = c(10000,5000,3000) ),
+         .f = ~simulate_meta(..1,..2,..3) ) |>
+  mutate(rank = factor(rank,levels = ranks_levels, labels = Ranks_levels,ordered = T) )
 ```
 
-```{r}
+We start by having a deck with a crude win rate of `r scales::percent(mean(example$outcome),accuracy = 0.01)`
+
+Assuming that the numbers of games collected is large enough it would be possible to assume that the deck has an almost coin-toss win rate but more toward the losing side.
+
+As the data is collected as different ranks platinum,diamond and master rank; while looking at these results the high ranked players may have some doubts about the results as they are sure that overall they winning more than losing.
+
+The stratified win rate is obtained:
+
+```{r wr-by-rank, fig.width  = 6, fig.height = 4}
 example |>
   group_by(rank) |>
   summarise(wr = mean(outcome)) |>
   ggplot(aes(x = rank,y = wr)) +
   geom_point() +
   geom_line(group = 1) +
-  theme_Publication() +
   scale_y_continuous(
-    limits = c(0.40,0.60)
-  )
-
-example |>
-  group_by(rank) |>
-  summarise(wr = mean(outcome))
-
-example |>
-  tabyl(rank,mu)
-
-example |>
-  group_by(mu) |>
-  summarise(wr = mean(outcome))
+    limits = c(0.45,0.55),
+    labels = scales::percent_format(accuracy = 1)
+  ) +
+  geom_text(
+    aes(label=round(wr*100,2)),
+    size = 4, face = "bold", color = "grey50", vjust = -1, hjust = -0.5
+  ) +
+  labs(title = "Win Rate by Rank",x = "Rank",y="WinRate") +
+  theme_Publication()
 ```
 
+The result is now coherent with the high level players and indeed the deck has a different WR at different ranks.
 
+It would be very easy to assume that the differences in WR is to assign to the difference in skills of the players. The higher the rank the better are the players to pilot a deck.
 
-```{r vS-example}
+In this example the *meta* is defined by a simple case two different match ups (let's ignore if it's feasable or not)
+
+What follows is again the stratified win rate by rank but also by each different match ups.
+
+```{r wr-by-rank-mu, fig.width  = 10, fig.height = 8}
 example |>
-  group_by(rank) |>
+  group_by(rank,mu) |>
   summarise(wr = mean(outcome)) |>
-  ggplot(aes(x = rank,y = wr)) +
+  ggplot(aes(x = rank,y = wr, group=mu, fill=mu, color=mu)) +
   geom_point() +
-  geom_line(group = 1) +
-  theme_Publication() +
+  geom_line() +
   scale_y_continuous(
-    limits = c(0.40,0.60)
-  )
+    limits = c(0.40,0.60),
+    labels = scales::percent_format(accuracy = 1)
+  ) +
+  geom_text(
+    aes(label=round(wr*100,2)),
+    size = 4, face = "bold", color = "grey50", vjust = -1, hjust = -0.5
+  ) +
+  labs(title = "Win Rate by Rank",subtitle = "Results by Rank AND Match Ups",x = "Rank",y="WinRate") +
+  theme_Publication() +
+  guides(color = guide_legend(title = "Match Up"), fill = "none", color = "none")
+```
 
+We can see that ... It's possible to notice that the win rate was actually constant at each rank And that the explanation is to found elsewhere.
+
+As this is a very easy example, the only remaining factor which could be the cause of the differences is by the variation in play rates of the two match ups at each rank
+
+```{r gt-meta}
 example |>
-  mutate(rank = factor(rank, levels = ranks_levels,ordered = F)) |>
-  mutate(rank = relevel(rank, ref = "platinum") ) |>
-  . => glm(outcome ~ rank, family = "binomial", .) -> model
-
-# broom::tidy(model, exponentiate = TRUE)
+  mutate(mu = factor(mu, levels = c("MU1","MU2"),labels = c("MatchUp1","MatchUp2") ) ) |>
+  tbl_cross(
+    row = rank,
+    col = mu,
+    percent = "row",
+    label = list(rank ~ "Player Rank", mu ~ "Match Up")
+  )
 ```
-```{r}
-
-
-
-sample()
-
-tibble(
-  
-  outcome = c(rep(1,1000*mu_wr1),
-              rep(1,1000*(1-mu_wr1)),
-              rep(1,1000*mu_wr2),
-              rep(1,1000*(1-mu_wr2)))
-  
-  
-  
-)
-
-
-
-
-wr <- function(w1,p1) {
-  1-p1-w1+2*w1*p1
-}
-
-wr(w1 = .1,p1 = .7)
-
-lapply(seq(0.01,1,0.01), function(x) wr(x,.6) )
-
-# 38/39 - 51 - 64
-
-
-
-```
-
-
-
-
-
-
 
 ## The Vicious (Syndicate) Way
 
+Trying to evaluate the differences in skills in a CG, in a certain meta at different ranks is no easy task.
 
+Assuming it was possible to collect all information a game played it would be still hard to control for
 
-Podcast info: ep.62 ~28:20
+Even if it was possible to create the perfect experiment it would be hard to track all the confounding variables
 
-> Sometimes the fields is going to influence a deck winrates at different brackets because if the fields is more favorable that contributes to the deck's wr
+Human factors that are not collectable. Of course it's possible to make some assumption, proxy but overall
 
+In the Hearthstone community Zach.O has discussed several times [^1] [^2] about skill-cap of decks at different ranks.
 
+[^1]: [Invenglobal Interview](https://www.invenglobal.com/articles/15634/vs-zacho-grandmasters-are-not-immune-to-making-poor-judgment-calls-like-running-safety-inspector-in-paladin){.uri}
+[^2]: Data Reaper Podcast: Ep.62 / Ep.64
 
-Zach.O
+In his podcast, Zach, while discussing with Hat on the skill-testing of "Garrote Contact Rogue" deck, goes more in detail about the skill-cap concept:
 
-https://www.invenglobal.com/articles/15634/vs-zacho-grandmasters-are-not-immune-to-making-poor-judgment-calls-like-running-safety-inspector-in-paladin
+> ... and I look at the difference between Top Legends and DiamondI-IV. I look at the disparities in MU, not looking at <unclear> because sometimes the fields is going to influence a deck winrates at different brackets. Because, you know if the fields is more favourable, that can contributes to the deck's win rate. But, when I try to eliminate all other factors, and look at the disparities, just the MU disparities based of skill... ^[Data Reaper Podcast: Ep.62 28:55]
 
+Other keys references from the discussion are some key references like:
 
+> A 2/3% win rate improvement is already big
 
+And similarly
 
+> A 3-4% is extremely high skill cap
 
-That would be a big error because it assumes there are no other differences in play while the meta by itself, with different meta and so different play rates. Even small difference can bring 
+<!-- The projection of the skill curve is so high, there is reason to believe it can add a couple more percentages at the very top of the ladder, because the scaling in insane -->
 
+In addition, also worth to remember is said by both Zach and Hat:
 
+> Zach: Data is not blind to skill. Data can very much identify skill if it doesn't appear in the data... it's probably a fairy tail
 
+> Hat: ...that's probably the player influence. If something is only good at top100, that mean that the best players in the world are playing a mediocre deck and off-setting for that Because the very best players in the world, will absolutely make anything look good
 
+As we mentioned in the introduction the methodology is only inferred from the sources mentioned and wrote in the footnotes.
 
-- ZachO explained the concept of Skill-Cap by looking at the performances/win in the ladder by looking at the differences between Top Legends / DiamondI-IV
+It's highly possible that Zach uses a more complex methodology compared to the one we will present as they have access to a bigger pool of variables but the core concept should still remain similar.
 
+Now, let us extract the key points from the discussion:
 
+- Sometimes the fields is going to influence a deck win-rates at different brackets because if the fields is more favourable, that contributes to the deck's win rate.
 
+This is the play-rate issue mentioned in our example.
 
+Even small differences in the meta can vastly change the overall performance of a deck.
 
+This is also a concept that we introduced in one of our earliest analysis on [Matching and Propensity Score](https://www.llorr-stats.com/analysis/matching-win-rate){.uri}
 
+- Measuring the Skill-Cap by looking at the differences between Top Legends/Diamond I-IV
 
+This is the key point which along side the previous one should explain the core methodology.
 
-Ok, so to detail more the concept:
+The unit of choice if the difference in win rates among match-ups.
 
+It means that given j,k with $j \ne k$ ranks of players, for a certain deck we have $d_{j,k}(deck\_MU_i) = wr_j(deck\_MU_i)-wr_k(deck\_MU_i)$ with $i \in 1:n$ with n being all the shared match ups among rank j,k of the chosen decks.
 
+With these an intuitive use of the set of differences if the take the expected value which would be $SkillCap(deck)_{j_k} = E(d_{j,k}(deck\_MU_i))$
 
-<!-- Sometimes the fields is going to influence a deck winrates at different brackets -->
+- After removing all other factors and seeing the disparity in MU
 
-But after removing all otherr factors and seeing the disparity in MU
+This is mostly to remember that there is the chance that the methodology also control for other variables
 
-But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity ( which already big if it goes 2/3% is already considered extremely high skill-cap it is historically high )
+---
+
+Problems:
+
+Assuming almost all MU are there in any combination rank and that 
+
+---
+
+But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity
 They look at the single MU because the meta would easily influence the mean value ( and looking at what I have for PR between the two groups it is an obvious confounder)
 
-Now, their example, Contact Rogue had a diff of 7.5% which is crazily high
-
-So, now it's clearer why there is the problem I asked:
-- Because a certain sample size is required also at top MMR  / in addition by taking the games from the start of the "top players" we know we can expect an higher WR because of the relationship between nGames and WR, but then, including games from when they were Plat+ seems wrong because of the definition
-
-
-Assessing the differences in ski
-
-So, now it's clearer why there is the problem I asked:
-- Because a certain sample size is required also at top MMR  / in addition by taking the games from the start of the "top players" we know we can expect an higher WR because of the relationship between nGames and WR, but then, including games from when they were Plat+ seems wrong because of the definition
-
-
-
-- But I don't think any deck reached these kinds of numbers where the improvement is by well over 5% from upper Diamond to top legend. Decks rarely if ever reach a 3% overall matchup improvement.
-
-> If something is good only at top100 one can assume it's only the player's skill
-
-
-
+---
 
 # Theory and methods
 
-## Leveraging the field
+```{r}
+mtcars |>
+  as.data.table() |>
+  extract( ,.N, by = cyl)
+  
+  # lm(formula = mpg ~ disp + wt, data = _)
+```
+
+
+## Standardisation
+
+
+# Laveraging the Shuriman devert
 
 ```{r raw-data}
-# load DeckDT
-LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
-
-# load Games DT
-LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread,colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) ) |>
-  mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
-  distinct(puuid,.keep_all = T)
-
-# load Seasonal
-LoR.Seasonal.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Seasonal(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-# load Temp DT
-LoR.Temp.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Temp_DT_S12(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-# load Games DT
-LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
-  str_subset(pattern = "Keys",negate = T) |>
-  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-# load Games DT
-LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
-  str_subset(pattern = "Keys",negate = T) |>
-  map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+# # load DeckDT
+# LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
+# 
+# # load Games DT
+# LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
+#   map_dfr(data.table::fread,colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+#   mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) ) |>
+#   mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
+#   distinct(puuid,.keep_all = T)
+# 
+# # load Seasonal
+# LoR.Seasonal.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Seasonal(.*)csv$"), full.names = T) |>
+#   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+#   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+# 
+# # load Temp DT
+# LoR.Temp.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Temp_DT_S12(.*)csv$"), full.names = T) |>
+#   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+#   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+# 
+# # load Games DT
+# LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
+#   str_subset(pattern = "Keys",negate = T) |>
+#   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+#   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+# 
+# # load Games DT
+# LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
+#   str_subset(pattern = "Keys",negate = T) |>
+#   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+#   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 ```
 
 ```{r players-select}
-LoR.Seasonal.DT.RMD |>
-  # filter(game_version == max(game_version) ) |>
-  filter(game_version == "live_3_01_12" ) |>
-  select(match_key,starts_with("puuid")) |>
-  pivot_longer(-match_key,values_to = "puuid") |>
-  distinct(puuid) |>
-  pull() -> puuid_seasonal
+# LoR.Seasonal.DT.RMD |>
+#   # filter(game_version == max(game_version) ) |>
+#   filter(game_version == "live_3_01_12" ) |>
+#   select(match_key,starts_with("puuid")) |>
+#   pivot_longer(-match_key,values_to = "puuid") |>
+#   distinct(puuid) |>
+#   pull() -> puuid_seasonal
 ```
 
 ```{r temp}
-LoR.Melt.Temp.RMD <- LoR.Temp.DT.RMD |>
-  filter(game_mode == "Constructed") |>
-  filter(game_start_time_utc >= as_datetime("2022-02-16 19:00:00") ) |>
-  select(-contains("factions")) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
-  as.data.table() |>
-  # Add Deck data
-  left_join(LoR.Deck.RMD, by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(
-    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code")) |>
-  # Add Player data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
-```
-
-```{r diamond}
-LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  filter(game_mode == "Constructed") |>
-  filter(game_start_time_utc >= as_datetime("2022-02-16 19:00:00") ) |>
-  select(-contains("factions")) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
-  as.data.table() |>
-  # Add Deck data
-  left_join(LoR.Deck.RMD, by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(
-    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code")) |>
-  # Add Player data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
-```
-
-```{r master}
-LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
-  filter(game_mode == "Constructed") |>
-  filter(game_start_time_utc >= as_datetime("2022-02-16 19:00:00") ) |>
-  select(-contains("factions")) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]"
-               ) |>
-  as.data.table() |>
-  # Add Deck data
-  left_join(LoR.Deck.RMD, by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(
-    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code")) |>
-  # Add Player data
-  left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
-  left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
+# LoR.Melt.Temp.RMD <- LoR.Temp.DT.RMD |>
+#   filter(game_mode == "Constructed") |>
+#   filter(game_start_time_utc >= as_datetime("2022-02-16 19:00:00") ) |>
+#   select(-contains("factions")) |>
+#   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+#   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+#   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+#   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+#                names_to = c(".value"),
+#                names_pattern = "(.*)_[0-9]"
+#                ) |>
+#   as.data.table() |>
+#   # Add Deck data
+#   left_join(LoR.Deck.RMD, by="deck_code") |>
+#   rename(playerDeck=archetype) |>
+#   left_join(
+#     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+#     by=c("opponent_deck_code"="deck_code")) |>
+#   # Add Player data
+#   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
+#   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
+# 
+# LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
+#   filter(game_mode == "Constructed") |>
+#   filter(game_start_time_utc >= as_datetime("2022-02-16 19:00:00") ) |>
+#   select(-contains("factions")) |>
+#   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+#   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+#   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+#   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+#                names_to = c(".value"),
+#                names_pattern = "(.*)_[0-9]"
+#                ) |>
+#   as.data.table() |>
+#   # Add Deck data
+#   left_join(LoR.Deck.RMD, by="deck_code") |>
+#   rename(playerDeck=archetype) |>
+#   left_join(
+#     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+#     by=c("opponent_deck_code"="deck_code")) |>
+#   # Add Player data
+#   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
+#   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
+# 
+# LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
+#   filter(game_mode == "Constructed") |>
+#   filter(game_start_time_utc >= as_datetime("2022-02-16 19:00:00") ) |>
+#   select(-contains("factions")) |>
+#   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
+#   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
+#   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
+#   pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
+#                names_to = c(".value"),
+#                names_pattern = "(.*)_[0-9]"
+#                ) |>
+#   as.data.table() |>
+#   # Add Deck data
+#   left_join(LoR.Deck.RMD, by="deck_code") |>
+#   rename(playerDeck=archetype) |>
+#   left_join(
+#     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
+#     by=c("opponent_deck_code"="deck_code")) |>
+#   # Add Player data
+#   left_join(LoR.Account.RMD[,.(puuid,playerID=RiotID)]   ,by=c("playerPuuid"="puuid")) |>
+#   left_join(LoR.Account.RMD[,.(puuid,opponentID=RiotID)] ,by=c("opponentPuuid"="puuid"))
 ```
 
 ```{r melt-data}
@@ -423,226 +456,231 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
 ```
 
 ```{r}
-nMU <- 30
-
-MasterOnly <- LoR.Melt.Master.RMD |>
-  anti_join(LoR.Melt.Diamond.RMD,by = c("match_key","playerPuuid"))
-
-DiamondOnly <- LoR.Melt.Diamond.RMD |>
-  anti_join(LoR.Melt.Master.RMD,by = c("match_key","playerPuuid"))
-
-MasterOnly |>
-  bind_rows(DiamondOnly) |>
-  count(playerDeck) |>
-  slice_max(n,n=nMU) |>
-  pull(playerDeck) -> decks_top
-
-# # only decks with at least 100 games
-# MU_Master |>
-#   filter(playerDeck == deck) |>
-#   filter(muGames >= 100) |>
-#   pull(opponentDeck) -> deck_min_100
-
-MU_Master <-  MasterOnly |>
-  match_ups() |>
-  filter(playerDeck %in% decks_top & opponentDeck %in% decks_top) |>
-  filter(playerDeck != opponentDeck) |>
-  add_column(rank = "master")
-
-MU_Diamond <- DiamondOnly |>
-  match_ups() |>
-  filter(playerDeck %in% decks_top & opponentDeck %in% decks_top) |>
-  filter(playerDeck != opponentDeck)  |>
-  add_column(rank = "diamond")
+# nMU <- 30
+# 
+# MasterOnly <- LoR.Melt.Master.RMD |>
+#   anti_join(LoR.Melt.Diamond.RMD,by = c("match_key","playerPuuid"))
+# 
+# DiamondOnly <- LoR.Melt.Diamond.RMD |>
+#   anti_join(LoR.Melt.Master.RMD,by = c("match_key","playerPuuid"))
+# 
+# MasterOnly |>
+#   bind_rows(DiamondOnly) |>
+#   count(playerDeck) |>
+#   slice_max(n,n=nMU) |>
+#   pull(playerDeck) -> decks_top
+# 
+# # # only decks with at least 100 games
+# # MU_Master |>
+# #   filter(playerDeck == deck) |>
+# #   filter(muGames >= 100) |>
+# #   pull(opponentDeck) -> deck_min_100
+# 
+# MU_Master <-  MasterOnly |>
+#   match_ups() |>
+#   filter(playerDeck %in% decks_top & opponentDeck %in% decks_top) |>
+#   filter(playerDeck != opponentDeck) |>
+#   add_column(rank = "master")
+# 
+# MU_Diamond <- DiamondOnly |>
+#   match_ups() |>
+#   filter(playerDeck %in% decks_top & opponentDeck %in% decks_top) |>
+#   filter(playerDeck != opponentDeck)  |>
+#   add_column(rank = "diamond")
 ```
 
 ```{r darkness, fig.width  = 12, fig.height = 8}
-
-deck  <- "Senna/Veigar"
-decks <- decks_top[1:20]
-# decks <- deck_min_100
-
-MU_Master |>
-  filter(playerDeck==deck) |>
-  filter(opponentDeck %in% decks) |>
-  rename(muMaster=muWR) |>
-  mutate(w = muGames/sum(muGames)) |>
-  select(1,2,5,last_col()) |>
-  left_join(
-    MU_Diamond |>
-      filter(playerDeck==deck) |>
-      filter(opponentDeck %in% decks) |>
-      rename(muDiamond=muWR) |>
-      mutate(w = muGames/sum(muGames)) |>
-      select(1,2,5),
-      # select(1,2,5,last_col()),
-    by = c("playerDeck","opponentDeck")
-  ) |>
-  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
-  arrange(opponentDeck) |>
-  mutate(diffMU = muMaster-muDiamond) |>
-  # pull(diffMU) -> vec_diff
-  mutate(mean_diffMU = cummean(diffMU)) |>
-  select(opponentDeck,mean_diffMU) |>
-  mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
-
-
-
-MU_Master |>
-  bind_rows(MU_Diamond) |>
-  filter(playerDeck==deck) |>
-  filter(opponentDeck %in% decks) |>
-  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
-  mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
-  # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
-  ggplot() +
-  geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
-                position = position_dodge(0.3),width = 0.2) +
-  geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
-  geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
-  geom_label_repel(
-    data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
-    family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
-    segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, fill = "#f0f0f0", label.padding = 0, label.size = 0
-  ) +
-  expand_limits(y=0) +
-  scale_y_continuous(
-    breaks=seq(0,1,0.25),
-    # Add a second axis and specify its features
-    labels = scales::percent_format(accuracy = 1),
-    sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.1,0.02), name="Win Rate difference")
-  ) +
-  labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
-       subtitle = "Difference in Win-Rates",
-       caption = "Left Y-axis are the win-rates") +
-  theme_Publication() +
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
-  scale_colour_Publication()
+# 
+# deck  <- "Senna/Veigar"
+# decks <- decks_top[1:20]
+# # decks <- deck_min_100
+# 
+# MU_Master |>
+#   filter(playerDeck==deck) |>
+#   filter(opponentDeck %in% decks) |>
+#   rename(muMaster=muWR) |>
+#   mutate(w = muGames/sum(muGames)) |>
+#   select(1,2,5,last_col()) |>
+#   left_join(
+#     MU_Diamond |>
+#       filter(playerDeck==deck) |>
+#       filter(opponentDeck %in% decks) |>
+#       rename(muDiamond=muWR) |>
+#       mutate(w = muGames/sum(muGames)) |>
+#       select(1,2,5),
+#       # select(1,2,5,last_col()),
+#     by = c("playerDeck","opponentDeck")
+#   ) |>
+#   mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+#   arrange(opponentDeck) |>
+#   mutate(diffMU = muMaster-muDiamond) |>
+#   # pull(diffMU) -> vec_diff
+#   mutate(mean_diffMU = cummean(diffMU)) |>
+#   select(opponentDeck,mean_diffMU) |>
+#   mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
+# 
+# 
+# 
+# MU_Master |>
+#   bind_rows(MU_Diamond) |>
+#   filter(playerDeck==deck) |>
+#   filter(opponentDeck %in% decks) |>
+#   mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+#   mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
+#   # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
+#   ggplot() +
+#   geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
+#                 position = position_dodge(0.3),width = 0.2) +
+#   geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
+#   geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
+#   geom_label_repel(
+#     data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
+#     family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
+#     segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, fill = "#f0f0f0", label.padding = 0, label.size = 0
+#   ) +
+#   expand_limits(y=0) +
+#   scale_y_continuous(
+#     breaks=seq(0,1,0.25),
+#     # Add a second axis and specify its features
+#     labels = scales::percent_format(accuracy = 1),
+#     sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.1,0.02), name="Win Rate difference")
+#   ) +
+#   labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
+#        subtitle = "Difference in Win-Rates",
+#        caption = "Left Y-axis are the win-rates") +
+#   theme_Publication() +
+#   theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
+#   scale_colour_Publication()
 ```
+
 ```{r lurk, fig.width  = 12, fig.height = 8}
-
-deck  <- "Pyke/Rek'Sai"
-decks <- decks_top[1:20]
-# decks <- deck_min_100
-
-MU_Master |>
-  filter(playerDeck==deck) |>
-  filter(opponentDeck %in% decks) |>
-  rename(muMaster=muWR) |>
-  mutate(w = muGames/sum(muGames)) |>
-  select(1,2,5,last_col()) |>
-  left_join(
-    MU_Diamond |>
-      filter(playerDeck==deck) |>
-      filter(opponentDeck %in% decks) |>
-      rename(muDiamond=muWR) |>
-      mutate(w = muGames/sum(muGames)) |>
-      select(1,2,5),
-      # select(1,2,5,last_col()),
-    by = c("playerDeck","opponentDeck")
-  ) |>
-  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
-  arrange(opponentDeck) |>
-  mutate(diffMU = muMaster-muDiamond) |>
-  # pull(diffMU) -> vec_diff
-  mutate(mean_diffMU = cummean(diffMU)) |>
-  select(opponentDeck,mean_diffMU) |>
-  mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
-
-
-
-MU_Master |>
-  bind_rows(MU_Diamond) |>
-  filter(playerDeck==deck) |>
-  filter(opponentDeck %in% decks) |>
-  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
-  mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
-  # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
-  ggplot() +
-  geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
-                position = position_dodge(0.3),width = 0.2) +
-  geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
-  geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
-  geom_label_repel(
-    data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
-    family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
-    segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, fill = "#f0f0f0", label.padding = 0, label.size = 0
-  ) +
-  expand_limits(y=0) +
-  scale_y_continuous(
-    breaks=seq(0,1,0.25),
-    # Add a second axis and specify its features
-    labels = scales::percent_format(accuracy = 1),
-    sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.1,0.02), name="Win Rate difference")
-  ) +
-  labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
-       subtitle = "Difference in Win-Rates",
-       caption = "Left Y-axis are the win-rates") +
-  theme_Publication() +
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
-  scale_colour_Publication()
+# 
+# deck  <- "Pyke/Rek'Sai"
+# decks <- decks_top[1:20]
+# # decks <- deck_min_100
+# 
+# MU_Master |>
+#   filter(playerDeck==deck) |>
+#   filter(opponentDeck %in% decks) |>
+#   rename(muMaster=muWR) |>
+#   mutate(w = muGames/sum(muGames)) |>
+#   select(1,2,5,last_col()) |>
+#   left_join(
+#     MU_Diamond |>
+#       filter(playerDeck==deck) |>
+#       filter(opponentDeck %in% decks) |>
+#       rename(muDiamond=muWR) |>
+#       mutate(w = muGames/sum(muGames)) |>
+#       select(1,2,5),
+#       # select(1,2,5,last_col()),
+#     by = c("playerDeck","opponentDeck")
+#   ) |>
+#   mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+#   arrange(opponentDeck) |>
+#   mutate(diffMU = muMaster-muDiamond) |>
+#   # pull(diffMU) -> vec_diff
+#   mutate(mean_diffMU = cummean(diffMU)) |>
+#   select(opponentDeck,mean_diffMU) |>
+#   mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
+# 
+# 
+# 
+# MU_Master |>
+#   bind_rows(MU_Diamond) |>
+#   filter(playerDeck==deck) |>
+#   filter(opponentDeck %in% decks) |>
+#   mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+#   mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
+#   # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
+#   ggplot() +
+#   geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
+#                 position = position_dodge(0.3),width = 0.2) +
+#   geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
+#   geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
+#   geom_label_repel(
+#     data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
+#     family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
+#     segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, fill = "#f0f0f0", label.padding = 0, label.size = 0
+#   ) +
+#   expand_limits(y=0) +
+#   scale_y_continuous(
+#     breaks=seq(0,1,0.25),
+#     # Add a second axis and specify its features
+#     labels = scales::percent_format(accuracy = 1),
+#     sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.1,0.02), name="Win Rate difference")
+#   ) +
+#   labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
+#        subtitle = "Difference in Win-Rates",
+#        caption = "Left Y-axis are the win-rates") +
+#   theme_Publication() +
+#   theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
+#   scale_colour_Publication()
 ```
 
 ```{r war-on-yuumi, fig.width  = 12, fig.height = 8}
-
-deck  <- decks_top[3]
-decks <- decks_top[4:20]
-# decks <- deck_min_100
-
-MU_Master |>
-  filter(playerDeck==deck) |>
-  filter(opponentDeck %in% decks) |>
-  rename(muMaster=muWR) |>
-  mutate(w = muGames/sum(muGames)) |>
-  select(1,2,5,last_col()) |>
-  left_join(
-    MU_Diamond |>
-      filter(playerDeck==deck) |>
-      filter(opponentDeck %in% decks) |>
-      rename(muDiamond=muWR) |>
-      mutate(w = muGames/sum(muGames)) |>
-      select(1,2,5),
-      # select(1,2,5,last_col()),
-    by = c("playerDeck","opponentDeck")
-  ) |>
-  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
-  arrange(opponentDeck) |>
-  mutate(diffMU = muMaster-muDiamond) |>
-  # pull(diffMU) -> vec_diff
-  mutate(mean_diffMU = cummean(diffMU)) |>
-  select(opponentDeck,mean_diffMU) |>
-  mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
-
-
-
-MU_Master |>
-  bind_rows(MU_Diamond) |>
-  filter(playerDeck==deck) |>
-  filter(opponentDeck %in% decks) |>
-  mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
-  mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
-  # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
-  ggplot() +
-  geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
-                position = position_dodge(0.3),width = 0.2) +
-  geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
-  geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
-  geom_label_repel(
-    data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
-    family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
-    segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, fill = "#f0f0f0", label.padding = 0, label.size = 0
-  ) +
-  expand_limits(y=0) +
-  scale_y_continuous(
-    breaks=seq(0,1,0.25),
-    # Add a second axis and specify its features
-    labels = scales::percent_format(accuracy = 1),
-    sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.1,0.02), name="Win Rate difference")
-  ) +
-  labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
-       subtitle = "Difference in Win-Rates",
-       caption = "Left Y-axis are the win-rates") +
-  theme_Publication() +
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
-  scale_colour_Publication()
+# 
+# deck  <- decks_top[3]
+# decks <- decks_top[4:20]
+# # decks <- deck_min_100
+# 
+# MU_Master |>
+#   filter(playerDeck==deck) |>
+#   filter(opponentDeck %in% decks) |>
+#   rename(muMaster=muWR) |>
+#   mutate(w = muGames/sum(muGames)) |>
+#   select(1,2,5,last_col()) |>
+#   left_join(
+#     MU_Diamond |>
+#       filter(playerDeck==deck) |>
+#       filter(opponentDeck %in% decks) |>
+#       rename(muDiamond=muWR) |>
+#       mutate(w = muGames/sum(muGames)) |>
+#       select(1,2,5),
+#       # select(1,2,5,last_col()),
+#     by = c("playerDeck","opponentDeck")
+#   ) |>
+#   mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+#   arrange(opponentDeck) |>
+#   mutate(diffMU = muMaster-muDiamond) |>
+#   # pull(diffMU) -> vec_diff
+#   mutate(mean_diffMU = cummean(diffMU)) |>
+#   select(opponentDeck,mean_diffMU) |>
+#   mutate(wr_label=scales::percent(mean_diffMU,accuracy = 0.1) ) -> diffDT
+# 
+# 
+# 
+# MU_Master |>
+#   bind_rows(MU_Diamond) |>
+#   filter(playerDeck==deck) |>
+#   filter(opponentDeck %in% decks) |>
+#   mutate(opponentDeck = factor(opponentDeck, levels = decks, ordered = TRUE) ) |>
+#   mutate(rank = factor(rank, levels = c("master","diamond"), ordered = TRUE) ) |>
+#   # mutate(opponentDeck = fct_reorder(opponentDeck, muGames, .desc = TRUE) ) |>
+#   ggplot() +
+#   geom_errorbar(aes(x=opponentDeck,ymin=LCI,ymax=UCI,color=rank),
+#                 position = position_dodge(0.3),width = 0.2) +
+#   geom_point(aes(x=opponentDeck,y=muWR,color = rank), position = position_dodge(0.3)) +
+#   geom_line(data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,group = 1), size=1.2,linetype=2, color="darkviolet") +
+#   geom_label_repel(
+#     data=diffDT,aes(x=opponentDeck,y=mean_diffMU*10,label=wr_label,group = 1),
+#     family = "Helvetica",fontface = "bold", size = 3.5, direction = "y", force = 3, hjust = 1, segment.size = .7, segment.alpha = .5, segment.linetype = "dotted", box.padding = .4,
+#     segment.curvature = -0.1, segment.ncp = 3, segment.angle = 15, fill = "#f0f0f0", label.padding = 0, label.size = 0
+#   ) +
+#   expand_limits(y=0) +
+#   scale_y_continuous(
+#     breaks=seq(0,1,0.25),
+#     # Add a second axis and specify its features
+#     labels = scales::percent_format(accuracy = 1),
+#     sec.axis =  dup_axis(trans=~./10,breaks = seq(0,0.1,0.02), name="Win Rate difference")
+#   ) +
+#   labs(title = glue::glue("{deck} Skill-Cap Gap Plot"),
+#        subtitle = "Difference in Win-Rates",
+#        caption = "Left Y-axis are the win-rates") +
+#   theme_Publication() +
+#   theme(axis.text.x = element_text(angle = 60, vjust = 0.85, hjust=1, size = 10)) +
+#   scale_colour_Publication()
 ```
+
+# Legal bla bla
+
+This content was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.

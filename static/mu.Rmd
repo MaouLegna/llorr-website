@@ -11,7 +11,7 @@ params:
   start:   "2022-03-30 19:00:00"
   # start:   "2022-02-16 19:00:00"
   # end:     "2023-12-31 18:00:00" #UTC tz / 2.21 Balance
-  minMUGames: 10 # min number of games for a MU
+  minMUGames: 100 # min number of games for a MU
   nGrid: 15      # how many MU to plot
 ---
 
