@@ -534,7 +534,7 @@ CC.table.Master |>
     ) |>
   reactablefmtr::add_source(element_text(glue::glue("Data from Master Only.
                                                     Source: Metadata of games collected with RiotGames API.
-                                                    Last Update: {now(tzone='UTC')}")), background_color = "whitesmoke", font_family = "Chivo")
+                                                    Last Update: {now(tzone='UTC')}")), background_color = "whitesmoke")
 ```
 :::
 
@@ -570,7 +570,7 @@ CC.table.Diamond |>
     ) |>
   reactablefmtr::add_source(element_text(glue::glue("Data from ~HighDiamond Only.
                                                     Source: Metadata of games collected with RiotGames API
-                                                    Last Update: {now(tzone='UTC')}.")), background_color = "whitesmoke", font_family = "Chivo")
+                                                    Last Update: {now(tzone='UTC')}.")), background_color = "whitesmoke")
 ```
 :::
 :::
@@ -749,7 +749,7 @@ WR.DT.Reg |>
 # react_lor_italia %<>%
 #   reactablefmtr::add_title(glue("{params$patch} - Top10"), background_color = "white", font_family = "Helvetica") |>
 #   reactablefmtr::add_subtitle("Top10 Most Played decks of the week by WinRate", background_color = "white", font_family = "Roboto") |>
-#   reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white", font_family = "Chivo")
+#   reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white")
 # 
 # reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("images/{params$ind}-loritalia-playrate.png"))
 ```
