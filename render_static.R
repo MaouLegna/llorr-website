@@ -30,41 +30,39 @@ while (TRUE) {
   
 }
 
-LoR.Account    <- data.table::fread(file.path("C:","LlorR","data","raw",glue("LoR_ACCOUNT_EU.csv")),
-                                    colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8")
-
-Current.Master.Info <- data.table::fread(file.path("C:","LlorR","data","raw","account",glue("LoR_Master_S12_EU.csv")),
-                                         header = T, na.strings = c("", NA), encoding = "UTF-8")
-
-LeaderBoard <- data.table::fread(file.path("C:","LlorR","data","raw","account", glue("LoR_Leaderboard_DT_S12_EU.csv") ) )
-
-Current.Master.by.Lead <- 
-  LeaderBoard |>
-  group_by(name) |>
-  slice_min(time,n=1,with_ties = F) 
-
-lor_leaderboard_dupe("europe")
-
-Base <- tibble(
-  gameName = lor_leaderboard("europe",names = T)
-)
-
-Current.Master.Info.v2 <- Base |>
-  left_join(
-    Current.Master.Info |>
-      mutate(time = as_datetime(time)) |>
-      group_by(gameName) |>
-      slice_min(time,n=1,with_ties = F),
-    by = "gameName"
-  )
-
-Current.Master.by.Lead |>
-  select(name,leadtime = time) |>
-  left_join(Current.Master.Info.v2 |>
-              select(name=gameName,time), by = "name") |>
-  filter(leadtime > time)
-
-
+# LoR.Account    <- data.table::fread(file.path("C:","LlorR","data","raw",glue("LoR_ACCOUNT_EU.csv")),
+#                                     colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8")
+# 
+# Current.Master.Info <- data.table::fread(file.path("C:","LlorR","data","raw","account",glue("LoR_Master_S12_EU.csv")),
+#                                          header = T, na.strings = c("", NA), encoding = "UTF-8")
+# 
+# LeaderBoard <- data.table::fread(file.path("C:","LlorR","data","raw","account", glue("LoR_Leaderboard_DT_S12_EU.csv") ) )
+# 
+# Current.Master.by.Lead <- 
+#   LeaderBoard |>
+#   group_by(name) |>
+#   slice_min(time,n=1,with_ties = F) 
+# 
+# lor_leaderboard_dupe("europe")
+# 
+# Base <- tibble(
+#   gameName = lor_leaderboard("europe",names = T)
+# )
+# 
+# Current.Master.Info.v2 <- Base |>
+#   left_join(
+#     Current.Master.Info |>
+#       mutate(time = as_datetime(time)) |>
+#       group_by(gameName) |>
+#       slice_min(time,n=1,with_ties = F),
+#     by = "gameName"
+#   )
+# 
+# Current.Master.by.Lead |>
+#   select(name,leadtime = time) |>
+#   left_join(Current.Master.Info.v2 |>
+#               select(name=gameName,time), by = "name") |>
+#   filter(leadtime > time)
 
 
     

@@ -14,6 +14,7 @@ params:
   # end:     "2023-12-31 18:00:00"
   minMUGames: 100
   meta_max: 0.25
+  ntopPR: 12 # meta evolution decks
 ---
 
 ```{r setup, include=FALSE}
@@ -90,8 +91,7 @@ LastUpdate.box <-
 n = 15   # if I want to select a fixed number of underdog decks
 p = 0.01 # if I want to use the standard meta deck threshold
 
-ntopPR  <- 12 # meta evolution decks
-seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),floor_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
+seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),ceiling_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
 
 one_day_check <- length(seqDate)>1
 if (one_day_check) seqDate <- seqDate[-length(seqDate)]
@@ -705,7 +705,7 @@ LastUpdate.box
 top7days <- LoR.Melt.Master.RMD |>
   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   count(playerDeck) |>
-  slice_max(n,n=ntopPR,with_ties = F) |>
+  slice_max(n,n=params$ntopPR,with_ties = F) |>
   pull(playerDeck)
 
 Champion.deck.daily <- tibble(
@@ -731,7 +731,7 @@ Champion.deck.daily <- tibble(
 top7days.diamond <- LoR.Melt.Diamond.RMD |>
   filter(game_start_time_utc >= now()-days(7) ) |>
   count(playerDeck) |>
-  slice_max(n,n=ntopPR,with_ties = F) |>
+  slice_max(n,n=params$ntopPR,with_ties = F) |>
   pull(playerDeck)
 
 Champion.deck.daily.diamond <- tibble(
@@ -818,7 +818,7 @@ meta.evo.master <- meta.evo.base +
     segment.curvature = -0.1,
     segment.ncp = 3,
     segment.angle = 15,
-    bg.color = "grey",
+    # bg.color = "grey",
     fill = "#f0f0f0",
     label.padding = 0,
     label.size = 0,

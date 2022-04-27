@@ -1,10 +1,10 @@
 ---
 params:
   ind: "MR055"
-  patch: "Patch 3.4 - Week 4"
+  patch: "Patch 3.5 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°55)"
-  description: ""
-  cardlurl: ""
+  description: "So the patch is both worthless and great? Pretty standard"
+  cardlurl: "https://dd.b.pvp.net/3_4_0/set5/en_us/img/cards/05SH011-full.png"
   start: "2022-04-20 18:00:00" #UTC tz / 'current' week start
   end:   "2022-04-27 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -115,13 +115,13 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r account-info}
-EU.master.found   <- 1120 # LoR.Account.RMD[ activeShard == "europe" & master == "master", .N ]
-NA.master.found   <- 1290 # LoR.Account.RMD[ activeShard == "americas" & master == "master", .N ]
-APAC.master.found <- 1081 # LoR.Account.RMD[ activeShard == "apac" & master == "master", .N ]
+EU.master.found   <- LoR.Account.RMD[ activeShard == "europe" & master == "master", .N ]
+NA.master.found   <- LoR.Account.RMD[ activeShard == "americas" & master == "master", .N ]
+APAC.master.found <- LoR.Account.RMD[ activeShard == "apac" & master == "master", .N ]
 
-EU.master.ladder   <- 1121 # lorR::lor_leaderboard("europe",names=T) |> length()
-NA.master.ladder   <- 1291 # lorR::lor_leaderboard("americas",names=T) |> length()
-APAC.master.ladder <- 1082 # lorR::lor_leaderboard("sea",names=T) |> length() 
+EU.master.ladder   <- lorR::lor_leaderboard("europe",names=T) |> length()
+NA.master.ladder   <- lorR::lor_leaderboard("americas",names=T) |> length()
+APAC.master.ladder <- lorR::lor_leaderboard("sea",names=T) |> length() 
 ```
 
 ```{r prepare-data-master}
@@ -1274,7 +1274,6 @@ LoR.Card |>
 Names and rules for the "non standard archetypes" which are not defined by Champion+Regions
 
 ```{r gt-archetype}
-source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
 gtfix |>
   tab_options(
     table.background.color = "whitesmoke",
@@ -1288,6 +1287,7 @@ This content was created under Riot Games 'Legal Jibber Jabber' policy using ass
 
 ```{r twitter-meta}
 #| echo=FALSE
+
 metathis::meta() |>
   metathis::meta_description(
     glue::glue("{params$patch} - {params$description}")
