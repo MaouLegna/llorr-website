@@ -30,9 +30,6 @@ while (TRUE) {
   
 }
 
-start_time <- lubridate::round_date(now(), "30 mins")
-start_time <- start_time + minutes(90)
-
 # LoR.Account    <- data.table::fread(file.path("C:","LlorR","data","raw",glue("LoR_ACCOUNT_EU.csv")),
 #                                     colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8")
 # 
