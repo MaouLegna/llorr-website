@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (from Patch 3.4 - Late March Patch)"
+title: "Match Ups Data (from Patch 3.6 - Late April Patch)"
 author: "by Legna"
 output:
   flexdashboard::flex_dashboard:
@@ -8,11 +8,11 @@ output:
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
 params:
-  start:   "2022-03-30 19:00:00"
+  start:   "2022-04-27 19:00:00"
   # start:   "2022-02-16 19:00:00"
   # end:     "2023-12-31 18:00:00" #UTC tz / 2.21 Balance
-  minMUGames: 100 # min number of games for a MU
-  nGrid: 15      # how many MU to plot
+  minMUGames: 10 # min number of games for a MU
+  nGrid: 12      # how many MU to plot
 ---
 
 ```{r setup, include=FALSE}
@@ -618,9 +618,8 @@ The format of the table is the usual way I display the match-ups data but I also
 
 #### Archetypes Fix
 
-```{r gt-archetype}
-source(file.path("C:","LlorR","scripts","functions","lor_archetype_gt.R"))
-gtfix
+```{r archetype-guide}
+tbl_archetype
 ```
 
 #### General info
