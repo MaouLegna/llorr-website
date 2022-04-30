@@ -10,8 +10,9 @@ output:
     orientation: row
     vertical_layout: fill
 params:
-  start:   "2022-03-30 19:00:00"
-  # end:     "2023-12-31 18:00:00"
+  # start:   "2022-03-30 19:00:00"
+  # end:     "2022-04-27 18:00:00"
+  start:   "2022-04-27 18:00:00"
   minMUGames: 100
   meta_max: 0.25
   ntopPR: 12 # meta evolution decks
@@ -45,6 +46,7 @@ xaringanExtra::use_panelset()
 
 ```{r load-data}
 # load DeckDT
+# LoR.Deck.RMD <- LoR.Deck
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 # load Games DT
@@ -54,7 +56,9 @@ LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), p
   filter(game_type == "Ranked"  ) |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   mutate(source = "Master") |>
-  mutate(source = factor(source,levels = c("Diamond","Master")))
+  mutate(source = factor(source,levels = c("Diamond","Master"))) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
 LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
@@ -64,6 +68,7 @@ LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"),
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   mutate(source = "Diamond") |>
   mutate(source = factor(source,levels = c("Diamond","Master")))  |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
@@ -760,7 +765,6 @@ max_freq <- max(c(Champion.deck.daily$freq,Champion.deck.daily.diamond$freq))
 ## Row {data-heigth="750"}
 
 ```{r meta-evo}
-
 meta.evo.base <- Champion.deck.daily |>
   ggplot( aes(game_start_time_utc, freq, group = playerDeck) ) +
   geom_line( aes(color = playerDeck), size = .9  ) +
@@ -778,8 +782,9 @@ meta.evo.base <- Champion.deck.daily |>
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
-       y = "PlayRate",
-       title = "Evolution of Play Rate over time - Master"
+       y = "Daily PlayRate",
+       title = "Master PlayRates",
+       subtitle = "Evolution of Play Rate over time"
        # caption = glue::glue("{params$patch}
        #                      Ranked games from {params$start} UTC to {params$end} UTC
        #                      Metadata of games collected with RiotGames API")
@@ -851,8 +856,9 @@ meta.evo.diamond.base <- Champion.deck.daily.diamond |>
     labels = scales::percent_format(accuracy = 1) # glue::glue("{format(seq(0, 0.20, by = 0.05), nsmall = 2)}%")
   )  +
   labs(x = "Date",
-       y = "PlayRate",
-       title = "Evolution of Play Rate over time - HighDiamond",
+       y = "Daily PlayRate",
+       title = "HighDiamond PlayRates",
+       subtitle = "Evolution of Play Rate over time",
        caption = glue::glue("{params$patch}
                             Ranked games from {params$start} UTC to {params$end} UTC
                             Games from Players who played against Master but aren't Master.

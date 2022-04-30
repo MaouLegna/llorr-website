@@ -8,9 +8,9 @@ output:
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
 params:
+  # start:   "2022-03-30 19:00:00"
+  # end:     "2022-04-27 18:00:00"
   start:   "2022-04-27 19:00:00"
-  # start:   "2022-02-16 19:00:00"
-  # end:     "2023-12-31 18:00:00" #UTC tz / 2.21 Balance
   minMUGames: 10 # min number of games for a MU
   nGrid: 12      # how many MU to plot
 ---
@@ -28,7 +28,6 @@ knitr::opts_chunk$set(
   fig.align  = 'center',
   fig.width  = 12,
   fig.height = 8,
-  # fig.path   = "figures/prefix-"
   # fig.path   = glue::glue("images/{params$ind}-"),
   layout     = "l-page",
   preview    = TRUE
@@ -52,6 +51,7 @@ LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), p
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
   filter(game_type == "Ranked"  ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
@@ -60,13 +60,12 @@ LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"),
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )  |>
   filter(game_type == "Ranked"  ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
 
 # load Games DT
 LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  # map(data.table::fread) |>
-  # reduce(rbind) |>
   mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) )
 ```
 
@@ -79,31 +78,14 @@ LastUpdate.box <- flexdashboard::valueBox(
 ```
 
 ```{r archetype-fix}
-# Limit the Deck DT to make the fixes much faster
-# deck_filter <- do.call("rbind", mget(ls(pattern="\\.DT.RMD$")) ) |>
-#   #' Base filters
-#   filter( game_type=="Ranked" ) |>
-#   filter( game_start_time_utc > as.POSIXct(params$start, tz = "UTC") ) |>
-#   select(deck_code_1,deck_code_2) |>
-#   pivot_longer( cols = contains("deck_code"),values_to = "decks" ) |>
-#   filter(decks!="") |>
-#   distinct(decks)
-# 
-# LoR.Deck.RMD <- LoR.Deck.RMD[deck_code %in% deck_filter$decks]
-
-#' Archetype-Fix
-#'##############
+# Archetype-Fix
 source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
-
-# LoR.Deck.RMD[ ,tabyl(archetype_pretty) ]
-
-#' Archetype names fix
-######################
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r prepara-data}
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
+  # filter(game_type == "Ranked"  ) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
@@ -118,12 +100,11 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   rename(playerDeck=archetype) |>
   left_join(
     LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code"))
+    by=c("opponent_deck_code"="deck_code")
+  )
 
-# Additional tbl
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  filter(game_type == "Ranked"  ) |>
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
+  # filter(game_type == "Ranked"  ) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
@@ -234,7 +215,6 @@ data |>
 
 ```{r}
 nGames = MUtbl |> 
-  # filter( muGames > params$minMUGames ) |>
   summarise(n = sum(muGames)) |>
   pull()
 
@@ -359,16 +339,15 @@ LastUpdate.box
 
 ### MU Grid
 
-```{r get-WR-Top}
+```{r prepare-grid}
 # Last 7 days most played
 TopCC <- LoR.Melt.Master.RMD |>
+  # filter(game_start_time_utc >= as_datetime(params$end)-days(7)) |>
   filter(game_start_time_utc >= now()-days(7)) |>
   count(playerDeck) |>
   slice_max(n, n = params$nGrid,with_ties = F ) |> 
   pull(playerDeck)
-```
 
-```{r mu}
 TopMUtbl.Master <- tibble::tibble( 
   playerDeck = rep(TopCC,each=params$nGrid),
   opponentDeck = rep(TopCC,params$nGrid)
@@ -501,9 +480,11 @@ MU.grid.gt |>
   cols_width(
     -1 ~ px(90),
      1 ~ px(150),
-  ) 
-  
-gtsave(data = MU.grid.gt,"images/mugrid_302.png",vwidth = 1500, vheight = 1000) |> invisible()
+  )
+```
+
+```{r}
+gtsave(data = MU.grid.gt,"images/mugrid_306_307.png",vwidth = 1500, vheight = 1000) |> invisible()
 gtsave(data = MU.grid.gt,"images/mugrid.png",vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
