@@ -54,22 +54,14 @@ LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), p
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(game_type == "Ranked"  ) |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
-  mutate(source = "Master") |>
-  mutate(source = factor(source,levels = c("Diamond","Master"))) |>
-  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
 # load Games DT
 LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   filter(game_type == "Ranked"  ) |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
-  mutate(source = "Diamond") |>
-  mutate(source = factor(source,levels = c("Diamond","Master")))  |>
-  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
 # load Games DT
 LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
@@ -111,6 +103,10 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 
 ```{r prepare-data}
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
+  mutate(source = "Master") |>
+  mutate(source = factor(source,levels = c("Diamond","Master"))) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
   select(-match_id,-data_version,-total_turn_count,-status,-game_mode,-game_type,-game_version,-contains("participants"),-contains("deck_id"),-contains("factions"),-contains("order")) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1) |>
@@ -127,6 +123,10 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
             by=c("opponent_deck_code"="deck_code"))
   
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
+  mutate(source = "Diamond") |>
+  mutate(source = factor(source,levels = c("Diamond","Master")))  |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
   select(-match_id,-data_version,-total_turn_count,-status,-game_mode,-game_type,-game_version,-contains("participants"),-contains("deck_id"),-contains("factions"),-contains("order")) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1) |>

@@ -49,19 +49,13 @@ LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),
 LoR.Match.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) ) |>
-  filter(game_type == "Ranked"  ) |>
-  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
 # load Games DT
 LoR.Diamond.DT.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys",negate = T) |>
   map_dfr(data.table::fread,header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )  |>
-  filter(game_type == "Ranked"  ) |>
-  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
 # load Games DT
 LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
@@ -85,8 +79,9 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 
 ```{r prepara-data}
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
-  # filter(game_type == "Ranked"  ) |>
-  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  filter(game_type == "Ranked"  ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -104,8 +99,9 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   )
 
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
-  # filter(game_type == "Ranked"  ) |>
-  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  filter(game_type == "Ranked"  ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -516,9 +512,9 @@ LastUpdate.box
 
 ![](images/mugrid.png)
 
-# Grid 3.00/3.01 (Magic Disadventure) {data-icon="fa-file-image"}
+# Grid 3.4 /3.5 (March Patch) {data-icon="fa-file-image"}
 
-![](images/mugrid_300_301.png)
+![](images/mugrid_304_305.png)
 
 # Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 
