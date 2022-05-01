@@ -64,5 +64,26 @@ while (TRUE) {
 #               select(name=gameName,time), by = "name") |>
 #   filter(leadtime > time)
 
+# source(file.path("C:","LlorR","scripts","lor_main.R" ))
+# source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+# source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 
+Test.Deck <- data.table::fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),header = T,na.strings = c("",NA),nrows = 10000 )
+
+Test.Deck |>
+  filter(str_count(champs,",")==2) -> Test.Deck
+
+str_extract_all(Test.Deck$cards[1], pattern = paste(LoR.Champion$cardCode, collapse = "|") )
+
+
+
+Test.Deck |>
+  mutate(
+    champs        = as.list(str_extract_all(cards, pattern = paste(LoR.Champion$cardCode, collapse = "|"))[[1]])
+  )
+    
+
+
+# turn champs into proper string
+champs = str_flatten( sort( str_replace_all( unique(champs) , set_names(LoR.Champion$name, LoR.Champion$cardCode))) , collapse = ",")
     

@@ -11,8 +11,8 @@ params:
   # start:   "2022-03-30 19:00:00"
   # end:     "2022-04-27 18:00:00"
   start:   "2022-04-27 19:00:00"
-  minMUGames: 10 # min number of games for a MU
-  nGrid: 12      # how many MU to plot
+  minMUGames: 25 # min number of games for a MU
+  nGrid: 15      # how many MU to plot
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +81,7 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   filter(game_type == "Ranked"  ) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
@@ -101,7 +101,7 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
   filter(game_type == "Ranked"  ) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
-  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") )
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
   rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
   mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
   mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>

@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (from Patch 3.4 - Late March Patch)"
+title: "Meta & Decks (from Patch 3.6 - Late April Patch)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -805,7 +805,7 @@ meta.evo.master <- meta.evo.base +
            # Champion.deck.daily |> filter( game_start_time_utc >= now()-days(2) ), 
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
-    family = "Helvetica",
+    family = "Roboto",
     size = 3.5,
     
     force = 20,
@@ -877,7 +877,7 @@ meta.evo.diamond <- meta.evo.diamond.base +
         filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
-    family = "Helvetica",
+    family = "Roboto",
     size = 3.5,
 
     force = 20,
@@ -917,7 +917,7 @@ meta.evo.base +
         filter( game_start_time_utc == max(game_start_time_utc) ),
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
     fontface = "bold",
-    family = "Helvetica",
+    family = "Roboto",
     size = 2.5,
 
     force = 20,
@@ -947,7 +947,7 @@ meta.evo.diamond.base +
     aes(label=str_to_upper(playerDeck),color = playerDeck ),
 
     fontface = "bold",
-    family = "Helvetica",
+    family = "Roboto",
     size = 2.5,
 
     force = 20,
