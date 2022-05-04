@@ -30,60 +30,38 @@ while (TRUE) {
   
 }
 
-# LoR.Account    <- data.table::fread(file.path("C:","LlorR","data","raw",glue("LoR_ACCOUNT_EU.csv")),
-#                                     colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8")
-# 
-# Current.Master.Info <- data.table::fread(file.path("C:","LlorR","data","raw","account",glue("LoR_Master_S12_EU.csv")),
-#                                          header = T, na.strings = c("", NA), encoding = "UTF-8")
-# 
-# LeaderBoard <- data.table::fread(file.path("C:","LlorR","data","raw","account", glue("LoR_Leaderboard_DT_S12_EU.csv") ) )
-# 
-# Current.Master.by.Lead <- 
-#   LeaderBoard |>
-#   group_by(name) |>
-#   slice_min(time,n=1,with_ties = F) 
-# 
-# lor_leaderboard_dupe("europe")
-# 
-# Base <- tibble(
-#   gameName = lor_leaderboard("europe",names = T)
-# )
-# 
-# Current.Master.Info.v2 <- Base |>
-#   left_join(
-#     Current.Master.Info |>
-#       mutate(time = as_datetime(time)) |>
-#       group_by(gameName) |>
-#       slice_min(time,n=1,with_ties = F),
-#     by = "gameName"
-#   )
-# 
-# Current.Master.by.Lead |>
-#   select(name,leadtime = time) |>
-#   left_join(Current.Master.Info.v2 |>
-#               select(name=gameName,time), by = "name") |>
-#   filter(leadtime > time)
+
 
 # source(file.path("C:","LlorR","scripts","lor_main.R" ))
 # source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 # source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 
-Test.Deck <- data.table::fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),header = T,na.strings = c("",NA),nrows = 10000 )
 
-Test.Deck |>
-  filter(str_count(champs,",")==2) -> Test.Deck
+champs_pretty_label <-  function(cards) {
+  
+  # cards <- Test.Deck$cards[10]
+  # extract the vector of champion cards
+  cards <- str_extract_all(cards, pattern = paste(LoR.Champion$cardCode, collapse = "|") ) |> extract2(1)
+  
+  length(cards)
+  
+  # we are interested in cases with at least 3 different champion
+  # if the length of the vector is 4 or less (1,1,1) or (2,1,1)
+  # in this case maybe it's more appropriate to still consider as a 6 cards - 2,2,2 scenario
+  
+}
 
-str_extract_all(Test.Deck$cards[1], pattern = paste(LoR.Champion$cardCode, collapse = "|") )
+LoR.Deck |>
+  mutate(count = str_count(champs,",") ) |>
+  mutate(l = map_dbl(cards,champs_pretty_label)) -> Test.Deck_v3
 
+Test.Deck_v3 |>
+  gtsummary::tbl_cross(count,l) -> gt_cross
 
+readr::write_rds(Test.Deck_v3 |> select(l,count),file.path("C:", "LlorR", "data", "temp", "champion_count.rds"))
 
-Test.Deck |>
-  mutate(
-    champs        = as.list(str_extract_all(cards, pattern = paste(LoR.Champion$cardCode, collapse = "|"))[[1]])
-  )
-    
+# str_extract_all(Test.Deck$cards[1], pattern = paste(LoR.Champion$cardCode, collapse = "|") ) |> extract2(1) |> table() |> . => sprintf("%s: %s",.,names(.)) 
+  
+  
+  # tabyl() |> rename_with(~c("card","n","freq"))
 
-
-# turn champs into proper string
-champs = str_flatten( sort( str_replace_all( unique(champs) , set_names(LoR.Champion$name, LoR.Champion$cardCode))) , collapse = ",")
-    

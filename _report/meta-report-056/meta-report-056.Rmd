@@ -3,8 +3,8 @@ params:
   ind: "MR056"
   patch: "Patch 3.6 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°56)"
-  description: ""
-  cardlurl: ""
+  description: "Gather 'Victories' Gather"
+  cardlurl: "https://dd.b.pvp.net/3_6_0/set5/en_us/img/cards/05FR013T4-full.png"
   start: "2022-04-27 18:00:00" #UTC tz / 'current' week start
   end:   "2022-05-04 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -21,7 +21,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 04-27-2022
+date: 05-04-2022
 output:
  distill::distill_article:
     toc: true
@@ -1274,7 +1274,7 @@ LoR.Card |>
 Names and rules for the "non standard archetypes" which are not defined by Champion+Regions
 
 ```{r gt-archetype}
-gtfix |>
+tbl_archetype |>
   tab_options(
     table.background.color = "whitesmoke",
     column_labels.background.color = "whitesmoke"
