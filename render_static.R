@@ -2,7 +2,7 @@ while (TRUE) {
   
   
   if (!exists("giorno")) {
-    giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
+    giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(25) + lubridate::minutes(30)
   }
   
   message(giorno)
