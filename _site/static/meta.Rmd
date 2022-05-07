@@ -13,8 +13,8 @@ params:
   # start:   "2022-03-30 19:00:00"
   # end:     "2022-04-27 18:00:00"
   start:   "2022-04-27 18:00:00"
-  minMUGames: 100
-  meta_max: 0.25
+  minMUGames: 50
+  meta_max: 0.15
   ntopPR: 12 # meta evolution decks
 ---
 
@@ -85,8 +85,8 @@ LastUpdate.box <-
     icon = "fa-clock",
     color = "#1A9850")
 
-n = 15   # if I want to select a fixed number of underdog decks
-p = 0.01 # if I want to use the standard meta deck threshold
+# n = 15   # if I want to select a fixed number of underdog decks
+# p = 0.01 # if I want to use the standard meta deck threshold
 
 seqDate <- seq(as.POSIXct(params$start, tz = "UTC"),ceiling_date(lubridate::now(),unit = "day")+hours(18) ,"day") #
 
@@ -708,8 +708,10 @@ LastUpdate.box
 
 ```{r data-meta-evo}
 top7days <- LoR.Melt.Master.RMD |>
+  # filter(game_start_time_utc >= now()-days(7) ) |>
   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   count(playerDeck) |>
+  # slice_max(n,n=15,with_ties = F) |>
   slice_max(n,n=params$ntopPR,with_ties = F) |>
   pull(playerDeck)
 
@@ -734,7 +736,7 @@ Champion.deck.daily <- tibble(
   mutate(game_start_time_utc = as.Date(game_start_time_utc) )
 
 top7days.diamond <- LoR.Melt.Diamond.RMD |>
-  filter(game_start_time_utc >= now()-days(7) ) |>
+  filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   count(playerDeck) |>
   slice_max(n,n=params$ntopPR,with_ties = F) |>
   pull(playerDeck)
@@ -1103,4 +1105,4 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 #### Credits
 
-Special thanks to bA1ance (March) and for the recent support (ᐛ)ᕗ 
+<!-- Special thanks to bA1ance (March) and for the recent support (ᐛ)ᕗ  -->
