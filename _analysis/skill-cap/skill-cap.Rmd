@@ -76,23 +76,6 @@ metathis::meta() |>
   )
 ```
 
-```{r functions}
-simulate_meta <- function(weight,rank,n) {
-  
-  W <- c(weight,1-weight) 
-  P <- c(mu_wr1,mu_wr2)
-  M <- W %*% t(P) |> round(digits = 3)
-  
-  # print(M)
-  tibble(outcome = c( rep(1,M[1,1]*n),rep(0,M[1,2]*n),
-                      rep(0,M[2,1]*n),rep(1,M[2,2]*n) ),
-         mu = c( rep("MU1",sum(M[1,])*n) ,
-                 rep("MU2",sum(M[2,])*n) ),
-         rank = rank
-  )
-}
-```
-
 # Introduction
 
 When talking in any discussion about any competitive activity a recurring concept that is likely to be bought up.
@@ -117,6 +100,69 @@ define the theory behind it and try to replicate in our own way the concept for 
 
 ## The Wrong Way
 
+```{r vS-example}
+# weight of the decks at each rank
+W <- matrix(c(0.30,0.70,
+              0.55,0.45,
+              0.60,0.40),nrow = 3,byrow = T) 
+
+# WR of each deck
+P <- c(0.60,0.44)
+W %*% P
+
+n = c(20000,5000,2000)
+rank_levels <- c("platinum","diamond","master")
+
+# if I wanted to give the final win rate and obtain the probabilites of each MU  
+# p <- limSolve::Solve(a, b)
+# inva <- MASS::ginv(a)
+# inva %*% b
+
+# data <- tibble(outcome = NA_integer_)[0,]
+example <- tibble(outcome = NA_integer_,
+                  mu = NA_character_,
+                  rank = NA_character_ )[0,]
+
+# 'simulate the meta'
+set.seed(123)
+for (i in seq_len(NROW(W)) ) {
+  
+  print(i)
+  
+  outcome <- c(#win (P1) of MU1 at rank i
+    rep(1,n[i]*W[i,1]*P[1]),
+    #loss (1-P1) of MU1 at rank i
+    rep(0,n[i]*W[i,1]*(1-P[1])),
+    #win (P2) of MU2 at rank i
+    rep(1,n[i]*W[i,2]*P[2]),
+    #loss (1-P2) of MU2 at rank i
+    rep(0,n[i]*W[i,2]*(1-P[2]))
+  )
+  
+  # sim <- c(
+  #   # MU-1
+  #   sample(x = c(1,0),size = n[i]*W[i,1],replace = T,prob = c(P[1],1-P[1]) ),
+  #   # MU-2 # example the 60% presence of MU2 with it's win rate of 40/60
+  #   sample(x = c(1,0),size = n[i]*W[i,2],replace = T,prob = c(P[2],1-P[2]) )
+  # )
+  
+  mu <- c(rep("MU1",n[i]*W[i,1]),
+          rep("MU2",n[i]*W[i,2]) )
+  
+  example <- example |>
+    add_row(outcome = outcome,rank = rank_levels[i],mu = mu)
+
+}
+
+example <- example |>
+  mutate(rank = factor(rank,levels = rank_levels,labels = str_to_title(rank_levels),ordered = T))
+
+# scales::percent(mean(example$outcome),accuracy = 0.01)
+# example |>
+#   group_by(rank) |>
+#   summarise(wr = mean(outcome))
+```
+
 In games with a ladder/rank system a common question is if there is any difference in skill between X at one particular rank vs another rank of choice.
 
 Let us take Hearthstone as an example: if we want to say that at top 1000 Legends players are more proficient than Diamond players with a certain deck a common approach would be to compare such deck win rate (WR) across those ranks and assume the difference in win rate can be explained by the difference in skill by the players.
@@ -127,38 +173,13 @@ That would be one of the basic errors when doing such kind of analysis.
 
 We created an example to illustrate what can easily go wrong:
 
-```{r vS-example}
-# to check some values
-# wr <- function(w1,p1) {
-#   1-p1-w1+2*w1*p1
-# }
-# 
-# lapply(seq(0.01,1,0.01), function(x) wr(x,.6) )
-
-ranks_levels <- c("platinum","diamond","master")
-Ranks_levels <- c("Platinum","Diamond","Master")
-
-n = 10000
-mu_wr1 <- 0.55
-mu_wr2 <- 0.45
-w1_plat    <- 0.40
-w1_diamond <- 0.54
-w1_master  <- 0.58
-
-example <- pmap_dfr(.l = list(weights = c(w1_plat,w1_diamond,w1_master),
-                              ranks = ranks_levels,
-                              n = c(10000,5000,3000) ),
-         .f = ~simulate_meta(..1,..2,..3) ) |>
-  mutate(rank = factor(rank,levels = ranks_levels, labels = Ranks_levels,ordered = T) )
-```
-
 We start by having a deck with a crude win rate of `r scales::percent(mean(example$outcome),accuracy = 0.01)`
 
 Assuming that the numbers of games collected is large enough it would be possible to assume that the deck has an almost coin-toss win rate but more toward the losing side.
 
-As the data is collected as different ranks platinum,diamond and master rank; while looking at these results the high ranked players may have some doubts about the results as they are sure that overall they winning more than losing.
+While looking at these results the high ranked players may have some doubts about the results as they are sure that overall the decks has a positive win-rate.
 
-The stratified win rate is obtained:
+As the data is collected at different ranks platinum,diamond and master rank we obtain the stratified win-rate:
 
 ```{r wr-by-rank, fig.width  = 6, fig.height = 4}
 example |>
@@ -168,12 +189,12 @@ example |>
   geom_point() +
   geom_line(group = 1) +
   scale_y_continuous(
-    limits = c(0.45,0.55),
+    limits = c(0.40,0.55),
     labels = scales::percent_format(accuracy = 1)
   ) +
   geom_text(
-    aes(label=round(wr*100,2)),
-    size = 4, face = "bold", color = "grey50", vjust = -1, hjust = -0.5
+    aes(label=round(wr*100,2)),colour = "grey50",size = 4,
+    vjust = -1, hjust = -0.5
   ) +
   labs(title = "Win Rate by Rank",x = "Rank",y="WinRate") +
   theme_Publication()
@@ -183,7 +204,7 @@ The result is now coherent with the high level players and indeed the deck has a
 
 It would be very easy to assume that the differences in WR is to assign to the difference in skills of the players. The higher the rank the better are the players to pilot a deck.
 
-In this example the *meta* is defined by a simple case two different match ups (let's ignore if it's feasable or not)
+In this example the *meta* is defined by a simple case two different match ups (let's ignore if it's feasible or not)
 
 What follows is again the stratified win rate by rank but also by each different match ups.
 
@@ -195,7 +216,7 @@ example |>
   geom_point() +
   geom_line() +
   scale_y_continuous(
-    limits = c(0.40,0.60),
+    # limits = c(0.40,0.60),
     labels = scales::percent_format(accuracy = 1)
   ) +
   geom_text(
@@ -255,11 +276,11 @@ In addition, also worth to remember is said by both Zach and Hat:
 
 > Zach: Data is not blind to skill. Data can very much identify skill if it doesn't appear in the data... it's probably a fairy tail
 
-> Hat: ...that's probably the player influence. If something is only good at top100, that mean that the best players in the world are playing a mediocre deck and off-setting for that Because the very best players in the world, will absolutely make anything look good
+> Hat: (taling about the player influence) If something is only good at top100, that mean that the best players in the world are playing a mediocre deck and off-setting for that Because the very best players in the world, will absolutely make anything look good
 
 As we mentioned in the introduction the methodology is only inferred from the sources mentioned and wrote in the footnotes.
 
-It's highly possible that Zach uses a more complex methodology compared to the one we will present as they have access to a bigger pool of variables but the core concept should still remain similar.
+It's highly possible that Zach uses a more complex methodology compared to the one we will present as they have access to a bigger pool of variables and so being able to control for a bigger number of counfounders. Still, the core concept should still remain similar.
 
 Now, let us extract the key points from the discussion:
 
@@ -271,19 +292,28 @@ Even small differences in the meta can vastly change the overall performance of 
 
 This is also a concept that we introduced in one of our earliest analysis on [Matching and Propensity Score](https://www.llorr-stats.com/analysis/matching-win-rate){.uri}
 
-- Measuring the Skill-Cap by looking at the differences between Top Legends/Diamond I-IV
+- Measuring the Skill-Cap by looking at the differences between Top Legends/Diamond I-IV after removing all other factors and seeing the disparity in MU
 
 This is the key point which along side the previous one should explain the core methodology.
 
-The unit of choice if the difference in win rates among match-ups.
+The crude difference in win-rate of a deck d between two rank i,j is:
 
-It means that given j,k with $j \ne k$ ranks of players, for a certain deck we have $d_{j,k}(deck\_MU_i) = wr_j(deck\_MU_i)-wr_k(deck\_MU_i)$ with $i \in 1:n$ with n being all the shared match ups among rank j,k of the chosen decks.
+$WR(d)_i - WR(d)_j$
 
-With these an intuitive use of the set of differences if the take the expected value which would be $SkillCap(deck)_{j_k} = E(d_{j,k}(deck\_MU_i))$
+But the definition of skill-cap provided by Zach use as unit of choice if the difference in win rates among match-ups.
 
-- After removing all other factors and seeing the disparity in MU
+$S(d)_{i,j} = f( MU(d)_{i,k} - MU(d)_{j,k} ) \forall k$
 
-This is mostly to remember that there is the chance that the methodology also control for other variables
+
+
+
+
+<!-- It means that given j,k with $j \ne k$ ranks of players, for a certain deck we have $d_{j,k}(deck\_MU_i) = wr_j(deck\_MU_i)-wr_k(deck\_MU_i)$ with $i \in 1:n$ with n being all the shared match ups among rank j,k of the chosen decks. 
+
+With these an intuitive use of the set of differences if the take the expected value which would be $SkillCap(deck)_{j_k} = E(d_{j,k}(deck\_MU_i))$ -->
+
+
+
 
 ---
 
@@ -299,14 +329,6 @@ They look at the single MU because the meta would easily influence the mean valu
 ---
 
 # Theory and methods
-
-```{r}
-mtcars |>
-  as.data.table() |>
-  extract( ,.N, by = cyl)
-  
-  # lm(formula = mpg ~ disp + wt, data = _)
-```
 
 
 ## Standardisation
