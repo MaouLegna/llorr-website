@@ -1,7 +1,7 @@
 ---
 params:
   ind: "SkillCap"
-  title: "From Curve to Gap. On difference of win rates at different ranks"
+  title: "From Curve to Gap. On difference of win-rates at different ranks"
   description: ""
 title: | 
   `r params$title`
@@ -67,8 +67,8 @@ metathis::meta() |>
   metathis::meta_social(
     title = params$title,
     url = "https://www.llorr-stats.com/",
-    image = "images/archetypes/A02_APheatmap.png",
-    image_alt = "APclusterHeatmap",
+    image = "",
+    image_alt = "",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",
@@ -247,7 +247,7 @@ example |>
 
 Trying to evaluate the differences in skills in a CG, in a certain meta at different ranks is no easy task.
 
-Assuming it was possible to collect all information a game played it would be still hard to control for
+Assuming it was possible to collect all information a game played it would be still hard to control for all possible confounding variable
 
 Even if it was possible to create the perfect experiment it would be hard to track all the confounding variables
 
@@ -280,7 +280,7 @@ In addition, also worth to remember is said by both Zach and Hat:
 
 As we mentioned in the introduction the methodology is only inferred from the sources mentioned and wrote in the footnotes.
 
-It's highly possible that Zach uses a more complex methodology compared to the one we will present as they have access to a bigger pool of variables and so being able to control for a bigger number of counfounders. Still, the core concept should still remain similar.
+It's highly possible that Zach uses a more complex methodology compared to the one we will present as they have access to a bigger pool of variables and so being able to control for a bigger number of confounders. Still, the core concept should still remain similar.
 
 Now, let us extract the key points from the discussion:
 
@@ -300,35 +300,42 @@ The crude difference in win-rate of a deck d between two rank i,j is:
 
 $WR(d)_i - WR(d)_j$
 
-But the definition of skill-cap provided by Zach use as unit of choice if the difference in win rates among match-ups.
+But the definition of skill-cap provided by Zach use as unit of choice if the difference in win-rates among match-ups.
 
-$S(d)_{i,j} = f( MU(d)_{i,k} - MU(d)_{j,k} ) \forall k$
+$S(d)_{i,j} = f( MU(d)_{i,1} - MU(d)_{j,1}, ...,  MU(d)_{i,i} - MU(d)_{j,i}, ..., MU(d)_{i,n} - MU(d)_{j,n} ) = f( MU(d)_{i,n} - MU(d)_{j,n} ) \forall n \in 1:N  $ where n is every deck facing the chosen deck d.
 
+Here we assume that the function of the differences in win-rates among match-ups is simply the expected value as it's probably the most appropriate yet simple choice for the result we are aiming for.
 
+$S(d)_{i,j} = \frac{1}{N} \sum_{k} ( MU(d)_{i,k} - MU(d)_{j,k} )$
 
+but because of the linearity properties of the mean we can write it as
 
+$S(d)_{i,j} = \frac{1}{N} \sum_{k} MU(d)_{i,k} - \frac{1}{N} \sum_{k} MU(d)_{j,k} = \overline{MU(d)_i} - \overline{MU(d)_j}$
 
-<!-- It means that given j,k with $j \ne k$ ranks of players, for a certain deck we have $d_{j,k}(deck\_MU_i) = wr_j(deck\_MU_i)-wr_k(deck\_MU_i)$ with $i \in 1:n$ with n being all the shared match ups among rank j,k of the chosen decks. 
+with $\overline{MU(d)}$ the mean win-rates of the deck d
 
-With these an intuitive use of the set of differences if the take the expected value which would be $SkillCap(deck)_{j_k} = E(d_{j,k}(deck\_MU_i))$ -->
+and instead of using the two difference of two crude win-rates we use the difference of two mean win-rates.
 
+This approach is simple and yet would solve the *field problem* mentioned before.
 
+Before we goes a bit more deep into the theory we must point out a possible problem with using the differences in match-ups win-rates: the shared meta.
 
+Assuming $N_i$ different decks are being played at rank i and $N_j$ are being played at rank j, unless $N_i = N_j$ the comparison at different ranks will only be limited to the shared decks that are being played at each different ranks. In addition decks with a really poor sample size in one of the meta will have to be excluded too.
 
----
+Assuming the two meta at different ranks differ a lot the skill-cap obtained will only reflect a certain percentage of both meta limiting as such the internal validity.
 
-Problems:
+How much of the shared meta issue is excluded probably depends also by each card game.
 
-Assuming almost all MU are there in any combination rank and that 
+In HS and MtG for example, because of rotations and power-creeps (HS) the pool of possible decks is more limited and sort of guided.
 
----
+On the contrary, in card games like YuGiOh and LoR with all cards ever released being playable (ban list aside) there is the chance of having to exclude a significant percentage of each meta.
 
-But differently for the Skill-Curve they don't look at the WR in function of games but at each MU-WR disparity
-They look at the single MU because the meta would easily influence the mean value ( and looking at what I have for PR between the two groups it is an obvious confounder)
-
----
+With a more developed archetype-definition and ability to define the similarity between decks a possible solution would be the use of data from other available data from decks in a similar concept to the one 
+we defined in the [matching introduction](https://www.llorr-stats.com/analysis/matching-win-rate/) we did before.
 
 # Theory and methods
+
+
 
 
 ## Standardisation
