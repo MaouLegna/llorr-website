@@ -612,36 +612,44 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 
 ```{r update-Shiny}
 # TopCC <- LoR.Melt.Master.RMD |>
+#   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
+#   # filter(game_start_time_utc >= now()-days(7)) |>
 #   count(playerDeck) |>
-#   slice_max(n, n = 30,with_ties = F ) |>
+#   slice_max(n, n = params$nGrid,with_ties = F ) |> 
 #   pull(playerDeck)
-# 
-# MUtbl <- LoR.Melt.Master.RMD |>
-#   bind_rows(LoR.Melt.Diamond.RMD) |>
-#   filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
-#   # removing the first week to remove "noise"
-#   filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"), # +days(7),
-#                                                as.POSIXct(params$end,"UTC") ) ) |>
-#   distinct(match_key,playerPuuid,.keep_all = T) |>
-#   filter(game_outcome!="tie") |>
-#   group_by(playerDeck,opponentDeck) |>
-#   summarise(muWin   = sum(game_outcome=="win"),
-#             muGames = n(),
-#             muWR=mean(game_outcome=="win") ) |>
-#   ungroup() |>
-#   mutate(playrate = muWin/muGames) |>
-#   as.data.table() |>
-#   {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
-#   mutate(
-#     okCI:=(!between(0.50,LCI,UCI)),
-#     direction:=ifelse(muWR>0.50,"POS","NEG"),
-#     CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
-# 
-# tibble::tibble(
-#   playerDeck   = rep(TopCC, each=30),
-#   opponentDeck = rep(TopCC,times=30)
-#   ) |>
-#   left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-#   # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
-#   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle03-MUtbl.csv"))
+
+TopCC <- LoR.Melt.Master.RMD |>
+  count(playerDeck) |>
+  slice_max(n, n = 30,with_ties = F ) |>
+  pull(playerDeck)
+
+MUtbl <- LoR.Melt.Master.RMD |>
+  bind_rows(LoR.Melt.Diamond.RMD) |>
+  filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
+  # removing the first week to remove "noise"
+  filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
+  # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"), # +days(7),
+  #                                              as.POSIXct(params$end,"UTC") ) ) |>
+  distinct(match_key,playerPuuid,.keep_all = T) |>
+  filter(game_outcome!="tie") |>
+  group_by(playerDeck,opponentDeck) |>
+  summarise(muWin   = sum(game_outcome=="win"),
+            muGames = n(),
+            muWR=mean(game_outcome=="win") ) |>
+  ungroup() |>
+  mutate(playrate = muWin/muGames) |>
+  as.data.table() |>
+  {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
+  mutate(
+    okCI:=(!between(0.50,LCI,UCI)),
+    direction:=ifelse(muWR>0.50,"POS","NEG"),
+    CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
+
+tibble::tibble(
+  playerDeck   = rep(TopCC, each=30),
+  opponentDeck = rep(TopCC,times=30)
+  ) |>
+  left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
+  # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
+  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle03-MUtbl.csv"))
 ```
