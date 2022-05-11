@@ -28,6 +28,7 @@ while (TRUE) {
   rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu.Rmd"), encoding = 'UTF-8')
   rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta.Rmd"), encoding = 'UTF-8')
   rmarkdown::render_site(encoding = 'UTF-8')
+  # ==> rmarkdown::render_site(encoding = 'UTF-8')
   
   end     <- Sys.time()
   glue::glue("Knit - End   - {end} / Duration: {round(as.numeric(lubridate::as.duration(end-start), 'seconds'),2)}s") |> message()
