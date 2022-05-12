@@ -624,7 +624,7 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 #   pull(playerDeck)
 # 
 # MUtbl <- LoR.Melt.Master.RMD |>
-#   bind_rows(LoR.Melt.Diamond.RMD) |>
+# #   bind_rows(LoR.Melt.Diamond.RMD) |>
 #   filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
 #   # removing the first week to remove "noise"
 #   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>

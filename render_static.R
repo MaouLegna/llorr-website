@@ -38,38 +38,24 @@ while (TRUE) {
   
 }
 
+distill::create_post(
+  "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°XX)",
+  collection = "report",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "meta-report-060",
+  date = "2021-05-11",
+  date_prefix = NULL,
+  draft = TRUE,
+  edit = interactive()
+)
 
-
-# source(file.path("C:","LlorR","scripts","lor_main.R" ))
-# source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
-# source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
-
-
-champs_pretty_label <-  function(cards) {
-  
-  # cards <- Test.Deck$cards[10]
-  # extract the vector of champion cards
-  cards <- str_extract_all(cards, pattern = paste(LoR.Champion$cardCode, collapse = "|") ) |> extract2(1)
-  
-  length(cards)
-  
-  # we are interested in cases with at least 3 different champion
-  # if the length of the vector is 4 or less (1,1,1) or (2,1,1)
-  # in this case maybe it's more appropriate to still consider as a 6 cards - 2,2,2 scenario
-  
-}
-
-LoR.Deck |>
-  mutate(count = str_count(champs,",") ) |>
-  mutate(l = map_dbl(cards,champs_pretty_label)) -> Test.Deck_v3
-
-Test.Deck_v3 |>
-  gtsummary::tbl_cross(count,l) -> gt_cross
-
-readr::write_rds(Test.Deck_v3 |> select(l,count),file.path("C:", "LlorR", "data", "temp", "champion_count.rds"))
-
-# str_extract_all(Test.Deck$cards[1], pattern = paste(LoR.Champion$cardCode, collapse = "|") ) |> extract2(1) |> table() |> . => sprintf("%s: %s",.,names(.)) 
-  
-  
-  # tabyl() |> rename_with(~c("card","n","freq"))
-
+distill::create_post(
+  "THE SEASONAL REPORT IS VAST (n°XXX)",
+  collection = "report",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "seasonal-005",
+  date = "2022-05-14",
+  date_prefix = NULL,
+  draft = FALSE,
+  edit = interactive()
+)
