@@ -202,28 +202,52 @@ LoR.Melt.Matches.RMD <- LoR.Match.DT.RMD |>
 # LoR.Melt.Matches.RMD[is.na(playerDeck), .N]
 ```
 
+```{r}
+
+
+  
+          
+  
+```
+
 
 ```{r create-lineUp-DT}
-LineUp.DT <- LoR.Melt.Seasonal |>
-  group_by(playerID, playergameName, server) |>
-  summarise(listDeck = list(unique(playerDeck)), listCode = list(unique(deck_code))) |>
-  ungroup()
+# LineUp.DT <- LoR.Melt.Seasonal |>
+#   group_by(playerID, playergameName, server) |>
+#   summarise(listDeck = list(unique(playerDeck)), listCode = list(unique(deck_code))) |>
+#   ungroup()
+# 
+# LineUp.DT <- LineUp.DT |>
+#   group_by(playerID) |>
+#   summarise(map_df(.x = listCode, .f = ~ assignLineUp(.x))) |>
+#   ungroup() |>
+#   right_join(LineUp.DT, by = "playerID") |>
+#   #' quality filter
+#   filter(!is.na(deck_1)) |>
+#   rename("code_1" = "deck_1", "code_2" = "deck_2", "code_3" = "deck_3") |>
+#   left_join(LoR.Deck.RMD |> select(deck_code, deck_1 = archetype), by = c("code_1" = "deck_code")) |>
+#   left_join(LoR.Deck.RMD |> select(deck_code, deck_2 = archetype), by = c("code_2" = "deck_code")) |>
+#   left_join(LoR.Deck.RMD |> select(deck_code, deck_3 = archetype), by = c("code_3" = "deck_code")) |>
+#   #' quality filter
+#   filter(!is.na(deck_1)) |>
+#   mutate(LU = purrr::pmap_chr(list(x = deck_1, y = deck_2, z = deck_3), ~ glue::glue_collapse(na.omit(sort(c(..1, ..2, ..3))), sep = " - ")))
 
-LineUp.DT <- LineUp.DT |>
-  group_by(playerID) |>
-  summarise(map_df(.x = listCode, .f = ~ assignLineUp(.x))) |>
-  ungroup() |>
-  right_join(LineUp.DT, by = "playerID") |>
-  #' quality filter
-  filter(!is.na(deck_1)) |>
-  rename("code_1" = "deck_1", "code_2" = "deck_2", "code_3" = "deck_3") |>
-  left_join(LoR.Deck.RMD |> select(deck_code, deck_1 = archetype), by = c("code_1" = "deck_code")) |>
-  left_join(LoR.Deck.RMD |> select(deck_code, deck_2 = archetype), by = c("code_2" = "deck_code")) |>
-  left_join(LoR.Deck.RMD |> select(deck_code, deck_3 = archetype), by = c("code_3" = "deck_code")) |>
-  #' quality filter
-  filter(!is.na(deck_1)) |>
+LineUp.DT <- LoR.Melt.Seasonal |>
+  distinct(playerID,playergameName,server,deck=playerDeck,code=deck_code) |>
+  group_by(playerID,playergameName,server) |>
+  mutate(listDeck = list(unique(deck)), listCode = list(unique(code))) |>
+  pivot_longer(c(deck,code)) |>
+  arrange(playerID,name,value) |>
+  as.data.table() |>
+  extract( name == "deck", id := seq(.N) , by = "playerID" ) |>
+  extract( name == "code", id := seq(.N) , by = "playerID" ) |>
+  arrange(playerID,name,value,id) |>
+  pivot_wider(names_from = c(name,id),
+              names_glue = sprintf('{%s}_{%s}',"name","id"),
+              values_from = value) |>
   mutate(LU = purrr::pmap_chr(list(x = deck_1, y = deck_2, z = deck_3), ~ glue::glue_collapse(na.omit(sort(c(..1, ..2, ..3))), sep = " - ")))
 ```
+
 # Data
 
 ```{r account-info}
@@ -276,6 +300,72 @@ gtsave(gtSeasonal, glue::glue("images/{params$ind}-coverage-player.png")) |> inv
 
 gtSeasonal
 ```
+
+```{r}
+Game.Result.APAC <-
+  LoR.Melt.Seasonal |>
+  filter(server == "apac") |>
+  filter( !(game_start_time_utc %within% interval(with_tz(force_tz(timeBlock.5.start, "Asia/Shanghai"), "UTC"),with_tz(force_tz(timeBlock.5.end, "Asia/Shanghai"), "UTC"))) ) |>
+  # As the players and opponents plays each other only in a single match group them and the min of their game_start can identify the round they are playing in
+  # filter(playerID == "AFTV<U+AE5C><U+B3D9>#0823") |>
+  group_by(playerID, opponentID, server) |>
+  mutate(timeBlock = min(game_start_time_utc) |>
+    {
+      \(x) as_datetime(x, tz = "UTC")
+    }()) |>
+  group_by(playerID, opponentID, server, timeBlock) |>
+  arrange(timeBlock) |>
+  summarise(result = paste(game_outcome, collapse = ","), ldeck = list(playerDeck)) |>
+  arrange(playerID, timeBlock) |>
+  ungroup() |>
+  # Identify the round with the official schedule
+  mutate(round = case_when(
+    timeBlock > with_tz(force_tz(timeBlock.1.start, "Asia/Shanghai"), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.1.end, "Asia/Shanghai"), "UTC") ~ 1, # 04:00
+    timeBlock > with_tz(force_tz(timeBlock.2.start, "Asia/Shanghai") + minutes(150), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.2.end, "Asia/Shanghai") + minutes(150), "UTC") ~ 2, # 07:35
+    timeBlock > with_tz(force_tz(timeBlock.3.start, "Asia/Shanghai") + minutes(150), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.3.end, "Asia/Shanghai") + minutes(150), "UTC") ~ 3, # 08:40
+    timeBlock > with_tz(force_tz(timeBlock.4.start, "Asia/Shanghai") + minutes(150), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.4.end, "Asia/Shanghai") + minutes(150), "UTC") ~ 4, # 09:45
+    timeBlock > with_tz(force_tz(timeBlock.5.start, "Asia/Shanghai") + minutes(150), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.5.end, "Asia/Shanghai") + minutes(150), "UTC") ~ 5, # 10:50
+    
+    timeBlock > with_tz(force_tz(timeBlock.6.start, "Asia/Shanghai") + minutes(125), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.6.end, "Asia/Shanghai") + minutes(125), "UTC") ~ 6, # 11:55
+    timeBlock > with_tz(force_tz(timeBlock.7.start, "Asia/Shanghai") + minutes(125), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.7.end, "Asia/Shanghai") + minutes(125), "UTC") ~ 7, # 13:00
+    
+    timeBlock > with_tz(force_tz(timeBlock.8.start, "Asia/Shanghai") + minutes(125), "UTC") & timeBlock <= with_tz(force_tz(timeBlock.8.end, "Asia/Shanghai") + minutes(125), "UTC") ~ 8, # 14:05
+    timeBlock > with_tz(force_tz(timeBlock.9.start, "Asia/Shanghai") + minutes(125), "UTC") ~ 9 # 15:10
+  )) |>
+  filter(!is.na(opponentID) & !is.na(round)) |>
+  # filter(playerID == "AFTV<U+AE5C><U+B3D9>#0823")
+  group_by(playerID, opponentID, server, timeBlock) |>
+  # number of won games in the match
+  mutate(nWin = str_count(result, "win")) |>
+  # is the match won?
+  mutate(matchWin = ifelse(nWin == 2, 1, 0)) |>
+  ungroup() |>
+  group_by(playerID) |>
+  # sum of ALL matches won
+  mutate(cumWin = cumsum(nWin)) |>
+  # sum of ALL games won
+  mutate(cumMatchWin = cumsum(matchWin)) |>
+  ungroup() |>
+  {
+    \(x)
+    left_join(
+      tibble(
+        playerID = rep(LineUp.DT |> filter(server == "apac") |> pull(playerID), each = 9),
+        round = rep(seq(1, 9, 1), times = (LineUp.DT |> filter(server == "apac") |> NROW())),
+        server = "apac"
+      ),
+      x,
+      by = c("playerID", "round", "server")
+    )
+  }() |>
+  relocate(round, .after = server) |>
+  left_join(LineUp.DT, by = c("server", "playerID")) |>
+  mutate(ban = map2_chr(.x = listDeck, .y = ldeck, ~ (setdiff(unlist(.x), unlist(.y))) |>
+    {
+      \(x) ifelse(length(x) == 1, x, NA)
+    }()))
+```
+
 
 ```{r compute-games-apac}
 Game.Result.APAC <-
@@ -454,7 +544,7 @@ Game.Result.NA <- LoR.Melt.Seasonal |>
     }()))
 ```
 
-```{r create-file}
+```{r}
 Game.Result.all <- rbind(Game.Result.APAC, Game.Result.EU, Game.Result.NA)
 ```
 
@@ -468,7 +558,6 @@ playRates.byLU <- LineUp.DT |>
   #' account for the presence of 3 decks
   mutate(percent = 3 * percent) |>
   rename("playerDeck" = 1)
-
 
 # WR tbl
 seasonal_WR_DT <- win_rates(LoR.Melt.Seasonal,server = F)
