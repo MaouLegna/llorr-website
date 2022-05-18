@@ -4,7 +4,7 @@ params:
   patch: "Patch 3.7 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°58)"
   description: "A Curious Journey Seasonal Tournament - Playoff - Waiting Room"
-  cardlurl: "https://dd.b.pvp.net/3_6_0/set5/en_us/img/cards/05BC161T1-full.png"
+  cardlurl: "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01DE054-full.png"
   start: "2022-05-11 18:00:00" #UTC tz / 'current' week start
   end:   "2022-05-18 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -317,6 +317,24 @@ gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
 ```
 
 :::
+:::::
+:::
+
+# Seasonal Tournament Open Rounds
+
+For the full detailed report go to: [A Curious Journey Open Rounds Report](https://www.llorr-stats.com/report/seasonal-005/)
+
+::: {.l-page}
+::::: {.panelset}
+
+::: panel
+### Top Deck Decks Performance {.panel-name}
+
+```{r}
+knitr::include_graphics("images/S2022-05-14-LMI-table-v2.png")
+```
+:::
+
 :::::
 :::
 
