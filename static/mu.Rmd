@@ -75,8 +75,7 @@ LastUpdate.box <- flexdashboard::valueBox(
 ```
 
 ```{r archetype-fix}
-# Archetype-Fix
-source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
+LoR.Deck.RMD <- archetype_pretty(LoR.Deck.RMD)
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
@@ -85,40 +84,13 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   filter(game_type == "Ranked"  ) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(
-    cols = c(ends_with("_1"),ends_with("_2")),
-    names_to = c(".value"),
-    names_pattern = "(.*)_[0-9]"
-    ) |>
-  as.data.table() |>
-  left_join(LoR.Deck.RMD, by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(
-    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code")
-  )
-
+  melt_match(LoR.Deck.RMD)
+  
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
   filter(game_type == "Ranked"  ) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2 ) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1 ) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1 ) |>
-  pivot_longer(
-    cols = c(ends_with("_1"),ends_with("_2")),
-    names_to = c(".value"),
-    names_pattern = "(.*)_[0-9]"
-    ) |>
-  as.data.table() |>
-  left_join(LoR.Deck.RMD, by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(
-    LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-    by=c("opponent_deck_code"="deck_code"))
+  melt_match(LoR.Deck.RMD)
 ```
 
 # Master {data-icon="fa-table"}

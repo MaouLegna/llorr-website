@@ -2,7 +2,7 @@ while (TRUE) {
   
   
   if (!exists("giorno")) {
-    giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(25) + lubridate::minutes(30)
+    giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(6) + lubridate::minutes(30)
   }
   
   message(giorno)
@@ -16,7 +16,6 @@ while (TRUE) {
   # Read Decks
   LoR.Deck    <- data.table::fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),header = T,na.strings = c("",NA) )
   source(file.path("C:","LlorR","scripts","dataIO","lor_deck_v3.R"), encoding = "UTF-8", local = TRUE)
-  # LoR.Deck.RMD <- LoR.Deck
   data.table::fwrite(LoR.Deck, file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"))
   
   

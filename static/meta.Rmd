@@ -96,8 +96,7 @@ if (one_day_check) seqDate <- seqDate[-length(seqDate)]
 
 
 ```{r archetype-fix}
-# Archetype-Fix
-source(file.path("C:","LlorR","scripts","functions","lor_archetype.R"))
+LoR.Deck.RMD <- archetype_pretty(LoR.Deck.RMD)
 LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
@@ -107,40 +106,14 @@ LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   mutate(source = factor(source,levels = c("Diamond","Master"))) |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  select(-match_id,-data_version,-total_turn_count,-status,-game_mode,-game_type,-game_version,-contains("participants"),-contains("deck_id"),-contains("factions"),-contains("order")) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]") |>
-  as.data.table() |>
-  # Add Deck data
-  left_join(LoR.Deck.RMD[,.(deck_code,archetype)],
-            by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-            by=c("opponent_deck_code"="deck_code"))
+  melt_match(LoR.Deck.RMD)
   
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
   mutate(source = "Diamond") |>
   mutate(source = factor(source,levels = c("Diamond","Master")))  |>
   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) )
   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-  select(-match_id,-data_version,-total_turn_count,-status,-game_mode,-game_type,-game_version,-contains("participants"),-contains("deck_id"),-contains("factions"),-contains("order")) |>
-  rename(playerPuuid_1 = puuid_1, playerPuuid_2 = puuid_2) |>
-  mutate(opponentPuuid_1 = playerPuuid_2, opponentPuuid_2 = playerPuuid_1) |>
-  mutate(opponent_deck_code_1 = deck_code_2, opponent_deck_code_2 = deck_code_1) |>
-  pivot_longer(cols = c(ends_with("_1"),ends_with("_2")),
-               names_to = c(".value"),
-               names_pattern = "(.*)_[0-9]") |>
-  as.data.table() |>
-  # Add Deck data
-  left_join(LoR.Deck.RMD[,.(deck_code,archetype)],
-            by="deck_code") |>
-  rename(playerDeck=archetype) |>
-  left_join(LoR.Deck.RMD[,.(deck_code,opponentDeck=archetype)],
-            by=c("opponent_deck_code"="deck_code"))  
+  melt_match(LoR.Deck.RMD)
   
 # Bind games
 LoR.Melt.Matches.RMD <- LoR.Melt.Master.RMD |>
