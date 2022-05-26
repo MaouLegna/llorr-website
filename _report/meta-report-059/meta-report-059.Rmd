@@ -3,8 +3,8 @@ params:
   ind: "MR059"
   patch: "Patch 3.7 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°58)"
-  description: "Jhin Jhin Jhin Jhin"
-  cardlurl: ""
+  description: "4"
+  cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06RU002T1-full.png"
   start: "2022-05-18 18:00:00" #UTC tz / 'current' week start
   end:   "2022-05-25 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -70,7 +70,7 @@ xaringanExtra::style_panelset_tabs(
 ```
 
 ```{r constant}
-general.caption <- glue::glue("{params$patch}
+general_caption <- glue::glue("{params$patch}
                               Ranked games from {params$start} UTC to {params$end} UTC
                               Source: Metadata of games collected with RiotGames API
                               Last Update: {now(tzone='UTC')}")
@@ -81,7 +81,7 @@ general.caption <- glue::glue("{params$patch}
 LoR.Deck.RMD       <- fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),na.strings = c("",NA))
 
 # load Games DT
-LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
+LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT_S12(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread,colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(activeShard = if_else(activeShard %in% c("sea","asia"),"apac",activeShard) ) |>
   mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
@@ -108,6 +108,7 @@ LoR.Deck.RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 LoR.Melt.Master.RMD <- LoR.Match.DT.RMD |>
   filter(game_type == "Ranked") |>
   filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"),as.POSIXct(params$end,"UTC")) ) |>
+  # tabyl(game_version)
   melt_match(LoR.Deck.RMD,LoR.Account.RMD)
   
 LoR.Melt.Diamond.RMD <- LoR.Diamond.DT.RMD |>
@@ -137,10 +138,10 @@ max_time <- do.call("rbind", mget( ls(pattern=regex("^LoR.Melt")) ) ) |>
 tbl.master  <- table_bythenumbers(LoR.Match.DT.RMD)
 tbl.diamond <- table_bythenumbers(LoR.Diamond.DT.RMD)
 
-nGames.Master  <- LoR.Melt.Master.RMD[,.N]
-nGames.Diamond <- LoR.Melt.Diamond.RMD[,.N]
+nGames.Master  <- NROW(LoR.Melt.Master.RMD)
+nGames.Diamond <- NROW(LoR.Melt.Diamond.RMD)
 
-nMaster <- LoR.Account.RMD[master=="master",.N]
+nMaster  <- LoR.Account.RMD[master=="master",.N]
 nDiamond <- LoR.Account.RMD[master=="diamond",.N]
 ```
 
@@ -261,7 +262,7 @@ LoR.Account.RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pa
 
 # prepare
 LoR.Deck.Seasonal <- LoR.Seasonal.DT.RMD |>
-  extract_deck_code_info() |>
+  extract_deck_code_info(decode = TRUE) |>
   archetype_pretty()
 
 LoR.Melt.Seasonal <- LoR.Seasonal.DT.RMD |>
@@ -336,7 +337,18 @@ deckFound <- top32tbl |>
   select(server,deck_code) |>
   drop_na() |>
   NROW()
+```
 
+Before providing the usual description of last week high ranked games here are the results from the top32
+
+`r kableExtra::text_spec("Note:", color = "red")` As not all decks has being played I can't provide a complete coverage of the lineUps but `r glue("{deckFound}/{32*3*3}")` decks overall.
+
+::: {.l-page}
+::::: {.panelset}
+::: {.panel}
+### Games Results {.panel-name}
+
+```{r check-seasonal-32}
 winlosstbl <- Game.Results |>
   group_by(server,playerID) |>
   summarise(result = paste(result,collapse = "," ) ) |>
@@ -396,136 +408,6 @@ gt_winlosstbl |>
     table.background.color = "whitesmoke",
     column_labels.background.color = "whitesmoke"
   )
-
-
-
-
-react.LU.top32 <- top32tbl |>
-  left_join(LoR.Account.RMD[ ,.(puuid,gameName) ],by=c("playerPuuid"="puuid") ) |>
-  select(-playerPuuid) |>
-  relocate(gameName,.after = "server") |>
-  # filter( server == "asia" ) |>
-  pivot_longer(
-    cols = c(contains("deck_"),contains("code_")),
-    names_to=c(".value", "index"),
-    names_sep = "_") |>
-  drop_na() |>
-  relocate(LU,.after = code) |>
-  select(-index) |>
-  mutate( code = glue::glue("<a href='https://runeterra.ar/decks/code/{code}'>{code}</a>") ) |>
-  reactable(
-    theme = reactablefmtr::fivethirtyeight(),
-    groupBy = c("server","cumMatchWin","gameName"),
-    bordered = TRUE,
-    highlight = TRUE,
-    searchable = TRUE,
-    compact = TRUE, # compact the table
-    # fullWidth = FALSE, # don't fill the page
-    defaultPageSize = 10,
-    defaultSorted = c("cumMatchWin"),
-    defaultSortOrder = "desc",
-    defaultColDef = colDef(
-      style = list(fontWeight = 500, color = "black",
-                   fontFamily = "Helvetica", fontSize = "12px"),
-      align = "left",
-      headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
-    ),
-    columns = list(
-      LU = colDef( show = F ),
-      deck = colDef(name = "Deck",minWidth = 200 ),
-      gameName = colDef(name = "Player" ),
-      # code = colDef( show = F ),
-      code = colDef(name = "DeckCode", minWidth = 750, style = list( fontSize = 9 ), html = T ),
-      # code = colDef(name = "DeckCode", cell = function(value, index) {
-      #   # Render as a link
-      #   if (!is.na(value) ) {
-      #     url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
-      #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
-      #   } } ,minWidth = 600, style = list(fontSize = "9px") ),
-      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
-    ),
-    rowStyle = JS("function(rowInfo) {
-                  if (rowInfo.level > 0) {
-                  return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
-                  } else {
-                  return { borderLeft: '2px solid whitesmoke' }
-                  }
-                  }"),
-    defaultExpanded = T
-  ) |>
-  reactablefmtr::add_title("Top32 Players' Deckcodes", background_color = "white", font_family = "Helvetica") |>
-  reactablefmtr::add_subtitle(c("Magic Disadventures Playoff - Top32 LineUps"), background_color = "white", font_family = "Roboto") |>
-  reactablefmtr::add_source(glue::glue("As not all decks has being played I can't provide a complete coverage of the lineUps but {deckFound}/{32*3*3} decks overall.
-                                       Source: Metadata of games collected with RiotGames API"), background_color = "white", font_family = "Chivo")
-
-react.LU.top32
-
-reactablefmtr::save_reactable(input = react.LU.top32,output = glue::glue("images/{params$ind}-top32-decks.png")) |> invisible()
-```
-
-Before providing the usual description of last week high ranked games here are the results from the top32
-
-`r kableExtra::text_spec("Note:", color = "red")` As not all decks has being played I can't provide a complete coverage of the lineUps but `r glue("{deckFound}/{32*3*3}")` decks overall.
-
-::: {.l-page}
-::::: {.panelset}
-::: {.panel}
-### Games Results {.panel-name}
-
-```{r check-seasonal-32}
-winlosstbl <- Game.Results |>
-  group_by(server,playerID) |>
-  summarise(result = paste(result,collapse = "," ) ) |>
-  mutate(result = str_replace_all(result, set_names(c("1","0"), c("win","loss") ) ) ) |>
-  mutate(result = str_split(result,",")) |>
-  mutate(result = map(.x=result, ~as.numeric(.x) ) ) |>
-  left_join(
-    Game.Results |>
-      select(playerID,cumMatchWin) |>
-      group_by(playerID) |>
-      slice_max(cumMatchWin,n=1,with_ties=F),
-    by = "playerID"
-  ) |>
-  arrange(server,desc(cumMatchWin)) |>
-  group_by(server) |>
-  mutate(row=row_number()) |>
-  rename(WonMatches=cumMatchWin,Player=playerID) |>
-# winlosstbl |>
-  pivot_wider(id_cols = c(row,WonMatches), names_from = "server", values_from=c(Player,result), names_glue = "{server}_{.value}" ) |>
-  select(-row)
-
-colnames_result <- winlosstbl |> colnames() |> str_subset("_result")
-
-gt_winlosstbl <- winlosstbl |>
-  select(WonMatches,sort(current_vars())) |>
-  gt() |>
-  tab_spanner_delim(delim = "_") |>
-  fmt_missing(
-    columns=everything(),
-    missing_text=""
-  )
-
-for (i in seq_along(colnames_result) ) {
-  gt_winlosstbl <- gt_winlosstbl |>
-    gtExtras::gt_plt_winloss(column = colnames_result[i], max_wins = 20)
-}
-  
-gt_winlosstbl <- gt_winlosstbl |>
-  # tab_options(data_row.padding = px(2)) |>
-  tab_header(
-    title = md("Top32 Results"),
-    subtitle = md("Game results from the top32 players of the Magic Disadventures Seasonal Tournament") 
-  ) |>
-  tab_source_note(source_note = md("Metadata of games collected with RiotGames API")) |>
-  gtExtras::gt_theme_538()
-
-# gtsave(winlosstbl,glue::glue("images/{params$ind}-winloss.png")) |> invisible()
-
-gt_winlosstbl |>
-  tab_options( 
-    table.background.color = "whitesmoke",
-    column_labels.background.color = "whitesmoke"
-    )
 ```
 
 :::
@@ -563,7 +445,7 @@ react.LU.top32 <- top32tbl |>
                    fontFamily = "Helvetica", fontSize = "12px"),
       align = "left",
       headerStyle = list(background = "steelblue",color="white",fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
-      ),
+    ),
     columns = list(
       LU = colDef( show = F ),
       deck = colDef(name = "Deck",minWidth = 200 ),
@@ -577,7 +459,7 @@ react.LU.top32 <- top32tbl |>
       #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
       #   } } ,minWidth = 600, style = list(fontSize = "9px") ),
       cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique",defaultSortOrder = "desc")
-      ),
+    ),
     rowStyle = JS("function(rowInfo) {
                   if (rowInfo.level > 0) {
                   return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
@@ -586,15 +468,13 @@ react.LU.top32 <- top32tbl |>
                   }
                   }"),
     defaultExpanded = T
-    ) |>
-  reactablefmtr::add_title("Top32 Players' Deckcodes", background_color = "white", font_family = "Helvetica") |>
-  reactablefmtr::add_subtitle(c("Magic Disadventures Playoff - Top32 LineUps"), background_color = "white", font_family = "Roboto") |>
+  ) |>
+  reactablefmtr::add_title("Top32 Players' Deckcodes", background_color = "white") |>
+  reactablefmtr::add_subtitle(c("Magic Disadventures Playoff - Top32 LineUps"), background_color = "white") |>
   reactablefmtr::add_source(glue::glue("As not all decks has being played I can't provide a complete coverage of the lineUps but {deckFound}/{32*3*3} decks overall.
-                                       Source: Metadata of games collected with RiotGames API"), background_color = "white", font_family = "Chivo")
+                                       Source: Metadata of games collected with RiotGames API"), background_color = "white")
 
-react.LU.top32
-
-reactablefmtr::save_reactable(input = react.LU.top32,output = glue::glue("images/{params$ind}-top32-decks.png")) |> invisible()
+# reactablefmtr::save_reactable_test(input = react.LU.top32,output = glue::glue("images/{params$ind}-top32-decks.png")) |> invisible()
 ```
 :::
 
@@ -622,7 +502,7 @@ plot_freq(
   Region.Freq,
   nGames.Master,
   subtitle = "number of times a region is included in a deck",
-  caption = general.caption
+  caption = general_caption
   )
 ```
 
@@ -638,7 +518,7 @@ table_freq_gt(Region.Freq) |>
     title    = "Region Play Rate",
     subtitle = "Relative Frequencies by Inclusion Rate of a Region"
   ) |>
-  tab_source_note( source_note = general.caption ) 
+  tab_source_note( source_note = general_caption ) 
 ```
 :::
 :::::
@@ -663,7 +543,7 @@ plot_freq(
   Region.Freq.byCards,
   nGames.Master,
   subtitle = "number of times a card within a region is included in a deck",
-  # caption = general.caption
+  # caption = general_caption
   caption = glue::glue("{params$patch}
                        Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
                        DualRegions cards are counted based by the region that matters in the deck
@@ -682,7 +562,7 @@ table_freq_gt(Region.Freq.byCards) |>
     title    = "Region Play Rate",
     subtitle = "Relative Frequencies by number of times a Card within a Region is included in a Deck"
   ) |>
-  tab_source_note( source_note = general.caption )
+  tab_source_note( source_note = general_caption )
 ```
 :::
 :::::
@@ -995,45 +875,6 @@ WR.DT.Reg |>
       )
     )
 ```
-
-```{r lor-italia}
-#| results="hide"
-# react_lor_italia <-
-#   WR.DT |>
-#   filter(playrate >= 0.01) |>
-#   slice_max(playrate,n=10) |>
-#   # arrange(desc(WR)) |>
-#   relocate(playerDeck,WR,nWin,nGames) |>
-#   reactable(
-#     bordered = TRUE,
-#     # wrap = FALSE,
-#     highlight = TRUE,
-#     striped = TRUE,
-#     # filterable = TRUE,
-#     defaultSorted = list(WR = "desc"),
-#     defaultColDef = colDef(
-#       # header = function(value) str_to_title(value),
-#       #  cell = function(value) format(value, nsmall = 1),
-#       align = "center",
-#       minWidth = 120
-#       # headerStyle = list(background = "steelblue",color="white")
-#       ),
-#     columns = list(
-#       playerDeck = colDef(name = "Champions",minWidth = 250),
-#       nWin   = colDef(name = "#Win"),
-#       nGames = colDef(name = "#Games"),
-#       WR     = colDef(name = "WinRate",format = colFormat(percent = TRUE,digits = 1) ),
-#       playrate = colDef(name = "PlayRate",format = colFormat(percent = TRUE,digits = 1))
-#       )
-#     )
-# 
-# react_lor_italia %<>%
-#   reactablefmtr::add_title(glue("{params$patch} - Top10"), background_color = "white", font_family = "Helvetica") |>
-#   reactablefmtr::add_subtitle("Top10 Most Played decks of the week by WinRate", background_color = "white", font_family = "Roboto") |>
-#   reactablefmtr::add_source(glue::glue("Source: Metadata of games collected with RiotGames API - by Legna - https://www.llorr-stats.com"), background_color = "white")
-# 
-# reactablefmtr::save_reactable(input = react_lor_italia,output = glue::glue("images/{params$ind}-loritalia-playrate.png"))
-```
 :::
 
 ::: panel
@@ -1294,7 +1135,7 @@ WR.DT |>
     subtitle = "Deck's Peformances by highest value of LMI",
     x = "Win Index",
     y = "Freq Index",
-    caption = general.caption)
+    caption = general_caption)
 ```
 
 > The LMI [^4] [^5] is an Index I developed to measure the performance of decks in the metagame. For those who are familiar with basic statistical concept I wrote a document to explain the theory behind it: , it's very similar to [vicioussyndicate](https://www.vicioussyndicate.com) (vS) Meta Score from their data reaper report. The score of each deck ***is not*** just their "strength", it takes in consideration both play rates and win rates that's why I prefer to say it measure the "performance". The values range from 0 to 100 and the higher the value, the higher is the performance.

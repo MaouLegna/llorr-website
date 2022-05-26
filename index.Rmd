@@ -16,9 +16,16 @@ knitr::opts_chunk$set(
   dev.args = list(bg = 'transparent'),
   fig.align='center'
 )
+
+# Hi, Legna here. I you are looking for stats on the current metagame just click on MatchUps or Meta in the Navigation Bar.
 ```
 
-<!-- Important: There is global problem regarding the Riot-API (also affecting LoL) where it's not possible to collect most (almost all) recent games. In the case of all Masters players there is just no new games that's updated after a certain threshold. While I can currently search at random for some games just to have some current-patch values, it wouldn't a representation of the Master ladder which is my core popular. Heck, I wouldn't even be able to tell what I'm actually analyzing and this would be wrong on so many levels. So, sorry if I can provide data as I would, once there are updates I'll update (and tweet) as soon as possible -->
+Important: With the release of the latest set WorldWalkers there are many changes I have to implement in addition to the ones I was already planning to, while I'm not going to slack off, I need to take my time to do everything well enough so that in the future new radical changes won't be too hard to add and allow to quicker and more stable updates.
+Most likely I will need the entire weekend and be fully back online by the end of the month.
+
+Sorry for the inconvenience.
+
+Note: I'm still collecting the data
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
