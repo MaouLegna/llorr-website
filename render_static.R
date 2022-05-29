@@ -1,3 +1,13 @@
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+
+# new_decks <- c(
+#   list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_(.*)csv$"), full.names = T)
+#   # list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Seasonal(.*)csv$"), full.names = T)
+# ) |>
+#   map_dfr(data.table::fread, select = c("game_type","game_mode","deck_code_1","deck_code_2","factions_1","factions_2"), header =T, colClasses = "character")
+
 while (TRUE) {
   
   
@@ -7,20 +17,6 @@ while (TRUE) {
   
   message(giorno)
   naptime::naptime(giorno)
-  
-  #'********************
-  # Update the decks
-  start   <- Sys.time()
-  glue::glue("Deck - Start - {start}") |> message()
-  
-  # Read Decks
-  LoR.Deck    <- data.table::fread(file.path("C:","LlorR","data","raw","LoR_DECK.csv"),header = T,na.strings = c("",NA) )
-  # LoR.Deck <- LoR.Deck.RMD
-  source(file.path("C:","LlorR","scripts","dataIO","lor_deck_v3.R"), encoding = "UTF-8", local = TRUE)
-  data.table::fwrite(LoR.Deck, file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"))
-  
-  end     <- Sys.time()
-  glue::glue("Deck - End   - {end} / Duration: {round(as.numeric(lubridate::as.duration(end-start), 'seconds'),2)}s") |> message()
   
   #'********************
   # Update pages
@@ -35,32 +31,8 @@ while (TRUE) {
   
   end     <- Sys.time()
   glue::glue("Knit - End   - {end} / Duration: {round(as.numeric(lubridate::as.duration(end-start), 'seconds'),2)}s") |> message()
-  
+  beepr::beep("treasure")
   
   giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
   
 }
-
-# OlsonNames()
-
-# distill::create_post(
-#   "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°XX)",
-#   collection = "report",
-#   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-060",
-#   date = "2021-05-11",
-#   date_prefix = NULL,
-#   draft = TRUE,
-#   edit = interactive()
-# )
-# 
-# distill::create_post(
-#   "THE SEASONAL REPORT IS VAST (n°XXX)",
-#   collection = "report",
-#   author = "Valentino (Legna) Vazzoler",
-#   slug = "seasonal-005",
-#   date = "2022-05-14",
-#   date_prefix = NULL,
-#   draft = FALSE,
-#   edit = interactive()
-# )
