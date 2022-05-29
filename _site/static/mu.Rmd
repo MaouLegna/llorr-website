@@ -167,11 +167,13 @@ gtMU_grid <- gtMU_grid |>
     1 ~ px(150),
   )
 
+gtMU_grid
+
 gtsave(data = gtMU_grid, "images/mugrid_308.png", vwidth = 1500, vheight = 1000) |> invisible()
 gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
-![](images/mugrid.png)
+<!-- ![](images/mugrid.png) -->
 
 ## Row
 
