@@ -189,7 +189,7 @@ last_update_box
 # Fresh Stats (last 24 hours) {data-icon="fa-table"}
 
 ```{r}
-LoR_Melt_Matches_RMD <- LoR_Melt_Matches_RMD |>
+LoR_Melt_24hrs <- LoR_Melt_Matches_RMD |>
   filter(game_start_time_utc %within% interval(today()+hours(18)-days(2), today()+hours(18)-days(1)) ) |>
   distinct(match_key, playerPuuid, .keep_all = T)
 ```
@@ -199,14 +199,14 @@ LoR_Melt_Matches_RMD <- LoR_Melt_Matches_RMD |>
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
-WR_tbl_24h <- LoR_Melt_Matches_RMD |>
+WR_tbl_24h <- LoR_Melt_24hrs |>
   win_rates(details = T, server = F) |>
   filter(playerDeck %!in% c(meta_7days$fct_meta, meta_all$fct_meta, meta_7days$fct_underdog, meta_all$fct_underdog) ) |>
   filter(WR > 0.5 ) |>
   slice_max(nGames, n = 50, with_ties = F) |>
   select(-lower, -upper)
 
-deck_code_tbl_24hrs  <- LoR_Melt_Matches_RMD |>
+deck_code_tbl_24hrs  <- LoR_Melt_24hrs |>
   filter(playerDeck %in% c(WR_tbl_24h$playerDeck) ) |>
   mutate(playerDeck = factor(playerDeck, ordered = TRUE, 
                               levels = c(WR_tbl_24h$playerDeck) )
