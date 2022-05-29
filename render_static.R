@@ -18,6 +18,8 @@ while (TRUE) {
   message(giorno)
   naptime::naptime(giorno)
   
+  # data.table::fwrite(LoR_Deck_RMD, file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"))
+  
   #'********************
   # Update pages
   start   <- Sys.time()
