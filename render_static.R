@@ -38,3 +38,23 @@ while (TRUE) {
   giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
   
 }
+
+
+
+# LoR_Deck_RMD_2 <- LoR_Deck_RMD[0,]
+# 
+# for (i in 1:NROW(LoR_Deck_RMD) ) {
+# # for (i in 1:10 ) {  
+#   
+#   # i = 1
+#   if ( (i %% 500)==0 ) message(i)
+#   
+#   LoR_Deck_RMD_2 <- LoR_Deck_RMD_2 |>
+#     bind_rows( get_deck_info(LoR_Deck_RMD$deck_code[i],LoR_Deck_RMD$factions[i]) |> as_tibble() )
+#   
+#   
+#   
+# }
+# 
+# LoR_Deck_RMD_2 |>
+#   filter(cards_region_fix != factions_abbr)
