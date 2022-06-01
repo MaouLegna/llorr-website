@@ -39,8 +39,6 @@ while (TRUE) {
   
 }
 
-
-
 # LoR_Deck_RMD_2 <- LoR_Deck_RMD[0,]
 # 
 # for (i in 1:NROW(LoR_Deck_RMD) ) {

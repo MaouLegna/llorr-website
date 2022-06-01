@@ -1,12 +1,12 @@
 ---
 params:
-  ind: "MR059"
-  patch: "Patch 3.7 - Week 2"
-  title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°58)"
-  description: "4"
-  cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06RU002T1-full.png"
-  start: "2022-05-18 18:00:00" #UTC tz / 'current' week start
-  end:   "2022-05-25 18:00:00" #UTC tz / 'current' week end
+  ind: "MR060"
+  patch: "Patch 3.8 - Week 1"
+  title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°60)"
+  description: "Burn API burn edition!"
+  cardlurl: "dd.b.pvp.net/latest/set6/en_us/img/cards/06NX012-full.png"
+  start: "2022-05-25 18:00:00" #UTC tz / 'current' week start
+  end:   "2022-06-01 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
   nDeck_cc:  20
   nDeck_day: 12
@@ -21,7 +21,8 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 05-29-2022
+date: |
+  `r as.Date("2022-06-01")` # 06-01-2022
 output:
  distill::distill_article:
     toc: true
@@ -76,85 +77,46 @@ general_caption <- glue::glue("{params$patch}
                               Last Update: {now(tzone='UTC')}")
 ```
 
-```{r raw-data}
+```{r load-data}
 # load DeckDT
-LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
+LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
-LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT_S12(.*)csv$"), full.names = T) |>
+LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_S13(.*)csv$"), full.names = T) |>
+  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+
+LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, colClasses = "character", header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(activeShard = if_else(activeShard %in% c("sea", "asia"), "apac", activeShard) ) |>
   mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
+  # to be safe
   distinct(puuid, .keep_all = T)
-
-# load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw", "games"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
-  str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
-
-# load Games DT
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw", "games"), pattern = glue("^(.*)Diamond_DT_S12(.*)csv$"), full.names = T) |>
-  str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
 ```
 
-```{r archetype-fix}
-LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
+```{r deck-fix}
+LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r prepare-data}
+# Called Master but Actually (Prev) Seasonal Matches
 LoR_Melt_Master_RMD <- LoR_Match_DT_RMD |>
   filter(game_type == "Ranked") |>
   filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) ) |>
-  # tabyl(game_version)
   melt_match(LoR_Deck_RMD, LoR_Account_RMD)
-  
-LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
-  filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) ) |>
-  melt_match(LoR_Deck_RMD, LoR_Account_RMD)
-```
-
-```{r account-info}
-EU_master_found   <- LoR_Account_RMD[ activeShard == "europe" & master == "master", .N ]
-NA_master_found   <- LoR_Account_RMD[ activeShard == "americas" & master == "master", .N ]
-APAC_master_found <- LoR_Account_RMD[ activeShard == "apac" & master == "master", .N ]
-
-EU_master_ladder   <- EU_master_found
-NA_master_ladder   <- NA_master_found
-APAC_master_ladder <- APAC_master_found
 ```
 
 # Data
 
 ```{r nGames-data}
-max_time <- do.call("rbind", mget( ls(pattern=regex("^LoR_Melt")) ) ) |>
-  slice_max(game_start_time_utc, n=1, with_ties = F) |>
-  pull(game_start_time_utc) |>
-  format(format = "%Y-%m-%d %H:%M:%S")
- 
-tbl_master  <- table_bythenumbers(LoR_Match_DT_RMD)
-tbl_diamond <- table_bythenumbers(LoR_Diamond_DT_RMD)
-
 nGames_master  <- NROW(LoR_Melt_Master_RMD)
-nGames_diamond <- NROW(LoR_Melt_Diamond_RMD)
-
-nMaster  <- LoR_Account_RMD[master=="master", .N]
-nDiamond <- LoR_Account_RMD[master=="diamond", .N]
+nMaster  <- LoR_Account_RMD[seasonal=="seasonal", .N]
 ```
 
-Number of Master Players: **`r nMaster`**
+Number of (Prev) Seasonal Players used: **`r nMaster`**
 
-Number of HighDiamond [^1] Players: **`r nDiamond`**
-
-[^1]: HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"
-
-Number of (Ranked) **Master** matches analysed **`r format(nGames_master/2, scientific = F)`** or **`r format(nGames_master, scientific = F)`** games.
-
-Number of (Ranked) **\~HighDiamond** matches analysed **`r format(nGames_diamond/2, scientific = F)`** or **`r format(nGames_diamond, scientific = F)`** games.
+Number of (Ranked) matches analysed **`r format(nGames_master/2, scientific = F)`** or **`r format(nGames_master, scientific = F)`** games.
 
 Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 
@@ -165,39 +127,11 @@ Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 
 ```{r table-nGames-data}
 #| layout="l-body"
-nGames_tbl <- 
-  tbl_merge(
-  tbls = list(tbl_master, tbl_diamond), 
-    tab_spanner = c("**Master**", "**~HighDiamond**")
-  ) |>
-  modify_footnote(
-    update = label ~
-      md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
-  ) |> # show_header_names()
-  modify_footnote(
-    # row_type, variable, var_label
-    update = contains("stat_") ~
-      md(glue::glue("n(%) took from the number of matches. When the data is analysed the size is double since we account each different player" ))
-  ) |>
-  # modify_header(label ~ "**Variable**") |>
-  bold_labels() |>
-  as_gt() |>
-  tab_header(
-    title = glue::glue("{params$patch} - by the Numbers")
-  ) |>
-  tab_footnote(
-    footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )), 
-    locations = cells_title(groups = c("title"))
-    ) |>
-  tab_footnote(
-    footnote = md(glue::glue(
-      "EU Master {EU_master_found}
-      NA Master {NA_master_found}
-      APAC Master {APAC_master_found}
-      warning: the leaderboard is bugged and doesn't provide the complete master list"
-      )), 
-    locations = cells_column_spanners(spanners = everything())
-  )
+
+nGames_tbl <- table_by_the_numbers(data = LoR_Match_DT_RMD,
+                                   title = glue::glue("{params$patch} - by the Numbers"),
+                                   caption = glue::glue("Games from {nMaster} players who attended the previous Seasonal Tournament
+                                                        As the API is currently bugged there is lack of games from the EU server since the 31th of May") )
 
 nGames_tbl |> #
   tab_options(
@@ -218,10 +152,10 @@ gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisi
 #| layout="l-body"
 
 nPlayers <- LoR_Account_RMD |>
-  dplyr::filter(!is.na(master)) |>
-  dplyr::select(activeShard, rank=master) |>
+  dplyr::filter(!is.na(seasonal)) |>
+  dplyr::select(activeShard, rank=seasonal) |>
   dplyr::mutate(across(everything(), str_to_title)) |>
-  dplyr::mutate(rank = factor(rank, levels = c("Master", "Diamond"), ordered = T ) ) |>
+  # dplyr::mutate(rank = factor(rank, levels = c("Seasonal", "Master", "Diamond"), ordered = T ) ) |>
   tbl_cross(
     row = rank, 
     col = activeShard, 
@@ -242,239 +176,6 @@ gtsave(nPlayers, glue::glue("images/{params$ind}-nPlayers.png")) |> invisible()
 ```
 
 :::
-:::::
-:::
-
-# Seasonal Tournament Top32 Results
-
-```{r read-prepare-seasonal-data}
-
-seasonal_edition <- "A Curious Journey"
-
-# read
-LoR_Seasonal_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Seasonal(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) ) |>
-  filter(game_mode == "SeasonalTournamentLobby") |>
-  filter(game_start_time_utc %within% interval(as_datetime("2022-05-20"), as_datetime("2022-05-24") ) )
-
-# prepare
-LoR_Deck_Seasonal <- LoR_Seasonal_DT_RMD |>
-  extract_deck_code_info(decode = TRUE) |>
-  archetype_pretty()
-
-LoR_Melt_Seasonal <- LoR_Seasonal_DT_RMD |>
-  melt_match(LoR_Deck_Seasonal, LoR_Account_RMD)
-
-# line-up
-line_up <- LoR_Melt_Seasonal |>
-  distinct(playerPuuid, playerID, playergameName, server, deck=playerDeck, code=deck_code) |>
-  group_by(playerID, playergameName, server) |>
-  mutate(listDeck = list(unique(deck)), listCode = list(unique(code))) |>
-  pivot_longer(c(deck, code)) |>
-  arrange(playerID, name, value) |>
-  as.data.table() |>
-  extract(name == "deck", id := seq(.N) , by = "playerID" ) |>
-  extract(name == "code", id := seq(.N) , by = "playerID" ) |>
-  arrange(playerID, name, value, id) |>
-  pivot_wider(names_from = c(name, id), 
-              names_glue = sprintf('{%s}_{%s}', "name", "id"), 
-              values_from = value) |>
-  mutate(LU = purrr::pmap_chr(list(x = deck_1, y = deck_2, z = deck_3), ~ glue::glue_collapse(na.omit(sort(c(..1, ..2, ..3))), sep = " - ")))
-
-# results
-game_results <- LoR_Melt_Seasonal |>
-  arrange(game_start_time_utc) |>
-  group_by(playerPuuid, opponentPuuid, server) |>
-  # timeblock è l'orario minimo di ciascun match tra diversi giocatori
-  mutate(timeBlock = min(game_start_time_utc) |> {\(x) as_datetime(x, tz="UTC")}() ) |>
-  group_by(playerPuuid, opponentPuuid, server, timeBlock ) |>
-  arrange( timeBlock ) |>
-  summarise(result = paste(game_outcome, collapse = ", " ), ldeck  = list(playerDeck) ) |>
-  arrange(server, playerPuuid, timeBlock ) |>
-  # number of won games in the match
-  mutate(nWin = str_count(result, "win") ) |>
-  # is the match won?
-  mutate(matchWin = ifelse(nWin==2, 1, 0) ) |>
-  ungroup() |>
-  group_by(playerPuuid) |>
-  # sum of ALL matches won
-  mutate(cumWin = cumsum(nWin)) |>
-  # sum of ALL games won
-  mutate(cumMatchWin = cumsum(matchWin)) |>
-  ungroup() |>
-  left_join(line_up, by=c("server", "playerPuuid")) |>
-  mutate(ban = map2_chr(.x = listDeck, .y = ldeck, ~(setdiff(unlist(.x), unlist(.y) )) |> {\(x) ifelse(length(x)==1, x, NA)}() )  ) 
-
-
-# Data from those who reached the highest amoutn of Match Win
-tbl_top32 <- game_results |>
-  group_by(playerPuuid) |>
-  slice_max(cumMatchWin, n=1, with_ties = F) |>
-  ungroup() |>
-  distinct(playerPuuid, .keep_all = T) |>
-  select(server, playerPuuid, cumMatchWin, LU, contains("deck_"), contains("code_") ) |>
-  arrange(server, desc(cumMatchWin))
-
-tbl_top32_champion <- tbl_top32 |>
-  pivot_longer(
-    cols = contains("code_"), values_to = "deck_code") |>
-  select(server, deck_code) |>
-  drop_na() |>
-  mutate( CC = map_chr(.x = deck_code, ~get_champion_from_code(.x) )) |>
-  separate_rows(CC, sep = "/") |>
-  group_by(server) |>
-  count(CC) |>
-  ungroup() |>
-  arrange(desc(n), CC) |>
-  rename("name"="CC")
-
-deck_found <- tbl_top32 |>
-  pivot_longer(
-    cols = contains("code_"), values_to = "deck_code") |>
-  select(server, deck_code) |>
-  drop_na() |>
-  NROW()
-```
-
-Before providing the usual description of last week high ranked games here are the results from the top32
-
-`r kableExtra::text_spec("Note:", color = "red")` As not all decks has being played I can't provide a complete coverage of the lineUps but `r glue("{deck_found}/{32*3*3}")` decks overall.
-
-::: {.l-page}
-::::: {.panelset}
-::: {.panel}
-### Games Results {.panel-name}
-
-```{r check-seasonal-32}
-winlosstbl <- game_results |>
-  group_by(server, playerID) |>
-  summarise(result = paste(result, collapse = ", " ) ) |>
-  mutate(result = str_replace_all(result, set_names(c("1", "0"), c("win", "loss") ) ) ) |>
-  mutate(result = str_split(result, ", ")) |>
-  mutate(result = map(.x=result, ~as.numeric(.x) ) ) |>
-  left_join(
-    game_results |>
-      select(playerID, cumMatchWin) |>
-      group_by(playerID) |>
-      slice_max(cumMatchWin, n=1, with_ties=F), 
-    by = "playerID"
-  ) |>
-  # correction
-  mutate(cumMatchWin  = if_else( playerID=="MrOwl#8389", 1, cumMatchWin) ) |>
-  mutate(result = if_else( playerID=="NBS Kinhts#5850", list(c(0, 1, 0)), result) ) |>
-  mutate(result = if_else( playerID=="MrOwl#8389", list(c(1, 0, 1, 1, 0, 0)), result) ) |>
-  arrange(server, desc(cumMatchWin)) |>
-  group_by(server) |>
-  mutate(row=row_number()) |>
-  rename(WonMatches=cumMatchWin, Player=playerID) |>
-  # winlosstbl |>
-  pivot_wider(id_cols = c(row, WonMatches), names_from = "server", values_from=c(Player, result), names_glue = "{server}_{.value}" ) |>
-  select(-row)
-
-colnames_result <- winlosstbl |> colnames() |> str_subset("_result")
-
-gt_winlosstbl <- winlosstbl |>
-  select(WonMatches, sort(tidyselect::peek_vars())) |>
-  gt() |>
-  tab_spanner_delim(delim = "_") |>
-  fmt_missing(
-    columns=everything(), 
-    missing_text=""
-  )
-
-for (i in seq_along(colnames_result) ) {
-  gt_winlosstbl <- gt_winlosstbl |>
-    gtExtras::gt_plt_winloss(column = colnames_result[i], max_wins = 20)
-}
-
-gt_winlosstbl <- gt_winlosstbl |>
-  # tab_options(data_row.padding = px(2)) |>
-  tab_header(
-    title = md("Top32 Results"), 
-    subtitle = md(glue::glue("Game results from the top32 players of the '{seasonal_edition}' Seasonal Tournament")) 
-  ) |>
-  tab_source_note(source_note = md("Metadata of games collected with RiotGames API")) |>
-  gtExtras::gt_theme_538()
-
-gtsave(gt_winlosstbl, glue::glue("curious-journey-playoff-winloss.png")) |> invisible()
-
-gt_winlosstbl |>
-  tab_options( 
-    table.background.color = "whitesmoke", 
-    column_labels.background.color = "whitesmoke"
-  )
-```
-
-:::
-
-::: {.panel}
-### LineUps {.panel-name}
-
-```{r react-top32}
-react_lineup_top32 <- tbl_top32 |>
-  left_join(LoR_Account_RMD[ , .(puuid, gameName) ], by=c("playerPuuid"="puuid") ) |>
-  select(-playerPuuid) |>
-  relocate(gameName, .after = "server") |>
-  # filter( server == "asia" ) |>
-  pivot_longer(
-    cols = c(contains("deck_"), contains("code_")), 
-    names_to=c(".value", "index"), 
-    names_sep = "_") |>
-  drop_na() |>
-  relocate(LU, .after = code) |>
-  select(-index) |>
-  mutate( code = glue::glue("<a href='https://runeterra.ar/decks/code/{code}'>{code}</a>") ) |>
-  reactable(
-    theme = reactablefmtr::fivethirtyeight(), 
-    groupBy = c("server", "cumMatchWin", "gameName"), 
-    bordered = TRUE, 
-    highlight = TRUE, 
-    searchable = TRUE, 
-    compact = TRUE, # compact the table
-    # fullWidth = FALSE, # don't fill the page
-    defaultPageSize = 10, 
-    defaultSorted = c("cumMatchWin"), 
-    defaultSortOrder = "desc", 
-    defaultColDef = colDef(
-      style = list(fontWeight = 500, color = "black", 
-                   fontFamily = "Helvetica", fontSize = "12px"), 
-      align = "left", 
-      headerStyle = list(background = "steelblue", color="white", fontFamily = "Work Sans, sans-serif", fontSize = "14px" )
-    ), 
-    columns = list(
-      LU = colDef( show = F ), 
-      deck = colDef(name = "Deck", minWidth = 200 ), 
-      gameName = colDef(name = "Player" ), 
-      # code = colDef( show = F ), 
-      code = colDef(name = "DeckCode", minWidth = 750, style = list( fontSize = 9 ), html = T ), 
-      # code = colDef(name = "DeckCode", cell = function(value, index) {
-      #   # Render as a link
-      #   if (!is.na(value) ) {
-      #     url <- glue::glue("{urlruneterraAR}{urldeck}{value}")
-      #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
-      #   } } , minWidth = 600, style = list(fontSize = "9px") ), 
-      cumMatchWin = colDef(name = "#Matches Wins", aggregate = "unique", defaultSortOrder = "desc")
-    ), 
-    rowStyle = JS("function(rowInfo) {
-                  if (rowInfo.level > 0) {
-                  return { background: 'whitesmoke', borderLeft: '2px solid #ffa62d' }
-                  } else {
-                  return { borderLeft: '2px solid whitesmoke' }
-                  }
-                  }"), 
-    defaultExpanded = T
-  ) |>
-  reactablefmtr::add_title("Top32 Players' Deckcodes", background_color = "white") |>
-  reactablefmtr::add_subtitle(glue::glue("{seasonal_edition} Playoff - Top32 LineUps"), background_color = "white") |>
-  reactablefmtr::add_source(glue::glue("As not all decks has being played I can't provide a complete coverage of the lineUps but {deck_found}/{32*3*3} decks overall.
-                                       Source: Metadata of games collected with RiotGames API"), background_color = "white")
-
-react_lineup_top32
-# reactablefmtr::save_reactable_test(input = react_lineup_top32, output = glue::glue("images/{params$ind}-top32-decks.png")) |> invisible()
-```
-:::
-
 :::::
 :::
 
