@@ -20,14 +20,7 @@ knitr::opts_chunk$set(
 # Hi, Legna here. I you are looking for stats on the current metagame just click on MatchUps or Meta in the Navigation Bar.
 ```
 
-Update: the API is still bugged regarding the leaderboard player. Meaning it's impossible to know who is at Master at the moment.
-As I completed most of the changes I wanted to add the updates are back but will have to rely only on the players who attended the last seasonal tournament.
-
-I could easily add more players but that would create messy data and I want my "identity" to be extremely clear in what I provide, and adding "random" players is among the last things I would like to do.
-
-Blame Riot as of now if anything.
-
-Sorry again for the inconvenience.
+Update 2022-06-04: The recent leaderboard and server issues from Riot side has been solved
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
