@@ -79,7 +79,6 @@ general_caption <- glue::glue("{params$patch}
 ```{r load-data}
 # load DeckDT
 LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
-# LoR_Deck_RMD       <- data.table::fread(file.path("D:", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
 LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_S13(.*)csv$"), full.names = T) |>
@@ -416,28 +415,9 @@ hourly_meta_plot_abs
 ### Game by game {.panel-name}
 
 ```{r day-by-day-playrate, fig.width=12, fig.height=8}
-champion_deck_daily <- LoR_Melt_Master_RMD |>
-  arrange(game_start_time_utc) |>
-  select(game_start_time_utc, playerDeck) |>
-  mutate(num_cc = factor(playerDeck) |> as.numeric() ) |>
-  as.data.table() |>
-  {\(x) x[ , cumFreq := (cumsum(num_cc)/num_cc)/.I , by=playerDeck ]}() |>
-  select(!num_cc) |>
-  mutate(playerDeck = factor(playerDeck) |> fct_infreq() )
+hourly_meta_plot_line <- plot_playrate_by_time(LoR_Melt_Master_RMD,prev_days = 7,max_top_pr = 12)
 
-fct_values <- LoR_Melt_Master_RMD |> 
-  count(playerDeck) |>
-  slice_max(n, n = params$nDeck_day) |>
-  pull(playerDeck)
-
-plot_daily(
-  champion_deck_daily, 
-  decks = fct_values, 
-  title = "Evolution of Play Rate over time - Master", 
-  limit = .20
-  ) -> meta_evo
-
-meta_evo
+hourly_meta_plot_line
 ```
 
 The "old" version that I'll most likely deprecate in the future unless I find a better way to improve it.
