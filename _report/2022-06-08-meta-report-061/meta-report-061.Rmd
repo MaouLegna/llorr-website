@@ -3,7 +3,7 @@ params:
   ind: "MR061"
   patch: "Patch 3.8 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°61)"
-  description: "Long live Path of Champions! Death to Path of Champions!"
+  description: "Long live Path of Champions! Death to Path of Champions! Long live(?) Path of Champions(?)!"
   cardlurl: "dd.b.pvp.net/3_8_0/set6/en_us/img/cards/06RU001-full.png"
   start: "2022-06-01 18:00:00" #UTC tz / 'current' week start
   end:   "2022-06-08 18:00:00" #UTC tz / 'current' week end
@@ -420,8 +420,9 @@ hourly_meta_plot_line <- plot_playrate_by_time(LoR_Melt_Master_RMD,prev_days = 7
 hourly_meta_plot_line
 ```
 
-The "old" version that I'll most likely deprecate in the future unless I find a better way to improve it.
-It's not wrong of anything but since a few months I'm dissatisfied by how it can convey its data and how badly it shows changes when using a long timeframe.
+An "updated" version of the old format. I don't really find it useful (a bit cool, but not useful) and still most likely leave it
+
+It display both daily aggregated data and hourly (background) data
 
 :::
 
