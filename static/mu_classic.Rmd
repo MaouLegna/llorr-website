@@ -56,7 +56,7 @@ last_update_box <- flexdashboard::valueBox(
 LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S12(.*)csv$"), full.names = T) |>
+LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S13(.*)csv$"), full.names = T) |>
   str_subset(pattern = "Keys", negate = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
