@@ -302,12 +302,9 @@ last_update_box
 
 ### Graph
 
-```{r meta-evo-temp}
-#| fig.width=20, 
-#| fig.height=8
-
+```{r meta-evo-temp, fig.width=20, fig.height=8}
 hourly_meta_plot <- plot_hourly_meta_deck(data = LoR_Melt_Matches_RMD, max_top_pr = params$max_top_pr)
-
+# hourly_meta_plot <- plot_hourly_meta_deck(data = LoR_Melt_Matches_RMD, prev_days = 7, max_top_pr = params$max_top_pr)
 hourly_meta_plot
 
 ggsave(filename = "images/meta-evo-area-temp.png", plot = hourly_meta_plot, width = 12, height = 8) |> invisible()
