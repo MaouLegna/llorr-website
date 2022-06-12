@@ -1,0 +1,133 @@
+---
+params:
+  title: "CI?! What is a Confidence Interval?"
+  description: "A little guide to understanding and use/read them."
+
+title: | 
+  `r params$title`
+description: |
+  `r params$description`
+base_url: https://www.llorr-stats.com
+author: Valentino (Legna) Vazzoler
+date: 2022-06-11
+output:
+ distill::distill_article:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    self_contained: false
+citation: false
+# bibliography: references.bib
+draft: TRUE
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE,
+  eval       = TRUE,
+  warning    = FALSE,
+  error      = FALSE,
+  message    = FALSE,
+  comment    = NA,
+  R.options  = list(width = 140, digits.secs=6),
+  dev.args   = list(bg = 'whitesmoke'),
+  fig.align  = 'center',
+  fig.width  = 12,
+  fig.height = 8,
+  # fig.path   = "figures/prefix-"
+  fig.path   = glue::glue("images/{params$ind}-"),
+  layout     = "l-page",
+  preview    = TRUE
+)
+
+# R Option
+# options(scipen = 999)
+source(file.path("C:","LlorR","scripts","lor_main.R" ))
+# source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+xaringanExtra::use_panelset()
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(
+  font_family        = "Helvetica",
+  active_foreground  = "white",
+  hover_foreground   = "black",
+  hover_border_color = "black",
+  active_background  = "#007fff"
+  )
+```
+
+```{r twitter-meta, echo = FALSE}
+metathis::meta() |>
+  metathis::meta_description(params$description) |>
+  metathis::meta_viewport() |>
+  metathis::meta_social(
+    title = params$title,
+    url = "https://www.llorr-stats.com/",
+    image = "",
+    image_alt = "",
+    og_type = "website",
+    og_author = "Legna",
+    twitter_card_type = "summary",
+    twitter_creator = "@Maou_Legna"
+  )
+```
+
+# Introduction
+
+We can't access the population so we take samples
+There will be variation across samples
+There will be sampling errors
+We go crazy for sampling and we takes lots of sampling and we takes the means for each samples and plot the distribution of the means
+the particular sample we have may not have have the population values
+but the sampling distribution will give us the population value
+the sampling deviation will give us that
+the sampling deviation should be narrows and the standard deviation of the sampling distribution is the standard error
+
+An interval such as that across a large number of samples we contains the population values
+How wide should the interval be to contains the population value a lot of times
+we take a sample and decide to use it
+
+1.96*SE
+
+The estimate and its interval may or may not contain the true population value
+across a lot of sample if were to set the limits around the estimate around 1.96*SE
+we are going to hit the population value 95% of SAMPLES
+
+Each bar is a sample that
+
+Intervals that contains the true population value of the paramter in 95% ifsamples
+
+NO - It's an interval i'm 95% confident that the population estimate falls within the interval 
+it's an interval where there is a 95% probability that contains the population value!
+Hyper no! it's either 1 or 0 but you don't know which
+They do not reflect confidence in the value of the population parameter
+
+
+Assuming that this sample is one of the 95% that yields a confidence interval containing the true value of the parameter 
+
+For every standard deviation change of the paramter we have an increase of the effect
+
+
+```{r}
+broom::tidy(model)
+# modelbased::estimate_means(lm,fixed=var_name)
+
+car::Anova(model, type=3)
+
+ggplot2::autoplot(model,which=c(1,2,3,4), colour="#5c97bf", alpha = 0.5, size = 1) + theme_minimal()
+
+robust::lmRob()
+
+parameters::model_parameters(model, robust=TRUE, vcov.type="HC4")
+```
+
+
+
+In statistics, a sampling distribution or finite-sample distribution is the probability distribution of a given random-sample-based statistic
+Wikipedia
+
+# Definition
+
+
+# Example
