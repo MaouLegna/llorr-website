@@ -43,6 +43,12 @@ source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
+```{css}
+.value-box {
+  height: 100px;
+}
+```
+
 ```{r constants}
 last_update_box <- flexdashboard::valueBox(
   Sys.Date(), 
@@ -70,7 +76,10 @@ LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"),
 
 ```{r deck-fix}
 # LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
-LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
+LoR_Deck_RMD <- update_and_save_deck(
+  LoR_Deck_RMD,
+  bind_rows(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD)
+)
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 

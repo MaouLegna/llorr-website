@@ -17,12 +17,6 @@ params:
   max_top_pr:  12 # meta evolution decks
 ---
 
-```{css}
-.value-box {
-  height: 125px;
-}
-```
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo       = FALSE,
@@ -47,6 +41,12 @@ source(file.path("C:","LlorR","scripts","lor_main.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 xaringanExtra::use_panelset()
+```
+
+```{css}
+.value-box {
+  height: 100px;
+}
 ```
 
 ```{r constants}
@@ -86,9 +86,13 @@ LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"),
 
 ```{r deck-fix}
 # LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
-LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD, bind_rows(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD) )
+LoR_Deck_RMD <- update_and_save_deck(
+  LoR_Deck_RMD,
+  bind_rows(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD)
+)
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
+
 ```{r prepara-data}
 LoR_Melt_Master_RMD <- LoR_Match_DT_RMD |>
   filter(game_type == "Ranked"  ) |>
