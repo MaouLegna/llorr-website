@@ -75,6 +75,10 @@ metathis::meta() |>
 
 # Introduction
 
+
+
+# A bit of theory
+
 We can't access the population so we take samples
 There will be variation across samples
 There will be sampling errors
@@ -110,16 +114,16 @@ For every standard deviation change of the paramter we have an increase of the e
 
 
 ```{r}
-broom::tidy(model)
-# modelbased::estimate_means(lm,fixed=var_name)
-
-car::Anova(model, type=3)
-
-ggplot2::autoplot(model,which=c(1,2,3,4), colour="#5c97bf", alpha = 0.5, size = 1) + theme_minimal()
-
-robust::lmRob()
-
-parameters::model_parameters(model, robust=TRUE, vcov.type="HC4")
+# broom::tidy(model)
+# # modelbased::estimate_means(lm,fixed=var_name)
+# 
+# car::Anova(model, type=3)
+# 
+# ggplot2::autoplot(model,which=c(1,2,3,4), colour="#5c97bf", alpha = 0.5, size = 1) + theme_minimal()
+# 
+# robust::lmRob()
+# 
+# parameters::model_parameters(model, robust=TRUE, vcov.type="HC4")
 ```
 
 

@@ -3,7 +3,7 @@ params:
   ind: "MR063"
   patch: "Patch 3.8 - Week 3"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°63)"
-  description: "LoR Twitter: bla bla game dead, bla bla Rito nerf this dec, bla bla meta stale"
+  description: "LoR Twitter: bla bla game dead, bla bla Rito nerf this deck, bla bla meta stale"
   cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06BW006-full.png"
   start: "2022-06-08 18:00:00" #UTC tz / 'current' week start
   end:   "2022-06-15 18:00:00" #UTC tz / 'current' week end
@@ -117,22 +117,11 @@ LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
 
 # Data
 
-```{r}
-EU_master_found   <- LoR_Account_RMD[ activeShard == "europe" & master == "master", .N ]
-NA_master_found   <- LoR_Account_RMD[ activeShard == "americas" & master == "master", .N ]
-APAC_master_found <- LoR_Account_RMD[ activeShard == "apac" & master == "master", .N ]
-
-EU_master_ladder   <- lorR::lor_leaderboard("europe",names = T) |> length()
-NA_master_ladder   <- lorR::lor_leaderboard("americas",names = T) |> length()
-APAC_master_ladder <- lorR::lor_leaderboard("sea",names = T) |> length()
-```
-
-
 ```{r nGames-data}
 nGames_master  <- NROW(LoR_Melt_Master_RMD)
 nMaster   <- LoR_Account_RMD[master=="master", .N]
 
-nGames_diamond  <- NROW(LoR_Melt_Master_RMD)
+nGames_diamond  <- NROW(LoR_Melt_Diamond_RMD)
 nDiamond  <- LoR_Account_RMD[master=="diamond", .N]
 ```
 
@@ -156,45 +145,7 @@ Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 ```{r table-nGames-data}
 #| layout="l-body"
 
-tbl_master  <- table_by_the_numbers(data = LoR_Match_DT_RMD)
-tbl_diamond <- table_by_the_numbers(data = LoR_Diamond_DT_RMD)
-
-max_time = max(max(LoR_Match_DT_RMD$game_start_time_utc,na.rm = T),max(LoR_Diamond_DT_RMD$game_start_time_utc,na.rm = T))
-
-nGames_tbl <- 
-  tbl_merge(
-  tbls = list(tbl_master, tbl_diamond), 
-    tab_spanner = c("**Master**", "**~HighDiamond**")
-  ) |>
-  modify_footnote(
-    update = label ~
-      md(glue::glue("Metadata from Friendly Matches (that aren't Bo3) is not recoverable, \n the value may not be perfect since I lack the starting time of the game. The amount of Games to still scrap is also an estimation based on the 'position' of the game" ))
-  ) |> # show_header_names()
-  modify_footnote(
-    # row_type, variable, var_label
-    update = contains("stat_") ~
-      md(glue::glue("n(%) took from the number of matches. When the data is analysed the size is double since we account each different player" ))
-  ) |>
-  # modify_header(label ~ "**Variable**") |>
-  bold_labels() |>
-  as_gt() |>
-  tab_header(
-    title = glue::glue("{params$patch} - by the Numbers")
-  ) |>
-  tab_footnote(
-    footnote = md(glue::glue("Max datetime recovered: {max_time} UTC from {params$start} to {params$end} UTC" )), 
-    locations = cells_title(groups = c("title"))
-    ) |>
-  tab_footnote(
-    footnote = md(glue::glue(
-      "EU Master {EU_master_found}/{EU_master_ladder}
-      NA Master {NA_master_found}/{NA_master_ladder}
-      APAC Master {APAC_master_found}/{APAC_master_ladder}
-      "
-      )), 
-    locations = cells_column_spanners(spanners = everything())
-  )
-
+nGames_tbl <- table_by_the_numbers_double(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD, LoR_Account_RMD)
 
 nGames_tbl |> #
   tab_options(
@@ -214,24 +165,7 @@ gtsave(nGames_tbl, glue::glue("images/{params$ind}-bytheNumbers.png")) |> invisi
 ```{r players-by-the-numbers}
 #| layout="l-body"
 
-nPlayers <- LoR_Account_RMD |>
-  dplyr::filter(!is.na(master)) |>
-  dplyr::select(activeShard, rank=master) |>
-  dplyr::mutate(across(everything(), str_to_title)) |>
-  dplyr::mutate(rank = factor(rank, levels = c("Master", "Diamond"), ordered = T ) ) |>
-  tbl_cross(
-    row = rank, 
-    col = activeShard, 
-    percent = "cell", 
-    list(rank ~ "Player Rank", activeShard ~ "**Shard/Server**")
-  ) |>
-  gtsummary::as_gt() |>
-  gt::tab_options(
-    data_row.padding = px(4), 
-    table.background.color = "whitesmoke", 
-    table.font.color = "black", 
-    table.font.color.light = "black"
-   )
+nPlayers <- table_accounts(LoR_Account_RMD,"rank")
   
 nPlayers
 
@@ -699,92 +633,9 @@ Top3 Players (or more in case of ties) from each server that had the highest amo
 ```{r win-marathon}
 #| layout="l-page"
 
-setDT(LoR_Melt_Master_RMD)
-gtWinning <- LoR_Melt_Master_RMD[ playerPuuid %in% LoR_Account_RMD[ seasonal=="seasonal", puuid], 
-                                  ][order(game_start_time_utc)
-                                    ][, counter := rowid(rleid(game_outcome)), by=c("playerID", "playerDeck") 
-                                      ][ game_outcome == "win" ] |>
-  group_by(playerID) |>
-  slice_max(counter, n=1) |>
-  ungroup() |>
-  group_by(server) |>
-  slice_max(counter, n=3) |>
-  left_join(LoR_Account_RMD[ , c("RiotID", "gameName") ]|>distinct(RiotID, .keep_all = T), by =c("playerID"="RiotID") ) |>
-  mutate( server = str_to_title(server) ) |>
-  group_by(server) |>
-  mutate( ranking = rank(-counter, ties.method = "min" ) ) |>
-  ungroup() |>
-  mutate(
-    counter_icon = dplyr::case_when(
-      ranking == 1 ~ "trophy", 
-      ranking == 2 ~ "medal", 
-      ranking == 3 ~ "minus", 
-      TRUE ~ "other"
-      ), 
-    icon = map(.x = counter_icon, ~fontawesome::fa(.x)), 
-    icon = map2(.x = counter, .y = icon, ~md(glue::glue("{.x} {.y}")) ), 
-    
-    link = sprintf('<div><span style ="color:grey50;font-size:10px"><p><a href = "%s">%s</a></span></div>', glue::glue("{urlruneterraAR}{urldeck}{deck_code}"), deck_code), 
-    link = map(link, gt::html)
-    # style ="font-weight:bold;color:grey;font-size:10px
-  ) |>
-  select(server, gameName, icon, playerDeck, link) |>
-  gt(groupname_col = "server") |>
-  cols_align(
-    align = "left", 
-    columns = everything()
-  ) |>
-  gtExtras::gt_theme_538() |>
-  tab_header(
-    title = md(glue::glue("{fontawesome::fa('star')} Top3 Biggest Win Streak by Server {fontawesome::fa('star')}")), 
-    subtitle = "Cumulative wins with the same Archetype"
-  ) |> 
-  cols_width(vars(icon) ~ px(30)) %>% 
-  #Original changes as above.
-  cols_label(
-    gameName = "Player", 
-    icon = "Result", 
-    playerDeck = "Archetype", 
-    link = "Deck Code"
-  ) |>
-  tab_source_note(
-    source_note = glue("Games from all Master are collected each hour adding up to the last 20 matches.
-                       Unlikely but possible to miss games in case of high frequency games.
-                       Metadata of games collected with RiotGames API")
-    ) |>
-  opt_all_caps() |>
-  opt_table_font(
-    font = list(
-      google_font("Chivo"), 
-      default_fonts()
-    )
-  ) |>
-  cols_width(vars(icon) ~ px(150), 
-             vars(link) ~ px(400)) |>
-  tab_options(
-    # table.font.color = "black", 
-    # table.font.color.light = "black", 
-    column_labels.border.top.width = px(3), 
-    column_labels.border.top.color = "white", 
-    table.border.top.color = "white", 
-    table.border.bottom.color = "white", 
-    data_row.padding = px(3), 
-    source_notes.font.size = 12, 
-    heading.align = "left", 
-    table.font.size = px(12L), 
-    # Adjust grouped rows to make them stand out
-    row_group.background.color = "grey"
-    ) |>
-  tab_style(
-    style = cell_text(size = "small"), 
-    locations = cells_body(
-      columns = vars(
-        "playerDeck", "link"
-        )
-      )
-    )
+gt_winning <- table_winning_streak(LoR_Melt_Master_RMD, LoR_Account_RMD, "master")
 
-gtWinning |>
+gt_winning |>
  tab_options(
     table.background.color = "whitesmoke", 
     column_labels.background.color = "whitesmoke", 
@@ -792,7 +643,7 @@ gtWinning |>
     table.font.color.light = "black"
    )
 
-gtsave(gtWinning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible()
+gtsave(gt_winning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible()
 ```
 
 # Cards Presence (at Master)
