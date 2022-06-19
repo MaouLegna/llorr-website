@@ -36,3 +36,23 @@ while (TRUE) {
   giorno <- Sys.time() |> lubridate::floor_date("days") + lubridate::hours(27)
   
 }
+
+
+# distill::create_post(
+#   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
+#   collection = "report",
+#   author = "Valentino (Legna) Vazzoler",
+#   slug = "meta-report-063",
+#   date_prefix = NULL,
+#   draft = FALSE
+# )
+# 
+# distill::create_post(
+#   title = "CI",
+#   collection = "analysis",
+#   author = "Valentino (Legna) Vazzoler",
+#   slug = "ci",
+#   date_prefix = NULL,
+#   date = Sys.Date(),
+#   draft = FALSE
+# )
