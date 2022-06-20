@@ -75,9 +75,184 @@ metathis::meta() |>
 
 # Introduction
 
+**Player A**: "This deck is way better than yours. You see, it even reached a 55% WR at Master this week!"
+
+**Player B**: "You fool! You clearly didn't see the latest values as mine is obvisously the superior version with 55.5% WR at Master this week!"
+
+**Voice in the background**: "Little did they know both decks were actually the same"
+
+For those who use my content or [Storm](https://twitter.com/storm_lor) [deck tracker](https://app.lormaster.com/meta) one may notice that I use something called Confidence Interval (CI) or similarly Storm add a $\pm X$ value to a deck win-rate. That is a confidence interval.
+
+While the intuition may easily tell how one is supposed to read them, it's really, really easy to misunderstand them. Here, We'll explain what they are, how they are computed, why you should almost always require their use and also why/how you shouldn't look too much into them.
+
+If the last two points seems a contradiction they are not but we will try to convey my reasoning.
+
+> Hi, Legna here, while normally I try to write those *analysis* articles in a publication-style format this post is meant to be an easier read for most players.
+>
+> I would like to say that this is the first of a series of articles meant to explain some statistical concepts in order to better understand the data and their nuances but I can hardly guarantee it, I will try, but most likely the cadence will be slow.
+
+Let us start with two examples:
+
+* Between a deck with a 55% WR made of 20 games and a deck with 53% WR made of 100.000 games which deck should one normally choose?
+
+> The second one
+
+* Suppose it wasn't possible to collect all games at Master, you have to rely on a sample of games. On Week-1 you have deck-A with a 10.2% play-rate and 52% win-rate, on Week-2 it reached 10.4% play-rate and 52.2% win-rate. Clearly the deck is performing better in Week-2 compared to Week-1
+
+> Most likely it is not
+
+In the first example, if ones go by typical level of a twitter analysis 55% > 53% and the first deck is the better choice. Most most people will disagree as 53% is the more stable value. Why is it that?
+
+Because most people knows that the more examples you have the more the data will converge to its *true value* ^[which still requires an infinite sample] and intuitively they applied some statistical inference to the data, either with the use of confidence intervals or statistical testing ( they are related after all )
+
+The example in this case was too easy, so it was *easy* to answer. Now, let's say a deck-A has a 55% win-rate with 150 games and deck-B has a 56% win-rate with 100 games. Is it still that easy to discern the difference just by the numbers of games? Of course not, and here is where the confidence interval would help us.
+
+The second one is not as clear, but the point we wanted to convey is that with some differences, their values are not statistically different from zero and it would be better to just ignore them.
+
+To be fair, as some data like the Master population games can be considered a full collection of their games and not a sample, we are not dealing with incomplete information and estimates but their actual values, so each difference found is indeed something that exist. Still the concept that some differences are better off to be ignored remains true.
+
+Again, this consideration is also a result of using confidence intervals and/or statistical testing.
+
+# Reject Points, embrace Intervals
+
+When one has access to some (continuous) data, one of the easiest statistics we can compute is the sample mean $\bar X $, yet while effective the mean greatly reduce the overall information and we have no idea about the uncertainty of our results as we mentioned in the first example.
+
+If we have a bunch of games results classified as either 0 or 1 a win-rate estimate will be the simple mean $\bar x = \sum_i^n x_i$
+
+In order to expand from a point estimation we can switch to an interval estimation
+
+```{r create-example}
+set.seed(123)
+
+n = 30
+# stats::runif(n) > (1 - p)
+sample1 <- purrr::rbernoulli(n = 30, p = 0.55) |> as.numeric()
+# skimr::skim(sample1)
+```
 
 
-# A bit of theory
+
+
+
+
+
+
+A confidence interval for a population mean is of the following form
+x¯±z⋆sn−−√
+
+You should by now be comfortable with calculating the mean and standard deviation of a sample in R. And we know that the sample size is 60. So the only remaining building block is finding the appropriate critical value for a given confidence level. We can use the qnorm function for this task, which will give the critical value associated with a given percentile under the normal distribution. Remember that confidence levels and percentiles are not equivalent. For example, a 95% confidence level refers to the middle 95% of the distribution, and the critical value associated with this area will correspond to the 97.5th percentile.
+
+We can find the critical value for a 95% confidence interal using
+
+```{r}
+z_star_95 <- qnorm(0.975)
+z_star_95
+
+# ## [1] 1.959964
+# which is roughly equal to the value critical value 1.96 that you’re likely familiar with by now.
+# 
+# Let’s finally calculate the confidence interval:
+
+samp %>%
+  summarise(lower = mean(area) - z_star_95 * (sd(area) / sqrt(n)),
+            upper = mean(area) + z_star_95 * (sd(area) / sqrt(n)))
+```
+
+```{r}
+params <- ames %>%
+  summarise(mu = mean(area))
+
+# Exercise: Does your confidence interval capture the true average size of houses in Ames?
+# 
+# params$mu
+# ## [1] 1499.69
+
+samp %>%
+  summarise(lower = mean(area) - z_star_95 * (sd(area) / sqrt(n)),
+            upper = mean(area) + z_star_95 * (sd(area) / sqrt(n)))
+
+ci <- ames %>%
+        rep_sample_n(size = n, reps = 50, replace = TRUE) %>%
+        summarise(lower = mean(area) - z_star_95 * (sd(area) / sqrt(n)),
+                  upper = mean(area) + z_star_95 * (sd(area) / sqrt(n)))
+
+ci <- ci %>%
+  mutate(capture_mu = ifelse(lower < params$mu & upper > params$mu, "yes", "no"))
+
+# ci %>%
+#   slice(1:5)
+
+ci_data <- data.frame(ci_id = c(1:50, 1:50),
+                      ci_bounds = c(ci$lower, ci$upper),
+                      capture_mu = c(ci$capture_mu, ci$capture_mu))
+
+ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id, 
+                           group = ci_id, color = capture_mu)) +
+  geom_point(size = 2) +  # add points at the ends, size = 2
+  geom_line() +           # connect with lines
+  geom_vline(xintercept = params$mu, color = "darkgray") # draw vertical line
+
+
+ci_99 <- ames %>%
+        rep_sample_n(size = n, reps = 50, replace = TRUE) %>%
+        summarise(lower = mean(area) - z_star_99 * (sd(area) / sqrt(n)),
+                  upper = mean(area) + z_star_99 * (sd(area) / sqrt(n)))
+
+ci_99 <- ci_99 %>%
+  mutate(capture_mu = ifelse(lower < params$mu & upper > params$mu, "yes", "no"))
+
+ci_data_99 <- data.frame(ci_id = c(1:50, 1:50),
+                      ci_bounds = c(ci_99$lower, ci_99$upper),
+                      capture_mu = c(ci_99$capture_mu, ci_99$capture_mu))
+
+ggplot(data = ci_data_99, aes(x = ci_bounds, y = ci_id, 
+                           group = ci_id, color = capture_mu)) +
+  geom_point(size = 2) +  
+  geom_line() +           
+  geom_vline(xintercept = params$mu, color = "darkgray") 
+```
+
+## Article 2
+
+Review of Confidence Intervals
+When we compute a confidence interval, we first compute an estimate of a parameter with a statistic.
+
+For example, we draw a random sample then compute the sample mean to estimate the parameter.
+
+With a single sample (or anything short of the whole population) we don’t know where the population mean lies, so we want to localize the population mean within an interval, computed from the data in the sample.
+
+An interval is a range of values (e.g. all real numbers between 4801 and 6801: written [4801, 6801]). A confidence interval is a range of plausible intervals for the parameter. A 95% confidence interval for a parameter is an interval computed by a method guaranteed to successfully cover the parameter 95% of the time (i.e. for 95% of the samples).
+
+We call 95% the “confidence level” for the parameter. Other confidence levels, anything between 0% and 100%, are possible.
+
+As the confidence level increases, what happens to the width of the confidence interval? The width of the confidence interval increases.
+
+As a follow up to the last question, will you be more confident that the population mean lies in a bigger interval, or less confident. You will be more confident that the population mean lies in a bigger interval.
+
+As the sample size increases, what happens to the width of the confidence interval? The confidence level width increases as sample size increases.
+
+In other words, will you be able to localize the population mean better (in a smaller interval) with a larger sample size? Yes.
+
+If the variablility in the population increases, what happens to the width of the confidence interval? The width of the confidence interval increases as variability in the population increases.
+
+In other words, will you be able to localize the population mean better (in a smaller interval) with more variability in the population? No, it will be more difficult to localize population mean with more variability in the population.
+
+> Drawing Confidence Intervals Assuming You Know Shape of Sampling Distribution
+According to the Central Limit Theorem, the sampling distribution for the sample mean has a Normal (bell shaped) distribution. Using this approximation, and the **68-95-99.7 Rule** to assign a margin of error (half the width of the confidence interval, centered on sample mean) to be 2 times the standard error (a statistic that estimates the standard deviation of the sampling distribution). We did this in class the Friday before Thanksgiving.
+
+
+
+We are 95% confident that the true average size of houses in Ames lies between the values 8390.28 and 11747.99.
+
+For the confidence interval to be valid, the sample mean must be normally distributed and have standard error s/√n. What conditions must be met for this to be true?
+For this to be true, sampled observations need to be independent. Independence is more likely if random samplng is used and, if sampling without replacement, the sample size should be less than 10% of the population. The popluation distribution should either be normal or n>30 and the population distribution is not extremely skewed.
+
+Exercise 4:
+What does 95% confidence mean?
+This refers to the long term success rate of this method, so it means that 95% of the confidence intervals produced will successfully capture the population parameter of interest, in this case, the mean Lot Area of homes in Ames.
+
+## Andy
+
 
 We can't access the population so we take samples
 There will be variation across samples
