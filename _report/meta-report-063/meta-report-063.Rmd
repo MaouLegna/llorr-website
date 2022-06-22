@@ -2,7 +2,7 @@
 params:
   ind: "MR063"
   patch: "Patch 3.9 - Week 1"
-  title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)"
+  title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°63)"
   description: "Dris week you sleep with the fish"
   cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06BW006T3-full.png"
   start: "2022-06-15 18:00:00" #UTC tz / 'current' week start
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
