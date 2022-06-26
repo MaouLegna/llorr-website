@@ -203,7 +203,7 @@ hourly_master_double <- invisible(hourly_master_plot + hourly_master_line)
 
 hourly_master_double
 
-ggsave(filename = "images/meta-evo-master.png", plot = hourly_master_double, width = 12, height = 8) |> invisible()
+# ggsave(filename = "images/meta-evo-master.png", plot = hourly_master_double, width = 12, height = 8) |> invisible()
 ```
 
 ### Diamond
@@ -215,7 +215,7 @@ hourly_diamond_double <- invisible(hourly_diamond_plot + hourly_diamond_line)
 
 hourly_diamond_double
 
-ggsave(filename = "images/meta-evo-diamond.png", plot = hourly_diamond_double, width = 12, height = 8) |> invisible()
+# ggsave(filename = "images/meta-evo-diamond.png", plot = hourly_diamond_double, width = 12, height = 8) |> invisible()
 ```
 
 Stats (whole patch) {data-icon="fa-table"}
@@ -421,11 +421,25 @@ tribble(
   gtExtras::gt_theme_nytimes()
 ```
 
-### Donwload
+### Donwload - Master
 
 ```{r}
 downloadthis::download_file(
-  path = file.path("images/meta-evo-temp.png"), 
+  path = file.path("images/meta-evo-master-1.png"), 
+  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
+  button_label = "Download PlayRates over time as .png", 
+  button_type = "primary", 
+  has_icon = TRUE, 
+  icon = "fa fa-save", 
+  self_contained = FALSE
+)
+```
+
+### Donwload - Diamond
+
+```{r}
+downloadthis::download_file(
+  path = file.path("images/meta-evo-diamond-1.png"), 
   # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
   button_label = "Download PlayRates over time as .png", 
   button_type = "primary", 

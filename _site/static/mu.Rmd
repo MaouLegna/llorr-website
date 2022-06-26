@@ -15,6 +15,7 @@ params:
   min_mu_games: 20  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
   last_season: "S13"
+  grid_name: "mugrid_308_309"
 ---
 
 ```{r setup, include=FALSE}
@@ -281,7 +282,7 @@ gtMU_grid <- gtMU_grid |>
 
 gtMU_grid
 
-gtsave(data = gtMU_grid, "images/mugrid_308.png", vwidth = 1500, vheight = 1000) |> invisible()
+gtsave(data = gtMU_grid, glue::glue("images/{grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
 gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
@@ -312,7 +313,7 @@ gtMU_grid <- gtMU_grid |>
 
 gtMU_grid
 
-gtsave(data = gtMU_grid, "images/mugrid_308_diamond.png", vwidth = 1500, vheight = 1000) |> invisible()
+gtsave(data = gtMU_grid, glue::glue("images/{grid_name}_diamond.png"), vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
 Grid Older Patch  {data-icon="fa-file-image"}
