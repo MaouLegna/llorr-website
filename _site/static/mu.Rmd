@@ -282,7 +282,7 @@ gtMU_grid <- gtMU_grid |>
 
 gtMU_grid
 
-gtsave(data = gtMU_grid, glue::glue("images/{grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
+gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
 gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
@@ -313,7 +313,7 @@ gtMU_grid <- gtMU_grid |>
 
 gtMU_grid
 
-gtsave(data = gtMU_grid, glue::glue("images/{grid_name}_diamond.png"), vwidth = 1500, vheight = 1000) |> invisible()
+gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}_diamond.png"), vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
 Grid Older Patch  {data-icon="fa-file-image"}

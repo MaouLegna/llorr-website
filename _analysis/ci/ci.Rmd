@@ -1,7 +1,7 @@
 ---
 params:
   title: "CI?! What is a Confidence Interval?"
-  description: "A little guide to understanding and use/read them."
+  description: "A little guide to understanding and use/read them and why TLC is in the mix?!"
 
 title: | 
   `r params$title`
@@ -91,13 +91,13 @@ If the last two points seems a contradiction they are not but we will try to con
 >
 > I would like to say that this is the first of a series of articles meant to explain some statistical concepts in order to better understand the data and their nuances but I can hardly guarantee it, I will try, but most likely the cadence will be slow.
 
-Let us start with two examples:
+Let us start with this examples:
 
 * Between a deck with a 55% WR made of 20 games and a deck with 53% WR made of 100.000 games which deck should one normally choose?
 
-> The second one
+When we will refer to statistics here we will only refer to the win-rates obtained from a sample of games. Yet, the concept is defined to any statistics
 
-* Suppose it wasn't possible to collect all games at Master, you have to rely on a sample of games. On Week-1 you have deck-A with a 10.2% play-rate and 52% win-rate, on Week-2 it reached 10.4% play-rate and 52.2% win-rate. Clearly the deck is performing better in Week-2 compared to Week-1
+
 
 > Most likely it is not
 
@@ -107,19 +107,45 @@ Because most people knows that the more examples you have the more the data will
 
 The example in this case was too easy, so it was *easy* to answer. Now, let's say a deck-A has a 55% win-rate with 150 games and deck-B has a 56% win-rate with 100 games. Is it still that easy to discern the difference just by the numbers of games? Of course not, and here is where the confidence interval would help us.
 
-The second one is not as clear, but the point we wanted to convey is that with some differences, their values are not statistically different from zero and it would be better to just ignore them.
-
-To be fair, as some data like the Master population games can be considered a full collection of their games and not a sample, we are not dealing with incomplete information and estimates but their actual values, so each difference found is indeed something that exist. Still the concept that some differences are better off to be ignored remains true.
-
 Again, this consideration is also a result of using confidence intervals and/or statistical testing.
 
-# Reject Points, embrace Intervals
+# Easy Level - A sort of TLDR
+
+The Confidence Interval (CI)
+
+The a 95% is not the probability that the true statistics (win-rate)
+
+
+# Mid Level - Reject Points, embrace Intervals
 
 When one has access to some (continuous) data, one of the easiest statistics we can compute is the sample mean $\bar X $, yet while effective the mean greatly reduce the overall information and we have no idea about the uncertainty of our results as we mentioned in the first example.
 
 If we have a bunch of games results classified as either 0 or 1 a win-rate estimate will be the simple mean $\bar x = \sum_i^n x_i$
 
 In order to expand from a point estimation we can switch to an interval estimation
+
+# Hard Level - TLC, when Lissandra is doing statistics
+
+```{r}
+binom::binom.confint(x = c(2, 4), n = 100, tol = 1e-8)
+
+x = 2
+n = 4
+alpha = 0.05
+
+p <- x/n
+p <- 0.6
+# alpha <- 1 - conf.level
+alpha2 <- 0.5 * alpha
+z <- qnorm(1 - alpha2)
+z2 <- z * z
+
+se <- sqrt(p * (1 - p)/n)
+lcl <- p - z * se
+ucl <- p + z * se
+```
+
+
 
 ```{r create-example}
 set.seed(123)
