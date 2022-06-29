@@ -306,7 +306,7 @@ region_freq_by_cards |>
 ::: panel
 ### Plot (New Patch) {.panel-name}
 
-```{r reg-freq-bycards-plot, fig.width=12, fig.height=8}
+```{r reg-freq-bycards-plot-new, fig.width=12, fig.height=8}
 region_freq_by_cards_new |>
   plot_freq(
     subtitle = "number of times a card within a region is included in a deck", 
