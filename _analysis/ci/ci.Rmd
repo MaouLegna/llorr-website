@@ -113,12 +113,98 @@ Again, this consideration is also a result of using confidence intervals and/or 
 
 As counter-intuitive as it may be we need to start with what is **not** a confidence interval:
 
-> A 
+> A Confidence Interval (CI) is not the probability that the true value of our estimate in inside a certain interval. For such case the true value is either contained or not and so the probability is either 1 (it's inside) or 0 (it's outside)
+
+*Add an easy explanation*
+
+> For a deck WR, let's take a CI of a  [57%, 60%]. A CI doesn't mean that there is 95% probability that the true win-rate in between 57% and 60%. The true win-rate is either inside the interval or not. If, for example if the true value is 58% then it's contained and the probability is one, if it's 55% then it's outside the range and the probability is zero
+
+A CI is a natural extension of a single point estimate (a single value) and it provides information about the variability, stability of our estimate, the WR.
+
+```{r}
+n  <- 1000
+x  <- 600
+p  <- x/n
+LL <- p - qnorm(0.975)*sqrt( (p*(1-p))/n )
+UL <- p + qnorm(0.975)*sqrt( (p*(1-p))/n )
+
+CI <- glue::glue("[{scales::percent(LL,accuracy = 0.1)},{scales::percent(UL,accuracy = 0.1)}]")
+
+# binom::binom.confint(x = 600,n = 1000, conf.level = 0.95)
+```
+
+Let us take a deck with `r n` games and `r x` wins, the 60% WR estimate obtained as $\frac{\#wins}{\#games}$ is a point estimate while the CI is `r CI`.
+
+Their use is intrinsically connection with hypothesis testing so CI also provides a rigorous frame about how to interpret them.
+
+Suppose we we would test if the deck WR is 60%%.
+
+As we can see that the CI does includes that value 57% < 60% < 63%, then we don't reject hypothesis that the WR is indeed 60%.
+
+On the other hand, if the CI was, let's say [54.0%,57.0%] then we would reject the hypothesis that the WR is 60%, having support that the true win-rates lies elsewhere.
+
+> It's very important to be careful how to interpret a statistical hyphotesis. One **NEVER PROVES** something, but it can reject an hypothesis, giving at most *support* to the opposite but never proving it. Think of SCP-55, all that is known is that it is not round, what shapes does it have are still an infinite amount of alternative options
+
+Now, let us use the example from the introduction.
+
+We have two decks, one with WR at 55.5% and one with WR at 55%. How can we say with confidence that they do indeed differ?
+
+```{r example-wIntersection, fig.width=6, fig.height=4}
+n_intro <- 10^4
+
+intro_example <- rbind(
+binom::binom.confint(x = 5500, n = n_intro, conf.level = 0.95, methods = "asymptotic"),
+binom::binom.confint(x = 5550, n = n_intro, conf.level = 0.95, methods = "asymptotic")
+)
+
+intro_example |>
+  add_column(deck = c("deckA","deckB")) |>
+  mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
+  as_tibble() |>
+  ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
+  geom_segment() +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5 ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
+  labs(
+    x = element_blank(),
+    y = element_blank()
+  ) +
+  theme_539() +
+  scale_colour_hue("clarity") +
+  theme(legend.position = "none")
+```
+We simply look at their CI and check if their intervals do overlap or not. It they overlap their difference is not statistically significant.
+
+In Fig:\@ref(fig:example-wIntersection) the line overlap -> we don't reject the equality of win-rates -> there is support on the **equality of win-rates**.
+
+```{r example-woIntersection, fig.width=6, fig.height=4}
+tibble(
+  deck = c("deckA","deckB"), 
+  lower = c(0.52, 0.545),
+  upper = c(0.54, 0.58)
+  ) |>
+  mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
+  ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
+  geom_segment() +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5 ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
+  labs(
+    x = element_blank(),
+    y = element_blank()
+  ) +
+  theme_539() +
+  scale_colour_hue("clarity") +
+  theme(legend.position = "none")
+```
+We proceed in the same way for the example illustrated in Fig:\@ref(fig:example-woIntersection)
+
+The line don't overlap -> we reject the equality of win-rates -> there is support on the **inequality of win-rates**.
 
 
-The Confidence Interval (CI)
 
-The a 95% is not the probability that the true statistics (win-rate)
+
 
 
 # Mid Level - Reject Points, embrace Intervals
