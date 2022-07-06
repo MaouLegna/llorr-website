@@ -101,7 +101,7 @@ When we will refer to statistics here we will only refer to the win-rates obtain
 
 > Most likely it is not
 
-In the first example, if ones go by typical level of a twitter analysis 55% > 53% and the first deck is the better choice. Most most people will disagree as 53% is the more stable value. Why is it that?
+In our example, if ones go by typical level of a twitter analysis 55% > 53% and the first deck is the better choice. Most most people will disagree as 53% is the more stable value. Why is it that?
 
 Because most people knows that the more examples you have the more the data will converge to its *true value* ^[which still requires an infinite sample] and intuitively they applied some statistical inference to the data, either with the use of confidence intervals or statistical testing ( they are related after all )
 
@@ -202,7 +202,35 @@ We proceed in the same way for the example illustrated in Fig:\@ref(fig:example-
 
 The line don't overlap -> we reject the equality of win-rates -> there is support on the **inequality of win-rates**.
 
+So everything seems pretty easy: lines overlap = no difference, no overlap = different enough...
 
+... well, no, unless you are working on a very important model you don't want to be as strict and try to consider each case
+
+```{r example-fringe, fig.width=6, fig.height=4}
+tibble(
+  deck = c("deckA","deckB"), 
+  lower = c(0.48, 0.60),
+  upper = c(0.61, 0.65)
+  ) |>
+  mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
+  ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
+  geom_segment() +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5 ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
+  labs(
+    x = element_blank(),
+    y = element_blank()
+  ) +
+  theme_539() +
+  scale_colour_hue("clarity") +
+  theme(legend.position = "none")
+```
+Here the two lines overlap but personally we would reject the equality of win-rates. It happens for a very small section and maybe the sample size is not even that big for deckA.
+
+We don't want to say that sometimes there are no rules, it's more that things are not so black and white and one must learn to navigate in the infinite sea of grey.
+
+So, after this what I must conclude is that one must decide subjectively each time? Again, no, it we use certain benchmark is so we can objectively makes decisions from our data. The point is that 
 
 
 
