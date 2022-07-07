@@ -55,3 +55,8 @@ while (TRUE) {
 #   date = Sys.Date(),
 #   draft = FALSE
 # )
+
+# LoR_Match_DT_RMD <- data.table::fread( "C:/LlorR/data/raw/LoR_Match_DT_S13_EU.csv", header = T, na.strings = c("", NA), encoding = "UTF-8")
+# LoR_Match_DT_RMD |>
+#   get_dupes(match_key)
+  
