@@ -77,37 +77,33 @@ metathis::meta() |>
 
 **Player A**: "This deck is way better than yours. You see, it even reached a 55% WR at Master this week!"
 
-**Player B**: "You fool! You clearly didn't see the latest values as mine is obvisously the superior version with 55.5% WR at Master this week!"
+**Player B**: "You fool! You clearly didn't see the latest values as mine is obviously the superior version with a 55.5% WR at Master this week!"
 
-**Voice in the background**: "Little did they know both decks were actually the same"
+**Voice in the background**: "Little did they know both decks win-rates were actually the same"
 
-For those who use my content or [Storm](https://twitter.com/storm_lor) [deck tracker](https://app.lormaster.com/meta) one may notice that I use something called Confidence Interval (CI) or similarly Storm add a $\pm X$ value to a deck win-rate. That is a confidence interval.
+For those who use my content one may notice that I use something called Confidence Interval (CI) or similarly those who use [Storm](https://twitter.com/storm_lor) [deck tracker](https://app.lormaster.com/meta) can see he adds a $\pm X$ value to a deck win-rate. That is a confidence interval.
 
-While the intuition may easily tell how one is supposed to read them, it's really, really easy to misunderstand them. Here, We'll explain what they are, how they are computed, why you should almost always require their use and also why/how you shouldn't look too much into them.
+While the intuition may easily tell how to read them, it's also really, really easy to misunderstand them.
 
-If the last two points seems a contradiction they are not but we will try to convey my reasoning.
+Here, we'll explain what they are, how they are computed, why you should almost always require their use and also why/how you shouldn't look too much into them.
+
+If the last two points seems a contradiction they are not but we will try to convey the underling reasoning.
 
 > Hi, Legna here, while normally I try to write those *analysis* articles in a publication-style format this post is meant to be an easier read for most players.
 >
-> I would like to say that this is the first of a series of articles meant to explain some statistical concepts in order to better understand the data and their nuances but I can hardly guarantee it, I will try, but most likely the cadence will be slow.
+> I would like to say that this is the first of a series of articles meant to explain some statistical concepts in order to better understand the data and their nuances but I can hardly guarantee it, I will try, but most likely the cadence will be slow. Even this article took weeks not because the content is hard, but mostly because of a combination of little time plus needing to understand what and how to write the content.
 
-Let us start with this examples:
+Let us start with this example:
 
-* Between a deck with a 55% WR made of 20 games and a deck with 53% WR made of 100.000 games which deck should one normally choose?
+* Between a deck with a 55% WR from 20 games and a deck with 53% WR from 100.000 games which deck is probably safer/better to choose?
 
-When we will refer to statistics here we will only refer to the win-rates obtained from a sample of games. Yet, the concept is defined to any statistics
+If ones goes by the typical twitter-level analysis 55% > 53% and so the first deck is the better choice.
 
+Most people (I hope) would disagree as 53% is the more stable value. Why is that?
 
+Because the more data we have, *the more we reduce the effect of chance* and  the data will converge to its *true value / true win-rate* ^[which would require an infinite amount of games.]
 
-> Most likely it is not
-
-In our example, if ones go by typical level of a twitter analysis 55% > 53% and the first deck is the better choice. Most most people will disagree as 53% is the more stable value. Why is it that?
-
-Because most people knows that the more examples you have the more the data will converge to its *true value* ^[which still requires an infinite sample] and intuitively they applied some statistical inference to the data, either with the use of confidence intervals or statistical testing ( they are related after all )
-
-The example in this case was too easy, so it was *easy* to answer. Now, let's say a deck-A has a 55% win-rate with 150 games and deck-B has a 56% win-rate with 100 games. Is it still that easy to discern the difference just by the numbers of games? Of course not, and here is where the confidence interval would help us.
-
-Again, this consideration is also a result of using confidence intervals and/or statistical testing.
+The example in this case was too easy, so it was *easy* to answer. Later we will provide some example not as obvious.
 
 # Easy Level - A sort of TLDR
 
@@ -117,7 +113,7 @@ As counter-intuitive as it may be we need to start with what is **not** a confid
 
 *Add an easy explanation*
 
-> For a deck WR, let's take a CI of a  [57%, 60%]. A CI doesn't mean that there is 95% probability that the true win-rate in between 57% and 60%. The true win-rate is either inside the interval or not. If, for example if the true value is 58% then it's contained and the probability is one, if it's 55% then it's outside the range and the probability is zero
+> Let's say we have a deck with 58.5% WR and CI of [57%, 60%]. A CI doesn't mean that there is 95% probability that the true win-rate in between 57% and 60%. If the **true win-rate** is 58% the value is inside the interval and so the proability of being inside it is 100%. If the true value was 56.5% then the probability of the true value being inside the CI was 0%. If, for example if the true value is 58% then it's contained and the probability is one, if it's 55% then it's outside the range and the probability is zero
 
 A CI is a natural extension of a single point estimate (a single value) and it provides information about the variability, stability of our estimate, the WR.
 
