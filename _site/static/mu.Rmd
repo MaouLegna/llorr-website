@@ -84,7 +84,6 @@ LoR_Deck_RMD <- update_and_save_deck(
 )
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
-
 Master {data-icon="fa-table"}
 ================================
 
@@ -98,6 +97,44 @@ LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
   filter(game_type == "Ranked") |>
   filter(str_detect(game_version,"3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
   melt_match(LoR_Deck_RMD)
+```
+
+```{r update-Shiny}
+top_archetype <- LoR_Melt_Match_RMD |>
+  filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
+  count(playerDeck) |>
+  slice_max(n, n = 30,with_ties = F ) |>
+  pull(playerDeck)
+
+Shiny_MUtbl <- LoR_Melt_Match_RMD |>
+  bind_rows(LoR_Melt_Diamond_RMD) |>
+  filter(playerDeck %in% top_archetype & opponentDeck %in% top_archetype) |>
+  # match_ups()
+  distinct(match_key,playerPuuid,.keep_all = T) |>
+  filter(game_outcome!="tie") |>
+  group_by(playerDeck,opponentDeck) |>
+  summarise(
+    muWin   = sum(game_outcome=="win"),
+    muGames = n(),
+    muWR = mean(game_outcome=="win")
+  ) |>
+  ungroup() |>
+  mutate(playrate = muWin/muGames) |>
+  mutate(ci_limit = pmap(list(muWin, muGames), ~ binom::binom.confint(..1, ..2, 0.95, methods = "exact")[5:6])) |>
+  unnest(ci_limit, names_repair = "universal") |>
+  rename(LCI = lower, UCI = upper) |>
+  mutate(
+    okCI:=(!between(0.50,LCI,UCI)),
+    direction:=ifelse(muWR>0.50,"POS","NEG"),
+    CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" )
+  )
+
+tibble::tibble(
+  playerDeck   = rep(top_archetype, each= length(top_archetype)),
+  opponentDeck = rep(top_archetype, times=length(top_archetype))
+) |>
+  left_join(Shiny_MUtbl, by = c("playerDeck","opponentDeck")) |>
+  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Set06-01-MUtbl.csv"))
 ```
 
 ```{r process-data-master}
@@ -414,47 +451,3 @@ When I refer to games it's always refering a single playerDeck. So, if I have th
 #### Credits
 
 <!-- Special thanks to Trinathan and bA1ance for the recent support (ᐛ)ᕗ  -->
-
-```{r update-Shiny}
-# TopCC <- LoR.Melt.Master.RMD |>
-#   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-#   # filter(game_start_time_utc >= now()-days(7)) |>
-#   count(playerDeck) |>
-#   slice_max(n, n = params$nGrid,with_ties = F ) |> 
-#   pull(playerDeck)
-# 
-# TopCC <- LoR.Melt.Master.RMD |>
-#   count(playerDeck) |>
-#   slice_max(n, n = 30,with_ties = F ) |>
-#   pull(playerDeck)
-# 
-# MUtbl <- LoR.Melt.Master.RMD |>
-# #   bind_rows(LoR.Melt.Diamond.RMD) |>
-#   filter(playerDeck %in% TopCC & opponentDeck %in% TopCC) |>
-#   # removing the first week to remove "noise"
-#   filter(game_start_time_utc >= as.POSIXct(params$start,"UTC") ) |>
-#   # filter(game_start_time_utc %within% interval(as.POSIXct(params$start,"UTC"), # +days(7),
-#   #                                              as.POSIXct(params$end,"UTC") ) ) |>
-#   distinct(match_key,playerPuuid,.keep_all = T) |>
-#   filter(game_outcome!="tie") |>
-#   group_by(playerDeck,opponentDeck) |>
-#   summarise(muWin   = sum(game_outcome=="win"),
-#             muGames = n(),
-#             muWR=mean(game_outcome=="win") ) |>
-#   ungroup() |>
-#   mutate(playrate = muWin/muGames) |>
-#   as.data.table() |>
-#   {\(x) x[ ,c("LCI","UCI") := binom.confint(muWin,muGames,0.95,methods="exact")[5:6] ] }() |>
-#   mutate(
-#     okCI:=(!between(0.50,LCI,UCI)),
-#     direction:=ifelse(muWR>0.50,"POS","NEG"),
-#     CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" ) )
-# 
-# tibble::tibble(
-#   playerDeck   = rep(TopCC, each=30),
-#   opponentDeck = rep(TopCC,times=30)
-#   ) |>
-#   left_join( MUtbl, by = c("playerDeck","opponentDeck")) |>
-#   # mutate( muWR = replace(muWR, muGames < params$minMUGames, NA ) ) |>
-#   fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Bandle03-MUtbl.csv"))
-```
