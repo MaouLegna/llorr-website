@@ -203,10 +203,18 @@ So everything seems pretty easy: lines overlap = no difference, no overlap = dif
 ... well, no, unless you are working on a very important model you don't want to be as strict and try to consider each case
 
 ```{r example-fringe, fig.width=6, fig.height=4}
+wr_1 = 0.54
+n_1 = 250
+wr_2 = 0.63
+n_2 = 1000
+
+CI_1 <- binom::binom.confint(x = round(wr_1*n_1),n =  n_1, 0.95, methods = "exact")[4:6]
+CI_2 <- binom::binom.confint(x = round(wr_2*n_2),n =  n_2, 0.95, methods = "exact")[4:6]
+
 tibble(
   deck = c("deckA","deckB"), 
-  lower = c(0.48, 0.60),
-  upper = c(0.61, 0.65)
+  lower = c(CI_1$lower, CI_2$lower),
+  upper = c(CI_1$upper, CI_2$upper)
   ) |>
   mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
   ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
@@ -222,11 +230,17 @@ tibble(
   scale_colour_hue("clarity") +
   theme(legend.position = "none")
 ```
-Here the two lines overlap but personally we would reject the equality of win-rates. It happens for a very small section and maybe the sample size is not even that big for deckA.
+Here the two lines overlap but personally we would reject the equality of win-rates. It happens for a very small section and maybe the sample size is not even that big for deckA. ^[deckA has 250 games, while deckB has 1000 games]
 
 We don't want to say that sometimes there are no rules, it's more that things are not so black and white and one must learn to navigate in the infinite sea of grey.
 
-So, after this what I must conclude is that one must decide subjectively each time? Again, no, it we use certain benchmark is so we can objectively makes decisions from our data. The point is that 
+So, after this what I must conclude is that one must decide subjectively each time? Once we set some rules we should try to follow them as much as we can.
+
+**How we can use the CI for positive or negative WR**
+
+
+
+**If we look too many data we will most likely find in false positive**
 
 
 
@@ -238,6 +252,8 @@ When one has access to some (continuous) data, one of the easiest statistics we 
 If we have a bunch of games results classified as either 0 or 1 a win-rate estimate will be the simple mean $\bar x = \sum_i^n x_i$
 
 In order to expand from a point estimation we can switch to an interval estimation
+
+**Add how the number of games required for a better interval gros exponentially**
 
 # Hard Level - TLC, when Lissandra is doing statistics
 
