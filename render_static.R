@@ -20,6 +20,10 @@ while (TRUE) {
   # Update pages
   start   <- Sys.time()
   glue::glue("Knit - Start - {start}") |> message()
+  
+  source(file.path("C:","LlorR","scripts","lor_main.R" ))
+  source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
+  source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 
   update_lor_database(server_abbr = "EU",last_season = "S13",delete = TRUE)
   update_lor_database(server_abbr = "NA",last_season = "S13",delete = TRUE)
