@@ -5,8 +5,8 @@ params:
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°66)"
   description: "WorldWalker Seaonal Tournament - Open Rournds - Waiting Room"
   cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06NX028-full.png"
-  start: "2022-06-29 18:00:00" #UTC tz / 'current' week start
-  end:   "2022-07-06 18:00:00" #UTC tz / 'current' week end
+  start: "2022-07-06 18:00:00" #UTC tz / 'current' week start
+  end:   "2022-07-13 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
   nDeck_cc:  20
   nDeck_day: 12
@@ -21,7 +21,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 2022-14-06
+date: 2022-07-13
 output:
  distill::distill_article:
     toc: true
@@ -29,7 +29,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
