@@ -25,6 +25,7 @@ jobs:
           install.packages("postcards")
           install.packages("devtools")
           install.packages("fs")
+          install.packages("tidyverse")
         shell: Rscript {0}
 
       - name: Render Site
