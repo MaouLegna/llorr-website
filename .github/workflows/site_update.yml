@@ -27,6 +27,7 @@ jobs:
           install.packages("fs")
           install.packages("tidyverse")
           install.packages("metathis")
+          install.packages("reactable")
         shell: Rscript {0}
 
       - name: Render Site
