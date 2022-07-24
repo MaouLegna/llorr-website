@@ -167,25 +167,24 @@ last_update_box
 Row {.tabset}
 -----------------------------------------------------------------------
 
-### Previous Seasonal
+### Graph-1
 
-```{r meta-evo-temp, fig.width=20, fig.height=8}
+```{r day-by-day-stack, fig.width=12, fig.height=8}
+hourly_meta_lines <- plot_playrate_by_time(data = LoR_Melt_Matches_RMD,prev_days = 7,max_top_pr = params$max_top_pr)
+
+hourly_meta_lines
+
+ggsave(filename = "images/meta-evo-lines-temp.png", plot = hourly_meta_lines, width = 12, height = 8) |> invisible()
+```
+
+### Graph-2
+
+```{r day-by-day-line, fig.width=20, fig.height=8}
 hourly_meta_plot <- plot_hourly_meta_deck(data = LoR_Melt_Matches_RMD, max_top_pr = params$max_top_pr)
 # hourly_meta_plot <- plot_hourly_meta_deck(data = LoR_Melt_Matches_RMD, prev_days = 7, max_top_pr = params$max_top_pr)
 hourly_meta_plot
 
 ggsave(filename = "images/meta-evo-area-temp.png", plot = hourly_meta_plot, width = 12, height = 8) |> invisible()
-```
-
-```{r meta-evo-line}
-#| fig.width=20, 
-#| fig.height=8
-
-hourly_meta_lines <- plot_playrate_by_time(data = LoR_Melt_Matches_RMD,prev_days = 7,max_top_pr = params$max_top_pr)
-
-hourly_meta_lines
-
-ggsave(filename = "images/meta-evo-line-temp.png", plot = hourly_meta_plot, width = 12, height = 8) |> invisible()
 ```
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}

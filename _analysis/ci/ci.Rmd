@@ -1,5 +1,6 @@
 ---
 params:
+  ind: "CI"
   title: "CI?! What is a Confidence Interval?"
   description: "A little guide to understanding and use/read them and why TLC is in the mix?!"
 
@@ -20,6 +21,7 @@ citation: false
 # bibliography: references.bib
 draft: TRUE
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo       = FALSE,
@@ -35,16 +37,31 @@ knitr::opts_chunk$set(
   fig.height = 8,
   # fig.path   = "figures/prefix-"
   fig.path   = glue::glue("images/{params$ind}-"),
-  layout     = "l-page",
+  layout     = "l-body",
   preview    = TRUE
 )
 
 # R Option
 # options(scipen = 999)
-source(file.path("C:","LlorR","scripts","lor_main.R" ))
-# source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
-source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+
+base_path <- "C:/Users/valentino.vazzoler/OneDrive - Stevanato Group/Documenti/R/llorr/"
+source(paste0(base_path,"lor_main.R" ))
+# source(paste0(base_path,"lor_constants.R"))
+source(paste0(base_path,"lor_functions.R"))
 xaringanExtra::use_panelset()
+```
+
+```{css style settings, echo = FALSE}
+blockquote {
+    padding: 60px 80px 40px;
+    position: relative;
+    font-family: "Chivo";
+    font-size: 20px;
+    font-weight: 700px;
+}
+
+<!-- text-align: center; -->
+<!-- border-left: 5px solid #eee; -->
 ```
 
 ```{r panelset-style}
@@ -73,47 +90,192 @@ metathis::meta() |>
   )
 ```
 
+```{r for-reference}
+ex_mean  <- 0.55
+ex_lower <- 0.525
+ex_upper <- 0.575
+```
+
+
+Hi, Legna here, while normally I try to write those *analysis* articles
+in a publication-style format this post is meant to be an easier read
+for most players.
+
+I would like to say that this is the first of a series of articles meant
+to explain some statistical concepts in order to better understand the
+data and their nuances but I can hardly guarantee it, I will try, but
+most likely the cadence will be slow. Even this article took weeks not
+because the content is hard, but mostly because of a combination of
+little time plus needing to understand what and how to write the
+content.
+
 # Introduction
 
-**Player A**: "This deck is way better than yours. You see, it even reached a 55% win-rate at Master this week!"
+**Player A**: "This deck is way better than yours. You see, it even
+reached a 55% win-rate at Master this week!"
 
-**Player B**: "You fool! You clearly didn't see the latest values as mine is obviously the superior version with a 55.5% win-rate at Master this week!"
+**Player B**: "You fool! You clearly didn't see the latest values as
+mine is obviously the superior version with a 55.5% win-rate at Master
+this week!"
 
-**Voice in the background**: "Little did they know both decks win-rates were actually the same"
+**Voice in the background**: "Little did they know both decks win-rates
+were actually the same"
 
-For those who use my content one may notice that I use something called Confidence Interval (CI) or similarly those who use [Storm](https://twitter.com/storm_lor) [deck tracker](https://app.lormaster.com/meta) can see he adds a $\pm X$ value to a deck win-rate.
+------------------------------------------------------------------------
 
-Normally a confidence interval is written inside squared brackets
+For those who use my content one may notice that I use something called
+Confidence Interval (CI)
+
+![](images/llorr-stats-CI-01.png)
+
+or similarly those who use [Storm](https://twitter.com/storm_lor) [deck
+tracker](https://app.lormaster.com/meta) can see he adds a $\pm X$ value
+to a deck win-rate.
+
+![](images/lor-master-tracker-CI.png)
+
+These $\pm X$ values are again a CI.
+
+Here, we aim to explain what confidence interval are, how they are
+computed, why you should almost always require their use and also
+why/how you shouldn't look too much into them.
+
+If the last two points seems a contradiction they are not but we will
+try to convey the underling reasoning.
+
+In order to increase the accessibility of the reading the article is
+divided in section of increasing difficulty. The first section should
+suffice to explain the confidence intervals while the additional ones
+are meant to explain them more in details, also by their theory.
+
+## Before we start - How to Read/Write a CI
+
+A confidence interval is made of two values called lower limit and upper limit usually written inside a squared or round
+brackets like
 
 $[lower,upper]$
 
-and more generally it's associated to a point estimation, like a win-rate estimation.
+in addition, it's associated to a probability called confidence level.
 
-A deck with 52% and confidence interval between 51% and 54% is written
+If the confidence level is not written, it assumed to be 95%
 
-52%; CI [51%,54%]
+A deck with 52% and 95% confidence interval between 51% and 54% is written
 
-While our intuition may tells us how to read them, it's also really, really easy to misunderstand them.
+52%; 95% CI [51%,54%] 
 
-Here, we'll explain what they are, how they are computed, why you should almost always require their use and also why/how you shouldn't look too much into them.
+## Before we start - the TRUE value
 
-If the last two points seems a contradiction they are not but we will try to convey the underling reasoning.
+When we refer to the true-value ^[also referred as the population value], for example the win-rate of a deck we refer to the unknown/actual win-rate
+that is associated to the deck. It is the value we try to estimate when
+we divide $\frac{\#wins}{\#games}$.
 
-> Hi, Legna here, while normally I try to write those *analysis* articles in a publication-style format this post is meant to be an easier read for most players.
->
-> I would like to say that this is the first of a series of articles meant to explain some statistical concepts in order to better understand the data and their nuances but I can hardly guarantee it, I will try, but most likely the cadence will be slow. Even this article took weeks not because the content is hard, but mostly because of a combination of little time plus needing to understand what and how to write the content.
+The caveat is that the value we obtain from $\frac{\#wins}{\#games}$ is an estimation, we don't know how far we are from the actual
+win-rate (sort-of).
 
-# A discoursive explanation
+Unless we truly know the generating process of the phenomenon
+we are interesting in, we **never** know the true value of what we are
+searching for.
 
-As counter-intuitive as it may be we need to start with what is **not** a confidence interval:
+For an easier example let's say we flip a coin 10 times. The probability
+of head and tails is the same at 50% and we will expect a number of head
+and tails equal to $0.5\times10 = 5$.
 
-> A Confidence Interval (CI) is not the probability that the true value of our estimate in inside a certain interval. For such case the true value is either contained or not and so the probability is either 1 (it's inside) or 0 (it's outside)
+Even so, we know it wouldn't be surprising to ends up with 6 head / 4 tails
+obtaining an estimation for head of 60% and tail at 40%. It's wrong and
+in this case we know it's wrong because we know the underling
+probability of getting head/tail.
 
-Let's say we have a deck with 58.5% WR and CI of [57%, 60%]. A CI doesn't mean that there is 95% probability that the true win-rate in between 57% and 60%. If the **true win-rate** is 58% the value is inside the interval and so the probability of being inside it is 100%. If the true value was 56.5% then the probability of the true value being inside the CI was 0%. If, for example if the true value is 58% then it's contained and the probability is one, if it's 55% then it's outside the range and the probability is zero
+With most events we don't have this luxury, we don't know if the win-rate of deck we can see on various sites are *correct* or biased because of *reasons*. We can model the win-rates, we can be pretty sure about our estimations but they always remain estimations.
 
-`r kableExtra::text_spec("Note:", color = "red")` When we refer to the true-value, the win-rate of our deck we refer to the unknown win-rate that is associated to the deck. It is the value we try to estimate when we divide $\frac{\#wins}{\#gci_example}$. Yet the value we obtain as said, it's an estimation, we don't know how far we are from the actual win-rate.
+> Unless we truly know the generating process of the phenomenon we are
+> interesting in, we **never** know the true value of what we are
+> searching for.
 
-A CI is a natural extension of a single point estimate (a single value) and it provides information about the variability, stability of our estimate, the win-rate.
+Returning to our coin example, increasing the number of coin-flips would make the estimation more stable, converging after an infinite numbers of times at the correct/true value of 0.5.
+
+Of course we don't really need infinite coin-flips or statistics would be useless
+
+# A Discursive Explanation
+
+## What a Confidence Interval is not
+
+While our intuition may tells us how to read a CI, it's also really,
+really easy to misunderstand them; so, as counter-intuitive as it may
+be, we need to start with what is **not** a confidence interval:
+
+**A Confidence Interval (CI) is not the probability that the true value of our estimate in inside a certain interval. For such case the true value is either contained or not and so the probability is either 1 (it's inside) or 0 (it's outside)**
+
+Let's say we have a deck with `r scales::percent(ex_mean,0.1)` WR and 95% CI of [`r scales::percent(ex_lower,0.1)`,`r scales::percent(ex_upper,0.1)`]. A CI
+doesn't mean that there is 95% probability that the true win-rate in
+between `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`. If the *true win-rate* is 54% the value is inside
+the interval and so the probability of being inside it is 100%. If the
+true value was 58% then the probability of the true value being inside
+the CI is 0%.
+
+`r kableExtra::text_spec("Important:", color = "red")` While the definition we provided is wrong, for those who are not working with data it's sort of an *ok definition* to remember, or well, it's better than nothing. 
+
+## What a Confidence Interval is
+
+What a CI is, is a natural extension of a single point estimate (a single value)
+and it provides information about the variability, stability of our
+estimate, the win-rates.
+
+As a simplification: assume we were to take 100 sites that collect Legends of Runeterra (LoR) data from the API, but because of Riot messing up each site can only collect a small number of games for each deck.
+
+If we compute the 95% confidence interval from each site we can expect that 95 of the 100 sites have an interval that do contain the true win-rate.
+
+For a visual explanation of the concept please refer to the example in **later section**.
+
+`r kableExtra::text_spec("Question:", color = "blue")` If the (95%) confidence interval or Azir/Irelia ranges from `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`. What does this tell us?
+
+`r kableExtra::text_spec("Answer:", color = "blue")` If this confidence interval is one of the 95% that contains the true win-rate then the true win-rate population value of Azir/Irelia lies between `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`.
+
+As this section wants to be really easy and minimal we also add the as number of data we use to create the CI increase the smaller the range for lower-upper limits gets as we would expect as our estimate gets more stable. This point will be expanded first in the next section.  
+
+### Super TLDR
+
+> A Confidence Interval gives us information about the variability our results. The smaller the interval is, the better is our estimation. By increasing the amount of data the interval gets smaller and smaller. While not the correct interpration it could be said that we can expect with a certain level of confidence (usually 95%) that the value of interest, like the win-rate lies between the lower and upper limit.
+
+# Mid Level - Reject Points, embrace Intervals
+
+This section will go a bit more in depth in the use of CI while still refraining ourselves to use many formulae.
+
+## Gomu gomu no interval
+
+Before that we take a little detour to expand the relationship between the data at our disposal and the confidence level.
+
+As we briefly mentioned in the previous section, we want the CI to be as small as possible, while still being relevant.
+
+Assuming we are dealing with the same kind of data there are two values that can influence the range of a CI:
+
+* **confidence level**: the probability by which we wants our CI to contains the population value, our win-rates. at fixed number of data (n), the higher the confidence level the bigger is the confidence interval
+
+confidence level $\uparrow$ $\rightarrow$ confidence interval $\uparrow$
+
+* **n**: the amount of data at our disposal, for example the number of games of certain deck for which we wants to estimate the win-rate. at fixed confidence level, the higher is n, the smaller is the confidence interval
+
+n $\uparrow$ $\rightarrow$ confidence interval $\downarrow$
+
+What follows is an example on the effect of the choice for the confidence level or the amount of games available for a deck with $55\%$ win-rate and either a fixed confidence level of $95\%$ or fixed 1000 games.
+
+```{r}
+n  <- 1000
+x  <- 550
+p  <- x/n
+
+conf_level = c(.5,.75,.90,.95,.99)
+
+map_dfr(conf_level,~binom::binom.confint(n = n,x = x,conf.level = .x,methods = "asymptotic")) |>
+  mutate(wideness = upper-lower) |>
+  add_column(conf_level = conf_level) |>
+  select(-method) |>
+  gt() |>
+  gtExtras::gt_theme_538()
+```
+
+
+At a fixed value of confidence, the smaller a CI is the more confident we are about our estimation.
+
 
 ```{r}
 n  <- 1000
@@ -127,21 +289,33 @@ CI <- glue::glue("[{scales::percent(LL,accuracy = 0.1)},{scales::percent(UL,accu
 # binom::binom.confint(x = 600,n = 1000, conf.level = 0.95)
 ```
 
-Let us take a deck with `r n` gci_example and `r x` wins, the 60% win-rate estimate obtained as $\frac{\#wins}{\#gci_example}$ is a point estimate while the CI is `r CI`.
+Let us take a deck with `r n` games and `r x` wins, the 60%
+win-rate estimate obtained as $\frac{\#wins}{\#games}$ is a point
+estimate while the CI is `r CI`.
 
-Their use is intrinsically connection with hypothesis testing so CI also provides a rigorous frame about how to interpret them.
+Their use is intrinsically connection with hypothesis testing so CI also
+provides a rigorous frame about how to interpret them.
 
 Suppose we we would test if the deck win-rate is 60%%.
 
-As we can see that the CI does includes that value 57% < 60% < 63%, then we don't reject hypothesis that the WR is indeed 60%.
+As we can see that the CI does includes that value 57% \< 60% \< 63%,
+then we don't reject hypothesis that the WR is indeed 60%.
 
-On the other hand, if the CI was, let's say [54.0%,57.0%] then we would reject the hypothesis that the win-rate is 60%, having support that the true win-rates lies elsewhere.
+On the other hand, if the CI was, let's say [54.0%,57.0%] then we would
+reject the hypothesis that the win-rate is 60%, having support that the
+true win-rates lies elsewhere.
 
-> It's very important to be careful how to interpret a statistical hyphotesis. One **NEVER PROVES** something, but it can reject an hypothesis, giving at most *support* to the opposite but never proving it. Think of SCP-55, all that is known is that it is not round, what shapes does it have are still an infinite amount of alternative options
+> It's very important to be careful how to interpret a statistical
+> hyphotesis. One **NEVER PROVES** something, but it can reject an
+> hypothesis, giving at most *support* to the opposite but never proving
+> it. Think of SCP-55, all that is known is that it is not round, what
+> shapes does it have are still an infinite amount of alternative
+> options
 
 Now, let us use the example from the introduction.
 
-We have two decks, one with win-rate at 55.5% and one with win-rate at 55%. How can we say with confidence that they do indeed differ?
+We have two decks, one with win-rate at 55.5% and one with win-rate at
+55%. How can we say with confidence that they do indeed differ?
 
 ```{r example-wIntersection, fig.width=6, fig.height=4}
 n_intro <- 10^4
@@ -168,9 +342,13 @@ intro_example |>
   scale_colour_hue("clarity") +
   theme(legend.position = "none")
 ```
-We simply look at their CI and check if their intervals do overlap or not. It they overlap their difference is not statistically significant.
 
-In Fig:\@ref(fig:example-wIntersection) the line overlap $\rightarrow$ we don't reject the equality of win-rates -> there is support on the **equality of win-rates**.
+We simply look at their CI and check if their intervals do overlap or
+not. It they overlap their difference is not statistically significant.
+
+In Fig:\@ref(fig:example-wIntersection) the line overlap $\rightarrow$
+we don't reject the equality of win-rates -\> there is support on the
+**equality of win-rates**.
 
 ```{r example-woIntersection, fig.width=6, fig.height=4}
 tibble(
@@ -192,13 +370,18 @@ tibble(
   scale_colour_hue("clarity") +
   theme(legend.position = "none")
 ```
-We proceed in the same way for the example illustrated in Fig:\@ref(fig:example-woIntersection)
 
-The line don't overlap $\rightarrow$ we reject the equality of win-rates $\rightarrow$ there is support on the **inequality of win-rates**.
+We proceed in the same way for the example illustrated in
+Fig:\@ref(fig:example-woIntersection)
 
-So everything seems pretty easy: lines overlap = no difference, no overlap = different enough...
+The line don't overlap $\rightarrow$ we reject the equality of win-rates
+$\rightarrow$ there is support on the **inequality of win-rates**.
 
-... well, no, unless you are working on a very important model you don't want to be as strict and try to consider each case
+So everything seems pretty easy: lines overlap = no difference, no
+overlap = different enough...
+
+... well, no, unless you are working on a very important model you don't
+want to be as strict and try to consider each case
 
 ```{r example-fringe, fig.width=6, fig.height=4}
 wr_1 = 0.54
@@ -229,17 +412,32 @@ tibble(
   theme(legend.position = "none")
 ```
 
-In Fig:\@ref(fig:example-fringe) the two lines overlap but personally we would reject the equality of win-rates. It happens for a very small section and maybe the sample size is not even that big for deckA. ^[deckA has 250 gci_example, while deckB has 1000 gci_example]
+In Fig:\@ref(fig:example-fringe) the two lines overlap but personally we
+would reject the equality of win-rates. It happens for a very small
+section and maybe the sample size is not even that big for deckA. [^1]
 
-We don't want to say that sometimes there are no rules, it's more that things are not so black and white and one must learn to navigate in the infinite sea of grey.
+[^1]: deckA has 250 gci_example, while deckB has 1000 gci_example
 
-So, after this what I must conclude is that one must decide subjectively each time? Once we set some rules we should try to follow them as much as we can.
+We don't want to say that sometimes there are no rules, it's more that
+things are not so black and white and one must learn to navigate in the
+infinite sea of grey.
+
+So, after this what I must conclude is that one must decide subjectively
+each time? Once we set some rules we should try to follow them as much
+as we can.
 
 ## Are you winning son?
 
-While the comparison of decks' CI one against each other can help us discern significant differences, this is hardly what we would normally suggest to do with them.
+While the comparison of decks' CI one against each other can help us
+discern significant differences, this is hardly what we would normally
+suggest to do with them.
 
-We explained how the CI can help us answer whatever or not our deck can support or not a certain hypothesis. But instead of asking if it's at a certain win-rate or if it differ enough from another deck there is another very basic question that someone would want to know: it my deck actually good? Or to put it differently: does my deck have a positive win-rate?
+We explained how the CI can help us answer whatever or not our deck can
+support or not a certain hypothesis. But instead of asking if it's at a
+certain win-rate or if it differ enough from another deck there is
+another very basic question that someone would want to know: it my deck
+actually good? Or to put it differently: does my deck have a positive
+win-rate?
 
 ```{r example-middle, fig.width=6, fig.height=4}
 tibble(
@@ -260,46 +458,47 @@ tibble(
   scale_colour_hue("clarity") +
   theme(legend.position = "none")
 ```
-The rules examples in Fig:\@ref(fig:example-middle) doesn't differ from what we previously told and so:
 
-- deckB confidence interval is all above the 50% win-rate $\rightarrow$ we support the hypothesis that the win-rate is indeed positive
+The rules examples in Fig:\@ref(fig:example-middle) doesn't differ from
+what we previously told and so:
 
-- deckA confidence interval includes the 50% win-rate $\rightarrow$ we can't determine if the win-rate is positive or negative.
+-   deckB confidence interval is all above the 50% win-rate
+    $\rightarrow$ we support the hypothesis that the win-rate is indeed
+    positive
 
-
-
+-   deckA confidence interval includes the 50% win-rate $\rightarrow$ we
+    can't determine if the win-rate is positive or negative.
 
 ## If you stare too long into the data... they may lie to to!
 
-https://xkcd.com/882/
+<https://xkcd.com/882/>
 
 ## To Recap
 
-
-
-
 **If we look too many data we will most likely find in false positive**
 
+When one has access to some (continuous) data, one of the easiest
+statistics we can compute is the sample mean \$\bar X \$, yet while
+effective the mean greatly reduce the overall information and we have no
+idea about the uncertainty of our results as we mentioned in the first
+example.
 
+If we have a bunch of gci_example results classified as either 0 or 1 a
+win-rate estimate will be the simple mean $\bar x = \sum_i^n x_i$
 
-
-# Mid Level - Reject Points, embrace Intervals
-
-When one has access to some (continuous) data, one of the easiest statistics we can compute is the sample mean $\bar X $, yet while effective the mean greatly reduce the overall information and we have no idea about the uncertainty of our results as we mentioned in the first example.
-
-If we have a bunch of gci_example results classified as either 0 or 1 a win-rate estimate will be the simple mean $\bar x = \sum_i^n x_i$
-
-In order to expand from a point estimation we can switch to an interval estimation
+In order to expand from a point estimation we can switch to an interval
+estimation
 
 **Il grafico con le simulazioni**
 
-**Add how the number of gci_example required for a better interval gros exponentially**
+**Add how the number of gci_example required for a better interval gros
+exponentially**
 
 **Add sample size OC curve**
 
 # Hard Level - TLC, when Lissandra is doing statistics
 
-
+## OC Curves
 
 ```{r}
 # binom::binom.confint(x = c(2, 4), n = 100, tol = 1e-8)
@@ -332,7 +531,15 @@ In order to expand from a point estimation we can switch to an interval estimati
 A confidence interval for a population mean is of the following form
 x¯±z⋆sn−−√
 
-You should by now be comfortable with calculating the mean and standard deviation of a sample in R. And we know that the sample size is 60. So the only remaining building block is finding the appropriate critical value for a given confidence level. We can use the qnorm function for this task, which will give the critical value associated with a given percentile under the normal distribution. Remember that confidence levels and percentiles are not equivalent. For example, a 95% confidence level refers to the middle 95% of the distribution, and the critical value associated with this p will correspond to the 97.5th percentile.
+You should by now be comfortable with calculating the mean and standard
+deviation of a sample in R. And we know that the sample size is 60. So
+the only remaining building block is finding the appropriate critical
+value for a given confidence level. We can use the qnorm function for
+this task, which will give the critical value associated with a given
+percentile under the normal distribution. Remember that confidence
+levels and percentiles are not equivalent. For example, a 95% confidence
+level refers to the middle 95% of the distribution, and the critical
+value associated with this p will correspond to the 97.5th percentile.
 
 We can find the critical value for a 95% confidence interal using
 
@@ -389,7 +596,6 @@ ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id,
   geom_vline(xintercept = param$mu, color = "darkgray") # draw vertical line
 ```
 
-
 ```{r}
 ci_99 <- ci_example %>%
         rep_sample_n(size = n, reps = 50, replace = TRUE) %>%
@@ -412,79 +618,113 @@ ggplot(data = ci_data_99, aes(x = ci_bounds, y = ci_id,
 
 ## Article 2
 
-Review of Confidence Intervals
-When we compute a confidence interval, we first compute an estimate of a parameter with a statistic.
+Review of Confidence Intervals When we compute a confidence interval, we
+first compute an estimate of a parameter with a statistic.
 
-For example, we draw a random sample then compute the sample mean to estimate the parameter.
+For example, we draw a random sample then compute the sample mean to
+estimate the parameter.
 
-With a single sample (or anything short of the whole population) we don’t know where the population mean lies, so we want to localize the population mean within an interval, computed from the data in the sample.
+With a single sample (or anything short of the whole population) we
+don't know where the population mean lies, so we want to localize the
+population mean within an interval, computed from the data in the
+sample.
 
-An interval is a range of values (e.g. all real numbers between 4801 and 6801: written [4801, 6801]). A confidence interval is a range of plausible intervals for the parameter. A 95% confidence interval for a parameter is an interval computed by a method guaranteed to successfully cover the parameter 95% of the time (i.e. for 95% of the samples).
+An interval is a range of values (e.g. all real numbers between 4801 and
+6801: written [4801, 6801]). A confidence interval is a range of
+plausible intervals for the parameter. A 95% confidence interval for a
+parameter is an interval computed by a method guaranteed to successfully
+cover the parameter 95% of the time (i.e. for 95% of the samples).
 
-We call 95% the “confidence level” for the parameter. Other confidence levels, anything between 0% and 100%, are possible.
+We call 95% the "confidence level" for the parameter. Other confidence
+levels, anything between 0% and 100%, are possible.
 
-As the confidence level increases, what happens to the width of the confidence interval? The width of the confidence interval increases.
+As the confidence level increases, what happens to the width of the
+confidence interval? The width of the confidence interval increases.
 
-As a follow up to the last question, will you be more confident that the population mean lies in a bigger interval, or less confident. You will be more confident that the population mean lies in a bigger interval.
+As a follow up to the last question, will you be more confident that the
+population mean lies in a bigger interval, or less confident. You will
+be more confident that the population mean lies in a bigger interval.
 
-As the sample size increases, what happens to the width of the confidence interval? The confidence level width increases as sample size increases.
+As the sample size increases, what happens to the width of the
+confidence interval? The confidence level width increases as sample size
+increases.
 
-In other words, will you be able to localize the population mean better (in a smaller interval) with a larger sample size? Yes.
+In other words, will you be able to localize the population mean better
+(in a smaller interval) with a larger sample size? Yes.
 
-If the variablility in the population increases, what happens to the width of the confidence interval? The width of the confidence interval increases as variability in the population increases.
+If the variablility in the population increases, what happens to the
+width of the confidence interval? The width of the confidence interval
+increases as variability in the population increases.
 
-In other words, will you be able to localize the population mean better (in a smaller interval) with more variability in the population? No, it will be more difficult to localize population mean with more variability in the population.
+In other words, will you be able to localize the population mean better
+(in a smaller interval) with more variability in the population? No, it
+will be more difficult to localize population mean with more variability
+in the population.
 
-> Drawing Confidence Intervals Assuming You Know Shape of Sampling Distribution
-According to the Central Limit Theorem, the sampling distribution for the sample mean has a Normal (bell shaped) distribution. Using this approximation, and the **68-95-99.7 Rule** to assign a margin of error (half the width of the confidence interval, centered on sample mean) to be 2 times the standard error (a statistic that estimates the standard deviation of the sampling distribution). We did this in class the Friday before Thanksgiving.
+> Drawing Confidence Intervals Assuming You Know Shape of Sampling
+> Distribution According to the Central Limit Theorem, the sampling
+> distribution for the sample mean has a Normal (bell shaped)
+> distribution. Using this approximation, and the **68-95-99.7 Rule** to
+> assign a margin of error (half the width of the confidence interval,
+> centered on sample mean) to be 2 times the standard error (a statistic
+> that estimates the standard deviation of the sampling distribution).
+> We did this in class the Friday before Thanksgiving.
 
+We are 95% confident that the true average size of houses in ci_example
+lies between the values 8390.28 and 11747.99.
 
+For the confidence interval to be valid, the sample mean must be
+normally distributed and have standard error s/√n. What conditions must
+be met for this to be true? For this to be true, sampled observations
+need to be independent. Independence is more likely if random samplng is
+used and, if sampling without replacement, the sample size should be
+less than 10% of the population. The popluation distribution should
+either be normal or n\>30 and the population distribution is not
+extremely skewed.
 
-We are 95% confident that the true average size of houses in ci_example lies between the values 8390.28 and 11747.99.
-
-For the confidence interval to be valid, the sample mean must be normally distributed and have standard error s/√n. What conditions must be met for this to be true?
-For this to be true, sampled observations need to be independent. Independence is more likely if random samplng is used and, if sampling without replacement, the sample size should be less than 10% of the population. The popluation distribution should either be normal or n>30 and the population distribution is not extremely skewed.
-
-Exercise 4:
-What does 95% confidence mean?
-This refers to the long term success rate of this method, so it means that 95% of the confidence intervals produced will successfully capture the population parameter of interest, in this case, the mean Lot p of homes in ci_example.
+Exercise 4: What does 95% confidence mean? This refers to the long term
+success rate of this method, so it means that 95% of the confidence
+intervals produced will successfully capture the population parameter of
+interest, in this case, the mean Lot p of homes in ci_example.
 
 ## Andy
 
+We can't access the population so we take samples There will be
+variation across samples There will be sampling errors We go crazy for
+sampling and we takes lots of sampling and we takes the means for each
+samples and plot the distribution of the means the particular sample we
+have may not have have the population values but the sampling
+distribution will give us the population value the sampling deviation
+will give us that the sampling deviation should be narrows and the
+standard deviation of the sampling distribution is the standard error
 
-We can't access the population so we take samples
-There will be variation across samples
-There will be sampling errors
-We go crazy for sampling and we takes lots of sampling and we takes the means for each samples and plot the distribution of the means
-the particular sample we have may not have have the population values
-but the sampling distribution will give us the population value
-the sampling deviation will give us that
-the sampling deviation should be narrows and the standard deviation of the sampling distribution is the standard error
+An interval such as that across a large number of samples we contains
+the population values How wide should the interval be to contains the
+population value a lot of times we take a sample and decide to use it
 
-An interval such as that across a large number of samples we contains the population values
-How wide should the interval be to contains the population value a lot of times
-we take a sample and decide to use it
+1.96\*SE
 
-1.96*SE
-
-The estimate and its interval may or may not contain the true population value
-across a lot of sample if were to set the limits around the estimate around 1.96*SE
-we are going to hit the population value 95% of SAMPLES
+The estimate and its interval may or may not contain the true population
+value across a lot of sample if were to set the limits around the
+estimate around 1.96\*SE we are going to hit the population value 95% of
+SAMPLES
 
 Each bar is a sample that
 
-Intervals that contains the true population value of the paramter in 95% ifsamples
+Intervals that contains the true population value of the paramter in 95%
+ifsamples
 
-NO - It's an interval i'm 95% confident that the population estimate falls within the interval 
-it's an interval where there is a 95% probability that contains the population value!
-Hyper no! it's either 1 or 0 but you don't know which
-They do not reflect confidence in the value of the population parameter
+NO - It's an interval i'm 95% confident that the population estimate
+falls within the interval it's an interval where there is a 95%
+probability that contains the population value! Hyper no! it's either 1
+or 0 but you don't know which They do not reflect confidence in the
+value of the population parameter
 
+Assuming that this sample is one of the 95% that yields a confidence
+interval containing the true value of the parameter
 
-Assuming that this sample is one of the 95% that yields a confidence interval containing the true value of the parameter 
-
-For every standard deviation change of the paramter we have an increase of the effect
-
+For every standard deviation change of the paramter we have an increase
+of the effect
 
 ```{r}
 # broom::tidy(model)
@@ -499,12 +739,10 @@ For every standard deviation change of the paramter we have an increase of the e
 # parameters::model_parameters(model, robust=TRUE, vcov.type="HC4")
 ```
 
-
-
-In statistics, a sampling distribution or finite-sample distribution is the probability distribution of a given random-sample-based statistic
+In statistics, a sampling distribution or finite-sample distribution is
+the probability distribution of a given random-sample-based statistic
 Wikipedia
 
 # Definition
-
 
 # Example
