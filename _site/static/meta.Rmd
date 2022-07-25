@@ -105,7 +105,7 @@ Row {data-heigth="125"}
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{meta_7days$nGames} Games"), 
-                        caption = glue::glue("Number of Ranked Games - Master&HighDiamond"), 
+                        caption = glue::glue("Number of Ranked Games - Seasonal Players"), 
                         icon = "fa-table", 
                         color = "#a88b32")
 ```
