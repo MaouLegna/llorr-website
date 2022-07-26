@@ -1,10 +1,11 @@
 ---
 params:
   ind: "MR068"
+  season: "S14"
   patch: "Patch 3.11 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°68)"
-  description: ""
-  cardlurl: "eve card"
+  description: "If you know someone who is still simping for Evelynn make him stop!"
+  cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06RU025T1-full.png"
   start: "2022-07-20 18:00:00" #UTC tz / 'current' week start
   end:   "2022-07-27 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -81,11 +82,11 @@ general_caption <- glue::glue("{params$patch}
 LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S13(.*)csv$"), full.names = T) |>
+LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_{params$season}(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
 
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S13(.*)csv$"), full.names = T) |>
+LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$season}(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
 
@@ -119,21 +120,19 @@ LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
 
 ```{r nGames-data}
 nGames_master  <- NROW(LoR_Melt_Master_RMD)
-nMaster   <- LoR_Account_RMD[master=="master", .N]
+nMaster   <- LoR_Account_RMD[!is.na(seasonal), .N]
 
 nGames_diamond  <- NROW(LoR_Melt_Diamond_RMD)
-nDiamond  <- LoR_Account_RMD[master=="diamond", .N]
+nDiamond  <- LoR_Account_RMD[master=="master", .N]
 ```
 
-Number of Master Players: **`r nMaster`**
+Number of Seasonal Players: **`r nMaster`**
 
-Number of HighDiamond [^1] Players: **`r nDiamond`**
+Number of Master Players: **`r nDiamond`**
 
-[^1]: HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"
+Number of (Ranked) **Seasonal** matches analysed **`r format(nGames_master/2, scientific = F)`** or **`r format(nGames_master, scientific = F)`** games.
 
-Number of (Ranked) **Master** matches analysed **`r format(nGames_master/2, scientific = F)`** or **`r format(nGames_master, scientific = F)`** games.
-
-Number of (Ranked) **\~HighDiamond** matches analysed **`r format(nGames_diamond/2, scientific = F)`** or **`r format(nGames_diamond, scientific = F)`** games.
+Number of (Ranked) **Master** matches analysed **`r format(nGames_diamond/2, scientific = F)`** or **`r format(nGames_diamond, scientific = F)`** games.
 
 Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 
@@ -145,7 +144,7 @@ Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 ```{r table-nGames-data}
 #| layout="l-body"
 
-nGames_tbl <- table_by_the_numbers_double(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD, LoR_Account_RMD)
+nGames_tbl <- table_by_the_numbers_double(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD, LoR_Account_RMD,c("**Seasonal**","**Master**"))
 
 nGames_tbl |> #
   tab_options(
@@ -240,7 +239,7 @@ plot_freq(
   subtitle = "number of times a card within a region is included in a deck", 
   # caption = general_caption
   caption = glue::glue("{params$patch}
-                       Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
+                       Ranked games from {params$start} UTC to {params$end} UTC - Seasonal Players
                        DualRegions cards are counted based by the region that matters in the deck
                        Source: Metadata of games collected with RiotGames API
                        Last Update: {now(tzone='UTC')}")
@@ -267,6 +266,8 @@ region_freq_by_cards |>
 # Champions Combinations
 
 ```{r process-tableChampion}
+group_label = c("Seasonal","Master")
+
 cc_table_master <- LoR_Melt_Master_RMD |>
   tabyl(playerDeck, show_na = F) |>
   left_join(LoR_Melt_Master_RMD |>
@@ -289,8 +290,8 @@ top_deck <- union(
 champion_combination <- tibble( playerDeck = top_deck ) |>
   left_join(cc_table_master[, c("playerDeck", "percent")], by ="playerDeck" ) |>
   left_join(cc_table_diamond[, c("playerDeck", "percent")], by ="playerDeck" ) |>
-  rename_all(~c("playerDeck", "Master", "Diamond")) |>
-  pivot_longer( cols = c("Master", "Diamond"), names_to = "master", values_to = "freq" )
+  rename_all(~c("playerDeck", !!group_label)) |>
+  pivot_longer( cols = !!group_label, names_to = "master", values_to = "freq" )
 ```
 
 ## Play Rates
@@ -329,10 +330,10 @@ champion_combination |>
     geom="text", 
     x=3, y=0.07, 
     col="black", 
-    label = glue::glue("#Games (Master) = {nGames_master}
-                       #Games (HighDiamond) = {nGames_diamond}
-                       Cumulative Frequence (Master) = {scales::percent(cc_table_master[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}
-                       Cumulative Frequence (HighDiamond) = {scales::percent(cc_table_diamond[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}")
+    label = glue::glue("#Games ({group_label[1]}) = {nGames_master}
+                       #Games ({group_label[2]}) = {nGames_diamond}
+                       Cumulative Frequence ({group_label[1]}) = {scales::percent(cc_table_master[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}
+                       Cumulative Frequence ({group_label[2]}) = {scales::percent(cc_table_diamond[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}")
   ) +
   theme_539() +
   labs(
@@ -342,7 +343,7 @@ champion_combination |>
     subtitle = glue::glue("Play-Rates of the top {params$nDeck_cc} most played combination of champions/regions"), 
     caption = glue::glue("{params$patch}
                          Ranked games from {params$start} UTC to {params$end} UTC
-                         Decks are chosen from the union of top {params$nDeck_cc} from Last-Seasononal player and ~HighDiamond resulting in {length(top_deck)} displayed
+                         Decks are chosen from the union of top {params$nDeck_cc} from Last-Seasononal player and Master resulting in {length(top_deck)} displayed
                          Source: Metadata of games collected with RiotGames API
                          Last Update: {now(tzone='UTC')}")
   ) +
@@ -352,13 +353,13 @@ champion_combination |>
     plot.title = element_text(face = "bold", size = 12, hjust = 0.6), 
     axis.title.x = element_text(face = "bold"), 
     axis.title.y = element_text(face = "bold"), 
-    legend.position = "none"
+    legend.position = "top"
   )
 ```
 :::
 
 ::: panel
-### from Master {.panel-name}
+### from Seasonal {.panel-name}
 
 ```{r table-Champion-PR}
 cc_table_master |>
@@ -393,7 +394,7 @@ cc_table_master |>
 :::
 
 ::: panel
-### from Diamond {.panel-name}
+### from Master {.panel-name}
 
 ```{r}
 cc_table_diamond |>
@@ -643,7 +644,7 @@ gt_winning |>
 gtsave(gt_winning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible()
 ```
 
-# Cards Presence (at Master)
+# Cards Presence (Seasonal players)
 
 ```{r process-UniqueCards}
 LoR_Melt_Master_RMD[ !is.na(cards_region_fix), cards:=cards_fix  ]
