@@ -41,13 +41,11 @@ knitr::opts_chunk$set(
   preview    = TRUE
 )
 
-# R Option
-# options(scipen = 999)
-
-base_path <- "C:/Users/valentino.vazzoler/OneDrive - Stevanato Group/Documenti/R/llorr/"
-source(paste0(base_path,"lor_main.R" ))
-# source(paste0(base_path,"lor_constants.R"))
-source(paste0(base_path,"lor_functions.R"))
+#' R Option
+options(scipen = 999)
+source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
+source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
+source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -59,9 +57,6 @@ blockquote {
     font-size: 20px;
     font-weight: 700px;
 }
-
-<!-- text-align: center; -->
-<!-- border-left: 5px solid #eee; -->
 ```
 
 ```{r panelset-style}
@@ -180,12 +175,10 @@ For an easier example let's say we flip a coin 10 times. The probability
 of head and tails is the same at 50% and we will expect a number of head
 and tails equal to $0.5\times10 = 5$.
 
-Even so, we know it wouldn't be surprising to ends up with 6 head / 4 tails
-obtaining an estimation for head of 60% and tail at 40%. It's wrong and
-in this case we know it's wrong because we know the underling
-probability of getting head/tail.
+Even so, we know it wouldn't be surprising to ends up with 6 head / 4 tails obtaining an estimation for head of 60% and tail at 40%. It's wrong and
+in this case we know it's wrong because we know the underling probability of getting head/tail.
 
-With most events we don't have this luxury, we don't know if the win-rate of deck we can see on various sites are *correct* or biased because of *reasons*. We can model the win-rates, we can be pretty sure about our estimations but they always remain estimations.
+With most events we don't have this luxury, we don't know if the decks' win-rate we can see on various sites are *correct* or biased because of *reasons*. We can model the win-rates, we can be pretty sure about our estimations but they always remain estimations.
 
 > Unless we truly know the generating process of the phenomenon we are
 > interesting in, we **never** know the true value of what we are
@@ -250,15 +243,23 @@ Assuming we are dealing with the same kind of data there are two values that can
 
 * **confidence level**: the probability by which we wants our CI to contains the population value, our win-rates. at fixed number of data (n), the higher the confidence level the bigger is the confidence interval
 
-confidence level $\uparrow$ $\rightarrow$ confidence interval $\uparrow$
+confidence level ($\uparrow$) $\rightarrow$ range of confidence interval ($\uparrow$)
+
+As we want that most of our CI may be the ones that do contain the true value, we want to have the confidence level to be high enough that we don't have to worry too much about it.
+
+The most common values of confidence level used are 90%, 95% and 99%, with 95% be more common of the three.
 
 * **n**: the amount of data at our disposal, for example the number of games of certain deck for which we wants to estimate the win-rate. at fixed confidence level, the higher is n, the smaller is the confidence interval
 
-n $\uparrow$ $\rightarrow$ confidence interval $\downarrow$
+n ($\uparrow$) $\rightarrow$ range of confidence interval ($\downarrow$)
 
-What follows is an example on the effect of the choice for the confidence level or the amount of games available for a deck with $55\%$ win-rate and either a fixed confidence level of $95\%$ or fixed 1000 games.
+It is suggested to have $n \ge 30$ and $n \times \hat{p} \ge 5$
 
-```{r}
+Now that the relationships are defined, we wants to show the extent of our choices to the results.
+
+What follows is an example on the effect of the the confidence level or the amount of games available for a deck with $55\%$ win-rate and either a fixed confidence level of $95\%$ or fixed 1000 games.
+
+```{r fixed-n}
 n  <- 1000
 x  <- 550
 p  <- x/n
@@ -270,47 +271,56 @@ map_dfr(conf_level,~binom::binom.confint(n = n,x = x,conf.level = .x,methods = "
   add_column(conf_level = conf_level) |>
   select(-method) |>
   gt() |>
-  gtExtras::gt_theme_538()
+  fmt_percent(columns = c(mean:upper,conf_level),decimals = 1) |>
+  cols_label(
+    conf_level = md("Conf. Level")
+  ) |>
+  tab_header(
+    title = "Confidence Interval",
+    subtitle = "Variation at different values of conf.level and fixed n"
+  ) |>
+  fmt_number(wideness,decimals = 3) |>
+  gtExtras::gt_theme_espn()
 ```
-
 
 At a fixed value of confidence, the smaller a CI is the more confident we are about our estimation.
 
+What is we let n change instead?
 
-```{r}
-n  <- 1000
-x  <- 600
-p  <- x/n
-LL <- p - qnorm(0.975)*sqrt( (p*(1-p))/n )
-UL <- p + qnorm(0.975)*sqrt( (p*(1-p))/n )
+```{r fixed-conf}
+n  <- c(10^2,    10^3,    10^4,    10^5    )
+x  <- c(.55*10^2,.55*10^3,.55*10^4,.55*10^5)
 
-CI <- glue::glue("[{scales::percent(LL,accuracy = 0.1)},{scales::percent(UL,accuracy = 0.1)}]")
+conf_level = .95
 
-# binom::binom.confint(x = 600,n = 1000, conf.level = 0.95)
+map2_dfr(.x = x,.y = n,~binom::binom.confint(n = .y,x = .x,conf.level = conf_level,methods = "asymptotic")) |>
+  mutate(wideness = upper-lower) |>
+  add_column(conf_level = conf_level) |>
+  select(-method) |>
+  gt() |>
+  fmt_percent(columns = c(mean:upper,conf_level),decimals = 1) |>
+  cols_label(
+    conf_level = md("Conf. Level")
+  ) |>
+  tab_header(
+    title = "Confidence Interval",
+    subtitle = "Variation at different values of n and fixed confidence level"
+  ) |>
+  fmt_number(wideness,decimals = 3) |>
+  gtExtras::gt_theme_espn()
 ```
 
-Let us take a deck with `r n` games and `r x` wins, the 60%
-win-rate estimate obtained as $\frac{\#wins}{\#games}$ is a point
-estimate while the CI is `r CI`.
+### Overlapping lines
 
-Their use is intrinsically connection with hypothesis testing so CI also
-provides a rigorous frame about how to interpret them.
+It's possible to finally introduce what is most likely the easiest and most important use of CI: hypothesis testing.
 
-Suppose we we would test if the deck win-rate is 60%%.
+Thanks to the CI it is really easy to answer the question:
 
-As we can see that the CI does includes that value 57% \< 60% \< 63%,
-then we don't reject hypothesis that the WR is indeed 60%.
+* Are two decks win-rates significantly different?
 
-On the other hand, if the CI was, let's say [54.0%,57.0%] then we would
-reject the hypothesis that the win-rate is 60%, having support that the
-true win-rates lies elsewhere.
+And the similar question:
 
-> It's very important to be careful how to interpret a statistical
-> hyphotesis. One **NEVER PROVES** something, but it can reject an
-> hypothesis, giving at most *support* to the opposite but never proving
-> it. Think of SCP-55, all that is known is that it is not round, what
-> shapes does it have are still an infinite amount of alternative
-> options
+* Does my deck have a positive/negative win-rate?
 
 Now, let us use the example from the introduction.
 
@@ -462,12 +472,16 @@ tibble(
 The rules examples in Fig:\@ref(fig:example-middle) doesn't differ from
 what we previously told and so:
 
--   deckB confidence interval is all above the 50% win-rate
-    $\rightarrow$ we support the hypothesis that the win-rate is indeed
-    positive
+* deckB confidence interval is all above the 50% win-rate $\rightarrow$ we support the hypothesis that the win-rate is indeed positive
 
--   deckA confidence interval includes the 50% win-rate $\rightarrow$ we
-    can't determine if the win-rate is positive or negative.
+* deckA confidence interval includes the 50% win-rate $\rightarrow$ we can't determine if the win-rate is positive or negative.
+    
+> It's very important to be careful how to interpret a statistical
+> hyphotesis. One **NEVER PROVES** something, but it can reject an
+> hypothesis, giving at most *support* to the opposite but never proving
+> it. Think of SCP-55, all that is known is that it is not round, what
+> shapes does it have are still an infinite amount of alternative
+> options    
 
 ## If you stare too long into the data... they may lie to to!
 

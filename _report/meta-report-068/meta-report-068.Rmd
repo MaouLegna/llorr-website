@@ -11,7 +11,7 @@ params:
   nGrid: 10
   nDeck_cc:  20
   nDeck_day: 12
-  min_games: 50
+  min_games: 10
 
 title: | 
   `r params$title`
@@ -30,7 +30,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
