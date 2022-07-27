@@ -233,7 +233,7 @@ As this section wants to be really easy and minimal we also add the as number of
 
 This section will go a bit more in depth in the use of CI while still refraining ourselves to use many formulae.
 
-## Gomu gomu no interval
+## Stretch the Interval
 
 We shall take a little detour to expand the relationship between the data at our disposal and the confidence level.
 
@@ -249,15 +249,7 @@ As we want that most of our CI may be the ones that do contain the true value, w
 
 The most common values of confidence level used are 90%, 95% and 99%, with 95% be more common of the three.
 
-* **n**: the amount of data at our disposal, for example the number of games of certain deck for which we wants to estimate the win-rate. at fixed confidence level, the higher is n, the smaller is the confidence interval
-
-n ($\uparrow$) $\rightarrow$ range of confidence interval ($\downarrow$)
-
-It is suggested to have $n \ge 30$ and $n \times \hat{p} \ge 5$
-
-Now that the relationships are defined, we wants to show the extent of our choices to the results.
-
-What follows is an example on the effect of the the confidence level or the amount of games available for a deck with $55\%$ win-rate and either a fixed confidence level of $95\%$ or fixed 1000 games.
+What follows is a table showing the wideness of the CI at a fixed amount of data. Let us also remember, the smaller the CI is the better is out estimation.
 
 ```{r fixed-n}
 n  <- 1000
@@ -283,9 +275,15 @@ map_dfr(conf_level,~binom::binom.confint(n = n,x = x,conf.level = .x,methods = "
   gtExtras::gt_theme_espn()
 ```
 
-At a fixed value of confidence, the smaller a CI is the more confident we are about our estimation.
+* **n**: the amount of data at our disposal, for example the number of games of certain deck for which we wants to estimate the win-rate. at fixed confidence level, the higher is n, the smaller is the confidence interval
 
-What is we let n change instead?
+n ($\uparrow$) $\rightarrow$ range of confidence interval ($\downarrow$)
+
+It is suggested to have $n \ge 30$ and $n \times \hat{p} \ge 5$
+
+Now that the relationships are defined, we wants to show the extent of our choices to the results.
+
+Similarly the previous table, here is an example with fixed confidence level an varying n:
 
 ```{r fixed-conf}
 n  <- c(10^2,    10^3,    10^4,    10^5    )
@@ -340,9 +338,9 @@ intro_example |>
   mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
   as_tibble() |>
   ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
-  geom_segment() +
-  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5 ) +
-  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5 ) +
+  geom_segment(size=1) +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5, size=1.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5, size=1.5 ) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
   labs(
     x = element_blank(),
@@ -353,12 +351,19 @@ intro_example |>
   theme(legend.position = "none")
 ```
 
-We simply look at their CI and check if their intervals do overlap or
-not. It they overlap their difference is not statistically significant.
+We simply look at their CI and check if the intervals do overlap or
+not. It they overlap, like in this case, their difference is not statistically significant.
 
 In Fig:\@ref(fig:example-wIntersection) the line overlap $\rightarrow$
-we don't reject the equality of win-rates -\> there is support on the
+we don't reject the equality of win-rates $\rightarrow$ there is support on the
 **equality of win-rates**.
+
+> It's very important to be careful how to interpret a statistical
+> hyphotesis. One **NEVER PROVES** something, but it can reject an
+> hypothesis, giving at most *support* to the opposite but never proving
+> it. Think of SCP-55, all that is known is that it is not round, what
+> shapes does it have are still an infinite amount of alternative
+> options    
 
 ```{r example-woIntersection, fig.width=6, fig.height=4}
 tibble(
@@ -368,9 +373,9 @@ tibble(
   ) |>
   mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
   ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
-  geom_segment() +
-  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5 ) +
-  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5 ) +
+  geom_segment(size=1) +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5, size=1.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5, size=1.5 ) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
   labs(
     x = element_blank(),
@@ -390,8 +395,7 @@ $\rightarrow$ there is support on the **inequality of win-rates**.
 So everything seems pretty easy: lines overlap = no difference, no
 overlap = different enough...
 
-... well, no, unless you are working on a very important model you don't
-want to be as strict and try to consider each case
+... well, sort of, unless you are working on a very important model you don't want to be as strict and try to consider each case
 
 ```{r example-fringe, fig.width=6, fig.height=4}
 wr_1 = 0.54
@@ -409,9 +413,9 @@ tibble(
   ) |>
   mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
   ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
-  geom_segment() +
-  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5 ) +
-  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5 ) +
+  geom_segment(size=1) +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5, size=1.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5, size=1.5 ) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
   labs(
     x = element_blank(),
@@ -422,21 +426,17 @@ tibble(
   theme(legend.position = "none")
 ```
 
-In Fig:\@ref(fig:example-fringe) the two lines overlap but personally we
-would reject the equality of win-rates. It happens for a very small
-section and maybe the sample size is not even that big for deckA. [^1]
+In Fig:\@ref(fig:example-fringe) the two lines overlap but personally we thinks it would reject the equality of win-rates. It happens for a very small section and maybe the sample size is not even that big for deckA. [^1]
 
-[^1]: deckA has 250 gci_example, while deckB has 1000 gci_example
+[^1]: deckA has 250 games, while deckB has 1000 games
 
-We don't want to say that sometimes there are no rules, it's more that
-things are not so black and white and one must learn to navigate in the
-infinite sea of grey.
+With this we don't want to say that sometimes there are no rules about what to conclude, just that sometimes, it's important to be flexible, everything is not black and white and to truly understand the data one must learn to navigate in the infinite sea of greys.
 
-So, after this what I must conclude is that one must decide subjectively
-each time? Once we set some rules we should try to follow them as much
-as we can.
+So, after this what I must conclude is that one must decide subjectively each time? Once we set some rules we should try to follow them as much as we can but we must always consider what is the implication of the choices we makes.
 
-## Are you winning son?
+As an example: Assume from the example \@ref{} that deckA is the win-rate of deck without a certain card X while deckB is the win-rate of the same deck but also a certain card X. Saying the two win-rates are the same would mean that that card has no benefits and as we mentioned, this doesn't seems to be the case. So it's better to break the rule and say "There is indeed a difference that should be explained by the included of card X"
+
+## Are you winning son? On positive/negative win-rates
 
 While the comparison of decks' CI one against each other can help us
 discern significant differences, this is hardly what we would normally
@@ -457,8 +457,8 @@ tibble(
   ) |>
   mutate(deck = factor(deck, levels = c("deckB","deckA"),ordered = T) ) |>
   ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
-  geom_segment() +
-  geom_vline(aes(xintercept  = 0.5), colour="black", linetype = 2, alpha = 0.5 ) +
+  geom_segment(size=1) +
+  geom_vline(aes(xintercept  = 0.5), colour="black", linetype = 2, alpha = 0.5, size = 1.5 ) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
   labs(
     x = element_blank(),
@@ -475,42 +475,30 @@ what we previously told and so:
 * deckB confidence interval is all above the 50% win-rate $\rightarrow$ we support the hypothesis that the win-rate is indeed positive
 
 * deckA confidence interval includes the 50% win-rate $\rightarrow$ we can't determine if the win-rate is positive or negative.
-    
-> It's very important to be careful how to interpret a statistical
-> hyphotesis. One **NEVER PROVES** something, but it can reject an
-> hypothesis, giving at most *support* to the opposite but never proving
-> it. Think of SCP-55, all that is known is that it is not round, what
-> shapes does it have are still an infinite amount of alternative
-> options    
-
-## If you stare too long into the data... they may lie to to!
-
-<https://xkcd.com/882/>
 
 ## To Recap
 
+Confidence intervals are a really easy instrument for comparison of the win-rate (statistics) we are using.
+
+
+`r kableExtra::text_spec("Important:", color = "red")` Be careful not to rely and confront too many CI, while not wrong by itself, the more you use the data the more likely you are recreating this famous comic, meaning that checking for something too many times may ends up give false results based on simple chance.
+
+<https://xkcd.com/882/>
+
+
+# Hard Level - TLC, when Lissandra is doing statistics
+
+## If you stare too long into the data... they may lie to to!
+
 **If we look too many data we will most likely find in false positive**
-
-When one has access to some (continuous) data, one of the easiest
-statistics we can compute is the sample mean \$\bar X \$, yet while
-effective the mean greatly reduce the overall information and we have no
-idea about the uncertainty of our results as we mentioned in the first
-example.
-
-If we have a bunch of gci_example results classified as either 0 or 1 a
-win-rate estimate will be the simple mean $\bar x = \sum_i^n x_i$
-
-In order to expand from a point estimation we can switch to an interval
-estimation
 
 **Il grafico con le simulazioni**
 
-**Add how the number of gci_example required for a better interval gros
-exponentially**
+**Add how the number of games required for a better interval grows exponentially**
 
 **Add sample size OC curve**
 
-# Hard Level - TLC, when Lissandra is doing statistics
+
 
 ## OC Curves
 
