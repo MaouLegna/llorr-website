@@ -3,7 +3,6 @@ params:
   ind: "CI"
   title: "CI?! What is a Confidence Interval?"
   description: "A little guide to understanding and use/read them and why TLC is in the mix?!"
-
 title: | 
   `r params$title`
 description: |
@@ -20,6 +19,9 @@ output:
 citation: false
 # bibliography: references.bib
 draft: TRUE
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -50,7 +52,7 @@ xaringanExtra::use_panelset()
 ```
 
 ```{css style settings, echo = FALSE}
-blockquote {
+blockquote{
     padding: 60px 80px 40px;
     position: relative;
     font-family: "Chivo";
@@ -91,7 +93,6 @@ ex_lower <- 0.525
 ex_upper <- 0.575
 ```
 
-
 Hi, Legna here, while normally I try to write those *analysis* articles
 in a publication-style format this post is meant to be an easier read
 for most players.
@@ -121,13 +122,13 @@ were actually the same"
 For those who use my content one may notice that I use something called
 Confidence Interval (CI)
 
-![](images/llorr-stats-CI-01.png)
+![](images/CI-example-llorr.png)
 
 or similarly those who use [Storm](https://twitter.com/storm_lor) [deck
 tracker](https://app.lormaster.com/meta) can see he adds a $\pm X$ value
 to a deck win-rate.
 
-![](images/lor-master-tracker-CI.png)
+![](images/CI-example-storm.png)
 
 These $\pm X$ values are again a CI.
 
@@ -143,10 +144,12 @@ divided in section of increasing difficulty. The first section should
 suffice to explain the confidence intervals while the additional ones
 are meant to explain them more in details, also by their theory.
 
-## Before we start - How to Read/Write a CI
+## Before we start
 
-A confidence interval is made of two values called lower limit and upper limit usually written inside a squared or round
-brackets like
+### How to Read/Write a CI
+
+A confidence interval is made of two values called lower limit and upper
+limit usually written inside a squared or round brackets like
 
 $[lower,upper]$
 
@@ -154,41 +157,81 @@ in addition, it's associated to a probability called confidence level.
 
 If the confidence level is not written, it assumed to be 95%
 
-A deck with 52% and 95% confidence interval between 51% and 54% is written
+`r kableExtra::text_spec("Example:", color = "red")` A deck with 52% and
+95% confidence interval between 51% and 54% is written
 
-52%; 95% CI [51%,54%] 
+52%; 95% CI [51%,54%]
 
-## Before we start - the TRUE value
+### the 'TRUE' value
 
-When we refer to the true-value ^[also referred as the population value], for example the win-rate of a deck we refer to the unknown/actual win-rate
-that is associated to the deck. It is the value we try to estimate when
-we divide $\frac{\#wins}{\#games}$.
+When we refer to the true-value [^1], for example the win-rate of a deck
+we refer to the unknown/actual win-rate that is associated to the deck.
+It is the value we try to estimate when we divide
+$\frac{\#wins}{\#games}$.
 
-The caveat is that the value we obtain from $\frac{\#wins}{\#games}$ is an estimation, we don't know how far we are from the actual
-win-rate (sort-of).
+The caveat is that the value we obtain from $\frac{\#wins}{\#games}$ is
+an estimation, we don't know how far we are from the actual win-rate
+(sort-of).
 
-Unless we truly know the generating process of the phenomenon
-we are interesting in, we **never** know the true value of what we are
+Unless we truly know the generating process of the phenomenon we are
+interesting in, we **never** know the true value of what we are
 searching for.
 
 For an easier example let's say we flip a coin 10 times. The probability
 of head and tails is the same at 50% and we will expect a number of head
 and tails equal to $0.5\times10 = 5$.
 
-Even so, we know it wouldn't be surprising to ends up with 6 head / 4 tails obtaining an estimation for head of 60% and tail at 40%. It's wrong and
-in this case we know it's wrong because we know the underling probability of getting head/tail.
+Even so, we know it wouldn't be surprising to ends up with 6 head / 4
+tails obtaining an estimation for head of 60% and tail at 40%. It's
+wrong and in this case we know it's wrong because we know the underling
+probability of getting head/tail.
 
-With most events we don't have this luxury, we don't know if the decks' win-rate we can see on various sites are *correct* or biased because of *reasons*. We can model the win-rates, we can be pretty sure about our estimations but they always remain estimations.
+With most events we don't have this luxury, we don't know if the decks'
+win-rate we can see on various sites are *correct* or biased because of
+*reasons*. We can model the win-rates, we can be pretty sure about our
+estimations but they always remain estimations.
 
 > Unless we truly know the generating process of the phenomenon we are
 > interesting in, we **never** know the true value of what we are
 > searching for.
 
-Returning to our coin example, increasing the number of coin-flips would make the estimation more stable, converging after an infinite numbers of times at the correct/true value of 0.5.
+Returning to our coin example, increasing the number of coin-flips would
+make the estimation more stable, converging after an infinite numbers of
+times at the correct/true value of 50%.
 
-Of course we don't really need infinite coin-flips or statistics would be useless
+Of course we don't really need infinite coin-flips or statistics would
+be useless
 
-# A Discursive Explanation
+[^1]: also referred as the population value
+
+# Easy level - A Discursive Explanation
+
+## Super TLDR
+
+> A Confidence Interval gives us information about the variability our
+> results. The smaller the interval is, the better is our estimation. By
+> increasing the amount of data the interval gets smaller and smaller.
+> While not the correct interpration it could be said that we can expect
+> with a certain level of confidence (usually 95%) that the value of
+> interest, like the win-rate lies between the lower and upper limit.
+
+`r kableExtra::text_spec("Question:", color = "blue")` If the (95%)
+confidence interval or Azir/Irelia ranges from
+`r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`.
+What does this tell us?
+
+`r kableExtra::text_spec("Answer:", color = "blue")` If this confidence
+interval is one of the 95% that contains the true win-rate then the true
+win-rate of Azir/Irelia lies between `r scales::percent(ex_lower,0.1)`
+and `r scales::percent(ex_upper,0.1)`.
+
+<!-- `r kableExtra::text_spec("Answer:", color = "blue")` If this confidence -->
+
+<!-- interval is one of the 95% that contains the true win-rate then the true -->
+
+<!-- win-rate population value of Azir/Irelia lies between -->
+
+<!-- `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`. -->
 
 ## What a Confidence Interval is not
 
@@ -196,60 +239,80 @@ While our intuition may tells us how to read a CI, it's also really,
 really easy to misunderstand them; so, as counter-intuitive as it may
 be, we need to start with what is **not** a confidence interval:
 
-**A Confidence Interval (CI) is not the probability that the true value of our estimate in inside a certain interval. For such case the true value is either contained or not and so the probability is either 1 (it's inside) or 0 (it's outside)**
+**A Confidence Interval (CI) is not the probability that the true value
+of our estimate in inside a certain interval. For such case the true
+value is either contained or not and so the probability is either 1
+(it's inside) or 0 (it's outside)**
 
-Let's say we have a deck with `r scales::percent(ex_mean,0.1)` WR and 95% CI of [`r scales::percent(ex_lower,0.1)`,`r scales::percent(ex_upper,0.1)`]. A CI
-doesn't mean that there is 95% probability that the true win-rate in
-between `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`. If the *true win-rate* is 54% the value is inside
-the interval and so the probability of being inside it is 100%. If the
-true value was 58% then the probability of the true value being inside
-the CI is 0%.
+Let's say we have a deck with `r scales::percent(ex_mean,0.1)` WR and
+95% CI of
+[`r scales::percent(ex_lower,0.1)`,`r scales::percent(ex_upper,0.1)`]. A
+CI doesn't mean that there is 95% probability that the true win-rate in
+between `r scales::percent(ex_lower,0.1)` and
+`r scales::percent(ex_upper,0.1)`. If the *true win-rate* is 54% the
+value is inside the interval and so the probability of being inside it
+is 100%. If the true value was 58% then the probability of the true
+value being inside the CI is 0%.
 
-`r kableExtra::text_spec("Important:", color = "red")` While the definition we provided is wrong, for those who are not working with data it's sort of an *ok definition* to remember, or well, it's better than nothing. 
+`r kableExtra::text_spec("Important:", color = "red")` While the
+definition we provided is wrong, for those who are not working with data
+it's sort of an *ok definition* to remember, or well, it's better than
+nothing.
 
 ## What a Confidence Interval is
 
-What a CI is, is a natural extension of a single point estimate (a single value)
-and it provides information about the variability, stability of our
-estimate, the win-rates.
+What a CI is, is a natural extension of a single point estimate (a
+single value) and it provides information about the variability,
+stability of our estimate, the win-rates.
 
-As a simplification: assume we were to take 100 sites that collect Legends of Runeterra (LoR) data from the API, but because of Riot messing up each site can only collect a small number of games for each deck.
+As a simplification: assume we were to take 100 sites that collect
+Legends of Runeterra (LoR) data from the API, but because of Riot
+messing up each site can only collect a small number of games for each
+deck.
 
-If we compute the 95% confidence interval from each site we can expect that 95 of the 100 sites have an interval that do contain the true win-rate.
+If we compute the 95% confidence interval from each site we can expect
+that 95 of the 100 sites have an interval that do contain the true
+win-rate.
 
-For a visual explanation of the concept please refer to the example in **later section**.
-
-`r kableExtra::text_spec("Question:", color = "blue")` If the (95%) confidence interval or Azir/Irelia ranges from `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`. What does this tell us?
-
-`r kableExtra::text_spec("Answer:", color = "blue")` If this confidence interval is one of the 95% that contains the true win-rate then the true win-rate population value of Azir/Irelia lies between `r scales::percent(ex_lower,0.1)` and `r scales::percent(ex_upper,0.1)`.
-
-As this section wants to be really easy and minimal we also add the as number of data we use to create the CI increase the smaller the range for lower-upper limits gets as we would expect as our estimate gets more stable. This point will be expanded first in the next section.  
-
-### Super TLDR
-
-> A Confidence Interval gives us information about the variability our results. The smaller the interval is, the better is our estimation. By increasing the amount of data the interval gets smaller and smaller. While not the correct interpration it could be said that we can expect with a certain level of confidence (usually 95%) that the value of interest, like the win-rate lies between the lower and upper limit.
+For a visual explanation of the concept please refer to the example in
+later section.
 
 # Mid Level - Reject Points, embrace Intervals
 
-This section will go a bit more in depth in the use of CI while still refraining ourselves to use many formulae.
+This section will go a bit more in depth in the use of CI while still
+refraining ourselves to use many formulae.
 
 ## Stretch the Interval
 
-We shall take a little detour to expand the relationship between the data at our disposal and the confidence level.
+We shall take a little detour to expand the relationship between the
+data at our disposal and the confidence level.
 
-As we briefly mentioned in the previous section, we want the CI to be as small as possible, while still being relevant.
+As we briefly mentioned in the previous section, we want the CI to be as
+small as possible, while still being relevant.
 
-Assuming we are dealing with the same kind of data there are two values that can influence the range of a CI:
+Assuming we are dealing with the same kind of data, like using always
+the same deck, there are two values that can influence the range of a
+CI:
 
-* **confidence level**: the probability by which we wants our CI to contains the population value, our win-rates. at fixed number of data (n), the higher the confidence level the bigger is the confidence interval
+#### Changing the Confidence Level
 
-confidence level ($\uparrow$) $\rightarrow$ range of confidence interval ($\uparrow$)
+the probability by which we wants our CI to contains the population
+value, our win-rates. at fixed number of data (n), the higher the
+confidence level the bigger is the confidence interval
 
-As we want that most of our CI may be the ones that do contain the true value, we want to have the confidence level to be high enough that we don't have to worry too much about it.
+**confidence level (**$\uparrow$) $\rightarrow$ range of confidence
+interval ($\uparrow$)
 
-The most common values of confidence level used are 90%, 95% and 99%, with 95% be more common of the three.
+As we want that most of our CI may be the ones that do contain the true
+value, we want to have the confidence level to be high enough that we
+don't have to worry too much about it.
 
-What follows is a table showing the wideness of the CI at a fixed amount of data. Let us also remember, the smaller the CI is the better is out estimation.
+The most common values of confidence level used are 90%, 95% and 99%,
+with 95% be more common of the three.
+
+What follows is a table showing the wideness of the CI at a fixed amount
+of data (Tab:\@ref(tab:fixed-n)). Let us also remember, the smaller the
+CI is the better is out estimation.
 
 ```{r fixed-n}
 n  <- 1000
@@ -268,26 +331,44 @@ map_dfr(conf_level,~binom::binom.confint(n = n,x = x,conf.level = .x,methods = "
     conf_level = md("Conf. Level")
   ) |>
   tab_header(
-    title = "Confidence Interval",
-    subtitle = "Variation at different values of conf.level and fixed n"
+    title = "CI Variation at different values of conf.level and fixed n"
   ) |>
   fmt_number(wideness,decimals = 3) |>
   gtExtras::gt_theme_espn()
 ```
 
-* **n**: the amount of data at our disposal, for example the number of games of certain deck for which we wants to estimate the win-rate. at fixed confidence level, the higher is n, the smaller is the confidence interval
+<caption>
 
-n ($\uparrow$) $\rightarrow$ range of confidence interval ($\downarrow$)
+(#tab:fixed-n)Fixed n table
 
-It is suggested to have $n \ge 30$ and $n \times \hat{p} \ge 5$
+</caption>
 
-Now that the relationships are defined, we wants to show the extent of our choices to the results.
+The more *confident* we want to be regarding our results the wider is
+the range of the CI, ranging in this case from a min of around 2% with
+50% confidence to a max of 8% range with a 99% confidence.
 
-Similarly the previous table, here is an example with fixed confidence level an varying n:
+#### Changing Confidence Level
+
+the amount of data at our disposal, for example the number of games of
+certain deck for which we wants to estimate the win-rate. at fixed
+confidence level, the higher is n, the smaller is the confidence
+interval
+
+**n (**$\uparrow$) $\rightarrow$ range of confidence interval
+($\downarrow$)
+
+It is suggested to have $n \ge 30$ and $n \times \hat{p} \ge 5$ with
+$\hat{p} = \frac{\#wins}{\#games}$
+
+Now that the relationships are defined, we wants to show the extent of
+our choices to the results.
+
+Similarly the previous table, here is an example with fixed confidence
+level an varying n:
 
 ```{r fixed-conf}
-n  <- c(10^2,    10^3,    10^4,    10^5    )
-x  <- c(.55*10^2,.55*10^3,.55*10^4,.55*10^5)
+n  <- c(10^2, 500, 10^3, 10^4, 10^5)
+x  <- .55*n
 
 conf_level = .95
 
@@ -301,31 +382,48 @@ map2_dfr(.x = x,.y = n,~binom::binom.confint(n = .y,x = .x,conf.level = conf_lev
     conf_level = md("Conf. Level")
   ) |>
   tab_header(
-    title = "Confidence Interval",
-    subtitle = "Variation at different values of n and fixed confidence level"
+    title = "CI Variation at different values of n and fixed conf.level"
   ) |>
   fmt_number(wideness,decimals = 3) |>
   gtExtras::gt_theme_espn()
 ```
 
-### Overlapping lines
+<caption>
 
-It's possible to finally introduce what is most likely the easiest and most important use of CI: hypothesis testing.
+(#tab:fixed-conf)Fixed Conf.Level table
+
+</caption>
+
+Compared to the results in Tab:\@ref(tab:fixed-n), in
+Tab:\@ref(tab:fixed-conf) at fixed conf.level, the number of data/games
+is even more effective in influencing the CI range and the more data we
+have the better. Yet, it's also possible to notice that we have to
+increase 10fold the amount of data at our disposal to have to reduce the
+CI range to around 1/3rd of it's previous value. [^2]
+
+[^2]: careful that this relationship depends on the win-rate and
+    confidence level, so it's not a golden-rule, more on this in the
+    next session
+
+### Comparing Win Rates - Overlapping lines
+
+It's possible to finally introduce what is most likely the easiest and
+most important use of CI: *hypothesis testing*.
 
 Thanks to the CI it is really easy to answer the question:
 
-* Are two decks win-rates significantly different?
+-   Are two decks win-rates significantly different?
 
 And the similar question:
 
-* Does my deck have a positive/negative win-rate?
+-   Does a deck have a positive/negative win-rate?
 
 Now, let us use the example from the introduction.
 
 We have two decks, one with win-rate at 55.5% and one with win-rate at
 55%. How can we say with confidence that they do indeed differ?
 
-```{r example-wIntersection, fig.width=6, fig.height=4}
+```{r example-wIntersection, fig.cap="example-wIntersection", fig.width=6, fig.height=4}
 n_intro <- 10^4
 
 intro_example <- rbind(
@@ -351,21 +449,22 @@ intro_example |>
   theme(legend.position = "none")
 ```
 
-We simply look at their CI and check if the intervals do overlap or
-not. It they overlap, like in this case, their difference is not statistically significant.
+We simply look at their CI and check if the intervals do overlap or not.
+It they overlap, like in this case, their difference is not
+statistically significant.
 
 In Fig:\@ref(fig:example-wIntersection) the line overlap $\rightarrow$
-we don't reject the equality of win-rates $\rightarrow$ there is support on the
-**equality of win-rates**.
+we don't reject the equality of win-rates $\rightarrow$ there is
+**support** on the **equality of win-rates**.
 
 > It's very important to be careful how to interpret a statistical
 > hyphotesis. One **NEVER PROVES** something, but it can reject an
 > hypothesis, giving at most *support* to the opposite but never proving
 > it. Think of SCP-55, all that is known is that it is not round, what
 > shapes does it have are still an infinite amount of alternative
-> options    
+> options
 
-```{r example-woIntersection, fig.width=6, fig.height=4}
+```{r example-woIntersection, fig.cap="example-woIntersection", fig.width=6, fig.height=4}
 tibble(
   deck = c("deckA","deckB"), 
   lower = c(0.52, 0.545),
@@ -395,9 +494,10 @@ $\rightarrow$ there is support on the **inequality of win-rates**.
 So everything seems pretty easy: lines overlap = no difference, no
 overlap = different enough...
 
-... well, sort of, unless you are working on a very important model you don't want to be as strict and try to consider each case
+... well, sort of, unless you are working on a very important model you
+don't want to be as strict and try to consider each case
 
-```{r example-fringe, fig.width=6, fig.height=4}
+```{r example-fringe, fig.cap="example-fringe", fig.width=6, fig.height=4}
 wr_1 = 0.54
 n_1 = 250
 wr_2 = 0.63
@@ -426,15 +526,100 @@ tibble(
   theme(legend.position = "none")
 ```
 
-In Fig:\@ref(fig:example-fringe) the two lines overlap but personally we thinks it would reject the equality of win-rates. It happens for a very small section and maybe the sample size is not even that big for deckA. [^1]
+In Fig:\@ref(fig:example-fringe) the two lines overlap but personally we
+thinks it would reject the equality of win-rates. It happens for a very
+small section and maybe the sample size is not even that big for deckA.
+[^3]
 
-[^1]: deckA has 250 games, while deckB has 1000 games
+With this we don't want to say that sometimes there are no rules about
+what to conclude, just that sometimes, it's important to be flexible,
+everything is not black and white and to truly understand the data one
+must learn to navigate in the infinite sea of greys.
 
-With this we don't want to say that sometimes there are no rules about what to conclude, just that sometimes, it's important to be flexible, everything is not black and white and to truly understand the data one must learn to navigate in the infinite sea of greys.
+So, after this what I must conclude is that one must decide subjectively
+each time? Once we set some rules we should try to follow them as much
+as we can but we must always consider what is the implication of the
+choices we makes.
 
-So, after this what I must conclude is that one must decide subjectively each time? Once we set some rules we should try to follow them as much as we can but we must always consider what is the implication of the choices we makes.
+We conclude this section with an example taken from a discussion with
+Leer:
 
-As an example: Assume from the example \@ref{} that deckA is the win-rate of deck without a certain card X while deckB is the win-rate of the same deck but also a certain card X. Saying the two win-rates are the same would mean that that card has no benefits and as we mentioned, this doesn't seems to be the case. So it's better to break the rule and say "There is indeed a difference that should be explained by the included of card X"
+![](images/example-leer.png)
+
+We have two versions of Aphelios Viktor whose decklist differ from a
+single card and nothing else, the first with with has Vi, the second one
+has Starshaping.
+
+The two deck do seems to differ quite a lot, but let's look at the CI
+
+```{r example-leer, fig.cap="example-leer", fig.width=6, fig.height=4}
+CI_1 <- binom::binom.confint(x = 590,n =  1089, 0.95, methods = "exact")[4:6]
+CI_2 <- binom::binom.confint(x = 595,n =  1040, 0.95, methods = "exact")[4:6]
+
+leer_label <- c("deck-w/Vi","deck-w/Starshaping")
+
+tibble(
+  deck = leer_label, 
+  lower = c(CI_1$lower, CI_2$lower),
+  upper = c(CI_1$upper, CI_2$upper)
+  ) |>
+  mutate(deck = factor(deck, levels = leer_label,ordered = T) ) |>
+  ggplot(aes(x = lower, y = deck, xend = upper, yend = deck, colour = deck)) +
+  geom_segment(size=1) +
+  geom_vline(aes(xintercept  = lower[2]), linetype = 2, alpha = 0.5, size=1.5 ) +
+  geom_vline(aes(xintercept  = upper[1]), linetype = 2, alpha = 0.5, size=1.5 ) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1) ) +
+  labs(
+    x = element_blank(),
+    y = element_blank()
+  ) +
+  theme_539() +
+  scale_colour_hue("clarity") +
+  theme(legend.position = "none")
+```
+
+By looking at Fig:\@ref(fig:example-leer) The two deck doesn't seems to
+differ as much anymore.
+
+One may say: "but the WR difference is of even 3 point!"
+
+Which is true, but less us also see the data is another way:
+
+```{r}
+tribble(
+  ~A, ~B, ~C,
+  "#wins",  595,  590,
+  "#games", 1040, 1089
+) |> 
+  gt() |>
+  cols_label(
+    A = md(""),
+    B = leer_label[1],
+    C = leer_label[2]
+  )
+```
+
+The difference is of 5 additional wins with 50 less games
+
+While the difference is not little, is it really that incredible? Assume
+that the Vi version is played usually by more skilled players, that
+alone could easily explain the difference, add before even adding
+potential factors like luck of match-ups and similar point let us ask
+the following question:
+
+-   Vi is a 5-cost single-copy card, should we really assume that the
+    differences in win-rate can be fully explained by that single
+    difference? It is was a full set of lower cost cards the assumption
+    could be worth considering but this case seems to us like pushing
+    the limits.
+
+Of course this is only our educated guess, the impact of single
+copy(ies) of cards is something we prefer to refrain from doing at leave
+it to figures like \<Dr.LoR\>.
+
+<!-- As an example: Assume from the example that deckA is the win-rate of deck without a certain card X while deckB is the win-rate of the same deck but also a certain card X. Saying the two win-rates are the same would mean that that card has no benefits and as we mentioned, this doesn't seems to be the case. So it's better to break the rule and say "There is indeed a difference that should be explained by the included of card X" -->
+
+[^3]: deckA has 250 games, while deckB has 1000 games
 
 ## Are you winning son? On positive/negative win-rates
 
@@ -449,7 +634,7 @@ another very basic question that someone would want to know: it my deck
 actually good? Or to put it differently: does my deck have a positive
 win-rate?
 
-```{r example-middle, fig.width=6, fig.height=4}
+```{r example-middle, fig.cap="example-4", fig.width=6, fig.height=4}
 tibble(
   deck = c("deckA","deckB"), 
   lower = c(0.48, 0.52),
@@ -472,33 +657,66 @@ tibble(
 The rules examples in Fig:\@ref(fig:example-middle) doesn't differ from
 what we previously told and so:
 
-* deckB confidence interval is all above the 50% win-rate $\rightarrow$ we support the hypothesis that the win-rate is indeed positive
+-   deckB confidence interval is all above the 50% win-rate
+    $\rightarrow$ we support the hypothesis that the win-rate is indeed
+    positive
 
-* deckA confidence interval includes the 50% win-rate $\rightarrow$ we can't determine if the win-rate is positive or negative.
+-   deckA confidence interval includes the 50% win-rate $\rightarrow$ we
+    can't determine if the win-rate is positive or negative.
+
+If we are only interested in knowing if a deck has positive/negative
+win-rate or note, as the key point is having the CI including the 50%
+value or not there two consequences to remember:
+
+-   Even if we have few games, if the true win-rate is high or low
+    enough we don't need that many games to say if a deck is good/bad.
+
+Looking back at Tab:\@ref(tab:fixed-conf), around 500 should suffice for
+a deck with 55% win-rate. But that number decrease as the win-rate
+increase requiring just 100 games if the win-rate was 60%
+
+```{r}
+binom::binom.confint(n = 100,x = 60,conf.level = 0.95,methods = "asymptotic")[4:6] |>
+  mutate(across(everything(),~scales::percent(.,accuracy = 0.1))) |> 
+  kable()
+```
+
+-   If we have a win-rate very close to 50%, it's pretty much impossible
+    to discern the direction of the win-rate to pure chance. Even worse
+    considering we know we should account for factors like skills.
+
+This result was to be expected, after-all, assume the true win-rate lays
+exactly at 50%, not even an infinite amount of games should be able to
+provide us a definitive answer.
+
+<invincible-meme>
 
 ## To Recap
 
-Confidence intervals are a really easy instrument for comparison of the win-rate (statistics) we are using.
+Confidence intervals are a really easy instrument for comparison of the
+win-rate (statistics) we are using. To hyper-simplify: compare the
+interval from the CI with what we are interested in, if there is no
+overlap there is no statistically significant difference, when
+overlapping the difference is not significant.
 
+In the next section we will expand on some of the concepts explained up
+until now and some more but with one crucial difference: math will now
+start to appear, the countdown was completed with no promising
+future(?).
 
-`r kableExtra::text_spec("Important:", color = "red")` Be careful not to rely and confront too many CI, while not wrong by itself, the more you use the data the more likely you are recreating this famous comic, meaning that checking for something too many times may ends up give false results based on simple chance.
+# Lissandra (Hard) Level - When the Ice Witch is actually doing statistics
 
-<https://xkcd.com/882/>
-
-
-# Hard Level - TLC, when Lissandra is doing statistics
-
-## If you stare too long into the data... they may lie to to!
+We tried to avoid the use of math for so long, but truly understand some
+concept
 
 **If we look too many data we will most likely find in false positive**
 
 **Il grafico con le simulazioni**
 
-**Add how the number of games required for a better interval grows exponentially**
+**Add how the number of games required for a better interval grows
+exponentially**
 
 **Add sample size OC curve**
-
-
 
 ## OC Curves
 
