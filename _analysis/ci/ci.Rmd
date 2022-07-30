@@ -140,9 +140,16 @@ If the last two points seems a contradiction they are not but we will
 try to convey the underling reasoning.
 
 In order to increase the accessibility of the reading the article is
-divided in section of increasing difficulty. The first section should
-suffice to explain the confidence intervals while the additional ones
-are meant to explain them more in details, also by their theory.
+divided in section of increasing difficulty.\
+\
+The first section explains the confidence intervals and what they mean.
+If you want to make it quick this should be enough.
+
+The mid section explain how to use a CI and why you should want them. I
+believe that any 'pro-player' should know the concept from this section.
+
+The last section will add some theory about the CI explaining some of
+the numbers and some 'hacks'.
 
 ## Before we start
 
@@ -964,5 +971,32 @@ the probability distribution of a given random-sample-based statistic
 Wikipedia
 
 # Definition
+
+vi abbiamo parlato di stime puntuali, cioè valori specirfici di una stat
+calcolata su una statistica allo scopo di un parametro di popolazione,
+problema, il problema puntuale non sarò mai identitco al par di
+popolazione, si preferisce una stima intervallare, si associa un
+intervallo che ne indichi il grado di precisione, intervallo di
+confidenza, IC ha un certo livello di confidenza, in una certa
+percentuale di casi applicando la stessa metodolologia il parametro sarà
+contenuto negli intervalli prodotti. IC non sta ad indicare che la prob
+stia dentro l'intervallo, l'CI 1-alpha con alpha prob di errore.
+
+l'idea è più è ampio IC meno è precisa la stima ottenuta, al 95% il win
+rate è di xx ed yy si da un idea dell'ordine di grandezza anche se
+semplificato
+
+il primo step è la definizione del livello di confidenza desiderato,
+convenzionalmente 95% ma a discrezione, la stima del parametro e poi gli
+estremi aggiungendo e sotraendo un margine di errore.
+
+0.025 -\> 1.96 x errore standard
+
+è bene accompagnare alle stime puntuali gli IC per dare un idea della
+precisione delle stime
+
+numerosità del campione, varianza, intervallo di confidenza
+
+più unità campionarie, meglio è
 
 # Example
