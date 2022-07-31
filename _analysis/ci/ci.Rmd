@@ -18,7 +18,7 @@ output:
     self_contained: false
 citation: false
 # bibliography: references.bib
-draft: TRUE
+draft: FALSE
 editor_options: 
   markdown: 
     wrap: 72
@@ -46,8 +46,8 @@ knitr::opts_chunk$set(
 #' R Option
 options(scipen = 999)
 source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
+# source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
+# source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -93,17 +93,13 @@ ex_lower <- 0.525
 ex_upper <- 0.575
 ```
 
-Hi, Legna here, while normally I try to write those *analysis* articles
-in a publication-style format this post is meant to be an easier read
-for most players.
+Hi, Legna here, normally I try to write those *analysis articles* in a publication-style format, not meant to be read by everyone; this post on the other hand is meant to be an easier read and accessible for most players.
 
 I would like to say that this is the first of a series of articles meant
-to explain some statistical concepts in order to better understand the
-data and their nuances but I can hardly guarantee it, I will try, but
-most likely the cadence will be slow. Even this article took weeks not
-because the content is hard, but mostly because of a combination of
-little time plus needing to understand what and how to write the
-content.
+to explain some statistical concepts applied in Legends of Runeterra (LoR) or any other cards game, but, I can hardly guarantee it.
+
+Most likely the cadence will be slow. Even this article took weeks not mostly because of a combination of
+little time plus needing to decide what and how to write the content.
 
 # Introduction
 
@@ -133,23 +129,17 @@ to a deck win-rate.
 These $\pm X$ values are again a CI.
 
 Here, we aim to explain what confidence interval are, how they are
-computed, why you should almost always require their use and also
-why/how you shouldn't look too much into them.
-
-If the last two points seems a contradiction they are not but we will
-try to convey the underling reasoning.
+computed and why you should almost always require their use.
+<!-- and also why/how you shouldn't look too much into them. -->
 
 In order to increase the accessibility of the reading the article is
-divided in section of increasing difficulty.\
-\
-The first section explains the confidence intervals and what they mean.
-If you want to make it quick this should be enough.
+divided in section of increasing difficulty:
 
-The mid section explain how to use a CI and why you should want them. I
-believe that any 'pro-player' should know the concept from this section.
+* The first section explains the confidence intervals and what they mean. If you want to make it quick this should be enough.
 
-The last section will add some theory about the CI explaining some of
-the numbers and some 'hacks'.
+* The mid section explain how to use a CI and why you should want them. We believe that any 'pro-player' should know the concept from this section.
+
+* The third and last section will add some theory about the CI explaining some of the numbers behind them.
 
 ## Before we start
 
@@ -160,18 +150,18 @@ limit usually written inside a squared or round brackets like
 
 $[lower,upper]$
 
-in addition, it's associated to a probability called confidence level.
+in addition, it's associated to a probability called **confidence level**.
 
 If the confidence level is not written, it assumed to be 95%
 
-`r kableExtra::text_spec("Example:", color = "red")` A deck with 52% and
+`r kableExtra::text_spec("Example:", color = "blue")` A deck with 52% and
 95% confidence interval between 51% and 54% is written
 
 52%; 95% CI [51%,54%]
 
 ### the 'TRUE' value
 
-When we refer to the true-value [^1], for example the win-rate of a deck
+When we refer to the true-value [^1], for example the win-rate of a deck,
 we refer to the unknown/actual win-rate that is associated to the deck.
 It is the value we try to estimate when we divide
 $\frac{\#wins}{\#games}$.
@@ -215,7 +205,7 @@ be useless
 
 ## Super TLDR
 
-> A Confidence Interval gives us information about the variability our
+> A Confidence Interval gives us information about the variability of our
 > results. The smaller the interval is, the better is our estimation. By
 > increasing the amount of data the interval gets smaller and smaller.
 > While not the correct interpration it could be said that we can expect
@@ -268,9 +258,13 @@ nothing.
 
 ## What a Confidence Interval is
 
-What a CI is, is an *extension* of a single point estimation (a single value). By associating a level of confidence, a CI provides a degree of precision of of our estimate, the win-rates.
+What a CI is, is an *extension* of a single point estimation (a single
+value). By associating a level of confidence, a CI provides a degree of
+precision of of our estimate, like the win-rates.
 
 The bigger the range of the CI the less accurate is our estimation.
+
+---
 
 As a simplification: assume we were to take 100 sites that collect
 Legends of Runeterra (LoR) data from the API, but because of Riot
@@ -281,8 +275,7 @@ If we compute the 95% confidence interval from each site we can expect
 that 95 of the 100 sites have an interval that do contain the true
 win-rate.
 
-For a visual explanation of the concept please refer to the example in
-later section.
+For a visual explanation of the concept please refer to the example at the start of the third section (Fig.\@ref(sample-CI)).
 
 # Mid Level - Reject Points, embrace Intervals
 
@@ -319,7 +312,7 @@ with 95% be more common of the three.
 
 What follows is a table showing the wideness of the CI at a fixed amount
 of data (Tab:\@ref(tab:fixed-n)). Let us also remember, the smaller the
-CI is the better is out estimation.
+CI is (expressed as wideness in the table) the better is our estimation.
 
 ```{r fixed-n}
 n  <- 1000
@@ -351,10 +344,10 @@ map_dfr(conf_level,~binom::binom.confint(n = n,x = x,conf.level = .x,methods = "
 </caption>
 
 The more *confident* we want to be regarding our results the wider is
-the range of the CI, ranging in this case from a min of around 2% with
-50% confidence to a max of 8% range with a 99% confidence.
+the range of the CI, ranging in this case from a min of around 2% (0.021) with
+50% confidence to a max of 8% (0.081) range with a 99% confidence.
 
-#### Changing Confidence Level
+#### Changing Sample Size
 
 the amount of data at our disposal, for example the number of games of
 certain deck for which we wants to estimate the win-rate. at fixed
@@ -414,8 +407,8 @@ CI range to around 1/3rd of it's previous value. [^2]
 
 ### Comparing Win Rates - Overlapping lines
 
-It's possible to finally introduce what is most likely the easiest and
-most important use of CI: *hypothesis testing*.
+Finally we introduce what is most likely the easiest and
+most important use of CI: **hypothesis testing**.
 
 Thanks to the CI it is really easy to answer the question:
 
@@ -543,13 +536,14 @@ what to conclude, just that sometimes, it's important to be flexible,
 everything is not black and white and to truly understand the data one
 must learn to navigate in the infinite sea of greys.
 
-So, after this what I must conclude is that one must decide subjectively
-each time? Once we set some rules we should try to follow them as much
+---
+
+So, after this what we must conclude is that one must decide subjectively
+each time? No, once we set some rules we should try to follow them as much
 as we can but we must always consider what is the implication of the
 choices we makes.
 
-We conclude this section with an example taken from a discussion with
-Leer:
+To better explain what we means we conclude this section with an example taken from a discussion with [Leet](https://twitter.com/leer97):
 
 ![](images/example-leer.png)
 
@@ -606,23 +600,21 @@ tribble(
   )
 ```
 
-The difference is of 5 additional wins with 50 less games
+The difference is of 5 additional wins with 50 less games which is not that far-fetched in over 1000 games. Again (Fig.\@ref(sample-CI)) perfectly shows how much the simple effect of chance can be enought to explain those results.
 
-While the difference is not little, is it really that incredible? Assume
+In addition, even assuming the chance wasn't the true factor there could be so much more as a potential explanation. Assume
 that the Vi version is played usually by more skilled players, that
 alone could easily explain the difference, add before even adding
 potential factors like luck of match-ups and similar point let us ask
 the following question:
 
--   Vi is a 5-cost single-copy card, should we really assume that the
-    differences in win-rate can be fully explained by that single
-    difference? It is was a full set of lower cost cards the assumption
-    could be worth considering but this case seems to us like pushing
-    the limits.
+* Vi is a 5-cost single-copy card, should we really assume that the differences in win-rate can be fully explained by that single difference? It is was a full set of lower cost cards the assumption could be worth considering but this case seems to us like pushing the limits.
+
+All this is to say: be careful not to see differences everywhere just because some decks differ by a couple of percentage points. Sometimes it could just be we are focusing too much what nothing seems the equal. At the same time, as mentioned in the before also don't focus too much on the defined rules and be aware of possible differences not yet clearly defined just by a lack of data.
 
 Of course this is only our educated guess, the impact of single
 copy(ies) of cards is something we prefer to refrain from doing at leave
-it to figures like \<Dr.LoR\>.
+it to figures like [Dr.Lor](https://twitter.com/drlor4)
 
 <!-- As an example: Assume from the example that deckA is the win-rate of deck without a certain card X while deckB is the win-rate of the same deck but also a certain card X. Saying the two win-rates are the same would mean that that card has no benefits and as we mentioned, this doesn't seems to be the case. So it's better to break the rule and say "There is indeed a difference that should be explained by the included of card X" -->
 
@@ -696,7 +688,7 @@ This result was to be expected, after-all, assume the true win-rate lays
 exactly at 50%, not even an infinite amount of games should be able to
 provide us a definitive answer.
 
-<invincible-meme>
+![](images/invincible-wr05.jpg)
 
 ## To Recap
 
@@ -713,67 +705,61 @@ future(?).
 
 # Lissandra (Hard) Level - When the Ice Witch is actually doing statistics
 
-We tried to avoid the use of math for so long, but truly understand some concepts, we need to start using it. Let us start by the very definition of a CI itself.
+In this section we are going to expand on the concepts we only briefly
+mentioned before and expand on the theory behind the CI explaining some
+of the results.
 
-A confidence interval for a population mean is of the following form $\bar{x} \pm q_{1-\alpha}*SE$
+## Beyond Good and Evil CI
 
-```{r}
-qt(0.975,30)
+In the discursive section we mentioned that
 
-qnorm(0.975)
-```
+> If we compute the 95% confidence interval from each site we can expect
+> that 95 of the 100 sites have an interval that do contain the true
+> win-rate.
 
+What does it actually means? Let's visually recreate the example above
+visually.
 
-```{r fig.width=12, fig.height=8, layout="l-screen"}
-set.seed(123)
-require(statsr,quietly = TRUE)
+Assume we have 100 players all equally skilled, all playing the same
+deck that we know has a 55% win-rate, also, each player plays 200 games.
 
-# parameter
-z_star_95 <- qnorm(0.975)
-z_star_99 <- qnorm(0.995)
-n <-100
+Now, for each player we compute the CI and plot each interval
+vertically, the result can be seen in Fig.\@ref(sample-CI).
 
-p = 0.55
+```{r sample-CI, fig.width=12, fig.height=8, layout="l-screen", fig.cap="simulation of 100 samples of their own CI"}
+set.seed(7998)
+z_95 <- qnorm(0.975)
+z_99 <- qnorm(0.995)
 
-ci_example <- tibble(
-  p = rnorm(n = n,mean = p,sd = p*(1-p))
-)
+p = .55
+n = 200
 
-param <- ci_example |>
-  summarise(mu = mean(p))
+tibble(
+  sample = lapply(1:100, function(x) rbernoulli(n = n,p = p) |> as.numeric() ),
+  mu     = map_dbl(sample, ~mean(.x)  ),
+  sd     = map_dbl(sample, ~sd(.x)    ),
+  n      = map_dbl(sample, ~length(.x)),
+  lower  = mu - z_95 * sd/ sqrt(n),
+  # lower  = map_dbl(sample, ~{ mean(.x) - z_95 * (sd(.x) / sqrt(length(.x)) ) } ),
+  upper  = mu + z_95 * sd/ sqrt(n)
+) |>
+  mutate(capture_mu = ifelse(lower < p & upper > p, "yes", "no")) |>
+  rowid_to_column() -> ci_example
 
-#
-# ci_example |>
-#   summarise(
-#     lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
-#     upper = mean(p) + z_star_95 * (sd(p) / sqrt(n))
-#   )
-
-ci <- ci_example |>
-  rep_sample_n(size = n, reps = n, replace = TRUE) |>
-  summarise(
-    lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
-    upper = mean(p) + z_star_95 * (sd(p) / sqrt(n))
-  ) |>
-  mutate(capture_mu = ifelse(lower < param$mu & upper > param$mu, "yes", "no"))
-
-ci_data <- data.frame(
-  ci_id = c(1:n, 1:n),
-  ci_bounds = c(ci$lower, ci$upper),
-  capture_mu = c(ci$capture_mu, ci$capture_mu)
-)
-
-ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id, 
-                           group = ci_id, color = capture_mu)) +
-  geom_point(size = 2) +  # add points at the ends, size = 2
-  geom_line() +           # connect with lines
-  geom_vline(xintercept = param$mu, color = "darkgray") + # draw vertical line
+ci_example |>
+  ggplot() +
+  geom_segment(aes(x = lower, y = rowid, xend = upper, yend = rowid, group = rowid, color = capture_mu)) +
+  geom_point(aes(x = lower, y = rowid, color = capture_mu), size = 1) +
+  geom_point(aes(x = upper, y = rowid, color = capture_mu), size = 1) +
+  geom_point(aes(x = mu, y = rowid), size = .75) +
+  geom_vline(xintercept = p, color = "darkgray") +
   theme_publication() +
   scale_x_continuous(
+    breaks = seq(0,1,0.05),
     labels = scales::percent_format(accuracy = 1)
   ) +
   labs(
-    title = "Simulation of 100 samples of 100 CI",
+    title = "Simulation of CI 100 from 100 samples",
     x = "Win Rate",
     y = element_blank()
   ) +
@@ -782,70 +768,370 @@ ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id,
     axis.title.y = element_blank(),
     axis.line.y = element_blank()
   )
-  
-  # theme_539()
+
+neg_winrate <- ci_example |>
+  filter(mu < 0.50) |>
+  NROW()
 ```
 
-Each bar is a CI from a sample that either contain (blue) the true win-rate value or it does not contain it (red).
+Each bar is a CI from a player that either contain (blue) the true
+win-rate (55%) or it does not contain it (red).
 
-Here we used 100 samples with a confidence level of 95% and as we can notice we were lucky enough to get exactly 95 CI which correctly include the 55% win-rate and 5 who doesn't. As this is dictated by change it the ratio could be different like 93 good CI and 7 bad ones but usually the ratio should be of 95:5.
+Of the 100 players we can notice we have 6 intervals that doesn't
+include 55% and so there are 94 that do contain the 55% win-rate. This
+is a result by chance but if we repeated this process for an infinite
+amount of players we would expect a ratio of 5:95.
 
-**If we look too many data we will most likely find in false positive**
+As the black dot represent the win-rate for each player we can notice it
+can differ a lot from the expected value. Not only that, sometimes it's
+so lower that even as a deck with 55% it would result as a deck with
+negative win-rate as it's lower than 50%, in this example
+`r neg_winrate` to be exact. This only by the effect of pure chance, no
+accounting for skill or MU or anything else.
 
-**Il grafico con le simulazioni**
+This is a prime example about why *personal results* are shouldn't be
+abused too much and it's usually better to just use aggregate results.
+Using personal results could also brings additional issues but that
+could be an entire article by itself. For now and this example we hope
+it's now clearer when we mention "assuming the CI is one that contains
+the true value" and about how chance can really make an impact.
 
-**Add how the number of games required for a better interval grows
-exponentially**
+## Confidence Interval
 
-**Add sample size OC curve**
+### Definition and Approximations...
 
-## OC Curves
+In the mid-section we showed in Tab:\@ref(tab:fixed-n) and
+Tab:\@ref(tab:fixed-conf) an example about the effect on the CI range
+with different values of sample size (number of games) and confidence
+level. To better explain the effect we must show the math behind them, let us start with a general definition of CI:
+
+$P( U \leq \theta \leq V)= 1-\alpha$
+
+where U and V are the lower and upper limits of our interval.
+
+`r kableExtra::text_spec("Note:", color = "blue")`usually the confidence
+level is defined as 1 minus the error we want to have, so with an error
+of 5% we have a confidence level of 1 - 0.05 = 95%.
+
+The equation above can also be written as:
+
+$CI = [\hat{F}^{-1}_{(1-\alpha)/2},\hat{F}^{-1}_{(1+\alpha)/2}]$
+
+by using the quantile of the statistics we are using.
+
+These equations are hardly clear and for those who did some basic of statistics they should not even seems familiar.
+
+Isn't there a simple expression to define how to the compute the CI of a win-rate?
+
+This is where we use the reality warping power of the Central Limit
+Theorem [^4], which, given very easy conditions, it obliterates any
+distribution we needs and replace them with a very easy Normal
+distribution.
+
+Because of that the problem turns into:
+
+$P( -z_{\alpha/2} \leq \frac{p-\mu}{\sigma\sqrt{n}} \leq z_{\alpha/2}) = 1-\alpha$
+
+Where $z_\alpha$ are the quantile of level of a Normal distribution.
+
+The previous expression can be further rewritten as to obtain the interval defined by
+
+$\mu \pm z_{\alpha/2} \frac{\sigma}{\sqrt(n)}$
+
+and as we are dealing with a proportion
+$\hat\mu = p = \frac{\#wins}{\#games}$ and
+$\hat\sigma = \hat{p}(1-\hat{p})$ we obtain:
+
+$p \pm z_{1-\alpha/2} \sqrt{\frac{p(1-p)}}{n}}$
+
+After regurgitating all those expressions we are left with a very simple
+expression, which is even simpler if we consider that when confidence
+level of 95% we have $z_{\alpha/2} = 1.96 \sim 2$
+
+$p \pm 2 \sqrt{\frac{{p(1-p)}}{n}}$
+
+While normally we could stop here we complete this section with a little 'hack'. If we want a very quick computation of the CI and if our win-rate is between 30% and 70%, so pretty much all realistic cases, then $\sqrt{p(1-p)}$ doesn't differ too much from when $p=50\%$ and $p(1-p) = 1/2$ making it so that we could very appropriately obtain
+
+$p \pm \frac{1}{\sqrt{n}}$
+
+Again, this is a very rough approprimation which shouldn't be normally used but it can help to obtain a basic idea about how big our CI should be.
+
+[^4]: or Teorema Limite Centrale, TLC in italian
+
+### ...and Curves
+
+Now the relationship we defined as how a CI's range change at varying
+the value of confidence level and sample size (n or number of games)
+should be clearer.
+
+For reference here are some values of confidence level and the
+associated $z_{\alpha/2}$
+
+```{r}
+tribble(
+  ~conf, ~z,
+  0.50, qnorm((1-.50/2)),
+  0.95, qnorm((1-.05/2)),
+  0.99, qnorm((1-.01/2)),
+  0.9999, qnorm((1-.0001/2))
+) |>
+  gt() |>
+  fmt_percent(columns = conf,decimals = 2) |>
+  fmt_number(columns = z,n_sigfig = 3) |>
+  cols_label(
+    conf = md("Conf. Level"),
+    z = md("Z")
+  ) |>
+  gtExtras::gt_theme_espn()
+
+```
+
+The confidence level while impactfull is not usually the one that matter
+when creating a confidence level. Even more considering it's usually
+fixed at 95% so with associated value of 1.96.
+
+The number of games is what usually can contribute the most to the CI's
+range but as the expression shows, it's not by the linear increase of
+the number of games but instead by the root squared number of games.
+That is why at some point the range doesn't decrease by much even after
+adding so many games.
+
+In Fig.\@ref(plot-range-a) we present a graphical representation of the
+CI's range at fixed confidence level of 95% varying the number of games
+and for different win-rates. In Fig.\@ref(plot-range-b) we restrict the
+number of games to a smaller, more common range.
+
+```{r create-curves}
+win_rates <- c(.55, .70, .85)
+games     <- seq(10,250000,10)
+
+tidyr::crossing(win_rates,games) |>
+  mutate(
+    lower = win_rates - 1.96*sqrt(win_rates*(1-win_rates)/games ),
+    upper = win_rates + 1.96*sqrt(win_rates*(1-win_rates)/games ),
+    range = upper - lower
+  ) |>
+  mutate(label = scales::percent(win_rates,accuracy = 0.1) |> as_factor() ) -> range_curves
+```
+
+```{r plot-range-a, fig.width=6, fig.height=4, fig.cap="CI range variation - plot a"}
+range_curves |>
+  ggplot() +
+  geom_line(aes(x = games,y = range, group=label, color=label) ) +
+  scale_x_continuous(limits = c(0,250000) ) +
+  scale_y_continuous(limits = c(0,0.1), labels = scales::percent_format(accuracy = 1)) +
+  theme_publication() +
+  labs(
+    x = "#Games",
+    y = "Range",
+    title = "Confidence Interval Range",
+    subtitle = "Variation at different win rates and number of games",
+    color="Win Rate"
+  )
+```
+
+```{r plot-range-b, fig.width=6, fig.height=4, fig.cap="CI range variation - plot b"}
+range_curves |>
+  ggplot() +
+  geom_line(aes(x = games,y = range, group=label, color=label) ) +
+  scale_x_continuous(limits = c(0,2000), breaks = seq(0,2000,200) ) +
+  scale_y_continuous(limits = c(0,0.5), labels = scales::percent_format(accuracy = 1)) +
+  theme_publication() +
+  labs(
+    x = "#Games",
+    y = "Range",
+    title = "Confidence Interval Range",
+    subtitle = "Variation at different win rates and number of games",
+    color="Win Rate"
+  )
+```
+
+With the 'hack-approximation' we described above the relationship between the CI's range and the root squared of the number of games should be even easier now.
+
+# Conclusion
+
+And so we conclude this explanation of confidence intervals. We hope we
+were able to dissipate the mystery about how they works and also
+explaining why they are so important.
+
+We hope that other "lor-stats-creators" will one day start using them
+too. The tool is very very easy to use and should be fairly easy to
+grasp. Some nuances maybe are not as easy but the very basics should
+help the most competitive players to better evaluate decks and do better
+choice.
+
+# Appendix {.appendix}
+
+## Central Limit Theoreom (CLT)
+
+Let $X_1,X_2,...,X_N$ be a set of N independent random variates and each
+$X_i$ have an arbitrary probability distribution and
+$Y = X_1 + X2 + ...+ X_n$ be the sum of the n i.i.d. random variables
+$X_i$.
+
+Let $E(Y) = \mu_Y$ and $Var(Y) = \sigma^2_Y$
+
+The Central Limit Theorem says
+
+$Y \approx N(\mu_y,\sigma^2_Y)$
+
+If the $X_i$ are i.i.d. with mean Let $\mu_X$ and variance $\sigma^2_X$,
+then $\mu_Y = n\mu_X$ and $\sigma^2_Y = n\sigma^2_X$
+
+For the sample mean $\bar{X_n}$, the CLT says
+
+$\bar{X_n} = \frac{1}n(X_1+X_2+...+X_n) \approx N(\mu_y,\sigma^2_Y)$
+
+------------------------------------------------------------------------
+
+This theorem states that when samples are large (above about 30) the
+sampling distribution will take the shape of a normal distribution
+regardless of the shape of the population from which the sample was
+drawn. For small samples the t-distribution better approximates the
+shape of the sampling distribution.
+
+We also know from this theorem the standard deviation of the sampling
+distribution (i.e., th standard error of the sample mean) will be equal
+to the standard deviation of the sample (s) divided by the square root
+of the sample size (N). The central in the name refers to the theorem
+being important and far-reaching and has nothing to do with centres of
+distribution. [^5]
+
+`r kableExtra::text_spec("Question:", color = "blue")` Someone may ask:
+
+-   If we can use the CLT for the sample mean. Why can we use it with
+    our win rates case? That is a case of a single Binomial
+    distribution. Where are the sum of variables?
+
+`r kableExtra::text_spec("Answer:", color = "blue")` The answer lies in
+the definition of the Binomial Distribution. The Bimonial distribution
+is after all, no more than a sum of Bernulli distribution with same
+probability parameter of the event but being repeated n amount of times.
+What we obtain as the win rate estimation of $\frac{\#wins}{\#games}$
+turns out to the sampling mean of n Bernulli. This is also the reason
+why the results of a Binomial distribution are said to approximate to a
+Normal distribution after around 30 repetitions $\rightarrow$ we are
+using the CLT.
+
+```{r fig.width=12, fig.height=8, layout="l-screen"}
+# # require(statsr,quietly = TRUE)
+# # parameter
+# 
+# n <-100
+# p = 0.55
+# 
+# ci_example <- tibble(
+#   p = rnorm(n = n,mean = p,sd = p*(1-p))
+# )
+# 
+# param <- ci_example |>
+#   summarise(mu = mean(p))
+# 
+# #
+# # ci_example |>
+# #   summarise(
+# #     lower = mean(p) - z_95 * (sd(p) / sqrt(n)),
+# #     upper = mean(p) + z_95 * (sd(p) / sqrt(n))
+# #   )
+# 
+# ci <- ci_example |>
+#   statsr::rep_sample_n(size = n, reps = n, replace = TRUE) |>
+#   summarise(
+#     lower = mean(p) - z_95 * (sd(p) / sqrt(n)),
+#     upper = mean(p) + z_95 * (sd(p) / sqrt(n))
+#   ) |>
+#   mutate(capture_mu = ifelse(lower < param$mu & upper > param$mu, "yes", "no"))
+# 
+# ci_data <- data.frame(
+#   ci_id = c(1:n, 1:n),
+#   ci_bounds = c(ci$lower, ci$upper),
+#   capture_mu = c(ci$capture_mu, ci$capture_mu)
+# )
+# 
+# ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id, 
+#                            group = ci_id, color = capture_mu)) +
+#   geom_point(size = 2) +  # add points at the ends, size = 2
+#   geom_line() +           # connect with lines
+#   geom_vline(xintercept = param$mu, color = "darkgray") + # draw vertical line
+#   theme_publication() +
+#   scale_x_continuous(
+#     labels = scales::percent_format(accuracy = 1)
+#   ) +
+#   labs(
+#     title = "Simulation of 100 samples of 100 CI",
+#     x = "Win Rate",
+#     y = element_blank()
+#   ) +
+#   theme(
+#     legend.position = "none",
+#     axis.title.y = element_blank(),
+#     axis.line.y = element_blank()
+#   )
+```
 
 <!-- ## Andy -->
 
 <!-- We can't access the population so we take samples There will be -->
+
 <!-- variation across samples There will be sampling errors We go crazy for -->
+
 <!-- sampling and we takes lots of sampling and we takes the means for each -->
+
 <!-- samples and plot the distribution of the means the particular sample we -->
+
 <!-- have may not have have the population values but the sampling -->
+
 <!-- distribution will give us the population value the sampling deviation -->
+
 <!-- will give us that the sampling deviation should be narrows and the -->
+
 <!-- standard deviation of the sampling distribution is the standard error -->
 
 <!-- An interval such as that across a large number of samples we contains -->
+
 <!-- the population values How wide should the interval be to contains the -->
+
 <!-- population value a lot of times we take a sample and decide to use it -->
 
 <!-- 1.96\*SE -->
 
 <!-- The estimate and its interval may or may not contain the true population -->
+
 <!-- value across a lot of sample if were to set the limits around the -->
+
 <!-- estimate around 1.96\*SE we are going to hit the population value 95% of -->
+
 <!-- SAMPLES -->
 
 <!-- Each bar is a sample that -->
 
 <!-- Intervals that contains the true population value of the paramter in 95% -->
+
 <!-- ifsamples -->
 
 <!-- NO - It's an interval i'm 95% confident that the population estimate -->
+
 <!-- falls within the interval it's an interval where there is a 95% -->
+
 <!-- probability that contains the population value! Hyper no! it's either 1 -->
+
 <!-- or 0 but you don't know which They do not reflect confidence in the -->
+
 <!-- value of the population parameter -->
 
 <!-- Assuming that this sample is one of the 95% that yields a confidence -->
+
 <!-- interval containing the true value of the parameter -->
 
 <!-- For every standard deviation change of the paramter we have an increase -->
+
 <!-- of the effect -->
 
 <!-- In statistics, a sampling distribution or finite-sample distribution is -->
+
 <!-- the probability distribution of a given random-sample-based statistic -->
+
 <!-- Wikipedia -->
 
-# Conclusion
-
-And so we conclude this explanation of confidence intervals. We hope we were able to dissipate the mystery about how they works and also explaining why they are so important.
-
-We hope that other "lor-stats-creators" will one day start using them too. The tool is very very easy to use and should be fairly easy to grasp. Some nuances maybe are not as easy but the very basics should help the most competitive players to better evaluate decks and do better choice.
+[^5]: Andy Field - An Adventure in Statistics the reality enigma. Second
+    Edition
