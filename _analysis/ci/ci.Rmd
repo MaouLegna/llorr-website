@@ -268,9 +268,9 @@ nothing.
 
 ## What a Confidence Interval is
 
-What a CI is, is a natural extension of a single point estimate (a
-single value) and it provides information about the variability,
-stability of our estimate, the win-rates.
+What a CI is, is an *extension* of a single point estimation (a single value). By associating a level of confidence, a CI provides a degree of precision of of our estimate, the win-rates.
+
+The bigger the range of the CI the less accurate is our estimation.
 
 As a simplification: assume we were to take 100 sites that collect
 Legends of Runeterra (LoR) data from the API, but because of Riot
@@ -713,8 +713,82 @@ future(?).
 
 # Lissandra (Hard) Level - When the Ice Witch is actually doing statistics
 
-We tried to avoid the use of math for so long, but truly understand some
-concept
+We tried to avoid the use of math for so long, but truly understand some concepts, we need to start using it. Let us start by the very definition of a CI itself.
+
+A confidence interval for a population mean is of the following form $\bar{x} \pm q_{1-\alpha}*SE$
+
+```{r}
+qt(0.975,30)
+
+qnorm(0.975)
+```
+
+
+```{r fig.width=12, fig.height=8, layout="l-screen"}
+set.seed(123)
+require(statsr,quietly = TRUE)
+
+# parameter
+z_star_95 <- qnorm(0.975)
+z_star_99 <- qnorm(0.995)
+n <-100
+
+p = 0.55
+
+ci_example <- tibble(
+  p = rnorm(n = n,mean = p,sd = p*(1-p))
+)
+
+param <- ci_example |>
+  summarise(mu = mean(p))
+
+#
+# ci_example |>
+#   summarise(
+#     lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
+#     upper = mean(p) + z_star_95 * (sd(p) / sqrt(n))
+#   )
+
+ci <- ci_example |>
+  rep_sample_n(size = n, reps = n, replace = TRUE) |>
+  summarise(
+    lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
+    upper = mean(p) + z_star_95 * (sd(p) / sqrt(n))
+  ) |>
+  mutate(capture_mu = ifelse(lower < param$mu & upper > param$mu, "yes", "no"))
+
+ci_data <- data.frame(
+  ci_id = c(1:n, 1:n),
+  ci_bounds = c(ci$lower, ci$upper),
+  capture_mu = c(ci$capture_mu, ci$capture_mu)
+)
+
+ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id, 
+                           group = ci_id, color = capture_mu)) +
+  geom_point(size = 2) +  # add points at the ends, size = 2
+  geom_line() +           # connect with lines
+  geom_vline(xintercept = param$mu, color = "darkgray") + # draw vertical line
+  theme_publication() +
+  scale_x_continuous(
+    labels = scales::percent_format(accuracy = 1)
+  ) +
+  labs(
+    title = "Simulation of 100 samples of 100 CI",
+    x = "Win Rate",
+    y = element_blank()
+  ) +
+  theme(
+    legend.position = "none",
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank()
+  )
+  
+  # theme_539()
+```
+
+Each bar is a CI from a sample that either contain (blue) the true win-rate value or it does not contain it (red).
+
+Here we used 100 samples with a confidence level of 95% and as we can notice we were lucky enough to get exactly 95 CI which correctly include the 55% win-rate and 5 who doesn't. As this is dictated by change it the ratio could be different like 93 good CI and 7 bad ones but usually the ratio should be of 95:5.
 
 **If we look too many data we will most likely find in false positive**
 
@@ -727,276 +801,51 @@ exponentially**
 
 ## OC Curves
 
-```{r}
-# binom::binom.confint(x = c(2, 4), n = 100, tol = 1e-8)
-# 
-# x = 2
-# n = 4
-# alpha = 0.05
-# 
-# p <- x/n
-# p <- 0.6
-# # alpha <- 1 - conf.level
-# alpha2 <- 0.5 * alpha
-# z <- qnorm(1 - alpha2)
-# z2 <- z * z
-# 
-# se <- sqrt(p * (1 - p)/n)
-# lcl <- p - z * se
-# ucl <- p + z * se
-```
+<!-- ## Andy -->
 
-```{r create-example}
-# set.seed(123)
-# 
-# n = 30
-# # stats::runif(n) > (1 - p)
-# sample1 <- purrr::rbernoulli(n = 30, p = 0.55) |> as.numeric()
-# # skimr::skim(sample1)
-```
+<!-- We can't access the population so we take samples There will be -->
+<!-- variation across samples There will be sampling errors We go crazy for -->
+<!-- sampling and we takes lots of sampling and we takes the means for each -->
+<!-- samples and plot the distribution of the means the particular sample we -->
+<!-- have may not have have the population values but the sampling -->
+<!-- distribution will give us the population value the sampling deviation -->
+<!-- will give us that the sampling deviation should be narrows and the -->
+<!-- standard deviation of the sampling distribution is the standard error -->
 
-A confidence interval for a population mean is of the following form
-x¯±z⋆sn−−√
+<!-- An interval such as that across a large number of samples we contains -->
+<!-- the population values How wide should the interval be to contains the -->
+<!-- population value a lot of times we take a sample and decide to use it -->
 
-You should by now be comfortable with calculating the mean and standard
-deviation of a sample in R. And we know that the sample size is 60. So
-the only remaining building block is finding the appropriate critical
-value for a given confidence level. We can use the qnorm function for
-this task, which will give the critical value associated with a given
-percentile under the normal distribution. Remember that confidence
-levels and percentiles are not equivalent. For example, a 95% confidence
-level refers to the middle 95% of the distribution, and the critical
-value associated with this p will correspond to the 97.5th percentile.
+<!-- 1.96\*SE -->
 
-We can find the critical value for a 95% confidence interal using
+<!-- The estimate and its interval may or may not contain the true population -->
+<!-- value across a lot of sample if were to set the limits around the -->
+<!-- estimate around 1.96\*SE we are going to hit the population value 95% of -->
+<!-- SAMPLES -->
 
-```{r}
-z_star_95 <- qnorm(0.975)
-z_star_99 <- qnorm(0.995)
+<!-- Each bar is a sample that -->
 
-ci_example <- tibble(
-  p = rnorm(n = 100,mean = 0.55,sd = 0.05)
-)
+<!-- Intervals that contains the true population value of the paramter in 95% -->
+<!-- ifsamples -->
 
-n <- NROW(ci_example)
+<!-- NO - It's an interval i'm 95% confident that the population estimate -->
+<!-- falls within the interval it's an interval where there is a 95% -->
+<!-- probability that contains the population value! Hyper no! it's either 1 -->
+<!-- or 0 but you don't know which They do not reflect confidence in the -->
+<!-- value of the population parameter -->
 
-# ## [1] 1.959964
-# which is roughly equal to the value critical value 1.96 that you’re likely familiar with by now.
-# 
-# Let’s finally calculate the confidence interval:
+<!-- Assuming that this sample is one of the 95% that yields a confidence -->
+<!-- interval containing the true value of the parameter -->
 
-ci_example |>
-  summarise(lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
-            upper = mean(p) + z_star_95 * (sd(p) / sqrt(n)))
-```
+<!-- For every standard deviation change of the paramter we have an increase -->
+<!-- of the effect -->
 
-```{r}
-require(statsr)
+<!-- In statistics, a sampling distribution or finite-sample distribution is -->
+<!-- the probability distribution of a given random-sample-based statistic -->
+<!-- Wikipedia -->
 
-param <- ci_example |>
-  summarise(mu = mean(p))
+# Conclusion
 
-ci_example |>
-  summarise(
-    lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
-    upper = mean(p) + z_star_95 * (sd(p) / sqrt(n))
-  )
+And so we conclude this explanation of confidence intervals. We hope we were able to dissipate the mystery about how they works and also explaining why they are so important.
 
-ci <- ci_example |>
-  rep_sample_n(size = n, reps = 100, replace = TRUE) |>
-  summarise(
-    lower = mean(p) - z_star_95 * (sd(p) / sqrt(n)),
-    upper = mean(p) + z_star_95 * (sd(p) / sqrt(n))
-  ) |>
-  mutate(capture_mu = ifelse(lower < param$mu & upper > param$mu, "yes", "no"))
-
-ci_data <- data.frame(
-  ci_id = c(1:100, 1:100),
-  ci_bounds = c(ci$lower, ci$upper),
-  capture_mu = c(ci$capture_mu, ci$capture_mu)
-)
-
-ggplot(data = ci_data, aes(x = ci_bounds, y = ci_id, 
-                           group = ci_id, color = capture_mu)) +
-  geom_point(size = 2) +  # add points at the ends, size = 2
-  geom_line() +           # connect with lines
-  geom_vline(xintercept = param$mu, color = "darkgray") # draw vertical line
-```
-
-```{r}
-ci_99 <- ci_example %>%
-        rep_sample_n(size = n, reps = 50, replace = TRUE) %>%
-        summarise(lower = mean(p) - z_star_99 * (sd(p) / sqrt(n)),
-                  upper = mean(p) + z_star_99 * (sd(p) / sqrt(n)))
-
-ci_99 <- ci_99 %>%
-  mutate(capture_mu = ifelse(lower < param$mu & upper > param$mu, "yes", "no"))
-
-ci_data_99 <- data.frame(ci_id = c(1:50, 1:50),
-                      ci_bounds = c(ci_99$lower, ci_99$upper),
-                      capture_mu = c(ci_99$capture_mu, ci_99$capture_mu))
-
-ggplot(data = ci_data_99, aes(x = ci_bounds, y = ci_id, 
-                           group = ci_id, color = capture_mu)) +
-  geom_point(size = 2) +  
-  geom_line() +           
-  geom_vline(xintercept = param$mu, color = "darkgray") 
-```
-
-## Article 2
-
-Review of Confidence Intervals When we compute a confidence interval, we
-first compute an estimate of a parameter with a statistic.
-
-For example, we draw a random sample then compute the sample mean to
-estimate the parameter.
-
-With a single sample (or anything short of the whole population) we
-don't know where the population mean lies, so we want to localize the
-population mean within an interval, computed from the data in the
-sample.
-
-An interval is a range of values (e.g. all real numbers between 4801 and
-6801: written [4801, 6801]). A confidence interval is a range of
-plausible intervals for the parameter. A 95% confidence interval for a
-parameter is an interval computed by a method guaranteed to successfully
-cover the parameter 95% of the time (i.e. for 95% of the samples).
-
-We call 95% the "confidence level" for the parameter. Other confidence
-levels, anything between 0% and 100%, are possible.
-
-As the confidence level increases, what happens to the width of the
-confidence interval? The width of the confidence interval increases.
-
-As a follow up to the last question, will you be more confident that the
-population mean lies in a bigger interval, or less confident. You will
-be more confident that the population mean lies in a bigger interval.
-
-As the sample size increases, what happens to the width of the
-confidence interval? The confidence level width increases as sample size
-increases.
-
-In other words, will you be able to localize the population mean better
-(in a smaller interval) with a larger sample size? Yes.
-
-If the variablility in the population increases, what happens to the
-width of the confidence interval? The width of the confidence interval
-increases as variability in the population increases.
-
-In other words, will you be able to localize the population mean better
-(in a smaller interval) with more variability in the population? No, it
-will be more difficult to localize population mean with more variability
-in the population.
-
-> Drawing Confidence Intervals Assuming You Know Shape of Sampling
-> Distribution According to the Central Limit Theorem, the sampling
-> distribution for the sample mean has a Normal (bell shaped)
-> distribution. Using this approximation, and the **68-95-99.7 Rule** to
-> assign a margin of error (half the width of the confidence interval,
-> centered on sample mean) to be 2 times the standard error (a statistic
-> that estimates the standard deviation of the sampling distribution).
-> We did this in class the Friday before Thanksgiving.
-
-We are 95% confident that the true average size of houses in ci_example
-lies between the values 8390.28 and 11747.99.
-
-For the confidence interval to be valid, the sample mean must be
-normally distributed and have standard error s/√n. What conditions must
-be met for this to be true? For this to be true, sampled observations
-need to be independent. Independence is more likely if random samplng is
-used and, if sampling without replacement, the sample size should be
-less than 10% of the population. The popluation distribution should
-either be normal or n\>30 and the population distribution is not
-extremely skewed.
-
-Exercise 4: What does 95% confidence mean? This refers to the long term
-success rate of this method, so it means that 95% of the confidence
-intervals produced will successfully capture the population parameter of
-interest, in this case, the mean Lot p of homes in ci_example.
-
-## Andy
-
-We can't access the population so we take samples There will be
-variation across samples There will be sampling errors We go crazy for
-sampling and we takes lots of sampling and we takes the means for each
-samples and plot the distribution of the means the particular sample we
-have may not have have the population values but the sampling
-distribution will give us the population value the sampling deviation
-will give us that the sampling deviation should be narrows and the
-standard deviation of the sampling distribution is the standard error
-
-An interval such as that across a large number of samples we contains
-the population values How wide should the interval be to contains the
-population value a lot of times we take a sample and decide to use it
-
-1.96\*SE
-
-The estimate and its interval may or may not contain the true population
-value across a lot of sample if were to set the limits around the
-estimate around 1.96\*SE we are going to hit the population value 95% of
-SAMPLES
-
-Each bar is a sample that
-
-Intervals that contains the true population value of the paramter in 95%
-ifsamples
-
-NO - It's an interval i'm 95% confident that the population estimate
-falls within the interval it's an interval where there is a 95%
-probability that contains the population value! Hyper no! it's either 1
-or 0 but you don't know which They do not reflect confidence in the
-value of the population parameter
-
-Assuming that this sample is one of the 95% that yields a confidence
-interval containing the true value of the parameter
-
-For every standard deviation change of the paramter we have an increase
-of the effect
-
-```{r}
-# broom::tidy(model)
-# # modelbased::estimate_means(lm,fixed=var_name)
-# 
-# car::Anova(model, type=3)
-# 
-# ggplot2::autoplot(model,which=c(1,2,3,4), colour="#5c97bf", alpha = 0.5, size = 1) + theme_minimal()
-# 
-# robust::lmRob()
-# 
-# parameters::model_parameters(model, robust=TRUE, vcov.type="HC4")
-```
-
-In statistics, a sampling distribution or finite-sample distribution is
-the probability distribution of a given random-sample-based statistic
-Wikipedia
-
-# Definition
-
-vi abbiamo parlato di stime puntuali, cioè valori specirfici di una stat
-calcolata su una statistica allo scopo di un parametro di popolazione,
-problema, il problema puntuale non sarò mai identitco al par di
-popolazione, si preferisce una stima intervallare, si associa un
-intervallo che ne indichi il grado di precisione, intervallo di
-confidenza, IC ha un certo livello di confidenza, in una certa
-percentuale di casi applicando la stessa metodolologia il parametro sarà
-contenuto negli intervalli prodotti. IC non sta ad indicare che la prob
-stia dentro l'intervallo, l'CI 1-alpha con alpha prob di errore.
-
-l'idea è più è ampio IC meno è precisa la stima ottenuta, al 95% il win
-rate è di xx ed yy si da un idea dell'ordine di grandezza anche se
-semplificato
-
-il primo step è la definizione del livello di confidenza desiderato,
-convenzionalmente 95% ma a discrezione, la stima del parametro e poi gli
-estremi aggiungendo e sotraendo un margine di errore.
-
-0.025 -\> 1.96 x errore standard
-
-è bene accompagnare alle stime puntuali gli IC per dare un idea della
-precisione delle stime
-
-numerosità del campione, varianza, intervallo di confidenza
-
-più unità campionarie, meglio è
-
-# Example
+We hope that other "lor-stats-creators" will one day start using them too. The tool is very very easy to use and should be fairly easy to grasp. Some nuances maybe are not as easy but the very basics should help the most competitive players to better evaluate decks and do better choice.
