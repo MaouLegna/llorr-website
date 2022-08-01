@@ -256,6 +256,8 @@ definition we provided is wrong, for those who are not working with data
 it's sort of an *ok definition* to remember, or well, it's better than
 nothing.
 
+`r kableExtra::text_spec("Even worse definition:", color = "red")` The CI corresponding to a deck's win-rate do not represent the interval obtained from the win-rate of the worst and best players. The definition is absolutely independent from specific players and/or their skills.
+
 ## What a Confidence Interval is
 
 What a CI is, is an *extension* of a single point estimation (a single
