@@ -174,9 +174,12 @@ Row {data-heigth="850" .tabset}
 ### MU Grid
 
 ```{r print-grid}
-grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the player who attended the last Seasonal Tournament
-                                  Order of the Archetypes based on the playrate.
-                                  Source: Metadata of games collected with RiotGames API") )
+grid_source_note <- gt::md(
+  glue::glue("MatchUp values from Ranked games of the player who attended the last Seasonal Tournament
+             Order of the Archetypes based on the playrate.
+             WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
+             Source: Metadata of games collected with RiotGames API")
+  )
 
 
 gtMU_grid <- mu_grid(mu_data = MU_tbl, dim_grid = params$dim_grid, 
