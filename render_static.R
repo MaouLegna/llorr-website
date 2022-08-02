@@ -6,8 +6,8 @@ update_lor_database(server_abbr = "EU",last_season = "S14",delete = TRUE)
 update_lor_database(server_abbr = "NA",last_season = "S14",delete = TRUE)
 update_lor_database(server_abbr = "APAC",last_season = "S14",delete = TRUE)
 
-rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu.Rmd"),  output_file = "mu_temp.html",   encoding = 'UTF-8', clean = TRUE)
-rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta.Rmd"),output_file = "meta_temp.html", encoding = 'UTF-8', clean = TRUE)
+rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
+rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta_temp.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
 
 while (TRUE) {
 

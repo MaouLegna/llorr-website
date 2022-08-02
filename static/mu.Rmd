@@ -15,8 +15,8 @@ params:
   end:     "2022-12-31 18:00:00"
   min_mu_games: 20  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
-  last_season: "S13"
-  grid_name: "mugrid_310"
+  last_season: "S14"
+  grid_name: "mugrid_311_312"
 ---
 
 ```{r setup, include=FALSE}
