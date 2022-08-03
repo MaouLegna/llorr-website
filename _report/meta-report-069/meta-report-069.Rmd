@@ -22,7 +22,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 2022-07-27
+date: 2022-08-03
 output:
  distill::distill_article:
     toc: true
@@ -765,7 +765,11 @@ Cards that couldn't find place even in a meme deck.
 ```{r missingCards}
 LoR_Card |>
   as.data.table() |>
-  filter( cardCode %in% LoR_Card$cardCode[LoR_Card$name %!in% TableAllCards$card] ) |>
+  filter( cardCode %in% LoR_Card$cardCode[LoR_Card$name %!in% TableAllCards$card] ) -> missing_cards
+
+if (NROW(missing_cards)>0) {
+  
+  missing_cards |>
   mutate( Region = str_sub(cardCode, 3, 4) ) |>
   group_by(Region) |>
   mutate(n = row_number(), 
@@ -803,6 +807,8 @@ LoR_Card |>
     ), 
     defaultColDef = colDef( minWidth = 125 ) 
   )
+  
+}
 ```
 :::
 :::
