@@ -78,8 +78,8 @@ metathis::meta() |>
   metathis::meta_social(
     title = params$title,
     url = "https://www.llorr-stats.com/",
-    image = "",
-    image_alt = "",
+    image = "images/thumbnails/CI-thumbnail.png",
+    image_alt = "CIexample",
     og_type = "website",
     og_author = "Legna",
     twitter_card_type = "summary",
