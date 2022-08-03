@@ -818,11 +818,9 @@ The previous expression can be further rewritten to obtain the interval defined 
 
 $\mu \pm z_{\alpha/2} \frac{\sigma}{\sqrt(n)}$
 
-and as we are dealing with a proportion
-$\hat\mu = p = \frac{\#wins}{\#games}$ and
-$\hat\sigma = \hat{p}(1-\hat{p})$ we obtain:
+and as we are dealing with a proportion $\hat\mu = p = \frac{\#wins}{\#games}$ and $\hat\sigma = \hat{p}(1-\hat{p})$ we obtain:
 
-$p \pm z_{1-\alpha/2} \sqrt{\frac{p(1-p)}}{n}}$
+$p \pm z_{1-\alpha/2} \sqrt{\frac{p(1-p)}{n}}$
 
 After regurgitating all those expressions we are left with a very simple
 one, which is even simpler if we consider for a confidence
