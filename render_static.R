@@ -2,6 +2,8 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 
+# get_code_from_name("Kai'Sa")
+
 update_lor_database(server_abbr = "EU",last_season = "S14",delete = TRUE)
 update_lor_database(server_abbr = "NA",last_season = "S14",delete = TRUE)
 update_lor_database(server_abbr = "APAC",last_season = "S14",delete = TRUE)
@@ -48,7 +50,7 @@ distill::create_post(
   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
   collection = "report",
   author = "Valentino (Legna) Vazzoler",
-  slug = "meta-report-067", # seasonal-006
+  slug = "meta-report-069", # seasonal-006
   date_prefix = NULL,
   draft = FALSE
 )

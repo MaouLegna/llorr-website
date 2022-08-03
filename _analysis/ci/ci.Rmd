@@ -9,7 +9,7 @@ description: |
   `r params$description`
 base_url: https://www.llorr-stats.com
 author: Valentino (Legna) Vazzoler
-date: 2022-06-11
+date: 2022-08-03
 output:
  distill::distill_article:
     toc: true
@@ -93,13 +93,12 @@ ex_lower <- 0.525
 ex_upper <- 0.575
 ```
 
-Hi, Legna here, normally I try to write those *analysis articles* in a publication-style format, not meant to be read by everyone; this post on the other hand is meant to be an easier read and accessible for most players.
+Hi, Legna here, normally I try to write those *analysis articles* in a publication-style format, not meant to be read by everyone; this post on the other hand is meant to be an easier read and accessible to most players.
 
 I would like to say that this is the first of a series of articles meant
 to explain some statistical concepts applied in Legends of Runeterra (LoR) or any other cards game, but, I can hardly guarantee it.
 
-Most likely the cadence will be slow. Even this article took weeks not mostly because of a combination of
-little time plus needing to decide what and how to write the content.
+Most likely the cadence will be slow. This article alone took weeks to write, not only because I get little time to work on this, but also because of deciding what to writ and how to communicate it.
 
 # Introduction
 
@@ -146,7 +145,7 @@ divided in section of increasing difficulty:
 ### How to Read/Write a CI
 
 A confidence interval is made of two values called lower limit and upper
-limit usually written inside a squared or round brackets like
+limit usually written inside squared or round brackets like
 
 $[lower,upper]$
 
@@ -154,8 +153,7 @@ in addition, it's associated to a probability called **confidence level**.
 
 If the confidence level is not written, it assumed to be 95%
 
-`r kableExtra::text_spec("Example:", color = "blue")` A deck with 52% and
-95% confidence interval between 51% and 54% is written
+`r kableExtra::text_spec("Example:", color = "blue")` A deck with a 52% mean WR and a 95% confidence interval between 51% and 54% is written
 
 52%; 95% CI [51%,54%]
 
@@ -171,25 +169,23 @@ an estimation, we don't know how far we are from the actual win-rate
 (sort-of).
 
 Unless we truly know the generating process of the phenomenon we are
-interesting in, we **never** know the true value of what we are
+interested in, we **never** know the true value of what we are
 searching for.
 
 For an easier example let's say we flip a coin 10 times. The probability
-of head and tails is the same at 50% and we will expect a number of head
+of head and tails is the same 50% and we will expect a number of head
 and tails equal to $0.5\times10 = 5$.
 
-Even so, we know it wouldn't be surprising to ends up with 6 head / 4
-tails obtaining an estimation for head of 60% and tail at 40%. It's
-wrong and in this case we know it's wrong because we know the underling
-probability of getting head/tail.
+Even so, we know it wouldn't be surprising to ends up with 6 heads / 4 tails obtaining an estimation for head of 60% and tail at 40%. It's
+wrong and in this case we know it's wrong because we know the underlying probability of getting head/tail.
 
 With most events we don't have this luxury, we don't know if the decks'
-win-rate we can see on various sites are *correct* or biased because of
+win-rate we can see on various sites is *correct* or biased because of
 *reasons*. We can model the win-rates, we can be pretty sure about our
 estimations but they always remain estimations.
 
 > Unless we truly know the generating process of the phenomenon we are
-> interesting in, we **never** know the true value of what we are
+> interested in, we **never** know the true value of what we are
 > searching for.
 
 Returning to our coin example, increasing the number of coin-flips would
@@ -241,20 +237,17 @@ of our estimate in inside a certain interval. For such case the true
 value is either contained or not and so the probability is either 1
 (it's inside) or 0 (it's outside)**
 
-Let's say we have a deck with `r scales::percent(ex_mean,0.1)` WR and
-95% CI of
+Let's say we have a deck with a `r scales::percent(ex_mean,0.1)` WR and a 95% CI of
 [`r scales::percent(ex_lower,0.1)`,`r scales::percent(ex_upper,0.1)`]. A
-CI doesn't mean that there is 95% probability that the true win-rate in
-between `r scales::percent(ex_lower,0.1)` and
-`r scales::percent(ex_upper,0.1)`. If the *true win-rate* is 54% the
+CI doesn't mean that there is 95% probability that the true win-rate lies between `r scales::percent(ex_lower,0.1)` and
+`r scales::percent(ex_upper,0.1)`. If the *true win-rate* is 54%, then the
 value is inside the interval and so the probability of being inside it
 is 100%. If the true value was 58% then the probability of the true
 value being inside the CI is 0%.
 
 `r kableExtra::text_spec("Important:", color = "red")` While the
 definition we provided is wrong, for those who are not working with data
-it's sort of an *ok definition* to remember, or well, it's better than
-nothing.
+it's sort of an *ok definition* to remember, or well, we take those.
 
 `r kableExtra::text_spec("Even worse definition:", color = "red")` The CI corresponding to a deck's win-rate do not represent the interval obtained from the win-rate of the worst and best players. The definition is absolutely independent from specific players and/or their skills.
 
@@ -269,20 +262,16 @@ The bigger the range of the CI the less accurate is our estimation.
 ---
 
 As a simplification: assume we were to take 100 sites that collect
-Legends of Runeterra (LoR) data from the API, but because of Riot
-messing up each site can only collect a small number of games for each
-deck.
+Legends of Runeterra (LoR) data from the API, but because there is an issue with the data collection, each site can only collect a small number of games for each deck.
 
-If we compute the 95% confidence interval from each site we can expect
-that 95 of the 100 sites have an interval that do contain the true
+If we compute the 95% confidence interval from each site we can expect that 95 of the 100 sites have an interval that does contain the true
 win-rate.
 
 For a visual explanation of the concept please refer to the example at the start of the third section (Fig.\@ref(sample-CI)).
 
 # Mid Level - Reject Points, embrace Intervals
 
-This section will go a bit more in depth in the use of CI while still
-refraining ourselves to use many formulae.
+This section will go a bit more in-depth into the use of CI while still refraining to use many formulae.
 
 ## Stretch the Interval
 
@@ -298,9 +287,9 @@ CI:
 
 #### Changing the Confidence Level
 
-the probability by which we wants our CI to contains the population
+the probability by which we want our CI to contain the population
 value, our win-rates. at fixed number of data (n), the higher the
-confidence level the bigger is the confidence interval
+confidence level the bigger the confidence interval
 
 **confidence level (**$\uparrow$) $\rightarrow$ range of confidence
 interval ($\uparrow$)
@@ -310,7 +299,7 @@ value, we want to have the confidence level to be high enough that we
 don't have to worry too much about it.
 
 The most common values of confidence level used are 90%, 95% and 99%,
-with 95% be more common of the three.
+with 95% being the most common of the three.
 
 What follows is a table showing the wideness of the CI at a fixed amount
 of data (Tab:\@ref(tab:fixed-n)). Let us also remember, the smaller the
@@ -351,9 +340,9 @@ the range of the CI, ranging in this case from a min of around 2% (0.021) with
 
 #### Changing Sample Size
 
-the amount of data at our disposal, for example the number of games of
+The amount of data at our disposal, for example the number of games of
 certain deck for which we wants to estimate the win-rate. at fixed
-confidence level, the higher is n, the smaller is the confidence
+confidence level, the higher n, the smaller the confidence
 interval
 
 **n (**$\uparrow$) $\rightarrow$ range of confidence interval
@@ -362,8 +351,8 @@ interval
 It is suggested to have $n \ge 30$ and $n \times \hat{p} \ge 5$ with
 $\hat{p} = \frac{\#wins}{\#games}$
 
-Now that the relationships are defined, we wants to show the extent of
-our choices to the results.
+Now that the relationships are defined, we want to show the effect of
+our choices on the results.
 
 Similarly the previous table, here is an example with fixed confidence
 level an varying n:
@@ -400,8 +389,8 @@ Compared to the results in Tab:\@ref(tab:fixed-n), in
 Tab:\@ref(tab:fixed-conf) at fixed conf.level, the number of data/games
 is even more effective in influencing the CI range and the more data we
 have the better. Yet, it's also possible to notice that we have to
-increase 10fold the amount of data at our disposal to have to reduce the
-CI range to around 1/3rd of it's previous value. [^2]
+increase ten fold the amount of data at our disposal to reduce the
+CI range to around 1/3rd of its previous value. [^2]
 
 [^2]: careful that this relationship depends on the win-rate and
     confidence level, so it's not a golden-rule, more on this in the
@@ -422,8 +411,8 @@ And the similar question:
 
 Now, let us use the example from the introduction.
 
-We have two decks, one with win-rate at 55.5% and one with win-rate at
-55%. How can we say with confidence that they do indeed differ?
+We have two decks, one with a win-rate of 55.5% and one with a win-rate of
+55%. How can we say with confidence that their true WRs do indeed differ?
 
 ```{r example-wIntersection, fig.cap="example-wIntersection", fig.width=6, fig.height=4}
 n_intro <- 10^4
@@ -452,18 +441,18 @@ intro_example |>
 ```
 
 We simply look at their CI and check if the intervals do overlap or not.
-It they overlap, like in this case, their difference is not
+If they overlap, like in this case, their difference is not
 statistically significant.
 
 In Fig:\@ref(fig:example-wIntersection) the line overlap $\rightarrow$
 we don't reject the equality of win-rates $\rightarrow$ there is
-**support** on the **equality of win-rates**.
+**support** for the **equality of win-rates**.
 
 > It's very important to be careful how to interpret a statistical
-> hyphotesis. One **NEVER PROVES** something, but it can reject an
+> hypothesis. One **NEVER PROVES** something, but it can reject an
 > hypothesis, giving at most *support* to the opposite but never proving
-> it. Think of SCP-55, all that is known is that it is not round, what
-> shapes does it have are still an infinite amount of alternative
+> it. Think of SCP-55, all that is known is that it is not round, but what
+> shape it could have is still an infinite amount of alternative
 > options
 
 ```{r example-woIntersection, fig.cap="example-woIntersection", fig.width=6, fig.height=4}
@@ -491,7 +480,7 @@ We proceed in the same way for the example illustrated in
 Fig:\@ref(fig:example-woIntersection)
 
 The line don't overlap $\rightarrow$ we reject the equality of win-rates
-$\rightarrow$ there is support on the **inequality of win-rates**.
+$\rightarrow$ there is support for the **inequality of win-rates**.
 
 So everything seems pretty easy: lines overlap = no difference, no
 overlap = different enough...
@@ -540,20 +529,20 @@ must learn to navigate in the infinite sea of greys.
 
 ---
 
-So, after this what we must conclude is that one must decide subjectively
-each time? No, once we set some rules we should try to follow them as much
-as we can but we must always consider what is the implication of the
-choices we makes.
+Does this mean that we conclude that one must decide subjectively
+each time? No! Once we set some rules we should try to follow them as much
+as we can but we should always consider what is the implication of the
+choices we make.
 
-To better explain what we means we conclude this section with an example taken from a discussion with [Leet](https://twitter.com/leer97):
+To better explain what we means, we conclude this section with an example taken from a discussion with [Leer](https://twitter.com/leer97):
 
 ![](images/example-leer.png)
 
 We have two versions of Aphelios Viktor whose decklist differ from a
-single card and nothing else, the first with with has Vi, the second one
+single card and nothing else, the first one has Vi, the second one
 has Starshaping.
 
-The two deck do seems to differ quite a lot, but let's look at the CI
+Based on their WR, the two decks do seem to differ quite a lot, but let's look at the CI
 
 ```{r example-leer, fig.cap="example-leer", fig.width=6, fig.height=4}
 CI_1 <- binom::binom.confint(x = 590,n =  1089, 0.95, methods = "exact")[4:6]
@@ -584,9 +573,9 @@ tibble(
 By looking at Fig:\@ref(fig:example-leer) The two deck doesn't seems to
 differ as much anymore.
 
-One may say: "but the WR difference is of even 3 point!"
+One may say: "But the WR difference is even even 3 percentage points!"
 
-Which is true, but less us also see the data is another way:
+This is true, but let's look at the data in another way:
 
 ```{r}
 tribble(
@@ -604,19 +593,13 @@ tribble(
 
 The difference is of 5 additional wins with 50 less games which is not that far-fetched in over 1000 games. Again (Fig.\@ref(sample-CI)) perfectly shows how much the simple effect of chance can be enought to explain those results.
 
-In addition, even assuming the chance wasn't the true factor there could be so much more as a potential explanation. Assume
-that the Vi version is played usually by more skilled players, that
-alone could easily explain the difference, add before even adding
-potential factors like luck of match-ups and similar point let us ask
-the following question:
+In addition, even assuming the chance wasn't the true factor there could be so much more as a potential explanation. Assume that the Vi version is played usually by more skilled players, that alone could easily explain the difference, before even adding potential factors like luck of match-ups and similar point let us ask the following question:
 
-* Vi is a 5-cost single-copy card, should we really assume that the differences in win-rate can be fully explained by that single difference? It is was a full set of lower cost cards the assumption could be worth considering but this case seems to us like pushing the limits.
+* Vi is a 5-cost single-copy card, should we really assume that the differences in win-rate can be fully explained by that single difference? If it was a full set of lower-cost cards, then the assumption could be worth considering but this case seems like pushing the limit.
 
-All this is to say: be careful not to see differences everywhere just because some decks differ by a couple of percentage points. Sometimes it could just be we are focusing too much what nothing seems the equal. At the same time, as mentioned in the before also don't focus too much on the defined rules and be aware of possible differences not yet clearly defined just by a lack of data.
+All this is to say: be careful not to see differences everywhere just because some decks differ by a couple of percentage points. Sometimes it could just be that are focusing too much on small differences/details that nothing seems the equal. At the same time, as mentioned before don't focus too much on the defined rules either, and be aware of possible differences that are not yet clearly defined just by a lack of data.
 
-Of course this is only our educated guess, the impact of single
-copy(ies) of cards is something we prefer to refrain from doing at leave
-it to figures like [Dr.Lor](https://twitter.com/drlor4)
+Of course this is only our educated guess, the impact of a single copy(ies) of cards is something we prefer to refrain from doing and leave it to figures like [Dr.Lor](https://twitter.com/drlor4)
 
 <!-- As an example: Assume from the example that deckA is the win-rate of deck without a certain card X while deckB is the win-rate of the same deck but also a certain card X. Saying the two win-rates are the same would mean that that card has no benefits and as we mentioned, this doesn't seems to be the case. So it's better to break the rule and say "There is indeed a difference that should be explained by the included of card X" -->
 
@@ -624,14 +607,13 @@ it to figures like [Dr.Lor](https://twitter.com/drlor4)
 
 ## Are you winning son? On positive/negative win-rates
 
-While the comparison of decks' CI one against each other can help us
-discern significant differences, this is hardly what we would normally
-suggest to do with them.
+While the comparison of decks' CIs against each other can help us
+discern significant differences, this is hardly what we would normally suggest doing with them.
 
-We explained how the CI can help us answer whatever or not our deck can
-support or not a certain hypothesis. But instead of asking if it's at a
-certain win-rate or if it differ enough from another deck there is
-another very basic question that someone would want to know: it my deck
+We explained how the CI can help us answer whether or not our deck can
+support a certain hypothesis. But instead of asking if it's at a
+certain win-rate or if it differs enough from another deck there is
+another very basic question that someone would want to know: is my deck
 actually good? Or to put it differently: does my deck have a positive
 win-rate?
 
@@ -667,14 +649,14 @@ what we previously told and so:
 
 If we are only interested in knowing if a deck has positive/negative
 win-rate or note, as the key point is having the CI including the 50%
-value or not there two consequences to remember:
+value or not there are two consequences to remember:
 
 -   Even if we have few games, if the true win-rate is high or low
     enough we don't need that many games to say if a deck is good/bad.
 
-Looking back at Tab:\@ref(tab:fixed-conf), around 500 should suffice for
-a deck with 55% win-rate. But that number decrease as the win-rate
-increase requiring just 100 games if the win-rate was 60%
+Looking back at Tab:\@ref(tab:fixed-conf), around 500 games should suffice for
+a deck with 55% win-rate. But that number decreases as the win-rate
+increases requiring just 100 games if the win-rate was 60%
 
 ```{r}
 binom::binom.confint(n = 100,x = 60,conf.level = 0.95,methods = "asymptotic")[4:6] |>
@@ -683,11 +665,11 @@ binom::binom.confint(n = 100,x = 60,conf.level = 0.95,methods = "asymptotic")[4:
 ```
 
 -   If we have a win-rate very close to 50%, it's pretty much impossible
-    to discern the direction of the win-rate to pure chance. Even worse
-    considering we know we should account for factors like skills.
+    to discern the direction of the win-rate. Even worse
+    considering we know we should account for factors like skill.
 
-This result was to be expected, after-all, assume the true win-rate lays
-exactly at 50%, not even an infinite amount of games should be able to
+This result was to be expected, after-all; assume the true win-rate lies
+exactly at 50%. Then; not even an infinite amount of games should be able to
 provide us a definitive answer.
 
 ![](images/invincible-wr05.jpg)
@@ -697,15 +679,15 @@ provide us a definitive answer.
 Confidence intervals are a really easy instrument for comparison of the
 win-rate (statistics) we are using. To hyper-simplify: compare the
 interval from the CI with what we are interested in, if there is no
-overlap there is no statistically significant difference, when
+overlap there is a statistically significant difference, when
 overlapping the difference is not significant.
 
 In the next section we will expand on some of the concepts explained up
 until now and some more but with one crucial difference: math will now
-start to appear, the countdown was completed with no promising
-future(?).
+start to appear, the countdown was completed with no Promising
+Future(?).
 
-# Lissandra (Hard) Level - When the Ice Witch is actually doing statistics
+# Hard Level - The realm of TLC
 
 In this section we are going to expand on the concepts we only briefly
 mentioned before and expand on the theory behind the CI explaining some
@@ -719,11 +701,10 @@ In the discursive section we mentioned that
 > that 95 of the 100 sites have an interval that do contain the true
 > win-rate.
 
-What does it actually means? Let's visually recreate the example above
-visually.
+What does this actually means? Let's visually recreate the example visually.
 
-Assume we have 100 players all equally skilled, all playing the same
-deck that we know has a 55% win-rate, also, each player plays 200 games.
+Assume we have 100 players who are all equally skilled, all playing the same
+deck that we know has a 55% true win-rate. Each player plays 200 games.
 
 Now, for each player we compute the CI and plot each interval
 vertically, the result can be seen in Fig.\@ref(sample-CI).
@@ -776,26 +757,23 @@ neg_winrate <- ci_example |>
   NROW()
 ```
 
-Each bar is a CI from a player that either contain (blue) the true
-win-rate (55%) or it does not contain it (red).
+Each bar is a CI from a player that either contains (blue) the true
+win-rate (55%) or does not contain it (red).
 
-Of the 100 players we can notice we have 6 intervals that doesn't
+Of the 100 players we notice that we have six intervals that don't
 include 55% and so there are 94 that do contain the 55% win-rate. This
 is a result by chance but if we repeated this process for an infinite
 amount of players we would expect a ratio of 5:95.
 
-As the black dot represent the win-rate for each player we can notice it
+As the black dot represent the win-rate for each player we notice that
 can differ a lot from the expected value. Not only that, sometimes it's
-so lower that even as a deck with 55% it would result as a deck with
-negative win-rate as it's lower than 50%, in this example
-`r neg_winrate` to be exact. This only by the effect of pure chance, no
+so low that even as a deck with a true WR of 55%, it would pass a hypothesis test for being a deck with a true WR of below than 50%. This is only due to the effect of pure chance, no
 accounting for skill or MU or anything else.
 
-This is a prime example about why *personal results* are shouldn't be
-abused too much and it's usually better to just use aggregate results.
-Using personal results could also brings additional issues but that
-could be an entire article by itself. For now and this example we hope
-it's now clearer when we mention "assuming the CI is one that contains
+This is a prime example of why *personal results* shouldn't be relied on too much and it's usually better to just use aggregated results.
+Using personal results could also bring additional issues but that
+could be an entire article by itself. For now and with this example, we hope
+it's clearer when we mention "assume the CI is one that contains
 the true value" and about how chance can really make an impact.
 
 ## Confidence Interval
@@ -803,13 +781,13 @@ the true value" and about how chance can really make an impact.
 ### Definition and Approximations...
 
 In the mid-section we showed in Tab:\@ref(tab:fixed-n) and
-Tab:\@ref(tab:fixed-conf) an example about the effect on the CI range
+Tab:\@ref(tab:fixed-conf) an example of the effect on the CI range
 with different values of sample size (number of games) and confidence
 level. To better explain the effect we must show the math behind them, let us start with a general definition of CI:
 
-$P( U \leq \theta \leq V)= 1-\alpha$
+$P( L \leq \theta \leq U)= 1-\alpha$
 
-where U and V are the lower and upper limits of our interval.
+where L and U are the lower and upper limits of our interval.
 
 `r kableExtra::text_spec("Note:", color = "blue")`usually the confidence
 level is defined as 1 minus the error we want to have, so with an error
@@ -821,22 +799,22 @@ $CI = [\hat{F}^{-1}_{(1-\alpha)/2},\hat{F}^{-1}_{(1+\alpha)/2}]$
 
 by using the quantile of the statistics we are using.
 
-These equations are hardly clear and for those who did some basic of statistics they should not even seems familiar.
+These equations are hardly clear and for those who didn't do some basic statistics they should not even seems familiar.
 
-Isn't there a simple expression to define how to the compute the CI of a win-rate?
+Isn't there a simple expression to define how to compute the CI of a win-rate?
 
-This is where we use the reality warping power of the Central Limit
-Theorem [^4], which, given very easy conditions, it obliterates any
-distribution we needs and replace them with a very easy Normal
+This is where we use the reality-warping power of the Central Limit
+Theorem [^4], which, given very easy conditions, obliterates any
+distribution we needs and replaces it with a very easy Normal
 distribution.
 
 Because of that the problem turns into:
 
 $P( -z_{\alpha/2} \leq \frac{p-\mu}{\sigma\sqrt{n}} \leq z_{\alpha/2}) = 1-\alpha$
 
-Where $z_\alpha$ are the quantile of level of a Normal distribution.
+Where $z_\alpha$ are the quantiles of the level of a Normal distribution.
 
-The previous expression can be further rewritten as to obtain the interval defined by
+The previous expression can be further rewritten to obtain the interval defined by
 
 $\mu \pm z_{\alpha/2} \frac{\sigma}{\sqrt(n)}$
 
@@ -847,16 +825,16 @@ $\hat\sigma = \hat{p}(1-\hat{p})$ we obtain:
 $p \pm z_{1-\alpha/2} \sqrt{\frac{p(1-p)}}{n}}$
 
 After regurgitating all those expressions we are left with a very simple
-expression, which is even simpler if we consider that when confidence
+one, which is even simpler if we consider for a confidence
 level of 95% we have $z_{\alpha/2} = 1.96 \sim 2$
 
 $p \pm 2 \sqrt{\frac{{p(1-p)}}{n}}$
 
-While normally we could stop here we complete this section with a little 'hack'. If we want a very quick computation of the CI and if our win-rate is between 30% and 70%, so pretty much all realistic cases, then $\sqrt{p(1-p)}$ doesn't differ too much from when $p=50\%$ and $p(1-p) = 1/2$ making it so that we could very appropriately obtain
+While normally we could stop here we complete this section with a little 'hack'. If we want a very quick computation of the CI and if our win-rate is between 30% and 70%, so pretty much all realistic cases, then $\sqrt{p(1-p)}$ doesn't differ too much from when $p=50\%$ and $\sqrt{p(1-p)} = 1/2$ making it so that we could very appropriately obtain
 
 $p \pm \frac{1}{\sqrt{n}}$
 
-Again, this is a very rough approprimation which shouldn't be normally used but it can help to obtain a basic idea about how big our CI should be.
+Again, this is a very rough approximation which shouldn't be normally used but it can help to obtain a basic idea about how big our CI should be.
 
 [^4]: or Teorema Limite Centrale, TLC in italian
 
@@ -888,18 +866,18 @@ tribble(
 
 ```
 
-The confidence level while impactfull is not usually the one that matter
+The confidence level while impactful is not usually the one that matter
 when creating a confidence level. Even more considering it's usually
-fixed at 95% so with associated value of 1.96.
+fixed at 95% so with associated an value of 1.96.
 
 The number of games is what usually can contribute the most to the CI's
 range but as the expression shows, it's not by the linear increase of
-the number of games but instead by the root squared number of games.
+the number of games but instead by the square root of the number of games.
 That is why at some point the range doesn't decrease by much even after
 adding so many games.
 
 In Fig.\@ref(plot-range-a) we present a graphical representation of the
-CI's range at fixed confidence level of 95% varying the number of games
+CI's range at a fixed confidence level of 95% varying the number of games
 and for different win-rates. In Fig.\@ref(plot-range-b) we restrict the
 number of games to a smaller, more common range.
 
@@ -948,19 +926,19 @@ range_curves |>
   )
 ```
 
-With the 'hack-approximation' we described above the relationship between the CI's range and the root squared of the number of games should be even easier now.
+With the 'hack-approximation' we described above the relationship between the CI's range and the square root of the number of games should be even easier now.
 
 # Conclusion
 
 And so we conclude this explanation of confidence intervals. We hope we
-were able to dissipate the mystery about how they works and also
-explaining why they are so important.
+were able to dissipate the mystery about how they work and also
+explaine why they are so important.
 
 We hope that other "lor-stats-creators" will one day start using them
 too. The tool is very very easy to use and should be fairly easy to
-grasp. Some nuances maybe are not as easy but the very basics should
+grasp. Some nuances might not be not as easy to implement but the very basics should
 help the most competitive players to better evaluate decks and do better
-choice.
+choices.
 
 # Appendix {.appendix}
 
@@ -1137,3 +1115,7 @@ using the CLT.
 
 [^5]: Andy Field - An Adventure in Statistics the reality enigma. Second
     Edition
+
+# Credits
+
+Thanks to Leer for helping edit some spelling/grammar errors.
