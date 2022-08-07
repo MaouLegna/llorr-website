@@ -12,34 +12,34 @@ output:
 params:
   start:   "2022-07-20 18:00:00"
   end:     "2022-12-31 18:00:00"
-  min_mu_games: 20  # min number of games for a MU
+  min_mu_games: 20 # min number of games for a MU
   last_season: "S14"
   max_top_pr:  12 # meta evolution decks
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo       = FALSE,
-  eval       = TRUE,
-  warning    = FALSE,
-  error      = FALSE,
-  message    = FALSE,
-  comment    = NA,
-  R.options  = list(width = 140, digits.secs=6),
-  dev.args   = list(bg = 'whitesmoke'),
-  fig.align  = 'center',
-  fig.width  = 12,
-  fig.height = 8,
-  fig.path   = glue::glue("images/"),
-  layout     = "l-page",
+  echo       = FALSE, 
+  eval       = TRUE, 
+  warning    = FALSE, 
+  error      = FALSE, 
+  message    = FALSE, 
+  comment    = NA, 
+  R.options  = list(width = 140, digits.secs=6), 
+  dev.args   = list(bg = 'whitesmoke'), 
+  fig.align  = 'center', 
+  fig.width  = 12, 
+  fig.height = 8, 
+  fig.path   = glue::glue("images/"), 
+  layout     = "l-page", 
   preview    = TRUE
 )
 
 #' R Option
 options(scipen = 999)
-source(file.path("C:","LlorR","scripts","lor_main.R"))
-source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
-source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
+source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
+source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
+source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -81,10 +81,11 @@ LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"),
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
 ```
+
 ```{r deck-fix}
 # LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
 LoR_Deck_RMD <- update_and_save_deck(
-  LoR_Deck_RMD,
+  LoR_Deck_RMD, 
   bind_rows(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD)
 )
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
@@ -93,13 +94,13 @@ LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```{r prepara-data}
 LoR_Melt_Master_RMD <- LoR_Match_DT_RMD |>
   filter(game_type == "Ranked"  ) |>
-  filter(str_detect(game_version,"3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD,LoR_Account_RMD)
+  filter(str_detect(game_version, "3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
+  melt_match(LoR_Deck_RMD, LoR_Account_RMD)
 
 LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
   filter(game_type == "Ranked"  ) |>
-  filter(str_detect(game_version,"3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD,LoR_Account_RMD)
+  filter(str_detect(game_version, "3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
+  melt_match(LoR_Deck_RMD, LoR_Account_RMD)
 
 LoR_Melt_Matches_RMD <- LoR_Melt_Master_RMD |>
   bind_rows(LoR_Melt_Diamond_RMD) |>
@@ -111,7 +112,7 @@ Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
 ================================
 
 ```{r}
-meta_7days <- reactable_meta(LoR_Melt_Matches_RMD,7)
+meta_7days <- reactable_meta(LoR_Melt_Matches_RMD, 7)
 ```
 
 Row {data-heigth="125"}
@@ -195,8 +196,8 @@ Row {.tabset}
 ### Master
 
 ```{r meta-evo-master, fig.width=20, fig.height=8}
-hourly_master_plot <- plot_hourly_meta_deck(data = LoR_Melt_Master_RMD,prev_days = 7,max_top_pr = params$max_top_pr)
-hourly_master_line <- plot_playrate_by_time(data = LoR_Melt_Master_RMD,prev_days = 7,max_top_pr = params$max_top_pr)
+hourly_master_plot <- plot_hourly_meta_deck(data = LoR_Melt_Master_RMD, prev_days = 7, max_top_pr = params$max_top_pr)
+hourly_master_line <- plot_playrate_by_time(data = LoR_Melt_Master_RMD, prev_days = 7, max_top_pr = params$max_top_pr)
 hourly_master_double <- invisible(hourly_master_plot + hourly_master_line)
 
 hourly_master_double
@@ -207,8 +208,8 @@ hourly_master_double
 ### Diamond
 
 ```{r meta-evo-diamond, fig.width=20, fig.height=8}
-hourly_diamond_plot <- plot_hourly_meta_deck(data = LoR_Melt_Diamond_RMD,prev_days = 7,max_top_pr = params$max_top_pr, population = "Diamond")
-hourly_diamond_line <- plot_playrate_by_time(data = LoR_Melt_Diamond_RMD,prev_days = 7,max_top_pr = params$max_top_pr, population = "Diamond")
+hourly_diamond_plot <- plot_hourly_meta_deck(data = LoR_Melt_Diamond_RMD, prev_days = 7, max_top_pr = params$max_top_pr, population = "Diamond")
+hourly_diamond_line <- plot_playrate_by_time(data = LoR_Melt_Diamond_RMD, prev_days = 7, max_top_pr = params$max_top_pr, population = "Diamond")
 hourly_diamond_double <- invisible(hourly_diamond_plot + hourly_diamond_line)
 
 hourly_diamond_double
@@ -361,7 +362,7 @@ WR_tbl_24h |>
           html = TRUE
           ), 
         theme = reactableTheme(
-          headerStyle = list(background = "red", color="white", fontSize = 13),
+          headerStyle = list(background = "red", color="white", fontSize = 13), 
           rowStyle = list(height = "45px")
         ), 
         columns = list(

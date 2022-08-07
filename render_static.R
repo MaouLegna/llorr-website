@@ -62,3 +62,6 @@ distill::create_post(
 #   date = Sys.Date(),
 #   draft = FALSE
 # )
+
+# LoR_Account <- data.table::fread(file.path("C:","LlorR","data","raw",   glue("LoR_ACCOUNT_APAC.csv")), colClasses = "character",header = T, na.strings = c("", NA), encoding = "UTF-8" )
+# data.table::fwrite(LoR_Account, file.path("C:","LlorR","data","raw",  glue("LoR_ACCOUNT_APAC.csv") ), quote=TRUE )

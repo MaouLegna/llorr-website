@@ -10,13 +10,12 @@ output:
     orientation: row
 
 params:
-  # start:   "2022-05-25 18:00:00"
-  start:   "2022-06-28 18:00:00"
+  start:   "2022-07-20 18:00:00"
   end:     "2022-12-31 18:00:00"
-  min_mu_games: 20  # min number of games for a MU
+  min_mu_games: 25  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
   last_season: "S14"
-  grid_name: "mugrid_311_312"
+  grid_name: "mugrid_311_temp"
 ---
 
 ```{r setup, include=FALSE}
@@ -300,6 +299,7 @@ Row {data-heigth="850" .tabset}
 ```{r print-grid}
 grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the current Master rank players
                                   Order of the Archetypes based on the playrate.
+                                  WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
                                   Source: Metadata of games collected with RiotGames API") )
 
 
@@ -328,9 +328,9 @@ gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000)
 ### MU Grid - Diamond
 
 ```{r}
-grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the current HighDiamond rank players
-                                  players who played against Master players but are not Master themselves
+grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the current HighDiamond rank players players who played against Master players but are not Master themselves
                                   Order of the Archetypes based on the playrate.
+                                  WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
                                   Source: Metadata of games collected with RiotGames API") )
 
 
@@ -361,6 +361,10 @@ Grid Older Patch  {data-icon="fa-file-image"}
 Row {.tabset}
 -----------------------------------------------------------------------
 
+### Patch 3.10 - WorlWalker
+
+![](images/mugrid_310.png)
+
 ### Patch 3.8 - Patch 3.9
 
 ![](images/mugrid_308_309.png)
@@ -372,10 +376,6 @@ Row {.tabset}
 ### Patch 3.4 - Patch 3.5
 
 ![](images/mugrid_304_305.png)
-
-### Patch 3.0 - Patch 3.1
-
-![](images/mugrid_300_301.png)
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 ================================
