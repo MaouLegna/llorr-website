@@ -134,7 +134,7 @@ tibble::tibble(
   opponentDeck = rep(top_archetype, times=length(top_archetype))
 ) |>
   left_join(Shiny_MUtbl, by = c("playerDeck","opponentDeck")) |>
-  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Set06-01-MUtbl.csv"))
+  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Set06-02-MUtbl.csv"))
 ```
 
 ```{r process-data-master}
@@ -443,6 +443,8 @@ The format of the table is the usual way I display the match-ups data but I also
 
 ```{r}
 tbl_archetype
+
+gt::gtsave(data = tbl_archetype, glue::glue("images/archetype_guide.png")) |> invisible()
 ```
 
 #### General info
