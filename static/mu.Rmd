@@ -12,7 +12,7 @@ output:
 params:
   start:   "2022-07-20 18:00:00"
   end:     "2022-12-31 18:00:00"
-  min_mu_games: 10  # min number of games for a MU
+  min_mu_games: 25  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
   last_season: "S14"
   grid_name: "mugrid_311_temp"
@@ -159,8 +159,8 @@ nGames = MU_tbl |>
   summarise(n = sum(muGames)) |>
   pull()
 
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"), 
-                        caption = glue::glue("out of a total of {NROW(LoR_Melt_Match_RMD)} - min {params$min_mu_games} games"), 
+flexdashboard::valueBox(glue::glue("{NROW(LoR_Melt_Match_RMD)} Ranked Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {nGames} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404")
 ```
@@ -227,8 +227,8 @@ nGames_diamond = MU_diamond |>
   summarise(n = sum(muGames)) |>
   pull()
 
-flexdashboard::valueBox(glue::glue("{nGames_diamond} Ranked Games"), 
-                        caption = glue::glue("out of a total of {NROW(LoR_Melt_Diamond_RMD)} - min {params$min_mu_games} games"), 
+flexdashboard::valueBox(glue::glue("{NROW(LoR_Melt_Diamond_RMD)} Ranked Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {nGames_diamond} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404")
 ```
@@ -279,8 +279,8 @@ Row
 ### Box MU
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games - Master Players"), 
-                        caption = glue::glue("out of a total of {NROW(LoR_Melt_Match_RMD)} - min 10 games"), 
+flexdashboard::valueBox(glue::glue("{NROW(LoR_Melt_Match_RMD)} Ranked Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {nGames} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404")
 ```
