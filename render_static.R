@@ -9,6 +9,8 @@ update_lor_database(server_abbr = "APAC",last_season = "S14",delete = TRUE)
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
 
+# rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/_report/meta-report-071/meta-report-071.Rmd',  encoding = 'UTF-8');
+
 # rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 # rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta_temp.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
 
@@ -47,14 +49,14 @@ rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents
 #' 
 #' }
 
-distill::create_post(
-  title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
-  collection = "report",
-  author = "Valentino (Legna) Vazzoler",
-  slug = "meta-report-071", # seasonal-006
-  date_prefix = NULL,
-  draft = FALSE
-)
+# distill::create_post(
+#   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
+#   collection = "report",
+#   author = "Valentino (Legna) Vazzoler",
+#   slug = "meta-report-071", # seasonal-006
+#   date_prefix = NULL,
+#   draft = FALSE
+# )
 # 
 # distill::create_post(
 #   title = "CI",
