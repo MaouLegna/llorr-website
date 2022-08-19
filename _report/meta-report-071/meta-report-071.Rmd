@@ -83,11 +83,13 @@ LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", 
 # load Games DT
 LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_S14(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) )
 
 LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_S14(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) )
 
 LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, colClasses = "character", header = T, na.strings = c("", NA), encoding = "UTF-8") |>
@@ -106,12 +108,10 @@ LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```{r prepare-data}
 LoR_Melt_Master_RMD <- LoR_Match_DT_RMD |>
   filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) ) |>
   melt_match(LoR_Deck_RMD, LoR_Account_RMD)
 
 LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
   filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) ) |>
   melt_match(LoR_Deck_RMD, LoR_Account_RMD)
 ```
 
