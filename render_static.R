@@ -53,7 +53,7 @@ rmarkdown::render_site(encoding = 'UTF-8')
 #   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
 #   collection = "report",
 #   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-071", # seasonal-006
+#   slug = "meta-report-072", # seasonal-006
 #   date_prefix = NULL,
 #   draft = FALSE
 # )
