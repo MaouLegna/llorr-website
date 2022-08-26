@@ -109,7 +109,7 @@ top_archetype <- LoR_Melt_Match_RMD |>
   pull(playerDeck)
 
 Shiny_MUtbl <- LoR_Melt_Match_RMD |>
-  bind_rows(LoR_Melt_Diamond_RMD) |>
+  # bind_rows(LoR_Melt_Diamond_RMD) |>
   filter(playerDeck %in% top_archetype & opponentDeck %in% top_archetype) |>
   # match_ups()
   distinct(match_key,playerPuuid,.keep_all = T) |>
