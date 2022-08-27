@@ -450,6 +450,219 @@ Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and
 :::
 
 ::: {.panel}
+### APAC {.panel-name}
+
+```{r react-deck-apac}
+LineUp_DT |>
+  filter(server == "apac") |>
+  select(contains("deck_")) |>
+  {\(x) unlist(x, use.names = F) }() |>
+  {\(x) tabyl(x, show_na = F) }() |>
+  arrange(desc(n)) |>
+  # account for the presence of 3 decks
+  mutate(percent = 3 * percent) |>
+  rename("deck" = 1) |>
+  left_join(LineUp_DT |>
+              filter(server == "apac") |>
+              select(contains("deck_")) |>
+              filter(!is.na(deck_3)) |>
+              select(contains("deck")) |>
+              {\(x) unlist(x, use.names = F) }() |>
+              {\(x) tabyl(x, show_na = F) }() |>
+              arrange(desc(n)) |>
+              # account for the presence of 3 decks
+              mutate(percent = 3 * percent) |>
+              rename("deck" = 1, "n_full" = "n", "percent_full" = "percent"),
+            by = "deck"
+            ) |>
+  left_join(apac_stats$deck_stats[, c("deck", "WR", "meanBan", "lplayrate", "lWR")], by = "deck") |>
+  as.data.table() |>
+  mutate(diffLadder = WR - lWR) |>
+  relocate(diffLadder, .after = "meanBan") |>
+  select(-lWR) |>
+  reactable(
+    theme = reactablefmtr::fivethirtyeight(),
+    bordered = TRUE,
+    highlight = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 15,
+    defaultColDef = colDef(
+      style = list(
+        fontWeight = 500, color = "black",
+        fontFamily = "Work Sans, sans-serif", fontSize = "12px"
+      ),
+      align = "center",
+      # minWidth = 100,
+      headerStyle = list(background = "steelblue", color = "white", fontFamily = "Work Sans, sans-serif", fontSize = "14px")
+    ),
+    columnGroups = list(
+      colGroup(name = "All-Data", columns = c("n", "percent")),
+      colGroup(name = "only full Line-Ups", columns = c("n_full", "percent_full"))
+    ),
+    columns = list(
+      deck = colDef(name = "Archetype", style = list(fontWeight = "bold", color = "black", fontFamily = "Work Sans, sans-serif", fontSize = "13px"), minWidth = 200, align = "left"),
+      n = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values, na.rm = T)), minWidth = 80),
+      n_full = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values, na.rm = T)), minWidth = 80),
+      percent = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      percent_full = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      diffLadder = colDef(name = "WinRate diff \n vs Ladder", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      meanBan = colDef(name = "BanRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      lplayrate = colDef(name = "ladder\nPlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100)
+    )
+  ) |>
+  reactablefmtr::add_title("Deck's Stats", background_color = "whitesmoke") |>
+  reactablefmtr::add_subtitle(glue::glue("{params$seasonal_name} Seasonal Open Rounds - APAC"), background_color = "whitesmoke") |>
+  reactablefmtr::add_source(glue::glue("Relative frequencies from all data or only lineUps with full information
+                                       Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke")
+```
+:::
+
+::: {.panel}
+### EMEA {.panel-name}
+
+```{r react-deck-emea}
+LineUp_DT |>
+  filter(server == "europe") |>
+  select(contains("deck_")) |>
+  {\(x) unlist(x, use.names = F) }() |>
+  {\(x) tabyl(x, show_na = F) }() |>
+  arrange(desc(n)) |>
+  # account for the presence of 3 decks
+  mutate(percent = 3 * percent) |>
+  rename("deck" = 1) |>
+  left_join(LineUp_DT |>
+              filter(server == "europe") |>
+              select(contains("deck_")) |>
+              filter(!is.na(deck_3)) |>
+              select(contains("deck")) |>
+              {\(x) unlist(x, use.names = F) }() |>
+              {\(x) tabyl(x, show_na = F) }() |>
+              arrange(desc(n)) |>
+              # account for the presence of 3 decks
+              mutate(percent = 3 * percent) |>
+              rename("deck" = 1, "n_full" = "n", "percent_full" = "percent"),
+            by = "deck"
+            ) |>
+  left_join(apac_stats$deck_stats[, c("deck", "WR", "meanBan", "lplayrate", "lWR")], by = "deck") |>
+  as.data.table() |>
+  mutate(diffLadder = WR - lWR) |>
+  relocate(diffLadder, .after = "meanBan") |>
+  select(-lWR) |>
+  reactable(
+    theme = reactablefmtr::fivethirtyeight(),
+    bordered = TRUE,
+    highlight = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 15,
+    defaultColDef = colDef(
+      style = list(
+        fontWeight = 500, color = "black",
+        fontFamily = "Work Sans, sans-serif", fontSize = "12px"
+      ),
+      align = "center",
+      # minWidth = 100,
+      headerStyle = list(background = "steelblue", color = "white", fontFamily = "Work Sans, sans-serif", fontSize = "14px")
+    ),
+    columnGroups = list(
+      colGroup(name = "All-Data", columns = c("n", "percent")),
+      colGroup(name = "only full Line-Ups", columns = c("n_full", "percent_full"))
+    ),
+    columns = list(
+      deck = colDef(name = "Archetype", style = list(fontWeight = "bold", color = "black", fontFamily = "Work Sans, sans-serif", fontSize = "13px"), minWidth = 200, align = "left"),
+      n = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values, na.rm = T)), minWidth = 80),
+      n_full = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values, na.rm = T)), minWidth = 80),
+      percent = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      percent_full = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      diffLadder = colDef(name = "WinRate diff \n vs Ladder", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      meanBan = colDef(name = "BanRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      lplayrate = colDef(name = "ladder\nPlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100)
+    )
+  ) |>
+  reactablefmtr::add_title("Deck's Stats", background_color = "whitesmoke") |>
+  reactablefmtr::add_subtitle(glue::glue("{params$seasonal_name} Seasonal Open Rounds - EMEA"), background_color = "whitesmoke") |>
+  reactablefmtr::add_source(glue::glue("Relative frequencies from all data or only lineUps with full information
+                                       Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke")
+```
+:::
+
+::: {.panel}
+### NA {.panel-name}
+
+```{r react-deck-na}
+LineUp_DT |>
+  filter(server == "americas") |>
+  select(contains("deck_")) |>
+  {\(x) unlist(x, use.names = F) }() |>
+  {\(x) tabyl(x, show_na = F) }() |>
+  arrange(desc(n)) |>
+  # account for the presence of 3 decks
+  mutate(percent = 3 * percent) |>
+  rename("deck" = 1) |>
+  left_join(LineUp_DT |>
+              filter(server == "americas") |>
+              select(contains("deck_")) |>
+              filter(!is.na(deck_3)) |>
+              select(contains("deck")) |>
+              {\(x) unlist(x, use.names = F) }() |>
+              {\(x) tabyl(x, show_na = F) }() |>
+              arrange(desc(n)) |>
+              # account for the presence of 3 decks
+              mutate(percent = 3 * percent) |>
+              rename("deck" = 1, "n_full" = "n", "percent_full" = "percent"),
+            by = "deck"
+            ) |>
+  left_join(apac_stats$deck_stats[, c("deck", "WR", "meanBan", "lplayrate", "lWR")], by = "deck") |>
+  as.data.table() |>
+  mutate(diffLadder = WR - lWR) |>
+  relocate(diffLadder, .after = "meanBan") |>
+  select(-lWR) |>
+  reactable(
+    theme = reactablefmtr::fivethirtyeight(),
+    bordered = TRUE,
+    highlight = TRUE,
+    searchable = TRUE,
+    compact = TRUE, # compact the table
+    # fullWidth = FALSE, # don't fill the page
+    defaultPageSize = 15,
+    defaultColDef = colDef(
+      style = list(
+        fontWeight = 500, color = "black",
+        fontFamily = "Work Sans, sans-serif", fontSize = "12px"
+      ),
+      align = "center",
+      # minWidth = 100,
+      headerStyle = list(background = "steelblue", color = "white", fontFamily = "Work Sans, sans-serif", fontSize = "14px")
+    ),
+    columnGroups = list(
+      colGroup(name = "All-Data", columns = c("n", "percent")),
+      colGroup(name = "only full Line-Ups", columns = c("n_full", "percent_full"))
+    ),
+    columns = list(
+      deck = colDef(name = "Archetype", style = list(fontWeight = "bold", color = "black", fontFamily = "Work Sans, sans-serif", fontSize = "13px"), minWidth = 200, align = "left"),
+      n = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values, na.rm = T)), minWidth = 80),
+      n_full = colDef(name = "N", footer = function(values) sprintf("%.0f", sum(values, na.rm = T)), minWidth = 80),
+      percent = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      percent_full = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      diffLadder = colDef(name = "WinRate diff \n vs Ladder", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      meanBan = colDef(name = "BanRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100),
+      lplayrate = colDef(name = "ladder\nPlayRate", format = colFormat(percent = TRUE, digits = 2), minWidth = 100)
+    )
+  ) |>
+  reactablefmtr::add_title("Deck's Stats", background_color = "whitesmoke") |>
+  reactablefmtr::add_subtitle(glue::glue("{params$seasonal_name} Seasonal Open Rounds - NA"), background_color = "whitesmoke") |>
+  reactablefmtr::add_source(glue::glue("Relative frequencies from all data or only lineUps with full information
+                                       Source: Metadata of games collected with RiotGames API"), background_color = "whitesmoke")
+```
+:::
+
+::: {.panel}
 ### Line-Ups {.panel-name}
 
 ```{r react-LineUps}
@@ -630,177 +843,177 @@ ggsave(glue::glue("images/{params$ind}-LMI.png"))
 :::::
 :::
 
-<!-- # Regions -->
+# Regions
 
-<!-- <!-- Some basic data regarding the regions play-rates / the values are  --> -->
+## Play Rate
 
-<!-- ## Play Rate -->
+```{r process-tableFreq}
+Region_Freq <- LineUp_DT |>
+  select(contains("deck_"), contains("code_")) |>
+  pivot_longer(
+    cols = c(contains("deck_"), contains("code_")),
+    names_to = c(".value", "index"),
+    names_sep = "_"
+  ) |>
+  drop_na() |>
+  left_join(LoR_Deck_RMD[, .(deck_code, factions)], by = c("code" = "deck_code")) |>
+  select(factions) |>
+  separate_rows(factions, sep = ",") |>
+  mutate(factions = str_remove_all(factions,"_Name|faction_") ) |>
+  mutate(factions = if_else(factions %!in% data_regions$nameRef, "Runeterra", factions ) ) |>
+  tabyl(factions, show_na = F) |>
+  tibble() |>
+  rename_all(~ c("region", "n", "freq")) |>
+  left_join(data_regions, by = c("region" = "nameRef")) |>
+  select(-factions)
 
-<!-- ```{r process-tableFreq} -->
-<!-- Region_Freq <- LineUp_DT |> -->
-<!--   select(contains("deck_"), contains("code_")) |> -->
-<!--   pivot_longer( -->
-<!--     cols = c(contains("deck_"), contains("code_")), -->
-<!--     names_to = c(".value", "index"), -->
-<!--     names_sep = "_" -->
-<!--   ) |> -->
-<!--   drop_na() |> -->
-<!--   left_join(LoR_Deck_RMD[, .(deck_code, factions)], by = c("code" = "deck_code")) |> -->
-<!--   select(factions) |> -->
-<!--   separate_rows(factions, sep = ",") |> -->
-<!--   mutate(factions = map_chr(.x = factions, ~ str_remove_all(.x, paste(c("_Name", "faction_", ""), collapse = "|")))) |> -->
-<!--   tabyl(factions, show_na = F) |> -->
-<!--   tibble() |> -->
-<!--   rename_all(~ c("region", "n", "freq")) |> -->
-<!--   left_join(data_regions, by = c("region" = "abbreviation")) |> -->
-<!--   select(-factions) -->
+Region_Freq_Server <- LineUp_DT |>
+  select(server, contains("deck_"), contains("code_")) |>
+  pivot_longer(
+    cols = c(contains("deck_"), contains("code_")),
+    names_to = c(".value", "index"),
+    names_sep = "_"
+  ) |>
+  drop_na() |>
+  left_join(LoR_Deck_RMD[, .(deck_code, factions)], by = c("code" = "deck_code")) |>
+  select(server,factions) |>
+  separate_rows(factions, sep = ",") |>
+  mutate(factions = str_remove_all(factions,"_Name|faction_") ) |>
+  mutate(factions = if_else(factions %!in% data_regions$nameRef, "Runeterra", factions ) ) |>
+  tabyl(factions, server, show_na = F) |>
+  adorn_percentages("col")
+  # mutate(region = map_chr(.x = factions, ~ str_remove_all(.x, paste(c("_Name", "faction_", ""), collapse = "|")))) |>
+  # select(-factions)
 
-<!-- Region_Freq_Server <- LineUp_DT |> -->
-<!--   select(server, contains("deck_"), contains("code_")) |> -->
-<!--   pivot_longer( -->
-<!--     cols = c(contains("deck_"), contains("code_")), -->
-<!--     names_to = c(".value", "index"), -->
-<!--     names_sep = "_" -->
-<!--   ) |> -->
-<!--   drop_na() |> -->
-<!--   left_join(LoR_Deck_RMD[, .(deck_code, factions)], by = c("code" = "deck_code")) |> -->
-<!--   mutate(factions = map_chr(.x = factions, ~ str_remove_all(.x, paste(c("_Name", "faction_", ""), collapse = "|")))) |> -->
-<!--   select(server, factions) |> -->
-<!--   separate_rows(factions, sep = ",") |> -->
-<!--   tabyl(factions, server, show_na = F) |> -->
-<!--   adorn_percentages("col") |> -->
-<!--   mutate(region = map_chr(.x = factions, ~ str_remove_all(.x, paste(c("_Name", "faction_", ""), collapse = "|")))) |> -->
-<!--   select(-factions) -->
+Region_Freq <- full_join(Region_Freq, Region_Freq_Server, by = c("region"="factions")) |>
+  mutate(
+    sxLabel_card = format(freq * 100, 2),
+    sxLabel_card = ifelse(as.numeric(sxLabel_card) > 4, sxLabel_card, "") |> as.numeric() |>
+      {
+        \(x) scales::number(x, accuracy = 0.01)
+      }(),
+    dxLabel_card = format(freq * 100, 2),
+    dxLabel_card = ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card, "") |> as.numeric() |>
+      {
+        \(x) scales::number(x, accuracy = 0.01)
+      }()
+  )
+```
 
-<!-- Region_Freq <- full_join(Region_Freq, Region_Freq_Server, by = "region") |> -->
-<!--   mutate( -->
-<!--     sxLabel_card = format(freq * 100, 2), -->
-<!--     sxLabel_card = ifelse(as.numeric(sxLabel_card) > 4, sxLabel_card, "") |> as.numeric() |> -->
-<!--       { -->
-<!--         \(x) scales::number(x, accuracy = 0.01) -->
-<!--       }(), -->
-<!--     dxLabel_card = format(freq * 100, 2), -->
-<!--     dxLabel_card = ifelse(as.numeric(dxLabel_card) <= 4, dxLabel_card, "") |> as.numeric() |> -->
-<!--       { -->
-<!--         \(x) scales::number(x, accuracy = 0.01) -->
-<!--       }() -->
-<!--   ) -->
-<!-- ``` -->
+::: l-page
+::::: {.panelset}
+::: {.panel}
+### Plot {.panel-name}
 
-<!-- ::: l-page -->
-<!-- ::::: {.panelset} -->
-<!-- ::: {.panel} -->
-<!-- ### Plot {.panel-name} -->
+```{r RegionPR}
+Region_Freq_plot <- Region_Freq |>
+  ggplot(aes(x = reorder(region, freq), y = freq)) +
+  geom_bar(stat = "identity") +
+  geom_bar_pattern(
+    aes(
+      pattern_filename = region,
+    ),
+    stat = "identity",
+    pattern = "image",
+    pattern_type = "none",
+    fill = Region_Freq$colorRegion,
+    colour = "black",
+    pattern_scale = -2,
+    pattern_filter = "point",
+    pattern_gravity = "east"
+  ) +
+  scale_pattern_filename_discrete(choices = Region_Freq$iconsPath) +
+  # scale_pattern_discrete(guide = guide_legend(nrow = 1)) +
+  annotate(
+    geom = "text",
+    color = "grey50",
+    x = 1.0,
+    y = 0.15,
+    hjust = 0.5,
+    label = glue::glue("n = {NROW(LoR_Melt_Seasonal)}\nGini Index = {round(DescTools::Gini(Region_Freq$freq,na.rm = T),3)}"),
+    fontface = "bold"
+  ) +
+  coord_flip() +
+  scale_fill_manual("legend", values = Region_Freq$colorRegion) +
+  scale_y_continuous(
+    limits = c(0, round(max(Region_Freq$freq + 0.04), 3)),
+    breaks = seq(0, 0.5, 0.04),
+    expand = c(-0.001, 0.02),
+    labels = scales::percent_format(accuracy = 1)
+  ) +
+  guides(fill = "none") +
+  #' Adding the text of the frequencies
+  geom_text(aes(label = sxLabel_card), hjust = 2.5, size = 5, position = position_dodge(width = 1)) +
+  geom_text(aes(label = dxLabel_card), hjust = -0.5, size = 5, position = position_dodge(width = 1)) +
+  theme_539() +
+  theme(
+    legend.position = "none",
+    axis.text = element_text(face = "bold", color = "grey50"),
+    panel.grid.major.y = element_blank()
+  ) +
+  labs(
+    x = "Region",
+    y = "Play Rate",
+    title = "Regions Play Rate",
+    subtitle = "number of times a region is included in a deck",
+    caption = element_text(glue::glue("{params$description}
+                                      Source: Metadata of games collected with RiotGames API
+                                      Last Update: {now(tzone='UTC')}"))
+  )
 
-<!-- ```{r RegionPR} -->
-<!-- Region_Freq_plot <- Region_Freq |> -->
-<!--   ggplot(aes(x = reorder(region, freq), y = freq)) + -->
-<!--   geom_bar(stat = "identity") + -->
-<!--   geom_bar_pattern( -->
-<!--     aes( -->
-<!--       pattern_filename = region, -->
-<!--     ), -->
-<!--     stat = "identity", -->
-<!--     pattern = "image", -->
-<!--     pattern_type = "none", -->
-<!--     fill = Region_Freq$colorRegion, -->
-<!--     colour = "black", -->
-<!--     pattern_scale = -2, -->
-<!--     pattern_filter = "point", -->
-<!--     pattern_gravity = "east" -->
-<!--   ) + -->
-<!--   scale_pattern_filename_discrete(choices = Region_Freq$iconsPath) + -->
-<!--   # scale_pattern_discrete(guide = guide_legend(nrow = 1)) + -->
-<!--   annotate( -->
-<!--     geom = "text", -->
-<!--     color = "grey50", -->
-<!--     x = 1.0, -->
-<!--     y = 0.15, -->
-<!--     hjust = 0.5, -->
-<!--     label = glue::glue("n = {NROW(LoR_Melt_Seasonal)}\nGini Index = {round(DescTools::Gini(Region_Freq$freq,na.rm = T),3)}"), -->
-<!--     fontface = "bold" -->
-<!--   ) + -->
-<!--   coord_flip() + -->
-<!--   scale_fill_manual("legend", values = Region_Freq$colorRegion) + -->
-<!--   scale_y_continuous( -->
-<!--     limits = c(0, round(max(Region_Freq$freq + 0.04), 3)), -->
-<!--     breaks = seq(0, 0.5, 0.04), -->
-<!--     expand = c(-0.001, 0.02), -->
-<!--     labels = scales::percent_format(accuracy = 1) -->
-<!--   ) + -->
-<!--   guides(fill = "none") + -->
-<!--   #' Adding the text of the frequencies -->
-<!--   geom_text(aes(label = sxLabel_card), hjust = 2.5, size = 5, position = position_dodge(width = 1)) + -->
-<!--   geom_text(aes(label = dxLabel_card), hjust = -0.5, size = 5, position = position_dodge(width = 1)) + -->
-<!--   theme_539() + -->
-<!--   theme( -->
-<!--     legend.position = "none", -->
-<!--     axis.text = element_text(face = "bold", color = "grey50"), -->
-<!--     panel.grid.major.y = element_blank() -->
-<!--   ) + -->
-<!--   labs( -->
-<!--     x = "Region", -->
-<!--     y = "Play Rate", -->
-<!--     title = "Regions Play Rate", -->
-<!--     subtitle = "number of times a region is included in a deck", -->
-<!--     caption = element_text(glue::glue("{params$description} -->
-<!--                                       Source: Metadata of games collected with RiotGames API -->
-<!--                                       Last Update: {now(tzone='UTC')}")) -->
-<!--   ) -->
+Region_Freq_plot
+```
 
-<!-- Region_Freq_plot -->
-<!-- ``` -->
+The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools.
+:::
 
-<!-- The Gini Index is a measure of heterogeneity so, in this case and in simpler terms, how much the play rates are similar. The Index goes (when normalized like here) $in$ [0,1] and it's equal to 1 when there's a single value with 100% play rate or 0 when all play rates are equal. Of course a Gini Index of 1 needs to be avoided but it's not like the aim should be 0. As said, it's just to add some additional tools. -->
-<!-- ::: -->
+::: {.panel}
+### Table {.panel-name}
 
-<!-- ::: {.panel} -->
-<!-- ### Table {.panel-name} -->
+```{r print-tableFreq-gt}
+#| fig.width=12,
+#| fig.height=8
 
-<!-- ```{r print-tableFreq-gt} -->
-<!-- #| fig.width=12, -->
-<!-- #| fig.height=8 -->
+Region_Freq_tbl <- Region_Freq |>
+  # mutate( server = factor(server, levels = c("apac","europe","americas")) ) |>
+  select(region, freq, contains("apac"), contains("europe"), contains("americas")) |>
+  # rename_all(str_to_title) |>
+  arrange(desc(freq)) |>
+  gt() |>
+  tab_header(
+    title = "Region Play Rate",
+    subtitle = "Relative Frequencies by Inclusion Rate of a Region"
+  ) |>
+  tab_spanner(
+    label = "Shard",
+    columns = c(contains("apac"), contains("europe"), contains("americas"))
+  ) |>
+  fmt_percent(
+    columns = -1,
+    decimals = 2
+  ) |>
+  # cols_label(
+  #   region   = md("**Region**"),
+  #   freq     = md("**Freq**"),
+  #   americas = md("**America**"),
+  #   apac     = md("**Apac**"),
+  #   europe   = md("**Europe**")
+  # ) |>
+  tab_source_note(
+    source_note = glue::glue("Source:Metadata of games collected with RiotGames API")
+  ) |>
+  gtExtras::gt_theme_538() |>
+  tab_options(
+    table.background.color = "whitesmoke",
+    table.font.color = "black",
+    table.font.color.light = "black"
+  )
 
-<!-- Region_Freq_tbl <- Region_Freq |> -->
-<!--   # mutate( server = factor(server, levels = c("apac","europe","americas")) ) |> -->
-<!--   select(nameRef, freq, contains("apac"), contains("europe"), contains("americas")) |> -->
-<!--   # rename_all(str_to_title) |> -->
-<!--   arrange(desc(freq)) |> -->
-<!--   gt() |> -->
-<!--   tab_header( -->
-<!--     title = "Region Play Rate", -->
-<!--     subtitle = "Relative Frequencies by Inclusion Rate of a Region" -->
-<!--   ) |> -->
-<!--   tab_spanner( -->
-<!--     label = "Shard", -->
-<!--     columns = c(contains("apac"), contains("europe"), contains("americas")) -->
-<!--   ) |> -->
-<!--   fmt_percent( -->
-<!--     columns = -1, -->
-<!--     decimals = 2 -->
-<!--   ) |> -->
-<!--   # cols_label( -->
-<!--   #   region   = md("**Region**"), -->
-<!--   #   freq     = md("**Freq**"), -->
-<!--   #   americas = md("**America**"), -->
-<!--   #   apac     = md("**Apac**"), -->
-<!--   #   europe   = md("**Europe**") -->
-<!--   # ) |> -->
-<!--   tab_source_note( -->
-<!--     source_note = glue::glue("Source:Metadata of games collected with RiotGames API") -->
-<!--   ) |> -->
-<!--   gtExtras::gt_theme_538() |> -->
-<!--   tab_options( -->
-<!--     table.background.color = "whitesmoke", -->
-<!--     table.font.color = "black", -->
-<!--     table.font.color.light = "black" -->
-<!--   ) -->
-
-<!-- Region_Freq_tbl -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- ::::: -->
-<!-- ::: -->
+Region_Freq_tbl
+```
+:::
+:::::
+:::
 
 # Top Player(?) Champions of Choice
 
@@ -831,6 +1044,10 @@ top32tbl <- Game_Result |>
   arrange(server, desc(cumMatchWin)) |>
   distinct(gameName, .keep_all = T) |>
   left_join(LineUp_DT, by = c("playerID", "server"))
+
+if (length(apac_top32)==0) top32tbl |> filter(server=="apac")     |> pull(playerID) -> apac_top32
+if (length(emea_top32)==0) top32tbl |> filter(server=="europe")   |> pull(playerID) -> emea_top32
+if (length(na_top32)==0)   top32tbl |> filter(server=="americas") |> pull(playerID) -> na_top32
 
 # count the number of times a champion is present in a deck - grouped by region
 top32tbl_CC <- top32tbl |>
