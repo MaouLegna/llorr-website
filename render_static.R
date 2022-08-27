@@ -2,9 +2,10 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 
+update_lor_database(server_abbr = "APAC",last_season = "S14",delete = TRUE)
 update_lor_database(server_abbr = "EU",last_season = "S14",delete = TRUE)
 update_lor_database(server_abbr = "NA",last_season = "S14",delete = TRUE)
-update_lor_database(server_abbr = "APAC",last_season = "S14",delete = TRUE)
+
 
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
@@ -53,7 +54,8 @@ rmarkdown::render_site(encoding = 'UTF-8')
 #   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
 #   collection = "report",
 #   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-072", # seasonal-006
+#   # slug = "meta-report-072",
+#   slug = "seasonal-007",
 #   date_prefix = NULL,
 #   draft = FALSE
 # )
