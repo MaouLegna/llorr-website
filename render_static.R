@@ -10,6 +10,8 @@ rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
 rmarkdown::render_site(encoding = 'UTF-8')
 
+# git add -A && git commit -m "update 2022-08-27 23:40"
+
 # rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 # rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta_temp.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
 # rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/_report/meta-report-071/meta-report-071.Rmd',  encoding = 'UTF-8');
