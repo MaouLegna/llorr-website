@@ -51,15 +51,22 @@ rmarkdown::render_site(encoding = 'UTF-8')
 #' 
 #' }
 
-# distill::create_post(
-#   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
-#   collection = "report",
-#   author = "Valentino (Legna) Vazzoler",
-#   # slug = "meta-report-072",
-#   slug = "seasonal-007",
-#   date_prefix = NULL,
-#   draft = FALSE
-# )
+distill::create_post(
+  title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
+  collection = "report",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "meta-report-073",
+  # slug = "seasonal-007",
+  date_prefix = NULL,
+  draft = FALSE
+)
+
+# NA
+# HKGCrisper07 / DreXeLL
+# APAC
+# sakuragi2172
+
+
 # 
 # distill::create_post(
 #   title = "CI",
