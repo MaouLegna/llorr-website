@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (from Patch 3.13 - Mid August)"
+title: "Meta & Decks (from Patch 3.14 - Awakening)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -10,9 +10,8 @@ output:
     orientation: row
     vertical_layout: fill
 params:
-  # start:   "2022-07-20 18:00:00"
-  start:   "2022-08-17 18:40:00"
-  end:     "2022-12-31 18:00:00"
+  start:   "2022-08-31 19:00:00"
+  end:     "2024-12-31 18:00:00"
   min_mu_games: 25 # min number of games for a MU
   last_season: "S14"
   max_top_pr:  12 # meta evolution decks
