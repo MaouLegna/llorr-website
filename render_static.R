@@ -13,15 +13,15 @@ rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents
 
 # git add -A && git commit -m "update 2022-08-28 10:40"
 
-# distill::create_post(
-#   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
-#   collection = "report",
-#   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-073",
-#   # slug = "seasonal-007",
-#   date_prefix = NULL,
-#   draft = FALSE
-# )
+distill::create_post(
+  title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
+  collection = "report",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "meta-report-074",
+  # slug = "seasonal-007",
+  date_prefix = NULL,
+  draft = FALSE
+)
 # 
 # distill::create_post(
 #   title = "CI",
