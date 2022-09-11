@@ -12,10 +12,11 @@ output:
 params:
   start:    "2022-08-31 19:00:00"
   end:      "2024-12-31 18:00:00"
-  min_mu_games: 25   # min number of games for a MU
+  min_mu_games: 25  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
   last_season: "S15"
-  grid_name: "mugrid_314_temp"
+  grid_name: "mugrid_314"
+  set_names: "Set06-03"
 ---
 
 ```{r setup, include=FALSE}
@@ -135,7 +136,7 @@ tibble::tibble(
   opponentDeck = rep(top_archetype, times=length(top_archetype))
 ) |>
   left_join(Shiny_MUtbl, by = c("playerDeck","opponentDeck")) |>
-  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper","Set06-02-MUtbl.csv"))
+  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv")))
 ```
 
 ```{r process-data-master}
