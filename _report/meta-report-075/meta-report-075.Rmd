@@ -5,9 +5,9 @@ params:
   patch: "Patch 3.14 - Week 2"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°75)"
   description: "Well, this week could have been akward..."
-  cardlurl: "https://dd.b.pvp.net/latest/set6/en_us/img/cards/06SH009T2-full.png"
+  cardlurl: "https://dd.b.pvp.net/latest/set6cde/en_us/img/cards/06BC015T2-full.png"
   start: "2022-09-07 18:00:00" #UTC tz / 'current' week start
-  end:   "2022-09-14 19:00:00" #UTC tz / 'current' week end
+  end:   "2022-09-14 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
   nDeck_cc:  20
   nDeck_day: 12
@@ -22,7 +22,7 @@ preview: |
   `r params$cardlurl`
 author:
   - name: Valentino (Legna) Vazzoler
-date: 2022-08-31
+date: 2022-09-14
 output:
  distill::distill_article:
     toc: true
@@ -30,7 +30,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
