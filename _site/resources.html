@@ -529,6 +529,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article table.gt_table td,
   d-article table.gt_table th {
     border-bottom: none;
+    font-size: 100%;
   }
 
   .html-widget {
@@ -1601,15 +1602,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        if ($(this).children()[0].nodeName == "D-FOOTNOTE") {
-          var fn = $(this).children()[0]
+        const citeChild = $(this).children()[0]
+        // Do not process if @xyz has been used without escaping and without bibliography activated
+        // https://github.com/rstudio/distill/issues/466
+        if (citeChild === undefined) return true
+
+        if (citeChild.nodeName == "D-FOOTNOTE") {
+          var fn = citeChild
           $(this).html(fn.shadowRoot.querySelector("sup"))
           $(this).id = fn.id
           fn.remove()
         }
         var refs = $(this).attr('data-cites').split(" ");
         var refHtml = refs.map(function(ref) {
-          return "<p>" + $('#ref-' + ref).html() + "</p>";
+          // Could use CSS.escape too here, we insure backward compatibility in navigator
+          return "<p>" + $('div[id="ref-' + ref + '"]').html() + "</p>";
         }).join("\n");
         window.tippy(this, {
           allowHTML: true,
@@ -2142,7 +2149,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
   <script src="site_libs/core-js-2.5.3/shim.min.js"></script>
   <script src="site_libs/react-17.0.0/react.min.js"></script>
   <script src="site_libs/react-17.0.0/react-dom.min.js"></script>
@@ -2228,22 +2235,15 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <div class="layout-chunk" data-layout="l-body">
-<div id="htmlwidget-d414a8a21cf5f3196459" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-d414a8a21cf5f3196459">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Project":["MatchUps","Bo3-Helper","Decks Codes/Structures"],"url":["https://www.llorr-stats.com/static/mu.html","https://legnavv.shinyapps.io/Bo3-helper/","https://www.llorr-stats.com/static/meta.html"],"Description":["Match Ups data that cover the same (current) cycle of buff/nerfs.","Helper for Bo3. As of now it's rarely updated because I need to remake it.","Dashboard with Meta or Underdog Decks' Most played decklist and playrates over time"]},"columns":[{"accessor":"Project","name":"Project","type":"character","cell":[{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/mu.html"},"children":["MatchUps"]},{"name":"a","attribs":{"href":"https://legnavv.shinyapps.io/Bo3-helper/"},"children":["Bo3-Helper"]},{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/meta.html"},"children":["Decks Codes/Structures"]}],"minWidth":150},{"accessor":"url","name":"url","type":["glue","character"],"show":false},{"accessor":"Description","name":"Description","type":"character","minWidth":250}],"pagination":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"theme":{"backgroundColor":"whitesmoke","borderColor":"#dfe2e5","stripedColor":"#f6f8fa","highlightColor":"#f0f5f9","cellPadding":"8px 12px","style":{"fontFamily":"-apple-system, Lato, sans-serif"}},"dataKey":"9261499e2c7fbafa5b1c20aa0e75a745"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9aade396237cb671d2ea" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-9aade396237cb671d2ea">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Project":["MatchUps","Bo3-Helper","Decks Codes/Structures"],"url":["https://www.llorr-stats.com/static/mu.html","https://legnavv.shinyapps.io/Bo3-helper/","https://www.llorr-stats.com/static/meta.html"],"Description":["Match Ups data that cover the same (current) cycle of buff/nerfs.","Helper for Bo3. As of now it's rarely updated because I need to remake it.","Dashboard with Meta or Underdog Decks' Most played decklist and playrates over time"]},"columns":[{"accessor":"Project","name":"Project","type":"character","cell":[{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/mu.html"},"children":["MatchUps"]},{"name":"a","attribs":{"href":"https://legnavv.shinyapps.io/Bo3-helper/"},"children":["Bo3-Helper"]},{"name":"a","attribs":{"href":"https://www.llorr-stats.com/static/meta.html"},"children":["Decks Codes/Structures"]}],"minWidth":150},{"accessor":"url","name":"url","type":["glue","character"],"show":false},{"accessor":"Description","name":"Description","type":"character","minWidth":250}],"pagination":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"theme":{"backgroundColor":"whitesmoke","borderColor":"#dfe2e5","stripedColor":"#f6f8fa","highlightColor":"#f0f5f9","cellPadding":"8px 12px","style":{"fontFamily":"-apple-system, Lato, sans-serif"}},"dataKey":"9261499e2c7fbafa5b1c20aa0e75a745"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
-<p>Credits to <a href="https://themockup.blog/resources.html">Tom
-Mock</a> for showing how to fully bring out the distill package
-potential.</p>
-<p>Regarding the Bo3-Helper, as it requires a server to work and the one
-I’m using have limited of available hrs it may not be always up. To
-solve this I would need to pay for a server and yeah it may be a
-problem… in case if I have enough support…I can invest on it. There’s a
-buymeacofee (~patreon) link in the menu if one wants to help me.</p>
+<p>Credits to <a href="https://themockup.blog/resources.html">Tom Mock</a> for showing how to fully bring out the distill package potential.</p>
+<p>Regarding the Bo3-Helper, as it requires a server to work and the one I’m using have limited of available hrs it may not be always up. To solve this I would need to pay for a server and yeah it may be a problem… in case if I have enough support…I can invest on it. There’s a buymeacofee (~patreon) link in the menu if one wants to help me.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
