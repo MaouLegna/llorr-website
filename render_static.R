@@ -15,16 +15,16 @@ update_lor_database(server_abbr = "APAC",last_season = "S15",delete = TRUE)
 
 # git add -A && git commit -m "update 2022-08-28 10:40"
 
-# distill::create_post(
-#   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
-#   collection = "report",
-#   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-075",
-#   # slug = "seasonal-007",
-#   date_prefix = NULL,
-#   draft = FALSE
-# )
-# 
+distill::create_post(
+  title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
+  collection = "report",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "meta-report-076",
+  # slug = "seasonal-007",
+  date_prefix = NULL,
+  draft = FALSE
+)
+ 
 # distill::create_post(
 #   title = "CI",
 #   collection = "analysis",
