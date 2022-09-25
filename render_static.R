@@ -15,6 +15,8 @@ rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/
 # rmarkdown::render_site(encoding = 'UTF-8')
 
 # git add -A && git commit -m "update 2022-08-28 10:40"
+# git push
+# git push -u origin master 
 
 # distill::create_post(
 #   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
