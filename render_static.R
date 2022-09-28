@@ -18,22 +18,22 @@ rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/
 # git push
 # git push -u origin master 
 
-# distill::create_post(
-#   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
-#   collection = "report",
-#   author = "Valentino (Legna) Vazzoler",
-#   slug = "meta-report-076",
-#   # slug = "seasonal-007",
-#   date_prefix = NULL,
-#   draft = FALSE
-# )
+distill::create_post(
+  title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
+  collection = "report",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "meta-report-077",
+  # slug = "seasonal-007",
+  date_prefix = NULL,
+  draft = FALSE
+)
  
-# distill::create_post(
-#   title = "CI",
-#   collection = "analysis",
-#   author = "Valentino (Legna) Vazzoler",
-#   slug = "ci",
-#   date_prefix = NULL,
-#   date = Sys.Date(),
-#   draft = FALSE
-# )
+distill::create_post(
+  title = "CI",
+  collection = "analysis",
+  author = "Valentino (Legna) Vazzoler",
+  slug = "ci",
+  date_prefix = NULL,
+  date = Sys.Date(),
+  draft = FALSE
+)
