@@ -11,7 +11,8 @@ output:
     
 params:
   start:    "2022-08-31 19:00:00"
-  end:      "2024-12-31 18:00:00"
+  end:      "2022-09-28 18:00:00"
+  # end:      "2024-12-31 18:00:00"
   min_mu_games: 50  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
   last_season: "S15"
