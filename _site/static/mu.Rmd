@@ -339,7 +339,7 @@ gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000)
 ```{r}
 grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the current HighDiamond rank players players who played against Master players but are not Master themselves
                                   Order of the Archetypes based on the playrate.
-                                  WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
+                                  WR<sub>meta</sub> defined as the win-rate against decks with at least 1% playrate.
                                   Source: Metadata of games collected with RiotGames API") )
 
 
