@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (from Patch 3.14 - Awakening)"
+title: "Match Ups Data (from Patch 3.16 - End of September Patch)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -10,12 +10,12 @@ output:
     orientation: row
     
 params:
-  start:    "2022-08-31 19:00:00"
+  start:    "2022-09-28 18:00:00"
   end:      "2024-12-31 18:00:00"
-  min_mu_games: 50  # min number of games for a MU
+  min_mu_games: 10  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
   last_season: "S15"
-  grid_name: "mugrid_314"
+  grid_name: "mugrid_316"
   set_names: "Set06-03"
 ---
 
@@ -370,25 +370,17 @@ Grid Older Patch  {data-icon="fa-file-image"}
 Row {.tabset}
 -----------------------------------------------------------------------
 
-### Patch 3.11 - Patch 3.12
+### Patch 3.14 - Patch 3.15 - Darkin Saga: Awekening
+
+![](images/mugrid_314_315.png)
+
+### Patch 3.13 - Forces from Beyond - End of Kai'Sa patch
+
+![](images/mugrid_313.png)
+
+### Patch 3.11 - Patch 3.12 - Forces from Beyond
 
 ![](images/mugrid_311_312.png)
-
-### Patch 3.10 - WorlWalker
-
-![](images/mugrid_310.png)
-
-### Patch 3.8 - Patch 3.9
-
-![](images/mugrid_308_309.png)
-
-### Patch 3.6 - Patch 3.7
-
-![](images/mugrid_306_307.png)
-
-### Patch 3.4 - Patch 3.5
-
-![](images/mugrid_304_305.png)
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 ================================
