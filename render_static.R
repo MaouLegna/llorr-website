@@ -37,3 +37,5 @@ rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/
 #   date = Sys.Date(),
 #   draft = FALSE
 # )
+
+Sys.time()
