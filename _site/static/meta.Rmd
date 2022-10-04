@@ -12,7 +12,7 @@ output:
 params:
   start:    "2022-09-28 18:00:00"
   end:      "2024-12-31 18:00:00"
-  min_mu_games: 10 # min number of games for a MU
+  min_mu_games: 25 # min number of games for a MU
   
   last_season: "S15"
   max_top_pr:  12 # meta evolution decks
