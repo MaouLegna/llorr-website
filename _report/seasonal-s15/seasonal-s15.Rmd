@@ -179,24 +179,29 @@ emea_top32 <- LoR_Account_RMD[ activeShard == "europe" & puuid %in% playoff_puui
 na_top32   <- LoR_Account_RMD[ activeShard == "americas" & puuid %in% playoff_puuid, RiotID ]
 ```
 
-
 ```{r create-lineUp-DT}
-LineUp_DT <- LoR_Melt_Seasonal |>
+# LineUp_DT <- 
+LoR_Melt_Seasonal |>
   distinct(playerID,playergameName,server,deck=playerDeck,code=deck_code) |>
-  group_by(playerID,playergameName,server) |>
-  mutate(listDeck = list(unique(deck)), listCode = list(unique(code))) |>
-  pivot_longer(c(deck,code)) |>
-  arrange(playerID,name,value) |>
-  as.data.table() |>
-  extract( name == "deck", id := seq(.N) , by = "playerID" ) |>
-  extract( name == "code", id := seq(.N) , by = "playerID" ) |>
-  arrange(playerID,name,value,id) |>
-  mutate(id = factor(id,level=c(1,2,3),ordered = T) ) |>
-  pivot_wider(names_from = c(name,id),
-              names_glue = sprintf('{%s}_{%s}',"name","id"),
-              values_from = value,
-              names_expand = TRUE) |>
-  mutate(LU = purrr::pmap_chr(list(x = deck_1, y = deck_2, z = deck_3), ~ glue::glue_collapse(na.omit(sort(c(..1, ..2, ..3))), sep = " - ")))
+  arrange(server,playerID,deck,code) |>
+  group_by(server,playerID) |>
+  mutate(id = row_number() |> factor(level=c(1,2,3),ordered = T) ) |>
+  ungroup() |>
+  # group_by(server,playerID) |>
+  # mutate(listDeck = list(unique(deck)), listCode = list(unique(code))) |>
+  # ungroup() |>
+  pivot_longer(deck:code,names_to = "name") |>
+  pivot_wider(
+    names_from = c(name,id),
+    names_glue = sprintf('{%s}_{%s}',"name","id"),
+    values_from = value,
+    names_expand = TRUE
+  ) |> 
+  mutate(
+    listDeck = pmap(list(deck_1,deck_2,deck_3),~na.omit(c(..1,..2,..3))),
+    listCode = pmap(list(code_1,code_2,code_3),~na.omit(c(..1,..2,..3)))
+  ) |>
+  mutate(LU = purrr::pmap_chr(list(x = deck_1, y = deck_2, z = deck_3), ~ glue::glue_collapse(na.omit(sort(c(..1, ..2, ..3))), sep = " - "))) -> LineUp_DT
 ```
 
 # Data
