@@ -22,8 +22,8 @@ distill::create_post(
   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°62)",
   collection = "report",
   author = "Valentino (Legna) Vazzoler",
-  # slug = "meta-report-078",
-  slug = "seasonal-s15",
+  slug = "meta-report-079",
+  # slug = "seasonal-s15",
   date_prefix = NULL,
   draft = FALSE
 )
