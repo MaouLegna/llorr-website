@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 # Hi, Legna here. I you are looking for stats on the current metagame just click on MatchUps or Meta in the Navigation Bar.
 ```
 
-Update 2022-09-01: Data for "The Darkin Saga - Awakening" are up!
+Update 2022-10-13: Data for "The Darkin Saga - Domination" are up!
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
