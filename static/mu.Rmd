@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (from Patch 3.16 - End of September Patch)"
+title: "Match Ups Data (from Patch 3.17 - The Darkin Saga - Domination)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -10,13 +10,13 @@ output:
     orientation: row
     
 params:
-  start:    "2022-09-28 18:00:00"
-  end:      "2024-12-31 18:00:00"
+  start:    "2024-10-12 19:00:00"
+  end:      "2099-10-12 19:00:00"
   min_mu_games: 50  # min number of games for a MU
   dim_grid: 15      # how many MU to plot
-  last_season: "S15"
-  grid_name: "mugrid_316"
-  set_names: "Set06-03"
+  last_season: "S16"
+  grid_name: "mugrid_317"
+  set_names: "Set06-04"
 ---
 
 ```{r setup, include=FALSE}
@@ -64,24 +64,30 @@ last_update_box <- flexdashboard::valueBox(
 LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$last_season}(.*)csv$"), full.names = T) |>
+LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Match_DT_{params$last_season}(.*)csv$"), full.names = T) |>
   # str_subset(pattern = "Keys", negate = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 
 # load Games DT
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_{params$last_season}(.*)csv$"), full.names = T) |>
+LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Diamond_DT_{params$last_season}(.*)csv$"), full.names = T) |>
   # str_subset(pattern = "Keys", negate = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+
+# load Temp DT
+# LoR_Temp_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_{params$last_season}(.*)csv$"), full.names = T) |>
+#   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+#   mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
 ```
 
 ```{r deck-fix}
 # LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
 LoR_Deck_RMD <- update_and_save_deck(
   LoR_Deck_RMD,
-  bind_rows(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD)
-  # write = TRUE
+  LoR_Match_DT_RMD |> 
+    bind_rows(LoR_Diamond_DT_RMD),
+  write = TRUE
 )
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
