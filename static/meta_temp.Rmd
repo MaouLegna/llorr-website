@@ -76,11 +76,30 @@ LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pa
   mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
   # to be safe
   distinct(puuid, .keep_all = T)
+
+# load Games DT
+LoR_Master_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Match_DT_{params$last_season}(.*)csv$"), full.names = T) |>
+  # str_subset(pattern = "Keys", negate = T) |>
+  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
+
+# load Games DT
+LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw","games"), pattern = glue("^(.*)Diamond_DT_{params$last_season}(.*)csv$"), full.names = T) |>
+  # str_subset(pattern = "Keys", negate = T) |>
+  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
+  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
 ```
 
 ```{r deck-fix}
-# LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
-LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
+# LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
+# LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+
+LoR_Deck_RMD <- update_and_save_deck(
+  LoR_Deck_RMD,
+  LoR_Match_DT_RMD |> 
+    bind_rows(LoR_Master_DT_RMD) |>
+    bind_rows(LoR_Diamond_DT_RMD)
+)
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
