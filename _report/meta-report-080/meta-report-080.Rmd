@@ -30,7 +30,7 @@ output:
     toc_depth: 3
     self_contained: false
 citation: FALSE
-draft: TRUE
+draft: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -647,7 +647,7 @@ gtsave(gt_winning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisibl
 # Cards Presence (Seasonal players)
 
 ```{r process-UniqueCards}
-LoR_Melt_Master_RMD[ !is.na(cards_region_fix), cards:=cards_fix  ]
+LoR_Melt_Master_RMD[ !is.na(cards_fix), cards:=cards_fix  ]
 
 DeckWeight <- LoR_Melt_Master_RMD |>
   tabyl(deck_code) |>
@@ -693,8 +693,8 @@ TableAllCards <- LoR_Melt_Master_RMD |>
       select(-nameRef), by = "abbreviation"
   ) |>
   rename(region = abbreviation, card = cards) |>
-  mutate(p_by_reg = ncard/n, 
-         card    = str_replace_all(card, set_names(LoR_Card$name, LoR_Card$cardCode)), 
+  mutate(p_by_reg = ncard/n,
+         card    = str_replace_all(card, set_names(LoR_Card$name, LoR_Card$cardCode)),
          region  = str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation)) )
 ```
 
@@ -706,18 +706,18 @@ TableAllCards <- LoR_Melt_Master_RMD |>
 ```{r print-CardsTable-1}
 MostPlayed <- TableAllCards |>
   arrange(desc(p_by_reg)) |>
-  rename_with(~c("Card", 
-                "#Decks with that card", 
-                "Region", 
-                "Games of X Region", 
+  rename_with(~c("Card",
+                "#Decks with that card",
+                "Region",
+                "Games of X Region",
                 "Play Rate")) |>
   # select(c(1, 3, 6, 2)) |>
   DT::datatable(rownames = FALSE) |>
   DT::formatStyle('Card', fontWeight = 'bold') |>
   DT::formatStyle('Play Rate', fontWeight = 'bold') |>
   DT::formatStyle(
-    'Region', 
-    target = 'row', 
+    'Region',
+    target = 'row',
     backgroundColor = DT::styleEqual(data_regions$nameRef, data_regions$colorRegion)
   ) |>
   DT::formatPercentage('Play Rate', 1)
@@ -737,17 +737,17 @@ TopPlayed.PbyReg <- TableAllCards |>
   arrange(region) |>
   rename_with(~c("Card", "N", "Region", "Games of X Region", "Play Rate")) |>
   ungroup() |>
-  DT::datatable(rownames = FALSE, 
+  DT::datatable(rownames = FALSE,
             options = list(
-              searching = FALSE, 
-              pageLength = 3*10, 
+              searching = FALSE,
+              pageLength = 3*10,
               info = FALSE)
             ) |>
   DT::formatStyle('Card', fontWeight = 'bold') |>
   DT::formatStyle('Play Rate', fontWeight = 'bold') |>
   DT::formatStyle(
-    'Region', 
-    target = 'row', 
+    'Region',
+    target = 'row',
     backgroundColor = DT::styleEqual(data_regions$nameRef, data_regions$colorRegion)
   ) |>
   DT::formatPercentage('Play Rate', 1) |>
@@ -768,7 +768,7 @@ LoR_Card |>
   filter( cardCode %in% LoR_Card$cardCode[LoR_Card$name %!in% TableAllCards$card] ) |>
   mutate( Region = str_sub(cardCode, 3, 4) ) |>
   group_by(Region) |>
-  mutate(n = row_number(), 
+  mutate(n = row_number(),
          l = n() ) |>
   ungroup() |>
   arrange(desc(l)) |>
@@ -780,28 +780,28 @@ LoR_Card |>
   {\(x) rename_all(x, ~unlist(x[1, ], use.names = F ) )  }() |>
   slice(-1) |>
   reactable(
-    bordered = TRUE, 
-    highlight = TRUE, 
-    wrap = T, 
-    sortable = F, 
-    searchable = TRUE, 
-    defaultPageSize = 10, 
-    style = list(fontFamily = "Chivo", fontSize = "12px"), 
-    # minRows = 10, 
+    bordered = TRUE,
+    highlight = TRUE,
+    wrap = T,
+    sortable = F,
+    searchable = TRUE,
+    defaultPageSize = 10,
+    style = list(fontFamily = "Chivo", fontSize = "12px"),
+    # minRows = 10,
     columns = list(
-      BC = colDef( style = list ( background = data_regions$colorRegion[1], fontWeight = "bold", color  = "#404040" ) ), 
-      BW = colDef( style = list ( background = data_regions$colorRegion[2], fontWeight = "bold", color  = "#404040" ) ), 
-      DE = colDef( style = list ( background = data_regions$colorRegion[3], fontWeight = "bold", color  = "#404040" ) ), 
-      FR = colDef( style = list ( background = data_regions$colorRegion[4], fontWeight = "bold", color  = "#404040" ) ), 
-      IO = colDef( style = list ( background = data_regions$colorRegion[5], fontWeight = "bold", color  = "#404040" ) ), 
-      MT = colDef( style = list ( background = data_regions$colorRegion[6], fontWeight = "bold", color  = "#404040" ) ), 
-      NX = colDef( style = list ( background = data_regions$colorRegion[7], fontWeight = "bold", color  = "#404040" ) ), 
-      PZ = colDef( style = list ( background = data_regions$colorRegion[8], fontWeight = "bold", color  = "#404040" ) ), 
-      RU = colDef( style = list ( background = data_regions$colorRegion[9], fontWeight = "bold", color  = "#404040" ) ), 
+      BC = colDef( style = list ( background = data_regions$colorRegion[1], fontWeight = "bold", color  = "#404040" ) ),
+      BW = colDef( style = list ( background = data_regions$colorRegion[2], fontWeight = "bold", color  = "#404040" ) ),
+      DE = colDef( style = list ( background = data_regions$colorRegion[3], fontWeight = "bold", color  = "#404040" ) ),
+      FR = colDef( style = list ( background = data_regions$colorRegion[4], fontWeight = "bold", color  = "#404040" ) ),
+      IO = colDef( style = list ( background = data_regions$colorRegion[5], fontWeight = "bold", color  = "#404040" ) ),
+      MT = colDef( style = list ( background = data_regions$colorRegion[6], fontWeight = "bold", color  = "#404040" ) ),
+      NX = colDef( style = list ( background = data_regions$colorRegion[7], fontWeight = "bold", color  = "#404040" ) ),
+      PZ = colDef( style = list ( background = data_regions$colorRegion[8], fontWeight = "bold", color  = "#404040" ) ),
+      RU = colDef( style = list ( background = data_regions$colorRegion[9], fontWeight = "bold", color  = "#404040" ) ),
       SI = colDef( style = list ( background = data_regions$colorRegion[10], fontWeight = "bold", color  = "#404040" ) ), #grey90
       SH = colDef( style = list ( background = data_regions$colorRegion[11], fontWeight = "bold", color = "#404040" ) )
-    ), 
-    defaultColDef = colDef( minWidth = 125 ) 
+    ),
+    defaultColDef = colDef( minWidth = 125 )
   )
 ```
 :::
