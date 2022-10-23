@@ -2,9 +2,13 @@ source(file.path("C:","LlorR","scripts","lor_main.R" ))
 source(file.path("C:","LlorR","scripts","functions","lor_constants.R"))
 source(file.path("C:","LlorR","scripts","functions","lor_functions.R"))
 
-update_lor_database(server_abbr = "EU",last_season = "S16",delete = TRUE, status=TRUE)
-update_lor_database(server_abbr = "NA",last_season = "S16",delete = TRUE, status=TRUE)
-update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE, status=TRUE)
+
+update_lor_database(server_abbr = "EU",last_season = "S16",delete = TRUE)
+update_lor_database(server_abbr = "NA",last_season = "S16",delete = TRUE)
+update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE)
+# update_lor_database(server_abbr = "EU",last_season = "S16",delete = TRUE, status=TRUE)
+# update_lor_database(server_abbr = "NA",last_season = "S16",delete = TRUE, status=TRUE)
+# update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE, status=TRUE)
 
 # rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/mu.Rmd',  encoding = 'UTF-8');
 # rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/meta.Rmd',  encoding = 'UTF-8');
