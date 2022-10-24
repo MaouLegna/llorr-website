@@ -98,12 +98,12 @@ Master {data-icon="fa-table"}
 ```{r prepara-data}
 LoR_Melt_Match_RMD <- LoR_Match_DT_RMD |>
   filter(game_type == "Ranked") |>
-  filter(str_detect(game_version,"3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
+  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
   melt_match(LoR_Deck_RMD)
 
 LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
   filter(game_type == "Ranked") |>
-  filter(str_detect(game_version,"3-10") | game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
+  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
   melt_match(LoR_Deck_RMD)
 ```
 
@@ -111,40 +111,25 @@ LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
 top_archetype <- LoR_Melt_Match_RMD |>
   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
   count(playerDeck) |>
-  slice_max(n, n = 30,with_ties = F ) |>
-  pull(playerDeck)
+  mutate(playrate = n/sum(n)) |>
+  slice_max(n, n = 30,with_ties = F )
 
 Shiny_MUtbl <- LoR_Melt_Match_RMD |>
-  # bind_rows(LoR_Melt_Diamond_RMD) |>
-  filter(playerDeck %in% top_archetype & opponentDeck %in% top_archetype) |>
-  # match_ups()
+  bind_rows(LoR_Melt_Diamond_RMD) |>
   distinct(match_key,playerPuuid,.keep_all = T) |>
-  filter(game_outcome!="tie") |>
-  group_by(playerDeck,opponentDeck) |>
-  summarise(
-    muWin   = sum(game_outcome=="win"),
-    muGames = n(),
-    muWR = mean(game_outcome=="win")
-  ) |>
-  ungroup() |>
-  mutate(playrate = muWin/muGames) |>
-  mutate(ci_limit = pmap(list(muWin, muGames), ~ binom::binom.confint(..1, ..2, 0.95, methods = "exact")[5:6])) |>
-  unnest(ci_limit, names_repair = "universal") |>
-  rename(LCI = lower, UCI = upper) |>
-  mutate(
-    okCI:=(!between(0.50,LCI,UCI)),
-    direction:=ifelse(muWR>0.50,"POS","NEG"),
-    CI = glue("({percent(LCI,accuracy = 0.1)} - {percent(UCI,accuracy = 0.1)})" )
-  )
+  filter(playerDeck %in% top_archetype$playerDeck & opponentDeck %in% top_archetype$playerDeck) |>
+  match_ups() |>
+  left_join(top_archetype) |>
+  rename(LCI = lower, UCI = upper)
 
-tibble::tibble(
-  playerDeck   = rep(top_archetype, each= length(top_archetype)),
-  opponentDeck = rep(top_archetype, times=length(top_archetype))
-) |>
-  left_join(Shiny_MUtbl, by = c("playerDeck","opponentDeck")) |>
-  fwrite(file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv")))
+shiny_grid <- mu_grid(mu_data = Shiny_MUtbl, dim_grid = 30, 
+                      games_data = LoR_Melt_Match_RMD, prev_days = 7,
+                      grid_source_note = "", div_1 = 10, div_2 = 10, font_upper = 12, font_lower = 9)
+
+Shiny_MUtbl |> data.table::fwrite( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv") ) )
+shiny_grid |>  gt::gtsave( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$grid_name}.png") ) , vwidth = 1500, vheight = 1000) |> invisible()
+
 ```
-
 ```{r process-data-master}
 WR_tbl <- win_rates(LoR_Melt_Match_RMD, server = F)
 
