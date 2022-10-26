@@ -79,16 +79,18 @@ general_caption <- glue::glue("{params$patch}
 
 ```{r load-data}
 # load DeckDT
-LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
+LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_{params$season}(.*)csv$"), full.names = T) |>
+LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$season}(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) )
 
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$season}(.*)csv$"), full.names = T) |>
+LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_{params$season}(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) ) |>
+  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) )
 
 LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, colClasses = "character", header = T, na.strings = c("", NA), encoding = "UTF-8") |>
@@ -99,20 +101,22 @@ LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pa
 ```
 
 ```{r deck-fix}
-LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD |>
-                                       bind_rows(LoR_Diamond_DT_RMD))
+LoR_Deck_RMD <- update_and_save_deck(
+  LoR_Deck_RMD,
+  LoR_Match_DT_RMD |> 
+    bind_rows(LoR_Diamond_DT_RMD)
+    # bind_rows(LoR_Temp_DT_RMD)
+)
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
 ```{r prepare-data}
 LoR_Melt_Master_RMD <- LoR_Match_DT_RMD |>
   filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) ) |>
   melt_match(LoR_Deck_RMD, LoR_Account_RMD)
 
 LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
   filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(as.POSIXct(params$start, "UTC"), as.POSIXct(params$end, "UTC")) ) |>
   melt_match(LoR_Deck_RMD, LoR_Account_RMD)
 ```
 
@@ -120,19 +124,21 @@ LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
 
 ```{r nGames-data}
 nGames_master  <- NROW(LoR_Melt_Master_RMD)
-nMaster   <- LoR_Account_RMD[!is.na(note), .N]
+nMaster   <- LoR_Account_RMD[master=="master", .N]
 
 nGames_diamond  <- NROW(LoR_Melt_Diamond_RMD)
-nDiamond  <- LoR_Account_RMD[master=="master", .N]
+nDiamond  <- LoR_Account_RMD[master=="diamond", .N]
 ```
 
-Number of Seasonal Players: **`r nMaster`**
+Number of Master Players: **`r nMaster`**
 
-Number of Master Players: **`r nDiamond`**
+Number of HighDiamond [^1] Players: **`r nDiamond`**
 
-Number of (Ranked) **Seasonal** matches analysed **`r format(nGames_master/2, scientific = F)`** or **`r format(nGames_master, scientific = F)`** games.
+[^1]: HighDiamond are defined as "players who played against Master player in a Ranked games but **are not** Master themselves"
 
-Number of (Ranked) **Master** matches analysed **`r format(nGames_diamond/2, scientific = F)`** or **`r format(nGames_diamond, scientific = F)`** games.
+Number of (Ranked) **Master** matches analysed **`r format(nGames_master/2, scientific = F)`** or **`r format(nGames_master, scientific = F)`** games.
+
+Number of (Ranked) **\~HighDiamond** matches analysed **`r format(nGames_diamond/2, scientific = F)`** or **`r format(nGames_diamond, scientific = F)`** games.
 
 Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 
@@ -144,7 +150,7 @@ Last Update: `r format(Sys.time(), format = "%Y-%m-%d %H:%M")`
 ```{r table-nGames-data}
 #| layout="l-body"
 
-nGames_tbl <- table_by_the_numbers_double(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD, LoR_Account_RMD,c("**Seasonal**","**Master**"))
+nGames_tbl <- table_by_the_numbers_double(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD, LoR_Account_RMD)
 
 nGames_tbl |> #
   tab_options(
@@ -239,7 +245,7 @@ plot_freq(
   subtitle = "number of times a card within a region is included in a deck", 
   # caption = general_caption
   caption = glue::glue("{params$patch}
-                       Ranked games from {params$start} UTC to {params$end} UTC - Seasonal Players
+                       Ranked games from {params$start} UTC to {params$end} UTC - Master Rank
                        DualRegions cards are counted based by the region that matters in the deck
                        Source: Metadata of games collected with RiotGames API
                        Last Update: {now(tzone='UTC')}")
@@ -266,8 +272,6 @@ region_freq_by_cards |>
 # Champions Combinations
 
 ```{r process-tableChampion}
-group_label = c("Seasonal","Master")
-
 cc_table_master <- LoR_Melt_Master_RMD |>
   tabyl(playerDeck, show_na = F) |>
   left_join(LoR_Melt_Master_RMD |>
@@ -290,8 +294,8 @@ top_deck <- union(
 champion_combination <- tibble( playerDeck = top_deck ) |>
   left_join(cc_table_master[, c("playerDeck", "percent")], by ="playerDeck" ) |>
   left_join(cc_table_diamond[, c("playerDeck", "percent")], by ="playerDeck" ) |>
-  rename_all(~c("playerDeck", !!group_label)) |>
-  pivot_longer( cols = !!group_label, names_to = "master", values_to = "freq" )
+  rename_all(~c("playerDeck", "Master", "Diamond")) |>
+  pivot_longer( cols = c("Master", "Diamond"), names_to = "master", values_to = "freq" )
 ```
 
 ## Play Rates
@@ -330,10 +334,10 @@ champion_combination |>
     geom="text", 
     x=3, y=0.07, 
     col="black", 
-    label = glue::glue("#Games ({group_label[1]}) = {nGames_master}
-                       #Games ({group_label[2]}) = {nGames_diamond}
-                       Cumulative Frequence ({group_label[1]}) = {scales::percent(cc_table_master[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}
-                       Cumulative Frequence ({group_label[2]}) = {scales::percent(cc_table_diamond[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}")
+    label = glue::glue("#Games (Master) = {nGames_master}
+                       #Games (HighDiamond) = {nGames_diamond}
+                       Cumulative Frequence (Master) = {scales::percent(cc_table_master[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}
+                       Cumulative Frequence (HighDiamond) = {scales::percent(cc_table_diamond[ order(-percent) ][1:params$nDeck_cc, sum(percent)], accuracy = 0.1)}")
   ) +
   theme_539() +
   labs(
@@ -343,7 +347,7 @@ champion_combination |>
     subtitle = glue::glue("Play-Rates of the top {params$nDeck_cc} most played combination of champions/regions"), 
     caption = glue::glue("{params$patch}
                          Ranked games from {params$start} UTC to {params$end} UTC
-                         Decks are chosen from the union of top {params$nDeck_cc} from Last-Seasononal player and Master resulting in {length(top_deck)} displayed
+                         Decks are chosen from the union of top {params$nDeck_cc} from Last-Seasononal player and ~HighDiamond resulting in {length(top_deck)} displayed
                          Source: Metadata of games collected with RiotGames API
                          Last Update: {now(tzone='UTC')}")
   ) +
@@ -359,7 +363,7 @@ champion_combination |>
 :::
 
 ::: panel
-### from Seasonal {.panel-name}
+### from Master {.panel-name}
 
 ```{r table-Champion-PR}
 cc_table_master |>
@@ -394,7 +398,7 @@ cc_table_master |>
 :::
 
 ::: panel
-### from Master {.panel-name}
+### from Diamond {.panel-name}
 
 ```{r}
 cc_table_diamond |>
@@ -644,7 +648,7 @@ gt_winning |>
 gtsave(gt_winning, glue::glue("images/{params$ind}-top_win.png")   ) |> invisible()
 ```
 
-# Cards Presence (Seasonal players)
+# Cards Presence (at Master)
 
 ```{r process-UniqueCards}
 LoR_Melt_Master_RMD[ !is.na(cards_fix), cards:=cards_fix  ]
@@ -693,8 +697,8 @@ TableAllCards <- LoR_Melt_Master_RMD |>
       select(-nameRef), by = "abbreviation"
   ) |>
   rename(region = abbreviation, card = cards) |>
-  mutate(p_by_reg = ncard/n,
-         card    = str_replace_all(card, set_names(LoR_Card$name, LoR_Card$cardCode)),
+  mutate(p_by_reg = ncard/n, 
+         card    = str_replace_all(card, set_names(LoR_Card$name, LoR_Card$cardCode)), 
          region  = str_replace_all(region, set_names(data_regions$nameRef, data_regions$abbreviation)) )
 ```
 
@@ -706,18 +710,18 @@ TableAllCards <- LoR_Melt_Master_RMD |>
 ```{r print-CardsTable-1}
 MostPlayed <- TableAllCards |>
   arrange(desc(p_by_reg)) |>
-  rename_with(~c("Card",
-                "#Decks with that card",
-                "Region",
-                "Games of X Region",
+  rename_with(~c("Card", 
+                "#Decks with that card", 
+                "Region", 
+                "Games of X Region", 
                 "Play Rate")) |>
   # select(c(1, 3, 6, 2)) |>
   DT::datatable(rownames = FALSE) |>
   DT::formatStyle('Card', fontWeight = 'bold') |>
   DT::formatStyle('Play Rate', fontWeight = 'bold') |>
   DT::formatStyle(
-    'Region',
-    target = 'row',
+    'Region', 
+    target = 'row', 
     backgroundColor = DT::styleEqual(data_regions$nameRef, data_regions$colorRegion)
   ) |>
   DT::formatPercentage('Play Rate', 1)
@@ -737,17 +741,17 @@ TopPlayed.PbyReg <- TableAllCards |>
   arrange(region) |>
   rename_with(~c("Card", "N", "Region", "Games of X Region", "Play Rate")) |>
   ungroup() |>
-  DT::datatable(rownames = FALSE,
+  DT::datatable(rownames = FALSE, 
             options = list(
-              searching = FALSE,
-              pageLength = 3*10,
+              searching = FALSE, 
+              pageLength = 3*10, 
               info = FALSE)
             ) |>
   DT::formatStyle('Card', fontWeight = 'bold') |>
   DT::formatStyle('Play Rate', fontWeight = 'bold') |>
   DT::formatStyle(
-    'Region',
-    target = 'row',
+    'Region', 
+    target = 'row', 
     backgroundColor = DT::styleEqual(data_regions$nameRef, data_regions$colorRegion)
   ) |>
   DT::formatPercentage('Play Rate', 1) |>
@@ -765,10 +769,14 @@ Cards that couldn't find place even in a meme deck.
 ```{r missingCards}
 LoR_Card |>
   as.data.table() |>
-  filter( cardCode %in% LoR_Card$cardCode[LoR_Card$name %!in% TableAllCards$card] ) |>
+  filter( cardCode %in% LoR_Card$cardCode[LoR_Card$name %!in% TableAllCards$card] )  -> missing_cards
+
+if (NROW(missing_cards)>0) {
+  
+  missing_cards |>
   mutate( Region = str_sub(cardCode, 3, 4) ) |>
   group_by(Region) |>
-  mutate(n = row_number(),
+  mutate(n = row_number(), 
          l = n() ) |>
   ungroup() |>
   arrange(desc(l)) |>
@@ -780,29 +788,31 @@ LoR_Card |>
   {\(x) rename_all(x, ~unlist(x[1, ], use.names = F ) )  }() |>
   slice(-1) |>
   reactable(
-    bordered = TRUE,
-    highlight = TRUE,
-    wrap = T,
-    sortable = F,
-    searchable = TRUE,
-    defaultPageSize = 10,
-    style = list(fontFamily = "Chivo", fontSize = "12px"),
-    # minRows = 10,
+    bordered = TRUE, 
+    highlight = TRUE, 
+    wrap = T, 
+    sortable = F, 
+    searchable = TRUE, 
+    defaultPageSize = 10, 
+    style = list(fontFamily = "Chivo", fontSize = "12px"), 
+    # minRows = 10, 
     columns = list(
-      BC = colDef( style = list ( background = data_regions$colorRegion[1], fontWeight = "bold", color  = "#404040" ) ),
-      BW = colDef( style = list ( background = data_regions$colorRegion[2], fontWeight = "bold", color  = "#404040" ) ),
-      DE = colDef( style = list ( background = data_regions$colorRegion[3], fontWeight = "bold", color  = "#404040" ) ),
-      FR = colDef( style = list ( background = data_regions$colorRegion[4], fontWeight = "bold", color  = "#404040" ) ),
-      IO = colDef( style = list ( background = data_regions$colorRegion[5], fontWeight = "bold", color  = "#404040" ) ),
-      MT = colDef( style = list ( background = data_regions$colorRegion[6], fontWeight = "bold", color  = "#404040" ) ),
-      NX = colDef( style = list ( background = data_regions$colorRegion[7], fontWeight = "bold", color  = "#404040" ) ),
-      PZ = colDef( style = list ( background = data_regions$colorRegion[8], fontWeight = "bold", color  = "#404040" ) ),
-      RU = colDef( style = list ( background = data_regions$colorRegion[9], fontWeight = "bold", color  = "#404040" ) ),
+      BC = colDef( style = list ( background = data_regions$colorRegion[1], fontWeight = "bold", color  = "#404040" ) ), 
+      BW = colDef( style = list ( background = data_regions$colorRegion[2], fontWeight = "bold", color  = "#404040" ) ), 
+      DE = colDef( style = list ( background = data_regions$colorRegion[3], fontWeight = "bold", color  = "#404040" ) ), 
+      FR = colDef( style = list ( background = data_regions$colorRegion[4], fontWeight = "bold", color  = "#404040" ) ), 
+      IO = colDef( style = list ( background = data_regions$colorRegion[5], fontWeight = "bold", color  = "#404040" ) ), 
+      MT = colDef( style = list ( background = data_regions$colorRegion[6], fontWeight = "bold", color  = "#404040" ) ), 
+      NX = colDef( style = list ( background = data_regions$colorRegion[7], fontWeight = "bold", color  = "#404040" ) ), 
+      PZ = colDef( style = list ( background = data_regions$colorRegion[8], fontWeight = "bold", color  = "#404040" ) ), 
+      RU = colDef( style = list ( background = data_regions$colorRegion[9], fontWeight = "bold", color  = "#404040" ) ), 
       SI = colDef( style = list ( background = data_regions$colorRegion[10], fontWeight = "bold", color  = "#404040" ) ), #grey90
       SH = colDef( style = list ( background = data_regions$colorRegion[11], fontWeight = "bold", color = "#404040" ) )
-    ),
-    defaultColDef = colDef( minWidth = 125 )
+    ), 
+    defaultColDef = colDef( minWidth = 125 ) 
   )
+  
+}
 ```
 :::
 :::

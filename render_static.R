@@ -15,9 +15,11 @@ update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE, stat
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta_temp.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 
-# git add -A && git commit -m "update 2022-10-25 06:47"
-# git push -u origin master
-# git push
+# git add -A && git commit -m "add meta-report-81"
+# git add -A && git commit -m "update 2022-10-26 05:09"
+# git push # correct
+# git push -u origin master # wrong
+
 
 distill::create_post(
   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°80)",
