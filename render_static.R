@@ -16,10 +16,12 @@ rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents
 rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 
 # git add -A && git commit -m "add meta-report-81"
-# git add -A && git commit -m "update 2022-10-26 05:09"
+# git add -A && git commit -m "update 2022-10-27 05:48"
 # git push # correct
 # git push -u origin master # wrong
 
+system('git add -A && git commit -m "update 2022-10-28 05:58"')
+system('git push')
 
 distill::create_post(
   title = "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°80)",
