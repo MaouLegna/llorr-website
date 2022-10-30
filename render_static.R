@@ -11,16 +11,15 @@ update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE, stat
 
 # rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/mu.Rmd',  encoding = 'UTF-8');
 # rmarkdown::render('C:/Users/Valentino Vazzoler/Documents/R/llorr-website/static/meta.Rmd',  encoding = 'UTF-8');
-
-rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta_temp.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
-rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
+# rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","meta_temp.Rmd"),output_file = "meta.html", encoding = 'UTF-8', clean = TRUE)
+# rmarkdown::render(input = file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","static","mu_temp.Rmd"),  output_file = "mu.html",   encoding = 'UTF-8', clean = TRUE)
 
 # git add -A && git commit -m "add meta-report-81"
 # git add -A && git commit -m "update 2022-10-27 05:48"
 # git push # correct
 # git push -u origin master # wrong
 
-system('git add -A && git commit -m "update 2022-10-28 05:58"')
+system('git add -A && git commit -m "update 2022-10-30 07:02"')
 system('git push')
 
 distill::create_post(
@@ -28,7 +27,7 @@ distill::create_post(
   collection = "report",
   author = "Valentino (Legna) Vazzoler",
   slug = "meta-report-081",
-  # slug = "seasonal-s15",
+  # slug = "seasonal-s16",
   date_prefix = NULL,
   draft = FALSE
 )
