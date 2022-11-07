@@ -51,6 +51,13 @@ xaringanExtra::use_panelset()
 }
 ```
 
+```{r update-dataset}
+update_lor_database(server_abbr = "EU",last_season = "S16",delete = TRUE)
+update_lor_database(server_abbr = "NA",last_season = "S16",delete = TRUE)
+update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE)
+```
+
+
 ```{r constants}
 last_update_box <- flexdashboard::valueBox(
   Sys.Date(), 
