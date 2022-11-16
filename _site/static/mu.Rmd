@@ -122,7 +122,7 @@ top_archetype <- LoR_Melt_Match_RMD |>
   slice_max(n, n = 30,with_ties = F )
 
 Shiny_MUtbl <- LoR_Melt_Match_RMD |>
-  bind_rows(LoR_Melt_Diamond_RMD) |>
+  # bind_rows(LoR_Melt_Diamond_RMD) |>
   distinct(match_key,playerPuuid,.keep_all = T) |>
   filter(playerDeck %in% top_archetype$playerDeck & opponentDeck %in% top_archetype$playerDeck) |>
   match_ups() |>
@@ -137,6 +137,7 @@ Shiny_MUtbl |> data.table::fwrite( file.path("C:","LlorR","scripts","shiny","bo3
 shiny_grid |>  gt::gtsave( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$grid_name}.png") ) , vwidth = 1500, vheight = 1000) |> invisible()
 
 ```
+
 ```{r process-data-master}
 WR_tbl <- win_rates(LoR_Melt_Match_RMD, server = F)
 
