@@ -101,12 +101,12 @@ LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pa
 ```
 
 ```{r deck-fix}
-LoR_Deck_RMD <- update_and_save_deck(
-  LoR_Deck_RMD,
-  LoR_Match_DT_RMD |> 
-    bind_rows(LoR_Diamond_DT_RMD)
-    # bind_rows(LoR_Temp_DT_RMD)
-)
+# LoR_Deck_RMD <- update_and_save_deck(
+#   LoR_Deck_RMD,
+#   LoR_Match_DT_RMD |> 
+#     bind_rows(LoR_Diamond_DT_RMD)
+#     # bind_rows(LoR_Temp_DT_RMD)
+# )
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
@@ -522,8 +522,7 @@ The win rates on the grid are among the `r params$nGrid` most played champion co
 ```{r match-ups, layout="l-screen-inset shaded", fig.width=12, fig.height=10}
 MU_tbl <- match_ups(LoR_Melt_Master_RMD)
 
-grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the player who attended the last Seasonal Tournament
-                                  Order of the Archetypes based on the playrate.
+grid_source_note <- md(glue::glue("MatchUp values from Ranked games of Master rank players. Order of the Archetypess based on the playrate.
                                   Source: Metadata of games collected with RiotGames API") )
 
 gtMU_grid <- mu_grid(mu_data = MU_tbl, dim_grid = params$nGrid, 
