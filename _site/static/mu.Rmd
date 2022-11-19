@@ -12,7 +12,7 @@ output:
 params:
   start:    "2022-11-09 18:00:00"
   end:      "2024-11-09 18:00:00"
-  min_mu_games: 15   # min number of games for a MU
+  min_mu_games: 25   # min number of games for a MU
   dim_grid: 15       # how many MU to plot
   last_season: "S16"
   grid_name: "mugrid_319"
@@ -372,17 +372,13 @@ Row {.tabset}
 
 ![](images/mugrid_317_318.png)
 
+### Patch 3.16
+
+![](images/mugrid_316.png)
+
 ### Patch 3.14 - Patch 3.15 - Darkin Saga: Awekening
 
 ![](images/mugrid_314_315.png)
-
-### Patch 3.13 - Forces from Beyond - End of Kai'Sa patch
-
-![](images/mugrid_313.png)
-
-### Patch 3.11 - Patch 3.12 - Forces from Beyond
-
-![](images/mugrid_311_312.png)
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 ================================
