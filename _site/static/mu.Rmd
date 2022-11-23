@@ -96,6 +96,7 @@ LoR_Deck_RMD <- update_and_save_deck(
     bind_rows(LoR_Diamond_DT_RMD) |>
     bind_rows(LoR_Temp_DT_RMD)
 )
+
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
