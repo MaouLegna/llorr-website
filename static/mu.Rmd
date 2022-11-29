@@ -137,6 +137,12 @@ shiny_grid <- mu_grid(mu_data = Shiny_MUtbl, dim_grid = 30,
 Shiny_MUtbl |> data.table::fwrite( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv") ) )
 shiny_grid |>  gt::gtsave( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$grid_name}.png") ) , vwidth = 1500, vheight = 1000) |> invisible()
 
+# Shiny_MUtbl <- data.table::fread(file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv")), header = T, na.strings = c("", NA), encoding = "UTF-8")
+
+Shiny_MUtbl |>
+  select(playerDeck,opponentDeck,muWR) |>
+  pivot_wider(id_cols = playerDeck,names_from = opponentDeck,values_from = muWR) |>
+  data.table::fwrite( "../data/Grid-MUtbl2.csv" )
 ```
 
 ```{r process-data-master}
