@@ -115,36 +115,6 @@ LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
   melt_match(LoR_Deck_RMD)
 ```
 
-```{r update-Shiny}
-# top_archetype <- LoR_Melt_Match_RMD |>
-#   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-#   count(playerDeck) |>
-#   mutate(playrate = n/sum(n)) |>
-#   slice_max(n, n = 30,with_ties = F )
-# 
-# Shiny_MUtbl <- LoR_Melt_Match_RMD |>
-#   # bind_rows(LoR_Melt_Diamond_RMD) |>
-#   distinct(match_key,playerPuuid,.keep_all = T) |>
-#   filter(playerDeck %in% top_archetype$playerDeck & opponentDeck %in% top_archetype$playerDeck) |>
-#   match_ups() |>
-#   left_join(top_archetype) |>
-#   rename(LCI = lower, UCI = upper)
-# 
-# shiny_grid <- mu_grid(mu_data = Shiny_MUtbl, dim_grid = 30, 
-#                       games_data = LoR_Melt_Match_RMD, prev_days = 7,
-#                       grid_source_note = "", div_1 = 10, div_2 = 10, font_upper = 12, font_lower = 9)
-# 
-# Shiny_MUtbl |> data.table::fwrite( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv") ) )
-# shiny_grid |>  gt::gtsave( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$grid_name}.png") ) , vwidth = 1500, vheight = 1000) |> invisible()
-# 
-# # Shiny_MUtbl <- data.table::fread(file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv")), header = T, na.strings = c("", NA), encoding = "UTF-8")
-# 
-# Shiny_MUtbl |>
-#   select(playerDeck,opponentDeck,muWR) |>
-#   pivot_wider(id_cols = playerDeck,names_from = opponentDeck,values_from = muWR) |>
-#   data.table::fwrite( "../data/Grid-MUtbl2.csv" )
-```
-
 ```{r process-data-master}
 WR_tbl <- win_rates(LoR_Melt_Match_RMD, server = F)
 
@@ -155,6 +125,33 @@ MU_tbl <- match_ups(LoR_Melt_Match_RMD,min_games = params$min_mu_games) |>
   left_join(WR_tbl |>
               select(playerDeck,opponentPR=playrate), by = c("opponentDeck"="playerDeck")) |>
   select(-lower,-upper)
+```
+
+```{r update-Shiny}
+top_archetype <- LoR_Melt_Match_RMD |>
+  filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
+  count(playerDeck) |>
+  mutate(playrate = n/sum(n)) |>
+  slice_max(n, n = 30,with_ties = F )
+
+Shiny_MUtbl <- LoR_Melt_Match_RMD |>
+  filter(playerDeck %in% top_archetype$playerDeck & opponentDeck %in% top_archetype$playerDeck) |>
+  match_ups() |>
+  left_join(top_archetype) |>
+  rename(LCI = lower, UCI = upper)
+
+shiny_grid <- mu_grid(mu_data = Shiny_MUtbl, dim_grid = 30,
+                      games_data = LoR_Melt_Match_RMD, prev_days = 7,
+                      grid_source_note = "", div_1 = 10, div_2 = 10, font_upper = 12, font_lower = 9)
+
+Shiny_MUtbl |> data.table::fwrite( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv") ) )
+shiny_grid  |> gt::gtsave( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$grid_name}.png") ) , vwidth = 1500, vheight = 1000) |> invisible()
+
+MU_tbl |>
+  filter(!is.na(playerDeck)) |>
+  select(playerDeck,opponentDeck,muWR) |>
+  pivot_wider(id_cols = playerDeck,names_from = opponentDeck,values_from = muWR) |>
+  data.table::fwrite( file.path("C:","Users","Valentino Vazzoler","Documents","R","llorr-website","data","Grid-MUtbl.csv") )
 ```
 
 Row
@@ -399,6 +396,7 @@ Download {data-width="250"}
 MU_tbl |>
   # filter(muGames >= params$min_mu_games) |>
   select(playerDeck, opponentDeck, muWin, muGames, muWR) |>
+  mutate(muWR = round(muWR,digits = 3)) |>
   downloadthis::download_this(
     button_label = glue("Download MU (Master) data as .csv
                         min {params$min_mu_games} games"), 
