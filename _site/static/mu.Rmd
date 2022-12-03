@@ -12,10 +12,10 @@ output:
 params:
   start:    "2022-11-09 18:00:00"
   end:      "2024-11-09 18:00:00"
-  min_mu_games: 50   # min number of games for a MU
+  min_mu_games: 10   # min number of games for a MU
   dim_grid: 15       # how many MU to plot
   last_season: "S16"
-  grid_name: "mugrid_319"
+  grid_name: "mugrid_319_320"
   set_names: "Set06-04"
 ---
 
@@ -51,13 +51,6 @@ xaringanExtra::use_panelset()
 }
 ```
 
-```{r update-dataset}
-update_lor_database(server_abbr = "EU",last_season = "S16",  delete = TRUE)
-update_lor_database(server_abbr = "NA",last_season = "S16",  delete = TRUE)
-update_lor_database(server_abbr = "APAC",last_season = "S16",delete = TRUE)
-```
-
-
 ```{r constants}
 last_update_box <- flexdashboard::valueBox(
   Sys.Date(), 
@@ -67,95 +60,23 @@ last_update_box <- flexdashboard::valueBox(
 ```
 
 ```{r load-data}
-# load DeckDT
-LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
-
-# load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  # str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-# load Games DT
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  # str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-LoR_Temp_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
-```
-
-```{r deck-fix}
-# LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
-LoR_Deck_RMD <- update_and_save_deck(
-  LoR_Deck_RMD,
-  LoR_Match_DT_RMD |> 
-    bind_rows(LoR_Diamond_DT_RMD) |>
-    bind_rows(LoR_Temp_DT_RMD)
+MU_tbl <- data.table::fread(
+  file = file.path("C:", "LlorR", "data", "clean","mu_master_minimal.csv"),
+  header = T, na.strings = c("", NA), encoding = "UTF-8"
 )
 
-LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+MU_diamond <- data.table::fread(
+  file = file.path("C:", "LlorR", "data", "clean","mu_diamond_minimal.csv"),
+  header = T, 
+  na.strings = c("", NA),
+  encoding = "UTF-8"
+)
+
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
 ```
 
 Master {data-icon="fa-table"}
 ================================
-
-```{r prepara-data}
-LoR_Melt_Match_RMD <- LoR_Match_DT_RMD |>
-  filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD)
-
-LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
-  filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD)
-```
-
-```{r update-Shiny}
-# top_archetype <- LoR_Melt_Match_RMD |>
-#   filter(game_start_time_utc >= Sys.Date()+hours(18)-days(7) ) |>
-#   count(playerDeck) |>
-#   mutate(playrate = n/sum(n)) |>
-#   slice_max(n, n = 30,with_ties = F )
-# 
-# Shiny_MUtbl <- LoR_Melt_Match_RMD |>
-#   # bind_rows(LoR_Melt_Diamond_RMD) |>
-#   distinct(match_key,playerPuuid,.keep_all = T) |>
-#   filter(playerDeck %in% top_archetype$playerDeck & opponentDeck %in% top_archetype$playerDeck) |>
-#   match_ups() |>
-#   left_join(top_archetype) |>
-#   rename(LCI = lower, UCI = upper)
-# 
-# shiny_grid <- mu_grid(mu_data = Shiny_MUtbl, dim_grid = 30, 
-#                       games_data = LoR_Melt_Match_RMD, prev_days = 7,
-#                       grid_source_note = "", div_1 = 10, div_2 = 10, font_upper = 12, font_lower = 9)
-# 
-# Shiny_MUtbl |> data.table::fwrite( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv") ) )
-# shiny_grid |>  gt::gtsave( file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$grid_name}.png") ) , vwidth = 1500, vheight = 1000) |> invisible()
-# 
-# # Shiny_MUtbl <- data.table::fread(file.path("C:","LlorR","scripts","shiny","bo3-helper",glue::glue("{params$set_names}-MUtbl.csv")), header = T, na.strings = c("", NA), encoding = "UTF-8")
-# 
-# Shiny_MUtbl |>
-#   select(playerDeck,opponentDeck,muWR) |>
-#   pivot_wider(id_cols = playerDeck,names_from = opponentDeck,values_from = muWR) |>
-#   data.table::fwrite( "../data/Grid-MUtbl2.csv" )
-```
-
-```{r process-data-master}
-WR_tbl <- win_rates(LoR_Melt_Match_RMD, server = F)
-
-MU_tbl <- match_ups(LoR_Melt_Match_RMD,min_games = params$min_mu_games) |>
-  mutate(mirror = if_else(playerDeck==opponentDeck, "Yes", "No" ) ) |>
-  left_join(WR_tbl |>
-              select(playerDeck,playrate), by = "playerDeck") |>
-  left_join(WR_tbl |>
-              select(playerDeck,opponentPR=playrate), by = c("opponentDeck"="playerDeck")) |>
-  select(-lower,-upper)
-```
 
 Row
 -----------------------------------------------------------------------
@@ -163,16 +84,23 @@ Row
 ### Box MU
 
 ```{r}
-nGames = MU_tbl |>
-  summarise(n = sum(muGames)) |>
-  pull()
-
-flexdashboard::valueBox(glue::glue("{NROW(LoR_Melt_Match_RMD)} Master Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {nGames} games used"), 
+flexdashboard::valueBox(glue::glue("{summary_info$nRankedMaster} Master Ranked Games"), 
+                        caption = glue::glue("min 10 games - {summary_info$nMuMaster} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> master_valuebox
 
 master_valuebox
+```
+
+### Box Master
+
+```{r value-player-master}
+flexdashboard::valueBox(value = summary_info$nMaster, 
+                        caption = glue::glue("Master Players"), 
+                        icon = "fa-medal", 
+                        color = "#65c0a9") -> box_master
+
+box_master
 ```
 
 ### Last Update
@@ -208,24 +136,12 @@ Row {data-heigth="750"}
 
 ### MU table
 
-```{r}
+```{r print-react-master}
 reactable_mu(crosstalk_data)
 ```
 
 Diamond {data-icon="fa-table"}
 ================================
-
-```{r process-data-diamond}
-WR_diamond <- win_rates(LoR_Melt_Diamond_RMD, server = F)
-
-MU_diamond <- match_ups(LoR_Melt_Diamond_RMD, min_games = params$min_mu_games) |>
-  mutate(mirror = if_else(playerDeck==opponentDeck, "Yes", "No" ) ) |>
-  left_join(WR_diamond |>
-              select(playerDeck,playrate), by = "playerDeck") |>
-  left_join(WR_diamond |>
-              select(playerDeck,opponentPR=playrate), by = c("opponentDeck"="playerDeck")) |>
-  select(-lower,-upper)
-```
 
 Row
 -----------------------------------------------------------------------
@@ -233,16 +149,21 @@ Row
 ### Box MU
 
 ```{r}
-nGames_diamond = MU_diamond |>
-  summarise(n = sum(muGames)) |>
-  pull()
-
-flexdashboard::valueBox(glue::glue("{NROW(LoR_Melt_Diamond_RMD)} Diamond Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {nGames_diamond} games used"), 
+flexdashboard::valueBox(glue::glue("{summary_info$nRankedDiamond} Master Ranked Games"), 
+                        caption = glue::glue("min 10 games - {summary_info$nMuDiamond} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> diamond_valuebox
 
 diamond_valuebox
+```
+
+```{r value-player-diamond}
+flexdashboard::valueBox(value = summary_info$nDiamond, 
+                        caption = glue::glue("HighDiamond Players"), 
+                        icon = "fa-diamond",
+                        color = "#ff7f24") -> box_diamond
+
+box_diamond
 ```
 
 ### Last Update
@@ -278,7 +199,7 @@ Row {data-heigth="750"}
 
 ### MU table
 
-```{r}
+```{r print-react-diamond}
 reactable_mu(crosstalk_diamond)
 ```
 
@@ -312,15 +233,7 @@ Row {data-heigth="850" .tabset}
 ### MU Grid
 
 ```{r print-grid}
-grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the current Master rank players
-                                  Order of the Archetypes based on the playrate.
-                                  WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
-                                  Source: Metadata of games collected with RiotGames API") )
-
-gtMU_grid <- mu_grid(mu_data = MU_tbl, dim_grid = params$dim_grid, 
-                     games_data = LoR_Melt_Match_RMD, prev_days = 7, 
-                     grid_source_note = grid_source_note, div_1 = 12, div_2 = 12, font_upper = 14, font_lower = 10)
-
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_master.rds"))
 
 gtMU_grid <- gtMU_grid |>
   tab_options(
@@ -341,17 +254,8 @@ gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000)
 
 ### MU Grid - Diamond
 
-```{r}
-grid_source_note <- md(glue::glue("MatchUp values from Ranked games of the current HighDiamond rank players players who played against Master players but are not Master themselves
-                                  Order of the Archetypes based on the playrate.
-                                  WR<sub>meta</sub> defined as the win-rate against decks with at least 1% playrate.
-                                  Source: Metadata of games collected with RiotGames API") )
-
-
-gtMU_grid <- mu_grid(mu_data = MU_diamond, dim_grid = params$dim_grid, 
-                     games_data = LoR_Melt_Diamond_RMD, prev_days = 7, 
-                     grid_source_note = grid_source_note, div_1 = 12, div_2 = 12, font_upper = 14, font_lower = 10)
-
+```{r print-diamond-grid}
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_diamond.rds"))
 
 gtMU_grid <- gtMU_grid |>
   tab_options(
@@ -396,28 +300,22 @@ Download {data-width="250"}
 ### Match Ups Data
 
 ```{r download-master}
-MU_tbl |>
-  # filter(muGames >= params$min_mu_games) |>
-  select(playerDeck, opponentDeck, muWin, muGames, muWR) |>
-  downloadthis::download_this(
-    button_label = glue("Download MU (Master) data as .csv
-                        min {params$min_mu_games} games"), 
+downloadthis::download_file(
+  path = file.path("data/mu_master.csv"),
+  button_label = glue("Download MU (Master) data as .csv
+                        min 10 games"), 
     output_name = "mutable", 
     button_type = "success", 
     has_icon = TRUE, 
-    icon = "fa fa-save")
-
-# MU_tbl |>
-#   select(playerDeck, opponentDeck, muWin, muGames, muWR) |>
-#   jsonlite::write_json("MU.json")
+    icon = "fa fa-save"
+)
 ```
 
 ### Match Ups Grid
 
-```{r}
+```{r download-grid}
 downloadthis::download_file(
   path = file.path("images/mugrid.png"), 
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
   button_label = "Download MU grid as .png", 
   button_type = "primary", 
   has_icon = TRUE, 
@@ -453,14 +351,8 @@ The format of the table is the usual way I display the match-ups data but I also
 
 ```{r}
 tbl_archetype
-
-gt::gtsave(data = tbl_archetype, glue::glue("images/archetype_guide.png")) |> invisible()
 ```
 
 #### General info
 
 When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games.
-
-#### Credits
-
-<!-- Special thanks to Trinathan and bA1ance for the recent support (ᐛ)ᕗ  -->

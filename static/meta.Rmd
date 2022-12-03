@@ -12,8 +12,8 @@ output:
 params:
   start:    "2022-11-09 18:00:00"
   end:      "2024-11-09 18:00:00"
-  min_mu_games: 50 # min number of games for a MU
-  max_top_pr:  12  # meta evolution decks
+  min_mu_games: 10 # min number of games for a MU
+  max_top_pr:   12  # meta evolution decks
   last_season: "S16"
 ---
 
@@ -61,58 +61,24 @@ seq_date <- seq(lubridate::as_datetime(params$start), floor_date(lubridate::now(
 ```
 
 ```{r load-data}
-# load DeckDT
-LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
+meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
+meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_all.rds") )
 
-# load Account
-LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread, colClasses = "character", header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(activeShard = if_else(activeShard %in% c("sea", "asia"), "apac", activeShard) ) |>
-  mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
-  # to be safe
-  distinct(puuid, .keep_all = T)
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
 
-# load Games
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+hourly_master_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_plot.rds") )
+hourly_master_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_line.rds") )
+hourly_diamond_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_diamond_plot.rds") )
+hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_diamond_line.rds") )
 
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
-```
-
-```{r deck-fix}
-# LoR_Deck_RMD <- archetype_pretty(LoR_Deck_RMD)
-# LoR_Deck_RMD <- update_and_save_deck(
-#   LoR_Deck_RMD, 
-#   bind_rows(LoR_Match_DT_RMD, LoR_Diamond_DT_RMD)
-# )
-LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-```
-
-```{r prepara-data}
-LoR_Melt_Master_RMD <- LoR_Match_DT_RMD |>
-  filter(game_type == "Ranked"  ) |>
-  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD, LoR_Account_RMD)
-
-LoR_Melt_Diamond_RMD <- LoR_Diamond_DT_RMD |>
-  filter(game_type == "Ranked"  ) |>
-  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD, LoR_Account_RMD)
-
-LoR_Melt_Matches_RMD <- LoR_Melt_Master_RMD |>
-  bind_rows(LoR_Melt_Diamond_RMD) |>
-  distinct()
+LoR_Melt_24hrs <- data.table::fread(
+  file = file.path("C:", "LlorR", "data", "clean","ranked_24hrs.csv"),
+  header = T, na.strings = c("", NA), encoding = "UTF-8"
+)
 ```
 
 Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
 ================================
-
-```{r}
-meta_7days <- reactable_meta(LoR_Melt_Matches_RMD, 7)
-```
 
 Row {data-heigth="125"}
 -----------------------------------------------------------------------
@@ -121,7 +87,7 @@ Row {data-heigth="125"}
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{meta_7days$nGames} Games"), 
-                        caption = glue::glue("Number of Ranked Games - Master&HighDiamond"), 
+                        caption = glue::glue("Number of Ranked Games - Master"), 
                         icon = "fa-table", 
                         color = "#a88b32")
 ```
@@ -168,7 +134,7 @@ Row {data-heigth="125"}
 ### Master
 
 ```{r value-player-master}
-flexdashboard::valueBox(glue::glue("{LoR_Account_RMD[master=='master', .N]}"), 
+flexdashboard::valueBox(value = summary_info$nMaster,
                         caption = glue::glue("Master Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9")
@@ -177,7 +143,7 @@ flexdashboard::valueBox(glue::glue("{LoR_Account_RMD[master=='master', .N]}"),
 ### Diamond
 
 ```{r value-player-diamond}
-flexdashboard::valueBox(glue::glue("{LoR_Account_RMD[master=='diamond', .N]}"), 
+flexdashboard::valueBox(value = summary_info$nDiamond, 
                         caption = glue::glue("HighDiamond Players"), 
                         icon = "fa-diamond", 
                         color = "#ff7f24")
@@ -195,33 +161,17 @@ Row {.tabset}
 ### Master
 
 ```{r meta-evo-master, fig.width=20, fig.height=8}
-hourly_master_plot <- plot_hourly_meta_deck(data = LoR_Melt_Master_RMD, prev_days = 7, max_top_pr = params$max_top_pr)
-hourly_master_line <- plot_playrate_by_time(data = LoR_Melt_Master_RMD, prev_days = 7, max_top_pr = params$max_top_pr)
-hourly_master_double <- invisible(hourly_master_plot + hourly_master_line)
-
-hourly_master_double
-
-# ggsave(filename = "images/meta-evo-master.png", plot = hourly_master_double, width = 12, height = 8) |> invisible()
+hourly_master_plot + hourly_master_line
 ```
 
 ### Diamond
 
 ```{r meta-evo-diamond, fig.width=20, fig.height=8}
-hourly_diamond_plot <- plot_hourly_meta_deck(data = LoR_Melt_Diamond_RMD, prev_days = 7, max_top_pr = params$max_top_pr, population = "Diamond")
-hourly_diamond_line <- plot_playrate_by_time(data = LoR_Melt_Diamond_RMD, prev_days = 7, max_top_pr = params$max_top_pr, population = "Diamond")
-hourly_diamond_double <- invisible(hourly_diamond_plot + hourly_diamond_line)
-
-hourly_diamond_double
-
-# ggsave(filename = "images/meta-evo-diamond.png", plot = hourly_diamond_double, width = 12, height = 8) |> invisible()
+hourly_diamond_plot + hourly_diamond_line
 ```
 
 Stats (whole patch) {data-icon="fa-table"}
 ================================
-
-```{r}
-meta_all <- reactable_meta(LoR_Melt_Matches_RMD)
-```
 
 Row 
 -----------------------------------------------------------------------
@@ -229,11 +179,8 @@ Row
 ### Number of Games
 
 ```{r value-games}
-# {data-heigth="125"}
-nGames <- NROW(LoR_Melt_Matches_RMD)
-
 flexdashboard::valueBox(glue::glue("{meta_all$nGames} Games"), 
-                        caption = glue::glue("Number of Ranked Games - by Seasonal Players"), 
+                        caption = glue::glue("Number of Ranked Games - by Master players"), 
                         icon = "fa-table", 
                         color = "#a88b32")
 ```
@@ -292,12 +239,6 @@ flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
 
 ```{r}
 last_update_box
-```
-
-```{r}
-LoR_Melt_24hrs <- LoR_Melt_Matches_RMD |>
-  filter(game_start_time_utc %within% interval(today()+hours(18)-days(2), today()+hours(18)-days(1)) ) |>
-  distinct(match_key, playerPuuid, .keep_all = T)
 ```
 
 Row {data-heigth="875"}
@@ -421,35 +362,6 @@ tribble(
   ) |>
   gtExtras::gt_theme_nytimes()
 ```
-
-### Donwload - Master
-
-```{r}
-downloadthis::download_file(
-  path = file.path("images/meta-evo-master-1.png"), 
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
-  button_label = "Download PlayRates over time as .png", 
-  button_type = "primary", 
-  has_icon = TRUE, 
-  icon = "fa fa-save", 
-  self_contained = FALSE
-)
-```
-
-### Donwload - Diamond
-
-```{r}
-downloadthis::download_file(
-  path = file.path("images/meta-evo-diamond-1.png"), 
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
-  button_label = "Download PlayRates over time as .png", 
-  button_type = "primary", 
-  has_icon = TRUE, 
-  icon = "fa fa-save", 
-  self_contained = FALSE
-)
-```
-
 
 ### General info
 
