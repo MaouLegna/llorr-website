@@ -4,6 +4,10 @@ author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
+    theme:
+      bg: "#101010"
+      fg: "#FDF7F7"
+      primary: "#ED7979"
     navbar:
       - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/mu.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
@@ -34,6 +38,8 @@ knitr::opts_chunk$set(
   layout     = "l-page", 
   preview    = TRUE
 )
+
+# "default", "bootstrap", "cerulean", "cosmo", "darkly", "flatly", "journal", "lumen", "paper", "readable", "sandstone", "simplex", "spacelab", "united", "yeti"
 
 #' R Option
 options(scipen = 999)

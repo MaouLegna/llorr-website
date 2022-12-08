@@ -100,3 +100,10 @@ body {
   --panel-tabs-border-bottom: #ddd;
   --panel-tab-inactive-opacity: 0.5;
 } */
+
+.darkmode d-article,
+.darkmode d-appendix,
+.darkmode body {
+  background-color: black;
+  color: white;
+}

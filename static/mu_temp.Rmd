@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (from Patch 3.17 - The Darkin Saga - Domination)"
+title: "Match Ups Data (from Patch 3.21 - The Darkin Saga - World Ender)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -10,12 +10,12 @@ output:
     orientation: row
 
 params:
-  start:    "2022-10-12 19:00:00"
+  start:    "2022-12-07 19:00:00"
   end:      "2099-10-12 19:00:00"
-  min_mu_games: 10   # min number of games for a MU
+  min_mu_games: 5   # min number of games for a MU
   dim_grid: 15       # how many MU to plot
-  last_season: "S16"
-  grid_name: "mugrid_317_temp"
+  last_season: "S17"
+  grid_name: "mugrid_321_temp"
 ---
 
 ```{r setup, include=FALSE}
@@ -60,16 +60,19 @@ last_update_box <- flexdashboard::valueBox(
 
 ```{r load-data}
 # load DeckDT
-LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
+LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK_S17.csv"), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Temp_DT_{params$last_season}(.*)csv$"), full.names = T) |>
+LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)PrevS_DT_{params$last_season}(.*)csv$"), full.names = T) |>
   map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
   mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
+
+World_Players <- list.files(path = file.path("C:", "LlorR", "data", "raw"),pattern = "World",  full.names = T) |> 
+  map_dfr(readr::read_rds)
 ```
 
 ```{r deck-fix}
-LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
+# LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
 LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
 ```
 
@@ -109,6 +112,15 @@ flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"),
                         caption = glue::glue("out of a total of {NROW(LoR_Melt_Match_RMD)} - min {params$min_mu_games} games"), 
                         icon = "fa-table", 
                         color = "#FA7404")
+```
+
+### Number of Players
+
+```{r value-player-base}
+flexdashboard::valueBox(glue::glue("{NROW(World_Players)}"), 
+                        caption = glue::glue("World Players"), 
+                        icon = "fa-medal", 
+                        color = "#65c0a9")
 ```
 
 ### Last Update
@@ -176,7 +188,7 @@ Row {data-heigth="850" .tabset}
 
 ```{r print-grid}
 grid_source_note <- gt::md(
-  glue::glue("MatchUp values from Ranked games of the player who attended the last Seasonal Tournament
+  glue::glue("MatchUp values from Ranked games of the player who were listed in playruneterra.com as sure or potential World attendences
              Order of the Archetypes based on the playrate.
              WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
              Source: Metadata of games collected with RiotGames API")
@@ -215,23 +227,9 @@ Grid Older Patch  {data-icon="fa-file-image"}
 Row {.tabset}
 -----------------------------------------------------------------------
 
-### Patch 3.16 - Late September Patch
+### Patch 3.19 - 3.20 -  - Late November
 
-![](images/mugrid_316.png)
-
-### Patch 3.14 - Patch 3.15 - Darkin Saga: Awekening
-
-![](images/mugrid_314_315.png)
-
-### Patch 3.13 - Forces from Beyond - End of Kai'Sa patch
-
-![](images/mugrid_313.png)
-
-### Patch 3.11 - Patch 3.12 - Forces from Beyond
-
-![](images/mugrid_311_312.png)
-
-
+![](images/mugrid_319_320.png)
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 ================================

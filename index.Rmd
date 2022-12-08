@@ -20,7 +20,11 @@ knitr::opts_chunk$set(
 # Hi, Legna here. I you are looking for stats on the current metagame just click on MatchUps or Meta in the Navigation Bar.
 ```
 
-Update 2022-10-13: Data for "The Darkin Saga - Domination" are up!
+Update 2022-12-08: Data for "The Darkin Saga - World Ender" are up!
+
+As usual during the start of the season the data shown is not from Master and HighDiamond players.
+
+This time, as there was no seasonal tournament the games are from the World list from playruneterra.com
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
@@ -120,7 +124,7 @@ ggplot(aes(x = x, y = value), data = gdat) +
   geom_line(aes(group = variable), color = 'blue') +
   geom_line(aes(group = variable, y = fmean),
             color = '#d9edf7',
-            size = 2) +
+            linewidth = 2) +
   geom_point(
     aes(x = X_train, y = y_train),
     size = 4,

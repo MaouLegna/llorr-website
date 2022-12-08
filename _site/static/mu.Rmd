@@ -4,6 +4,7 @@ author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
+    theme: darkly
     navbar:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }

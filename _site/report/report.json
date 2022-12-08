@@ -1547,5 +1547,22 @@
     "preview": "https://dd.b.pvp.net/latest/set4/en_us/img/cards/04SH041-full.png",
     "last_modified": "2021-07-24T13:02:09+02:00",
     "input_file": {}
+  },
+  {
+    "path": "report/meta-report-test/",
+    "title": "THE META REPORT NAME IS TOO SHORT\n",
+    "description": "Patch 999.66 - Week 42 - End of the Universe",
+    "author": [
+      {
+        "name": "Valentino (Legna) Vazzoler",
+        "url": {}
+      }
+    ],
+    "date": "1986-12-06",
+    "categories": [],
+    "contents": "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nknitr::opts_chunk$set(\r\n  fig.width = 12,\r\n  fig.height = 8,\r\n  fig.path = \"images/MRXX-\"\r\n)\r\n\r\n\r\n\r\n\r\nplot(mtcars)\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+    "preview": "https://dd.b.pvp.net/latest/set1/en_us/img/cards/01IO005-full.png\n",
+    "last_modified": "2022-12-07T21:48:45+01:00",
+    "input_file": {}
   }
 ]
