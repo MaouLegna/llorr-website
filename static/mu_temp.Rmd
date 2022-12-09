@@ -36,11 +36,7 @@ knitr::opts_chunk$set(
   preview    = TRUE
 )
 
-#' R Option
-options(scipen = 999)
 source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -50,53 +46,36 @@ xaringanExtra::use_panelset()
 }
 ```
 
+```{r load-data}
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+MU_tbl <- data.table::fread(file = file.path("C:","LlorR", "data", "clean","mu_prevs.csv") )
+```
+
 ```{r constants}
 last_update_box <- flexdashboard::valueBox(
   Sys.Date(), 
   caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"), 
   icon = "fa-clock", 
-  color = "#1A9850")
-```
+  color = "#1A9850"
+)
 
-```{r load-data}
-# load DeckDT
-LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK_S17.csv"), na.strings = c("", NA), colClasses = "character")
-
-# load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)PrevS_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
-
-World_Players <- list.files(path = file.path("C:", "LlorR", "data", "raw"),pattern = "World",  full.names = T) |> 
-  map_dfr(readr::read_rds)
-```
-
-```{r deck-fix}
-# LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
-LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
+number_games <- flexdashboard::valueBox(
+    value = glue::glue("{summary_info$nGames} Ranked Games"), 
+    caption = glue::glue("min 5 games - {summary_info$nMu} games used"), 
+    icon = "fa-table", 
+    color = "#FA7404"
+  )
+  
+number_players = flexdashboard::valueBox(
+    glue::glue("{summary_info$nPlayers}"), 
+    caption = glue::glue("World Players"), 
+    icon = "fa-medal", 
+    color = "#65c0a9"
+  )
 ```
 
 (Previous) Seasonal Players {data-icon="fa-table"}
 ================================
-
-```{r prepara-data}
-LoR_Melt_Match_RMD <- LoR_Match_DT_RMD |>
-  filter(game_type == "Ranked") |>
-  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD)
-```
-
-```{r process-data}
-WR_tbl <- win_rates(LoR_Melt_Match_RMD, server = F)
-
-MU_tbl <- match_ups(LoR_Melt_Match_RMD,min_games = params$min_mu_games) |>
-  mutate(mirror = if_else(playerDeck==opponentDeck, "Yes", "No" ) ) |>
-  left_join(WR_tbl |>
-              select(playerDeck,playrate), by = "playerDeck") |>
-  left_join(WR_tbl |>
-              select(playerDeck,opponentPR=playrate), by = c("opponentDeck"="playerDeck")) |>
-  select(-lower,-upper)
-```
 
 Row
 -----------------------------------------------------------------------
@@ -104,23 +83,13 @@ Row
 ### Box MU
 
 ```{r}
-nGames = MU_tbl |>
-  summarise(n = sum(muGames)) |>
-  pull()
-
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games"), 
-                        caption = glue::glue("out of a total of {NROW(LoR_Melt_Match_RMD)} - min {params$min_mu_games} games"), 
-                        icon = "fa-table", 
-                        color = "#FA7404")
+number_games
 ```
 
 ### Number of Players
 
 ```{r value-player-base}
-flexdashboard::valueBox(glue::glue("{NROW(World_Players)}"), 
-                        caption = glue::glue("World Players"), 
-                        icon = "fa-medal", 
-                        color = "#65c0a9")
+number_players
 ```
 
 ### Last Update
@@ -169,10 +138,7 @@ Row
 ### Box MU
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{nGames} Ranked Games - Seasonal Players"), 
-                        caption = glue::glue("out of a total of {NROW(LoR_Melt_Match_RMD)} - min 10 games"), 
-                        icon = "fa-table", 
-                        color = "#FA7404")
+number_games
 ```
 
 ### Last Update
@@ -187,18 +153,7 @@ Row {data-heigth="850" .tabset}
 ### MU Grid
 
 ```{r print-grid}
-grid_source_note <- gt::md(
-  glue::glue("MatchUp values from Ranked games of the player who were listed in playruneterra.com as sure or potential World attendences
-             Order of the Archetypes based on the playrate.
-             WR<sub>meta</inf> defined as the win-rate against decks with at least 1% playrate.
-             Source: Metadata of games collected with RiotGames API")
-  )
-
-
-gtMU_grid <- mu_grid(mu_data = MU_tbl, dim_grid = params$dim_grid, 
-                     games_data = LoR_Melt_Match_RMD, prev_days = 7, 
-                     grid_source_note = grid_source_note, div_1 = 12, div_2 = 12, font_upper = 14, font_lower = 10)
-
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_prevs.rds") )
 
 gtMU_grid <- gtMU_grid |>
   tab_options(
@@ -212,14 +167,7 @@ gtMU_grid <- gtMU_grid |>
   )
 
 gtMU_grid
-
-gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
-# gtsave(data = gtMU_grid, "images/mugrid.png",                         vwidth = 1500, vheight = 1000) |> invisible()
 ```
-
-<!-- ![](images/mugrid.png) -->
-
-
 
 Grid Older Patch  {data-icon="fa-file-image"}
 ================================
@@ -239,29 +187,23 @@ Download {data-width="250"}
 
 ### Match Ups Data
 
-```{r download-master}
-MU_tbl |>
-  # filter(muGames >= params$min_mu_games) |>
-  select(playerDeck, opponentDeck, muWin, muGames, muWR) |>
-  downloadthis::download_this(
-    button_label = glue("Download MU (Master) data as .csv
-                        min {params$min_mu_games} games"), 
+```{r download-games}
+downloadthis::download_file(
+  path = file.path("data/mu_prevs.csv"),
+  button_label = glue("Download MU (World) data as .csv
+                        min 5 games"), 
     output_name = "mutable", 
     button_type = "success", 
     has_icon = TRUE, 
-    icon = "fa fa-save")
-
-# MU_tbl |>
-#   select(playerDeck, opponentDeck, muWin, muGames, muWR) |>
-#   jsonlite::write_json("MU.json")
+    icon = "fa fa-save"
+)
 ```
 
 ### Match Ups Grid
 
-```{r}
+```{r download-grid}
 downloadthis::download_file(
   path = file.path("images/mugrid.png"), 
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
   button_label = "Download MU grid as .png", 
   button_type = "primary", 
   has_icon = TRUE, 

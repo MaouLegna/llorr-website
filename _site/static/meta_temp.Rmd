@@ -36,11 +36,7 @@ knitr::opts_chunk$set(
   preview    = TRUE
 )
 
-#' R Option
-options(scipen = 999)
 source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -48,6 +44,15 @@ xaringanExtra::use_panelset()
 .value-box {
   height: 100px;
 }
+```
+
+```{r load-data}
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+hourly_prevs_plot <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","hourly_prevs_plot.rds") )
+hourly_prevs_line <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","hourly_prevs_line.rds") )
+
+meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
+react_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","react_24hrs.rds") )
 ```
 
 ```{r constants}
@@ -58,68 +63,25 @@ last_update_box <- flexdashboard::valueBox(
   color = "#1A9850"
 )
 
+number_games <- flexdashboard::valueBox(
+    value = glue::glue("{summary_info$nGames} Ranked Games"), 
+    caption = glue::glue("min 5 games - {summary_info$nMu} games used"), 
+    icon = "fa-table", 
+    color = "#FA7404"
+  )
+  
+number_players = flexdashboard::valueBox(
+    glue::glue("{summary_info$nPlayers}"), 
+    caption = glue::glue("World Players"), 
+    icon = "fa-medal", 
+    color = "#65c0a9"
+  )
+
 seq_date <- seq(lubridate::as_datetime(params$start), floor_date(lubridate::now(), unit = "day")+hours(18) , "day") #
-```
-
-```{r load-data}
-# load DeckDT
-LoR_Deck_RMD       <- fread(file.path("C:", "LlorR", "data", "raw", glue::glue("LoR_DECK_{params$last_season}.csv")), na.strings = c("", NA), colClasses = "character")
-
-# load Games DT
-LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)PrevS_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(server = if_else(server %in% c("sea", "asia"), "apac", server) )
-
-LoR_Account_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)ACCOUNT(.*)csv$"), full.names = T) |>
-  map_dfr(data.table::fread, colClasses = "character", header = T, na.strings = c("", NA), encoding = "UTF-8") |>
-  mutate(activeShard = if_else(activeShard %in% c("sea", "asia"), "apac", activeShard) ) |>
-  mutate(RiotID = glue::glue("{gameName}#{tagLine}")) |>
-  # to be safe
-  distinct(puuid, .keep_all = T)
-
-# load Games DT
-LoR_Master_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  # str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8", colClasses = "character") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-# load Games DT
-LoR_Diamond_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Diamond_DT_{params$last_season}(.*)csv$"), full.names = T) |>
-  # str_subset(pattern = "Keys", negate = T) |>
-  map_dfr(data.table::fread, header = T, na.strings = c("", NA), encoding = "UTF-8", colClasses = "character") |>
-  mutate(server = if_else(server %in% c("sea","asia"),"apac",server) )
-
-World_Players <- list.files(path = file.path("C:", "LlorR", "data", "raw"),pattern = "World",  full.names = T) |> 
-  map_dfr(readr::read_rds)
-```
-
-```{r deck-fix}
-# LoR_Deck_RMD <- update_and_save_deck(LoR_Deck_RMD,LoR_Match_DT_RMD)
-# LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-# 
-# LoR_Deck_RMD <- update_and_save_deck(
-#   LoR_Deck_RMD,
-#   LoR_Match_DT_RMD |> 
-#     bind_rows(LoR_Master_DT_RMD) |>
-#     bind_rows(LoR_Diamond_DT_RMD)
-# )
-LoR_Deck_RMD[ !is.na(archetype_pretty), archetype:=archetype_pretty ]
-```
-
-```{r prepara-data}
-LoR_Melt_Matches_RMD <- LoR_Match_DT_RMD |>
-  filter(game_type == "Ranked"  ) |>
-  filter(game_start_time_utc %within% interval(lubridate::as_datetime(params$start), lubridate::as_datetime(params$end)) ) |>
-  melt_match(LoR_Deck_RMD,LoR_Account_RMD)
 ```
 
 Stats (up to last 7days) {data-icon="fa-table"}
 ================================
-
-```{r}
-meta_7days <- reactable_meta(LoR_Melt_Matches_RMD,7)
-```
 
 Row {data-heigth="125"}
 -----------------------------------------------------------------------
@@ -175,10 +137,7 @@ Row {data-heigth="125"}
 ### Number of Players
 
 ```{r value-player-base}
-flexdashboard::valueBox(glue::glue("{NROW(World_Players)}"), 
-                        caption = glue::glue("World Players"), 
-                        icon = "fa-medal", 
-                        color = "#65c0a9")
+number_players
 ```
 
 ### Last Update
@@ -193,23 +152,13 @@ Row {.tabset}
 ### Graph-1
 
 ```{r day-by-day-stack, fig.width=12, fig.height=8}
-hourly_meta_lines <- plot_playrate_by_time(data = LoR_Melt_Matches_RMD,prev_days = 7,max_top_pr = params$max_top_pr) +
-  ggtitle(label = "Playrate over time - from 'World Players'")
-
-hourly_meta_lines 
-
-ggsave(filename = "images/meta-evo-lines-temp.png", plot = hourly_meta_lines, width = 12, height = 8) |> invisible()
+hourly_prevs_line 
 ```
 
 ### Graph-2
 
 ```{r day-by-day-line, fig.width=20, fig.height=8}
-hourly_meta_plot <- plot_hourly_meta_deck(data = LoR_Melt_Matches_RMD, max_top_pr = params$max_top_pr)  +
-  ggtitle(label = "Playrate over time - from 'World Players'")
-
-hourly_meta_plot
-
-ggsave(filename = "images/meta-evo-area-temp.png", plot = hourly_meta_plot, width = 12, height = 8) |> invisible()
+hourly_prevs_plot
 ```
 
 Fresh Stats (last 24 hours) {data-icon="fa-table"}
@@ -224,7 +173,6 @@ Row {data-heigth="125"}
 flexdashboard::valueBox(glue::glue("24 Hours Time Frame"), 
                         caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"), 
                         icon = "fa-clock", 
-                        # color = "lightgreen"
                         color = "red")
 ```
 
@@ -235,96 +183,13 @@ flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
 last_update_box
 ```
 
-```{r}
-LoR_Melt_24hrs <- LoR_Melt_Matches_RMD |>
-  filter(game_start_time_utc %within% interval(today()+hours(18)-days(2), today()+hours(18)-days(1)) ) |>
-  distinct(match_key, playerPuuid, .keep_all = T)
-```
-
 Row {data-heigth="875"}
 -----------------------------------------------------------------------
 
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
-if (NROW(LoR_Melt_24hrs)>0) {
-  
-  WR_tbl_24h <- LoR_Melt_24hrs |>
-    win_rates(details = T, server = F) |>
-    filter(playerDeck %!in% c(meta_7days$fct_meta, meta_7days$fct_underdog) ) |>
-    filter(WR > 0.5 ) |>
-    slice_max(nGames, n = 50, with_ties = F) |>
-    select(-lower, -upper)
-
-  deck_code_tbl_24hrs  <- LoR_Melt_24hrs |>
-    filter(playerDeck %in% c(WR_tbl_24h$playerDeck) ) |>
-    mutate(playerDeck = factor(playerDeck, ordered = TRUE, levels = c(WR_tbl_24h$playerDeck) ) ) |>
-    group_by(server, playerDeck, deck_code ) |>
-    summarise( n = n() ) |>
-    group_by(playerDeck) |>
-    slice_max(n, n = 10) |>
-    ungroup() |>
-    mutate(link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"), 
-           server = str_to_title(server) ) |>
-    select(playerDeck, n, link, server)
-  
-    with_tooltip <- function(value, tooltip) {
-      htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help", 
-                           title = tooltip, value)
-}
-
-WR_tbl_24h |>
-  reactable(
-    # groupBy = "playerDeck", 
-    searchable = TRUE, 
-    bordered = TRUE, 
-    # wrap = FALSE, 
-    highlight = TRUE, 
-    striped = TRUE, 
-    pagination = FALSE, 
-    fullWidth = T, 
-    # defaultSorted = list(LMI = "desc"), 
-    defaultColDef = colDef(
-      align = "center", 
-      minWidth = 100, 
-      # headerStyle = list(background = "steelblue", color="white")
-    ), 
-    details = function(index) {
-      # index = 1
-      deckdata <- deck_code_tbl_24hrs[ deck_code_tbl_24hrs$playerDeck == WR_tbl_24h$playerDeck[index], ]
-      reactable(
-        deckdata, 
-        fullWidth = F, 
-        defaultColDef = colDef(
-          style = list( fontSize = 13 ), 
-          html = TRUE
-          ), 
-        theme = reactableTheme(
-          headerStyle = list(background = "red", color="white", fontSize = 13), 
-          rowStyle = list(height = "45px")
-        ), 
-        columns = list(
-          n = colDef(name = "#Games", minWidth = 75 ), 
-          link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ), 
-          # playerDeck = colDef(name = "Archetype", minWidth = 150 ), 
-          playerDeck = colDef(show = F), 
-          server = colDef(name = "Server", minWidth = 100 )
-          ) )}, 
-    columns = list(
-      playerDeck = colDef(name = "Archetype", minWidth = 250, align = "left", header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")), 
-      nWin   = colDef(name = "#Win"), 
-      nGames = colDef(name = "#Games"), 
-      playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 1) ), 
-      type = colDef(name = "Type"), 
-      # LMI = colDef(name = "LMI"), 
-      tier = colDef(name = "Tier", minWidth = 200, align = "left"), 
-      CI = colDef(name = "Conf.Interval", minWidth = 200, align = "center"), 
-      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE, digits = 1) )
-    )
-
-  )
-
-}
+react_24hrs
 ```
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
@@ -349,35 +214,6 @@ tribble(
   ) |>
   gtExtras::gt_theme_nytimes()
 ```
-
-### Donwload - Master
-
-```{r}
-downloadthis::download_file(
-  path = file.path("images/meta-evo-master-1.png"), 
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
-  button_label = "Download PlayRates over time as .png", 
-  button_type = "primary", 
-  has_icon = TRUE, 
-  icon = "fa fa-save", 
-  self_contained = FALSE
-)
-```
-
-### Donwload - Diamond
-
-```{r}
-downloadthis::download_file(
-  path = file.path("images/meta-evo-diamond-1.png"), 
-  # path = system.file("assets/css/all.min.css", package = "downloadthis"), 
-  button_label = "Download PlayRates over time as .png", 
-  button_type = "primary", 
-  has_icon = TRUE, 
-  icon = "fa fa-save", 
-  self_contained = FALSE
-)
-```
-
 
 ### General info
 

@@ -302,9 +302,9 @@ Download {data-width="250"}
 
 ```{r download-master}
 downloadthis::download_file(
-  path = file.path("data/mu_master.csv"),
-  button_label = glue("Download MU (Master) data as .csv
-                        min 10 games"), 
+  path = file.path("data/mu_prevs.csv"),
+  button_label = glue("Download MU (World players) data as .csv
+                        min 5 games"), 
     output_name = "mutable", 
     button_type = "success", 
     has_icon = TRUE, 
