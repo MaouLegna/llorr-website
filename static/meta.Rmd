@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (from Patch 3.19 - Pre-World Patch)"
+title: "Meta & Decks (from Patch 3.21 - The Darkin Saga - World Ender)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -18,7 +18,7 @@ params:
   end:      "2024-11-09 18:00:00"
   min_mu_games: 10 # min number of games for a MU
   max_top_pr:   12  # meta evolution decks
-  last_season: "S16"
+  last_season: "S17"
 ---
 
 ```{r setup, include=FALSE}
@@ -39,13 +39,9 @@ knitr::opts_chunk$set(
   preview    = TRUE
 )
 
-# "default", "bootstrap", "cerulean", "cosmo", "darkly", "flatly", "journal", "lumen", "paper", "readable", "sandstone", "simplex", "spacelab", "united", "yeti"
-
-#' R Option
-options(scipen = 999)
 source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
 source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
+# source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
 xaringanExtra::use_panelset()
 ```
 

@@ -1,23 +1,20 @@
 ---
-title: "Match Ups Data (from Patch 3.19 - Pre-World Patch)"
+title: "Match Ups Data (from Patch 3.21 - The Darkin Saga - World Ender)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
-    theme: darkly
     navbar:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
     
 params:
-  start:    "2022-11-09 18:00:00"
-  end:      "2024-11-09 18:00:00"
   min_mu_games: 10   # min number of games for a MU
   dim_grid: 15       # how many MU to plot
-  last_season: "S16"
-  grid_name: "mugrid_319_320"
-  set_names: "Set06-04"
+  last_season: "S17"
+  grid_name: "mugrid_321_322"
+  set_names: "Set06-05"
 ---
 
 ```{r setup, include=FALSE}
@@ -41,8 +38,8 @@ knitr::opts_chunk$set(
 #' R Option
 options(scipen = 999)
 source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
-source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
 source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
+# source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
 xaringanExtra::use_panelset()
 ```
 
@@ -62,12 +59,12 @@ last_update_box <- flexdashboard::valueBox(
 
 ```{r load-data}
 MU_tbl <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","mu_master_minimal.csv"),
+  file = file.path("C:", "LlorR", "data", "clean","mu_master.csv"),
   header = T, na.strings = c("", NA), encoding = "UTF-8"
 )
 
 MU_diamond <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","mu_diamond_minimal.csv"),
+  file = file.path("C:", "LlorR", "data", "clean","mu_diamond.csv"),
   header = T, 
   na.strings = c("", NA),
   encoding = "UTF-8"
@@ -237,20 +234,20 @@ Row {data-heigth="850" .tabset}
 gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_master.rds"))
 
 gtMU_grid <- gtMU_grid |>
-  tab_options(
-    data_row.padding = px(8),
-    table.font.size = px(13),
-    column_labels.font.size = px(10)
+  gt::tab_options(
+    data_row.padding = gt::px(8),
+    table.font.size  = gt::px(13),
+    column_labels.font.size = gt::px(10)
   ) |>
-  cols_width(
-    -1 ~ px(90),
-    1 ~ px(150),
+  gt::cols_width(
+    -1 ~ gt::px(90),
+    1  ~ gt::px(150),
   )
 
 gtMU_grid
 
-gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
-gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000) |> invisible()
+gt::gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
+gt::gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000) |> invisible()
 ```
 
 ### MU Grid - Diamond
@@ -259,14 +256,14 @@ gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000)
 gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_diamond.rds"))
 
 gtMU_grid <- gtMU_grid |>
-  tab_options(
-    data_row.padding = px(8),
-    table.font.size = px(13),
-    column_labels.font.size = px(10)
+  gt::tab_options(
+    data_row.padding = gt::px(8),
+    table.font.size  = gt::px(13),
+    column_labels.font.size = gt::px(10)
   ) |>
-  cols_width(
-    -1 ~ px(90),
-    1 ~ px(150),
+  gt::cols_width(
+    -1 ~ gt::px(90),
+    1  ~ gt::px(150),
   )
 
 gtMU_grid
