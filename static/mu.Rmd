@@ -277,6 +277,10 @@ Grid Older Patch  {data-icon="fa-file-image"}
 Row {.tabset}
 -----------------------------------------------------------------------
 
+### Patch 3.19 - Patch 3.20 - Darkin Saga: Domination - November Balance Patch
+
+![](images/mugrid_319_320.png)
+
 ### Patch 3.17 - Patch 3.18 - Darkin Saga: Domination
 
 ![](images/mugrid_317_318.png)
@@ -284,10 +288,6 @@ Row {.tabset}
 ### Patch 3.16
 
 ![](images/mugrid_316.png)
-
-### Patch 3.14 - Patch 3.15 - Darkin Saga: Awekening
-
-![](images/mugrid_314_315.png)
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
 ================================
@@ -299,9 +299,21 @@ Download {data-width="250"}
 
 ```{r download-master}
 downloadthis::download_file(
-  path = file.path("data/mu_prevs.csv"),
-  button_label = glue("Download MU (World players) data as .csv
-                        min 5 games"), 
+  path = file.path("data/mu_master.csv"),
+  button_label = glue("Download MU (Masters) data as .csv
+                        min 10 games"), 
+    output_name = "mutable", 
+    button_type = "success", 
+    has_icon = TRUE, 
+    icon = "fa fa-save"
+)
+```
+
+```{r download-diamond}
+downloadthis::download_file(
+  path = file.path("data/mu_diamond.csv"),
+  button_label = glue("Download MU (HighDiamond) data as .csv
+                        min 10 games"), 
     output_name = "mutable", 
     button_type = "success", 
     has_icon = TRUE, 
