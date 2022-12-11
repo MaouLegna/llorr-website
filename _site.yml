@@ -26,7 +26,13 @@ navbar:
     - text: "Analysis"
       href: analysis.html
     - text: "Resources"
-      href: resources.html
+      menu:
+        - text: "Master MU spreadsheet"
+          href: https://docs.google.com/spreadsheets/d/1MFb-6203FOHiK4KJJyjQI3dmJw2_6cFRWsEMQSYyDnQ
+        - text: "Diamond MU spreadsheet"
+          href: https://docs.google.com/spreadsheets/d/1lYODIY3N-TP_0-zuJYcOZwqfOBVaTv66quUHaT8CG90
+        - text: "Site tools"
+          href: resources.html
     # - text: "Other"
     #   menu:
     #     - text: "Analysis"

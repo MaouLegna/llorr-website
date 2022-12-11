@@ -4,6 +4,9 @@ author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
+    theme:
+      bg: "#101010"
+      fg: "#FDF7F7"
     navbar:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
@@ -233,7 +236,7 @@ Row {data-heigth="850" .tabset}
 ```{r print-grid}
 gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_master.rds"))
 
-gtMU_grid <- gtMU_grid |>
+gtMU_grid |>
   gt::tab_options(
     data_row.padding = gt::px(8),
     table.font.size  = gt::px(13),
@@ -242,12 +245,8 @@ gtMU_grid <- gtMU_grid |>
   gt::cols_width(
     -1 ~ gt::px(90),
     1  ~ gt::px(150),
-  )
-
-gtMU_grid
-
-gt::gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}.png"), vwidth = 1500, vheight = 1000) |> invisible()
-gt::gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1000) |> invisible()
+  ) |>
+  gtExtras::gt_theme_dark()
 ```
 
 ### MU Grid - Diamond
@@ -255,7 +254,7 @@ gt::gtsave(data = gtMU_grid, "images/mugrid.png",     vwidth = 1500, vheight = 1
 ```{r print-diamond-grid}
 gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_diamond.rds"))
 
-gtMU_grid <- gtMU_grid |>
+gtMU_grid |>
   gt::tab_options(
     data_row.padding = gt::px(8),
     table.font.size  = gt::px(13),
@@ -264,11 +263,8 @@ gtMU_grid <- gtMU_grid |>
   gt::cols_width(
     -1 ~ gt::px(90),
     1  ~ gt::px(150),
-  )
-
-gtMU_grid
-
-gtsave(data = gtMU_grid, glue::glue("images/{params$grid_name}_diamond.png"), vwidth = 1500, vheight = 1000) |> invisible()
+  ) |>
+  gtExtras::gt_theme_dark()
 ```
 
 Grid Older Patch  {data-icon="fa-file-image"}

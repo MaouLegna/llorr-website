@@ -4,10 +4,14 @@ author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
-    # theme:
-    #   bg: "#101010"
-    #   fg: "#FDF7F7"
-    #   primary: "#ED7979"
+    theme:
+      bg: "#101010"
+      fg: "#FDF7F7"
+      base_font:
+        google: "Prompt"
+      code_font:
+        google: "JetBrains Mono"  
+      # primary: "#ED7979"
     navbar:
       - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/mu.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
@@ -65,6 +69,7 @@ seq_date <- seq(lubridate::as_datetime(params$start), floor_date(lubridate::now(
 ```{r load-data}
 meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
 meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_all.rds") )
+meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_24hrs.rds") )
 
 summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
 
@@ -249,86 +254,7 @@ Row {data-heigth="875"}
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
-if (NROW(LoR_Melt_24hrs)>0) {
-  
-  WR_tbl_24h <- LoR_Melt_24hrs |>
-  win_rates(details = T, server = F) |>
-  filter(playerDeck %!in% c(meta_7days$fct_meta, meta_all$fct_meta, meta_7days$fct_underdog, meta_all$fct_underdog) ) |>
-  filter(WR > 0.5 ) |>
-  slice_max(nGames, n = 50, with_ties = F) |>
-  select(-lower, -upper)
-
-deck_code_tbl_24hrs  <- LoR_Melt_24hrs |>
-  filter(playerDeck %in% c(WR_tbl_24h$playerDeck) ) |>
-  mutate(playerDeck = factor(playerDeck, ordered = TRUE, 
-                              levels = c(WR_tbl_24h$playerDeck) )
-         ) |>
-  group_by(server, playerDeck, deck_code ) |>
-  summarise( n = n() ) |>
-  group_by(playerDeck) |>
-  slice_max(n, n = 10) |>
-  ungroup() |>
-  mutate(link = glue::glue("<a href='https://runeterra.ar/decks/code/{deck_code}'>{deck_code}</a>"), 
-         server = str_to_title(server) ) |>
-  select(playerDeck, n, link, server)
-  
-with_tooltip <- function(value, tooltip) {
-  htmltools::tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help", 
-            title = tooltip, value)
-}
-
-WR_tbl_24h |>
-  reactable(
-    # groupBy = "playerDeck", 
-    searchable = TRUE, 
-    bordered = TRUE, 
-    # wrap = FALSE, 
-    highlight = TRUE, 
-    striped = TRUE, 
-    pagination = FALSE, 
-    fullWidth = T, 
-    # defaultSorted = list(LMI = "desc"), 
-    defaultColDef = colDef(
-      align = "center", 
-      minWidth = 100, 
-      # headerStyle = list(background = "steelblue", color="white")
-    ), 
-    details = function(index) {
-      # index = 1
-      deckdata <- deck_code_tbl_24hrs[ deck_code_tbl_24hrs$playerDeck == WR_tbl_24h$playerDeck[index], ]
-      reactable(
-        deckdata, 
-        fullWidth = F, 
-        defaultColDef = colDef(
-          style = list( fontSize = 13 ), 
-          html = TRUE
-          ), 
-        theme = reactableTheme(
-          headerStyle = list(background = "red", color="white", fontSize = 13), 
-          rowStyle = list(height = "45px")
-        ), 
-        columns = list(
-          n = colDef(name = "#Games", minWidth = 75 ), 
-          link = colDef(name = "DeckCode - Most played lists", minWidth = 750, style = list( fontSize = 9 ) ), 
-          # playerDeck = colDef(name = "Archetype", minWidth = 150 ), 
-          playerDeck = colDef(show = F), 
-          server = colDef(name = "Server", minWidth = 100 )
-          ) )}, 
-    columns = list(
-      playerDeck = colDef(name = "Archetype", minWidth = 250, align = "left", header = with_tooltip("Archetype", "I still have to decide what to display here, so for now I'll simply but the decks with at least 10 games, before WR that did't appear in the other sections (whole-Patch and 7days).")), 
-      nWin   = colDef(name = "#Win"), 
-      nGames = colDef(name = "#Games"), 
-      playrate = colDef(name = "PlayRate", format = colFormat(percent = TRUE, digits = 1) ), 
-      type = colDef(name = "Type"), 
-      # LMI = colDef(name = "LMI"), 
-      tier = colDef(name = "Tier", minWidth = 200, align = "left"), 
-      CI = colDef(name = "Conf.Interval", minWidth = 200, align = "center"), 
-      WR = colDef(name = "WinRate", format = colFormat(percent = TRUE, digits = 1) )
-    )
-
-  )
-
-}
+meta_24hrs$meta_table
 ```
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
