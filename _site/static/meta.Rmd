@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (from Patch 3.21 - The Darkin Saga - World Ender)"
+title: "Meta & Decks (Post Hotfix 3.21 - The Darkin Saga - World Ender)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -67,11 +67,13 @@ seq_date <- seq(lubridate::as_datetime(params$start), floor_date(lubridate::now(
 ```
 
 ```{r load-data}
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+
 meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
 meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_all.rds") )
-meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_24hrs.rds") )
-
-summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+if (summary_info$with24hrs) {
+ meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_24hrs.rds") )
+}
 
 hourly_master_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_plot.rds") )
 hourly_master_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_line.rds") )
@@ -254,7 +256,9 @@ Row {data-heigth="875"}
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
-meta_24hrs$meta_table
+if (summary_info$with24hrs) {
+  meta_24hrs$meta_table  
+}
 ```
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
