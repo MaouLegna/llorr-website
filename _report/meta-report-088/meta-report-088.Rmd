@@ -4,8 +4,8 @@ params:
   season: "S17"
   patch: "Patch 3.21 - Week 1"
   title: "THE META REPORT NAME IS TOO LONG, TOO DAMN LONG (n°88)"
-  description: "World was hot but so was the meta -fixxed"
-  cardlurl: "https://dd.b.pvp.net/latest/set6cde/en_us/img/cards/06RU009-full.png"
+  description: "World was hot but so was the meta -fixed"
+  cardlurl: "https://dd.b.pvp.net/latest/set6cde/en_us/img/cards/06RU026-full.png"
   start: "2022-12-07 19:00:00" #UTC tz / 'current' week start
   end:   "2022-12-14 18:00:00" #UTC tz / 'current' week end
   nGrid: 10
@@ -87,7 +87,7 @@ general_caption <- glue::glue("{params$patch}
 
 ```{r load-data}
 # load DeckDT
-LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", "LoR_DECK.csv"), na.strings = c("", NA), colClasses = "character")
+LoR_Deck_RMD       <- data.table::fread(file.path("C:", "LlorR", "data", "raw", glue::glue("LoR_DECK_{params$season}.csv")), na.strings = c("", NA), colClasses = "character")
 
 # load Games DT
 LoR_Match_DT_RMD <- list.files(path = file.path("C:", "LlorR", "data", "raw"), pattern = glue("^(.*)Match_DT_{params$season}(.*)csv$"), full.names = T) |>
