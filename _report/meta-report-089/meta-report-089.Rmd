@@ -62,12 +62,6 @@ source(file.path("C:", "LlorR", "scripts", "functions", "load_cards_info.R"))
 xaringanExtra::use_panelset()
 ```
 
-```{r update-dataset}
-update_lor_database(server_abbr = "EU",last_season = params$season,delete = TRUE)
-update_lor_database(server_abbr = "NA",last_season = params$season,delete = TRUE)
-update_lor_database(server_abbr = "APAC",last_season = params$season,delete = TRUE)
-```
-
 ```{r panelset-style}
 xaringanExtra::style_panelset_tabs(
   font_family        = "Helvetica", 
