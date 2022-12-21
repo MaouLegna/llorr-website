@@ -5,12 +5,12 @@ base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     theme:
-      bg: "#101010"
+      bg: "#404040"
       fg: "#FDF7F7"
       base_font:
         google: "Prompt"
       code_font:
-        google: "JetBrains Mono"  
+        google: "JetBrains Mono"
       # primary: "#ED7979"
     navbar:
       - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/mu.html", align: right }
@@ -71,19 +71,14 @@ summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean",
 
 meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
 meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_all.rds") )
-if (summary_info$with24hrs) {
- meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_24hrs.rds") )
-}
+
+meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_24hrs.rds") )
+
 
 hourly_master_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_plot.rds") )
 hourly_master_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_line.rds") )
 hourly_diamond_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_diamond_plot.rds") )
 hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_diamond_line.rds") )
-
-LoR_Melt_24hrs <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","ranked_24hrs.csv"),
-  header = T, na.strings = c("", NA), encoding = "UTF-8"
-)
 ```
 
 Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
@@ -256,9 +251,7 @@ Row {data-heigth="875"}
 ### Previous Day
 
 ```{r 24hrs-process-winRate}
-if (summary_info$with24hrs) {
-  meta_24hrs$meta_table  
-}
+meta_24hrs$meta_table  
 ```
 
 Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}

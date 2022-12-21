@@ -5,7 +5,7 @@ base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     theme:
-      bg: "#101010"
+      bg: "#404040"
       fg: "#FDF7F7"
     navbar:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
@@ -245,8 +245,7 @@ gtMU_grid |>
   gt::cols_width(
     -1 ~ gt::px(90),
     1  ~ gt::px(150),
-  ) |>
-  gtExtras::gt_theme_dark()
+  )
 ```
 
 ### MU Grid - Diamond
