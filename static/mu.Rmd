@@ -17,11 +17,7 @@ output:
     orientation: row
     
 params:
-  min_mu_games: 10   # min number of games for a MU
-  dim_grid: 15       # how many MU to plot
-  last_season: "S17"
-  grid_name: "mugrid_321_322"
-  set_names: "Set06-05"
+  min_mu_games: 10
 ---
 
 ```{r setup, include=FALSE}
@@ -66,12 +62,12 @@ last_update_box <- flexdashboard::valueBox(
 
 ```{r load-data}
 MU_tbl <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","mu_master.csv"),
+  file = file.path("C:", "LlorR", "data", "clean","mu_master_minimal.csv"),
   header = T, na.strings = c("", NA), encoding = "UTF-8"
 )
 
 MU_diamond <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","mu_diamond.csv"),
+  file = file.path("C:", "LlorR", "data", "clean","mu_diamond_minimal.csv"),
   header = T, 
   na.strings = c("", NA),
   encoding = "UTF-8"
@@ -90,7 +86,7 @@ Row
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{summary_info$nRankedMaster} Master Ranked Games"), 
-                        caption = glue::glue("min 10 games - {summary_info$nMuMaster} games used"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$nMuMaster} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> master_valuebox
 
@@ -155,7 +151,7 @@ Row
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{summary_info$nRankedDiamond} Master Ranked Games"), 
-                        caption = glue::glue("min 10 games - {summary_info$nMuDiamond} games used"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$nMuDiamond} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> diamond_valuebox
 

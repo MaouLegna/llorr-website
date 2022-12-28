@@ -15,13 +15,6 @@ output:
       - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
       - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
     orientation: row
-    
-params:
-  min_mu_games: 10   # min number of games for a MU
-  dim_grid: 15       # how many MU to plot
-  last_season: "S17"
-  grid_name: "mugrid_321_322"
-  set_names: "Set06-05"
 ---
 
 ```{r setup, include=FALSE}
