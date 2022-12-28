@@ -73,6 +73,9 @@ MU_diamond <- data.table::fread(
   encoding = "UTF-8"
 )
 
+nMuMaster  = setDT(MU_tbl)[ ,sum(muGames)]
+nMuDiamond = setDT(MU_diamond) [ ,sum(muGames)]
+
 summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
 ```
 
@@ -86,7 +89,7 @@ Row
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{summary_info$nRankedMaster} Master Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$nMuMaster} games used"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {nMuMaster} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> master_valuebox
 
@@ -151,7 +154,7 @@ Row
 
 ```{r}
 flexdashboard::valueBox(glue::glue("{summary_info$nRankedDiamond} Master Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$nMuDiamond} games used"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {nMuDiamond} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> diamond_valuebox
 
