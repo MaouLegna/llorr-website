@@ -55,7 +55,7 @@ xaringanExtra::use_panelset()
 ```{r constants}
 last_update_box <- flexdashboard::valueBox(
   Sys.Date(), 
-  caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"), 
+  caption = glue::glue("Last Update"), 
   icon = "fa-clock", 
   color = "#1A9850")
 ```
@@ -111,6 +111,20 @@ box_master
 
 ```{r}
 last_update_box
+```
+
+### Download Data
+
+```{r}
+downloadthis::download_link(
+  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_master.csv",
+  button_label = "Download as .csv",
+  # output_name = "mutable",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save"
+  # self_contained = FALSE
+)
 ```
 
 Inputs {.sidebar}
@@ -175,6 +189,22 @@ box_diamond
 ```{r}
 last_update_box
 ```
+
+### Download Data
+
+```{r}
+## Link in Github repo
+downloadthis::download_link(
+  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_diamond.csv",
+  button_label = "Download as .csv",
+  # output_name = "mutable",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save"
+  # self_contained = FALSE
+)
+```
+
 
 Inputs {.sidebar}
 -----------------------------------------------------------------------
@@ -248,7 +278,8 @@ gtMU_grid |>
   gt::cols_width(
     -1 ~ gt::px(90),
     1  ~ gt::px(150),
-  )
+  ) |>
+  gtExtras::gt_theme_dark()
 ```
 
 ### MU Grid - Diamond
@@ -268,30 +299,6 @@ gtMU_grid |>
   ) |>
   gtExtras::gt_theme_dark()
 ```
-
-<!-- Grid Older Patch  {data-icon="fa-file-image"} -->
-<!-- ================================ -->
-
-<!-- Row {.tabset} -->
-<!-- ----------------------------------------------------------------------- -->
-
-<!-- ### Patch 3.19 - Patch 3.20 - Darkin Saga: Domination - November Balance Patch -->
-
-<!-- ![](images/mugrid_319_320.png) -->
-
-<!-- ### Patch 3.17 - Patch 3.18 - Darkin Saga: Domination -->
-
-<!-- ![](images/mugrid_317_318.png) -->
-
-<!-- ### Patch 3.16 -->
-
-<!-- ![](images/mugrid_316.png) -->
-
-<!-- Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"} -->
-<!-- ================================ -->
-
-<!-- Download {data-width="250"} -->
-<!-- ----------------------------------------------------------------------- -->
 
 <!-- ### Match Ups Data -->
 

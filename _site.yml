@@ -22,7 +22,12 @@ navbar:
     - text: "MatchUps"  
       href: https://www.llorr-stats.com/static/mu.html
     - text: "Meta"  
-      href: https://www.llorr-stats.com/static/meta.html
+      menu:
+        - text: "Meta Stats"
+          href: https://www.llorr-stats.com/static/meta.html
+        - text: "Old Meta MU grid"
+          href: https://www.llorr-stats.com/static/oldgrid.html
+      href: 
     - text: "Analysis"
       href: analysis.html
     - text: "Resources"

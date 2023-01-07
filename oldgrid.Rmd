@@ -1,0 +1,74 @@
+---
+title: "Older Meta"
+description: "Match Grids for previous Meta"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE, 
+  eval       = TRUE, 
+  warning    = FALSE, 
+  error      = FALSE, 
+  message    = FALSE, 
+  comment    = NA, 
+  R.options  = list(width = 140, digits.secs=6), 
+  dev.args   = list(bg = 'whitesmoke'), 
+  fig.align  = 'center', 
+  fig.width  = 12, 
+  fig.height = 8,
+  layout     = "l-page", 
+  preview    = TRUE
+)
+
+xaringanExtra::use_panelset()
+```
+
+```{r panelset-style}
+xaringanExtra::style_panelset_tabs(
+  font_family        = "Helvetica", 
+  active_foreground  = "white", 
+  hover_foreground   = "black", 
+  hover_border_color = "black", 
+  active_background  = "#007fff"
+  )
+```
+
+## The Darkin Saga
+
+::: l-page
+::::: panelset
+
+::: panel
+### World Ender - Patch 3.21 - Patch 3.22 {.panel-name}
+Darkin Saga: World Ender
+![](./static/images/mugrid_321_322.png){width="1024"}
+:::
+
+::: panel
+### Domination - Patch 3.19 - Patch 3.20 {.panel-name}
+Darkin Saga: Domination - November Balance Patch
+![](./static/images/mugrid_319_320.png){width="1024"}
+:::
+
+::: panel
+### Domination - Patch 3.17 - Patch 3.18 {.panel-name}
+Darkin Saga: Domination
+![](./static/images/mugrid_317_318.png){width="1024"}
+:::
+
+::: panel
+### Awakening - Patch 3.16 {.panel-name}
+Darkin Saga: Awakening - Late September Balance Patch
+![](./static/images/mugrid_316.png){width="1024"}
+:::
+
+::: panel
+### Awakening - Patch 3.14 - 3.15 {.panel-name}
+Darkin Saga: Awakening - Late September Balance Patch
+![](./static/images/mugrid_314_315.png){width="1024"}
+:::
+
+:::::
+:::
+
+The playrate are from the last 7 days of each meta.

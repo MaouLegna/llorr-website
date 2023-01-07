@@ -20,11 +20,7 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 2022-12-14: Data 'resetted' after the hotfix
-
-The MU and Meta pages are not in a dark theme to reduce the eye stain. The option for the whole site will be added in the v2 of the site which is planned "late" ( can't even say soon )
-
-The Resource tab in the navigation bar contains link to some google spreadsheets pretty similar to what was available on lor-meta, more will be added.
+Update 2023-01-07: Data 'resetted' after the january hotfix
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
