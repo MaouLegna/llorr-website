@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (Post Hotfix 3.21 - The Darkin Saga - World Ender)"
+title: "Match Ups Data (Post January Hotfix Patch 4.00)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -269,98 +269,98 @@ gtMU_grid |>
   gtExtras::gt_theme_dark()
 ```
 
-Grid Older Patch  {data-icon="fa-file-image"}
-================================
+<!-- Grid Older Patch  {data-icon="fa-file-image"} -->
+<!-- ================================ -->
 
-Row {.tabset}
------------------------------------------------------------------------
+<!-- Row {.tabset} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### Patch 3.19 - Patch 3.20 - Darkin Saga: Domination - November Balance Patch
+<!-- ### Patch 3.19 - Patch 3.20 - Darkin Saga: Domination - November Balance Patch -->
 
-![](images/mugrid_319_320.png)
+<!-- ![](images/mugrid_319_320.png) -->
 
-### Patch 3.17 - Patch 3.18 - Darkin Saga: Domination
+<!-- ### Patch 3.17 - Patch 3.18 - Darkin Saga: Domination -->
 
-![](images/mugrid_317_318.png)
+<!-- ![](images/mugrid_317_318.png) -->
 
-### Patch 3.16
+<!-- ### Patch 3.16 -->
 
-![](images/mugrid_316.png)
+<!-- ![](images/mugrid_316.png) -->
 
-Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
-================================
+<!-- Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"} -->
+<!-- ================================ -->
 
-Download {data-width="250"}
------------------------------------------------------------------------
+<!-- Download {data-width="250"} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### Match Ups Data
+<!-- ### Match Ups Data -->
 
-```{r download-master}
-downloadthis::download_file(
-  path = file.path("data/mu_master.csv"),
-  button_label = glue("Download MU (Masters) data as .csv
-                        min 10 games"), 
-    output_name = "mutable", 
-    button_type = "success", 
-    has_icon = TRUE, 
-    icon = "fa fa-save"
-)
-```
+<!-- ```{r download-master} -->
+<!-- downloadthis::download_file( -->
+<!--   path = file.path("data/mu_master.csv"), -->
+<!--   button_label = glue("Download MU (Masters) data as .csv -->
+<!--                         min 10 games"),  -->
+<!--     output_name = "mutable",  -->
+<!--     button_type = "success",  -->
+<!--     has_icon = TRUE,  -->
+<!--     icon = "fa fa-save" -->
+<!-- ) -->
+<!-- ``` -->
 
-```{r download-diamond}
-downloadthis::download_file(
-  path = file.path("data/mu_diamond.csv"),
-  button_label = glue("Download MU (HighDiamond) data as .csv
-                        min 10 games"), 
-    output_name = "mutable", 
-    button_type = "success", 
-    has_icon = TRUE, 
-    icon = "fa fa-save"
-)
-```
+<!-- ```{r download-diamond} -->
+<!-- downloadthis::download_file( -->
+<!--   path = file.path("data/mu_diamond.csv"), -->
+<!--   button_label = glue("Download MU (HighDiamond) data as .csv -->
+<!--                         min 10 games"),  -->
+<!--     output_name = "mutable",  -->
+<!--     button_type = "success",  -->
+<!--     has_icon = TRUE,  -->
+<!--     icon = "fa fa-save" -->
+<!-- ) -->
+<!-- ``` -->
 
-### Match Ups Grid
+<!-- ### Match Ups Grid -->
 
-```{r download-grid}
-downloadthis::download_file(
-  path = file.path("images/mugrid.png"), 
-  button_label = "Download MU grid as .png", 
-  button_type = "primary", 
-  has_icon = TRUE, 
-  icon = "fa fa-save", 
-  self_contained = FALSE
-)
-```
+<!-- ```{r download-grid} -->
+<!-- downloadthis::download_file( -->
+<!--   path = file.path("images/mugrid.png"),  -->
+<!--   button_label = "Download MU grid as .png",  -->
+<!--   button_type = "primary",  -->
+<!--   has_icon = TRUE,  -->
+<!--   icon = "fa fa-save",  -->
+<!--   self_contained = FALSE -->
+<!-- ) -->
+<!-- ``` -->
 
-Column {data-width="750"}
------------------------------------------------------------------------
+<!-- Column {data-width="750"} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### How to use
+<!-- ### How to use -->
 
-#### Filters
+<!-- #### Filters -->
 
-The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report:
+<!-- The format of the table is the usual way I display the match-ups data but I also displayed additional variables that I normally remove in the report: -->
 
--   **Player's Deck** - deck's archetype of the playerDeck
+<!-- -   **Player's Deck** - deck's archetype of the playerDeck -->
 
--   **Opponent's Deck** - deck's archetype of the opponentDeck
+<!-- -   **Opponent's Deck** - deck's archetype of the opponentDeck -->
 
--   **#Win** - min number of wins for a match-up
+<!-- -   **#Win** - min number of wins for a match-up -->
 
--   **#Games** - min number of games for a match-up
+<!-- -   **#Games** - min number of games for a match-up -->
 
--   **Regions** - regions of the 'Player' deck.
+<!-- -   **Regions** - regions of the 'Player' deck. -->
 
--   **MU-Direction** - simply if the MU is positive (win rate > 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%)
+<!-- -   **MU-Direction** - simply if the MU is positive (win rate > 50%) or negative (win rate \< 50%) for the 'Player' or tie (win rate = 50%) -->
 
--   **Mirror** - hide or include mirror match-ups
+<!-- -   **Mirror** - hide or include mirror match-ups -->
 
-#### Archetypes Fix
+<!-- #### Archetypes Fix -->
 
-```{r}
-tbl_archetype
-```
+<!-- ```{r} -->
+<!-- tbl_archetype -->
+<!-- ``` -->
 
-#### General info
+<!-- #### General info -->
 
-When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games.
+<!-- When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games. -->

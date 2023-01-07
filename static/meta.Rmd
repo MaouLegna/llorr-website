@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (Post Hotfix 3.21 - The Darkin Saga - World Ender)"
+title: "Meta & Decks (Post January Hotfix Patch 4.00)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -245,41 +245,3 @@ Row {data-heigth="875"}
 ```{r 24hrs-process-winRate}
 meta_24hrs$meta_table  
 ```
-
-Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
-================================
-
-Column {data-width="450"}
------------------------------------------------------------------------
-
-### Archetypes Guide
-
-current aggregations applied to archetypes (Champions+Regions)
-
-```{r archetype}
-tbl_archetype
-```
-
-Column {data-width="550"}
------------------------------------------------------------------------
-
-### LMI - Tiers
-
-```{r info-gt-lmi}
-tribble( 
-  ~Tier, ~Note, 
-  "Best Choice ~ T0", "with LMI >= 97.5", 
-  "Good ~T1", "with LMI in [85, 97.5)", 
-  "Could do better ~T2", "with LMI in [50, 85)", 
-  "Meh, either bad or not played/ignored ~T3", "with LMI < 50"
-  ) |>
-  gt() |>
-  tab_header(
-    title = glue::glue("LMI Tiers")
-  ) |>
-  gtExtras::gt_theme_nytimes()
-```
-
-### General info
-
-When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games.
