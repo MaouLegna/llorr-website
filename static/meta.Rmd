@@ -76,7 +76,7 @@ hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", 
 Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
 ================================
 
-Row {data-heigth="125"}
+Row {data-heigth="100"}
 -----------------------------------------------------------------------
 
 ### Number of Games
@@ -112,7 +112,7 @@ flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_underdog)} Underdog D
 last_update_box
 ```
 
-Row {data-heigth="875"}
+Row {data-heigth="900"}
 -----------------------------------------------------------------------
 
 ### Decks Performances
@@ -121,10 +121,11 @@ Row {data-heigth="875"}
 meta_7days$meta_table
 ```
 
+
 Meta-Evolution {data-icon="fa-chart-line"}
 ================================
 
-Row {data-heigth="125"}
+Row {data-heigth="100"}
 -----------------------------------------------------------------------
 
 ### Master
@@ -169,7 +170,7 @@ hourly_diamond_plot + hourly_diamond_line
 Stats (whole patch) {data-icon="fa-table"}
 ================================
 
-Row 
+Row {data-heigth="100"}
 -----------------------------------------------------------------------
 
 ### Number of Games
@@ -205,7 +206,7 @@ flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Dec
 last_update_box
 ```
 
-Row {data-heigth="875"}
+Row {data-heigth="900"}
 -----------------------------------------------------------------------
 
 ### Decks Performances
@@ -217,7 +218,7 @@ meta_all$meta_table
 Fresh Stats (last 24 hours) {data-icon="fa-table"}
 ================================
 
-Row {data-heigth="125"}
+Row {data-heigth="100"}
 -----------------------------------------------------------------------
 
 ### Time Frame
@@ -230,14 +231,13 @@ flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
                         color = "red")
 ```
 
-
 ### Last Update
 
 ```{r}
 last_update_box
 ```
 
-Row {data-heigth="875"}
+Row {data-heigth="900"}
 -----------------------------------------------------------------------
 
 ### Previous Day
