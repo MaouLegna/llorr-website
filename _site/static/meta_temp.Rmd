@@ -1,0 +1,220 @@
+---
+title: "Meta & Decks (from Patch 3.21 - The Darkin Saga - World Ender)"
+author: "by Legna"
+base_url: https://www.llorr-stats.com
+output:
+  flexdashboard::flex_dashboard:
+    navbar:
+      - { icon: "fa-trophy", text: "MatchUps", href: "https://www.llorr-stats.com/static/mu.html", align: right }
+      - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
+    orientation: row
+    vertical_layout: fill
+params:
+  start:    "2022-12-07 19:00:00"
+  end:      "2099-10-12 19:00:00"
+  min_mu_games: 5 # min number of games for a MU
+  max_top_pr:  12 # meta evolution decks
+  last_season: "S17"
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE, 
+  eval       = TRUE, 
+  warning    = FALSE, 
+  error      = FALSE, 
+  message    = FALSE, 
+  comment    = NA, 
+  R.options  = list(width = 140, digits.secs=6), 
+  dev.args   = list(bg = 'whitesmoke'), 
+  fig.align  = 'center', 
+  fig.width  = 12, 
+  fig.height = 8, 
+  fig.path   = glue::glue("images/"), 
+  layout     = "l-page", 
+  preview    = TRUE
+)
+
+source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
+xaringanExtra::use_panelset()
+```
+
+```{css}
+.value-box {
+  height: 100px;
+}
+```
+
+```{r load-data}
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+hourly_prevs_plot <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","hourly_prevs_plot.rds") )
+hourly_prevs_line <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","hourly_prevs_line.rds") )
+
+meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
+react_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","react_24hrs.rds") )
+```
+
+```{r constants}
+last_update_box <- flexdashboard::valueBox(
+  Sys.Date(), 
+  caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"), 
+  icon = "fa-clock", 
+  color = "#1A9850"
+)
+
+number_games <- flexdashboard::valueBox(
+    value = glue::glue("{summary_info$nGames} Ranked Games"), 
+    caption = glue::glue("min 5 games - {summary_info$nMu} games used"), 
+    icon = "fa-table", 
+    color = "#FA7404"
+  )
+  
+number_players = flexdashboard::valueBox(
+    glue::glue("{summary_info$nPlayers}"), 
+    caption = glue::glue("World Players"), 
+    icon = "fa-medal", 
+    color = "#65c0a9"
+  )
+
+seq_date <- seq(lubridate::as_datetime(params$start), floor_date(lubridate::now(), unit = "day")+hours(18) , "day") #
+```
+
+Stats (up to last 7days) {data-icon="fa-table"}
+================================
+
+Row {data-heigth="125"}
+-----------------------------------------------------------------------
+
+### Number of Games
+
+```{r}
+flexdashboard::valueBox(glue::glue("{meta_7days$nGames} Games"), 
+                        caption = glue::glue("Number of Ranked Games - Seasonal Players"), 
+                        icon = "fa-table", 
+                        color = "#a88b32")
+```
+
+### Number of Meta Decks
+
+```{r}
+flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_meta)} Meta Decks"), 
+                        caption = glue::glue("Decks with PlayRate with at least 1%"), 
+                        icon = "fa-trophy", 
+                        color = "#65c0a9")
+```
+
+### Number of Underdog Decks
+
+```{r}
+flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_underdog)} Underdog Decks"), 
+                        caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"), 
+                        icon = "fa-dog", 
+                        color = "#ff7f24")
+```
+
+### Last-Update
+
+```{r}
+last_update_box
+```
+
+Row {data-heigth="875"}
+-----------------------------------------------------------------------
+
+### Decks Performances
+
+```{r stats-7days}
+meta_7days$meta_table
+```
+
+Meta-Evolution {data-icon="fa-chart-line"}
+================================
+
+Row {data-heigth="125"}
+-----------------------------------------------------------------------
+
+### Number of Players
+
+```{r value-player-base}
+number_players
+```
+
+### Last Update
+
+```{r}
+last_update_box
+```
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Graph-1
+
+```{r day-by-day-stack, fig.width=12, fig.height=8}
+hourly_prevs_line 
+```
+
+### Graph-2
+
+```{r day-by-day-line, fig.width=20, fig.height=8}
+hourly_prevs_plot
+```
+
+Fresh Stats (last 24 hours) {data-icon="fa-table"}
+================================
+
+Row {data-heigth="125"}
+-----------------------------------------------------------------------
+
+### Time Frame
+
+```{r}
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"), 
+                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"), 
+                        icon = "fa-clock", 
+                        color = "red")
+```
+
+
+### Last Update
+
+```{r}
+last_update_box
+```
+
+Row {data-heigth="875"}
+-----------------------------------------------------------------------
+
+### Previous Day
+
+```{r 24hrs-process-winRate}
+react_24hrs
+```
+
+Downloads and Informations {data-orientation="columns" data-icon="fa-info-circle"}
+================================
+
+Column {data-width="450"}
+-----------------------------------------------------------------------
+
+### LMI - Tiers
+
+```{r info-gt-lmi}
+tribble( 
+  ~Tier, ~Note, 
+  "Best Choice ~ T0", "with LMI >= 97.5", 
+  "Good ~T1", "with LMI in [85, 97.5)", 
+  "Could do better ~T2", "with LMI in [50, 85)", 
+  "Meh, either bad or not played/ignored ~T3", "with LMI < 50"
+  ) |>
+  gt() |>
+  tab_header(
+    title = glue::glue("LMI Tiers")
+  ) |>
+  gtExtras::gt_theme_nytimes()
+```
+
+### General info
+
+When I refer to games it's always refering a single playerDeck. So, if I have the information of 1 match it's equivalent to 2 games.

@@ -1,0 +1,3848 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { color: #20794d; } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #20794d; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+  <!--radix_placeholder_meta_tags-->
+<title>LLoRR Stats: LoR Meta Index (LMI) expansion by using Bo3 data</title>
+
+<meta property="description" itemprop="description" content="The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"/>
+
+<link rel="canonical" href="https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/"/>
+
+<!--  https://schema.org/Article -->
+<meta property="article:published" itemprop="datePublished" content="2021-09-21"/>
+<meta property="article:created" itemprop="dateCreated" content="2021-09-21"/>
+<meta name="article:author" content="Valentino (Legna) Vazzoler"/>
+
+<!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+<meta property="og:title" content="LLoRR Stats: LoR Meta Index (LMI) expansion by using Bo3 data"/>
+<meta property="og:type" content="article"/>
+<meta property="og:description" content="The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"/>
+<meta property="og:url" content="https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/"/>
+<meta property="og:image" content="https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/lmi-02-tentative-expansion_files/figure-html5/print-seqCor-1.png"/>
+<meta property="og:image:width" content="1728"/>
+<meta property="og:image:height" content="1152"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="LLoRR Stats"/>
+
+<!--  https://dev.twitter.com/cards/types/summary -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:title" content="LLoRR Stats: LoR Meta Index (LMI) expansion by using Bo3 data"/>
+<meta property="twitter:description" content="The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"/>
+<meta property="twitter:url" content="https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/"/>
+<meta property="twitter:image" content="https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/lmi-02-tentative-expansion_files/figure-html5/print-seqCor-1.png"/>
+<meta property="twitter:image:width" content="1728"/>
+<meta property="twitter:image:height" content="1152"/>
+<meta property="twitter:site" content="@Maou_Legna"/>
+<meta property="twitter:creator" content="@Maou_Legna"/>
+
+<!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+<script type="text/json" id="radix-rmarkdown-metadata">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","base_url","preview","author","date","output","citation","draft","twitter","params","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["LoR Meta Index (LMI) expansion by using Bo3 data"]},{"type":"character","attributes":{},"value":["The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"]},{"type":"character","attributes":{},"value":["http://www.llorr-stats.com"]},{"type":"NULL"},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Valentino (Legna) Vazzoler"]}]}]},{"type":"character","attributes":{},"value":["09-21-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","toc_depth","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[3]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[false]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["site","creator"]}},"value":[{"type":"character","attributes":{},"value":["@Maou_Legna"]},{"type":"character","attributes":{},"value":["@Maou_Legna"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["start","end"]}},"value":[{"type":"character","attributes":{},"value":["2021-07-07 21:00:00"]},{"type":"character","attributes":{},"value":["2021-08-25 21:00:00"]}]},{"type":"character","attributes":{},"value":["https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/"]},{"type":"character","attributes":{},"value":["https://www.llorr-stats.com/analysis/lmi-02-tentative-expansion/"]}]}
+</script>
+<!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["lmi-02-tentative-expansion_files/anchor-4.2.2/anchor.min.js","lmi-02-tentative-expansion_files/bowser-1.9.3/bowser.min.js","lmi-02-tentative-expansion_files/core-js-2.5.3/LICENSE","lmi-02-tentative-expansion_files/core-js-2.5.3/package.json","lmi-02-tentative-expansion_files/core-js-2.5.3/shim.min.js","lmi-02-tentative-expansion_files/crosstalk-1.1.1.9000/css/crosstalk.min.css","lmi-02-tentative-expansion_files/crosstalk-1.1.1.9000/js/crosstalk.js","lmi-02-tentative-expansion_files/crosstalk-1.1.1.9000/js/crosstalk.js.map","lmi-02-tentative-expansion_files/crosstalk-1.1.1.9000/js/crosstalk.min.js","lmi-02-tentative-expansion_files/crosstalk-1.1.1.9000/js/crosstalk.min.js.map","lmi-02-tentative-expansion_files/crosstalk-1.1.1.9000/scss/crosstalk.scss","lmi-02-tentative-expansion_files/DiagrammeR-styles-0.2/styles.css","lmi-02-tentative-expansion_files/distill-2.2.21/template.v2.js","lmi-02-tentative-expansion_files/figure-html5/compute-corWR-1.png","lmi-02-tentative-expansion_files/figure-html5/print-corBanWin-1.png","lmi-02-tentative-expansion_files/figure-html5/print-corWR-1.png","lmi-02-tentative-expansion_files/figure-html5/print-seqCor-1.png","lmi-02-tentative-expansion_files/figure-html5/unnamed-chunk-1-1.png","lmi-02-tentative-expansion_files/grViz-binding-1.0.6.1/grViz.js","lmi-02-tentative-expansion_files/header-attrs-2.10/header-attrs.js","lmi-02-tentative-expansion_files/htmlwidgets-1.5.3/htmlwidgets.js","lmi-02-tentative-expansion_files/jquery-1.11.3/jquery.min.js","lmi-02-tentative-expansion_files/jquery-3.5.1/jquery-AUTHORS.txt","lmi-02-tentative-expansion_files/jquery-3.5.1/jquery.js","lmi-02-tentative-expansion_files/jquery-3.5.1/jquery.min.js","lmi-02-tentative-expansion_files/jquery-3.5.1/jquery.min.map","lmi-02-tentative-expansion_files/panelset-0.2.6/panelset.css","lmi-02-tentative-expansion_files/panelset-0.2.6/panelset.js","lmi-02-tentative-expansion_files/plotly-binding-4.9.4.1/plotly.js","lmi-02-tentative-expansion_files/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css","lmi-02-tentative-expansion_files/plotly-main-1.57.1/plotly-latest.min.js","lmi-02-tentative-expansion_files/popper-2.6.0/popper.min.js","lmi-02-tentative-expansion_files/react-17.0.0/AUTHORS","lmi-02-tentative-expansion_files/react-17.0.0/LICENSE.txt","lmi-02-tentative-expansion_files/react-17.0.0/react-dom.min.js","lmi-02-tentative-expansion_files/react-17.0.0/react.min.js","lmi-02-tentative-expansion_files/reactable-binding-0.2.3/reactable.js","lmi-02-tentative-expansion_files/reactwidget-1.0.0/react-tools.js","lmi-02-tentative-expansion_files/reactwidget-1.0.0/react-tools.js.map","lmi-02-tentative-expansion_files/tippy-6.2.7/tippy-bundle.umd.min.js","lmi-02-tentative-expansion_files/tippy-6.2.7/tippy-light-border.css","lmi-02-tentative-expansion_files/tippy-6.2.7/tippy.css","lmi-02-tentative-expansion_files/tippy-6.2.7/tippy.umd.min.js","lmi-02-tentative-expansion_files/typedarray-0.1/typedarray.min.js","lmi-02-tentative-expansion_files/viz-1.8.2/viz.js","lmi-02-tentative-expansion_files/webcomponents-2.0.0/webcomponents.js"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+<meta name="distill:offset" content="../.."/>
+
+<script type="application/javascript">
+
+  window.headroom_prevent_pin = false;
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // initialize headroom for banner
+    var header = $('header').get(0);
+    var headerHeight = header.offsetHeight;
+    var headroom = new Headroom(header, {
+      tolerance: 5,
+      onPin : function() {
+        if (window.headroom_prevent_pin) {
+          window.headroom_prevent_pin = false;
+          headroom.unpin();
+        }
+      }
+    });
+    headroom.init();
+    if(window.location.hash)
+      headroom.unpin();
+    $(header).addClass('headroom--transition');
+
+    // offset scroll location for banner on hash change
+    // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+    window.addEventListener("hashchange", function(event) {
+      window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+    });
+
+    // responsive menu
+    $('.distill-site-header').each(function(i, val) {
+      var topnav = $(this);
+      var toggle = topnav.find('.nav-toggle');
+      toggle.on('click', function() {
+        topnav.toggleClass('responsive');
+      });
+    });
+
+    // nav dropdowns
+    $('.nav-dropbtn').click(function(e) {
+      $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+      $(this).parent().siblings('.nav-dropdown')
+         .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $("body").click(function(e){
+      $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $(".nav-dropdown").click(function(e){
+      e.stopPropagation();
+    });
+  });
+</script>
+
+<style type="text/css">
+
+/* Theme (user-documented overrideables for nav appearance) */
+
+.distill-site-nav {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: #0F2E3D;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.distill-site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.distill-site-nav a:hover {
+  color: white;
+}
+
+@media print {
+  .distill-site-nav {
+    display: none;
+  }
+}
+
+.distill-site-header {
+
+}
+
+.distill-site-footer {
+
+}
+
+
+/* Site Header */
+
+.distill-site-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.distill-site-header .nav-left {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header .nav-left {
+    margin-left: 0;
+  }
+}
+
+
+.distill-site-header .nav-right {
+  float: right;
+  margin-right: 8px;
+}
+
+.distill-site-header a,
+.distill-site-header .title {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 10px 14px 10px;
+}
+
+.distill-site-header .title {
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.distill-site-header .logo {
+  padding: 0;
+}
+
+.distill-site-header .logo img {
+  display: none;
+  max-height: 20px;
+  width: auto;
+  margin-bottom: -4px;
+}
+
+.distill-site-header .nav-image img {
+  max-height: 18px;
+  width: auto;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+
+
+@media screen and (min-width: 1000px) {
+  .distill-site-header .logo img {
+    display: inline-block;
+  }
+  .distill-site-header .nav-left {
+    margin-left: 20px;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 20px;
+  }
+  .distill-site-header .title {
+    padding-left: 12px;
+  }
+}
+
+
+.distill-site-header .nav-toggle {
+  display: none;
+}
+
+.nav-dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.nav-dropdown .nav-dropbtn {
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 16px 10px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  margin-top: 1px;
+  z-index: 2;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 200px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 2px;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-dropdown-content hr {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dropdown-active {
+  display: block;
+}
+
+.nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+  color: black;
+  padding: 6px 24px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.nav-dropdown-content .nav-dropdown-header {
+  display: block;
+  padding: 5px 24px;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropbtn {
+  color: white;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.nav-right .nav-dropdown-content {
+  margin-left: -45%;
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+  .distill-site-header a.nav-toggle {
+    float: right;
+    display: block;
+  }
+  .distill-site-header .title {
+    margin-left: 0;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 0;
+  }
+  .distill-site-header {
+    overflow: hidden;
+  }
+  .nav-right .nav-dropdown-content {
+    margin-left: 0;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-header.responsive {position: relative; min-height: 500px; }
+  .distill-site-header.responsive a.nav-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .distill-site-header.responsive a,
+  .distill-site-header.responsive .nav-dropdown {
+    display: block;
+    text-align: left;
+  }
+  .distill-site-header.responsive .nav-left,
+  .distill-site-header.responsive .nav-right {
+    width: 100%;
+  }
+  .distill-site-header.responsive .nav-dropdown {float: none;}
+  .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+  .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Site Footer */
+
+.distill-site-footer {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 3;
+  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Headroom */
+
+d-title {
+  padding-top: 6rem;
+}
+
+@media print {
+  d-title {
+    padding-top: 4rem;
+  }
+}
+
+.headroom {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.headroom--transition {
+  transition: all .4s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+/* adjust viewport for navbar height */
+/* helps vertically center bootstrap (non-distill) content */
+.min-vh-100 {
+  min-height: calc(100vh - 100px) !important;
+}
+
+</style>
+
+<script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../../site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+<link href="../../site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+<script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
+<!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+<style type="text/css">
+
+body {
+  background-color: white;
+}
+
+.pandoc-table {
+  width: 100%;
+}
+
+.pandoc-table>caption {
+  margin-bottom: 10px;
+}
+
+.pandoc-table th:not([align]) {
+  text-align: left;
+}
+
+.pagedtable-footer {
+  font-size: 15px;
+}
+
+d-byline .byline {
+  grid-template-columns: 2fr 2fr;
+}
+
+d-byline .byline h3 {
+  margin-block-start: 1.5em;
+}
+
+d-byline .byline .authors-affiliations h3 {
+  margin-block-start: 0.5em;
+}
+
+.authors-affiliations .orcid-id {
+  width: 16px;
+  height:16px;
+  margin-left: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+  padding-bottom: 2px;
+}
+
+d-title .dt-tags {
+  margin-top: 1em;
+  grid-column: text;
+}
+
+.dt-tags .dt-tag {
+  text-decoration: none;
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0em 0.4em;
+  margin-right: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 70%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+d-article table.gt_table td,
+d-article table.gt_table th {
+  border-bottom: none;
+  font-size: 100%;
+}
+
+.html-widget {
+  margin-bottom: 2.0em;
+}
+
+.l-screen-inset {
+  padding-right: 16px;
+}
+
+.l-screen .caption {
+  margin-left: 10px;
+}
+
+.shaded {
+  background: rgb(247, 247, 247);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .html-widget {
+  margin-bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .shaded-content {
+  background: white;
+}
+
+.text-output {
+  margin-top: 0;
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+d-article {
+  padding-top: 2.5rem;
+  padding-bottom: 30px;
+}
+
+d-appendix {
+  padding-top: 30px;
+}
+
+d-article>p>img {
+  width: 100%;
+}
+
+d-article h2 {
+  margin: 1rem 0 1.5rem 0;
+}
+
+d-article h3 {
+  margin-top: 1.5rem;
+}
+
+d-article iframe {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 2.0em;
+  width: 100%;
+}
+
+/* Tweak code blocks */
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: auto;
+}
+
+d-article div.sourceCode {
+  background-color: white;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 10px;
+  font-size: 12px;
+  border-left: 2px solid rgba(0,0,0,0.1);
+}
+
+d-article pre {
+  font-size: 12px;
+  color: black;
+  background: none;
+  margin-top: 0;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+d-article pre a {
+  border-bottom: none;
+}
+
+d-article pre a:hover {
+  border-bottom: none;
+  text-decoration: underline;
+}
+
+d-article details {
+  grid-column: text;
+  margin-bottom: 0.8em;
+}
+
+@media(min-width: 768px) {
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: visible !important;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+d-article pre {
+  font-size: 14px;
+}
+
+}
+
+figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* CSS for d-contents */
+
+.d-contents {
+  grid-column: text;
+  color: rgba(0,0,0,0.8);
+  font-size: 0.9em;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 0.25em;
+  justify-self: start;
+}
+
+@media(min-width: 1000px) {
+  .d-contents.d-contents-float {
+    height: 0;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: center;
+    padding-right: 3em;
+    padding-left: 2em;
+  }
+}
+
+.d-contents nav h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.d-contents li {
+  list-style-type: none
+}
+
+.d-contents nav > ul {
+  padding-left: 0;
+}
+
+.d-contents ul {
+  padding-left: 1em
+}
+
+.d-contents nav ul li {
+  margin-top: 0.6em;
+  margin-bottom: 0.2em;
+}
+
+.d-contents nav a {
+  font-size: 13px;
+  border-bottom: none;
+  text-decoration: none
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.d-contents nav a:hover {
+  text-decoration: underline solid rgba(0, 0, 0, 0.6)
+}
+
+.d-contents nav > ul > li > a {
+  font-weight: 600;
+}
+
+.d-contents nav > ul > li > ul {
+  font-weight: inherit;
+}
+
+.d-contents nav > ul > li > ul > li {
+  margin-top: 0.2em;
+}
+
+
+.d-contents nav ul {
+  margin-top: 0;
+  margin-bottom: 0.25em;
+}
+
+.d-article-with-toc h2:nth-child(2) {
+  margin-top: 0;
+}
+
+
+/* Figure */
+
+.figure {
+  position: relative;
+  margin-bottom: 2.5em;
+  margin-top: 1.5em;
+}
+
+.figure .caption {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5em;
+}
+
+.figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.figure .caption a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.figure .caption b,
+.figure .caption strong, {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+/* Citations */
+
+d-article .citation {
+  color: inherit;
+  cursor: inherit;
+}
+
+div.hanging-indent{
+  margin-left: 1em; text-indent: -1em;
+}
+
+/* Citation hover box */
+
+.tippy-box[data-theme~=light-border] {
+  background-color: rgba(250, 250, 250, 0.95);
+}
+
+.tippy-content > p {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+
+/* Tweak 1000px media break to show more text */
+
+@media(min-width: 1000px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 16px;
+  }
+
+  .grid {
+    grid-column-gap: 16px;
+  }
+
+  d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+  }
+  figure .caption, .figure .caption, figure figcaption {
+    font-size: 13px;
+  }
+}
+
+@media(min-width: 1180px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 32px;
+  }
+
+  .grid {
+    grid-column-gap: 32px;
+  }
+}
+
+
+/* Get the citation styles for the appendix (not auto-injected on render since
+   we do our own rendering of the citation appendix) */
+
+d-appendix .citation-appendix,
+.d-appendix .citation-appendix {
+  font-size: 11px;
+  line-height: 15px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 18px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.02);
+  padding: 10px 18px;
+  border-radius: 3px;
+  color: rgba(150, 150, 150, 1);
+  overflow: hidden;
+  margin-top: -12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Include appendix styles here so they can be overridden */
+
+d-appendix {
+  contain: layout style;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-top: 60px;
+  margin-bottom: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0,0,0,0.5);
+  padding-top: 60px;
+  padding-bottom: 48px;
+}
+
+d-appendix h3 {
+  grid-column: page-start / text-start;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.65);
+}
+
+d-appendix h3 + * {
+  margin-top: 1em;
+}
+
+d-appendix ol {
+  padding: 0 0 0 15px;
+}
+
+@media (min-width: 768px) {
+  d-appendix ol {
+    padding: 0 0 0 30px;
+    margin-left: -30px;
+  }
+}
+
+d-appendix li {
+  margin-bottom: 1em;
+}
+
+d-appendix a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+d-appendix > * {
+  grid-column: text;
+}
+
+d-appendix > d-footnote-list,
+d-appendix > d-citation-list,
+d-appendix > distill-appendix {
+  grid-column: screen;
+}
+
+/* Include footnote styles here so they can be overridden */
+
+d-footnote-list {
+  contain: layout style;
+}
+
+d-footnote-list > * {
+  grid-column: text;
+}
+
+d-footnote-list a.footnote-backlink {
+  color: rgba(0,0,0,0.3);
+  padding-left: 0.5em;
+}
+
+
+
+/* Anchor.js */
+
+.anchorjs-link {
+  /*transition: all .25s linear; */
+  text-decoration: none;
+  border-bottom: none;
+}
+*:hover > .anchorjs-link {
+  margin-left: -1.125em !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Social footer */
+
+.social_footer {
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.67);
+}
+
+.disqus-comments {
+  margin-right: 30px;
+}
+
+.disqus-comment-count {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#disqus_thread {
+  margin-top: 30px;
+}
+
+.article-sharing a {
+  border-bottom: none;
+  margin-right: 8px;
+}
+
+.article-sharing a:hover {
+  border-bottom: none;
+}
+
+.sidebar-section.subscribe {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.subscribe p {
+  margin-bottom: 0.5em;
+}
+
+
+.article-footer .subscribe {
+  font-size: 15px;
+  margin-top: 45px;
+}
+
+
+.sidebar-section.custom {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.custom p {
+  margin-bottom: 0.5em;
+}
+
+/* Styles for listing layout (hide title) */
+.layout-listing d-title, .layout-listing .d-title {
+  display: none;
+}
+
+/* Styles for posts lists (not auto-injected) */
+
+
+.posts-with-sidebar {
+  padding-left: 45px;
+  padding-right: 45px;
+}
+
+.posts-list .description h2,
+.posts-list .description p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.posts-list .description h2 {
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.posts-list h2.post-tag {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 12px;
+}
+.posts-list {
+  margin-top: 60px;
+  margin-bottom: 24px;
+}
+
+.posts-list .post-preview {
+  text-decoration: none;
+  overflow: hidden;
+  display: block;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+}
+
+.post-preview-last {
+  border-bottom: none !important;
+}
+
+.posts-list .posts-list-caption {
+  grid-column: screen;
+  font-weight: 400;
+}
+
+.posts-list .post-preview h2 {
+  margin: 0 0 6px 0;
+  line-height: 1.2em;
+  font-style: normal;
+  font-size: 24px;
+}
+
+.posts-list .post-preview p {
+  margin: 0 0 12px 0;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+.posts-list .post-preview .thumbnail {
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  position: relative;
+  max-width: 500px;
+}
+.posts-list .post-preview img {
+  width: 100%;
+  display: block;
+}
+
+.posts-list .metadata {
+  font-size: 12px;
+  line-height: 1.4em;
+  margin-bottom: 18px;
+}
+
+.posts-list .metadata > * {
+  display: inline-block;
+}
+
+.posts-list .metadata .publishedDate {
+  margin-right: 2em;
+}
+
+.posts-list .metadata .dt-authors {
+  display: block;
+  margin-top: 0.3em;
+  margin-right: 2em;
+}
+
+.posts-list .dt-tags {
+  display: block;
+  line-height: 1em;
+}
+
+.posts-list .dt-tags .dt-tag {
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0.3em 0.4em;
+  margin-right: 0.2em;
+  margin-bottom: 0.4em;
+  font-size: 60%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.posts-list img {
+  opacity: 1;
+}
+
+.posts-list img[data-src] {
+  opacity: 0;
+}
+
+.posts-more {
+  clear: both;
+}
+
+
+.posts-sidebar {
+  font-size: 16px;
+}
+
+.posts-sidebar h3 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.categories ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categories li {
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0;
+}
+
+.categories li>a {
+  border-bottom: none;
+}
+
+.categories li>a:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.categories .active {
+  font-weight: 600;
+}
+
+.categories .category-count {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+@media(min-width: 768px) {
+  .posts-list .post-preview h2 {
+    font-size: 26px;
+  }
+  .posts-list .post-preview .thumbnail {
+    float: right;
+    width: 30%;
+    margin-bottom: 0;
+  }
+  .posts-list .post-preview .description {
+    float: left;
+    width: 45%;
+  }
+  .posts-list .post-preview .metadata {
+    float: left;
+    width: 20%;
+    margin-top: 8px;
+  }
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.5em;
+    font-size: 16px;
+  }
+  .posts-with-sidebar .posts-list {
+    float: left;
+    width: 75%;
+  }
+  .posts-with-sidebar .posts-sidebar {
+    float: right;
+    width: 20%;
+    margin-top: 60px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+
+/* Improve display for browsers without grid (IE/Edge <= 15) */
+
+.downlevel {
+  line-height: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+}
+
+.downlevel .d-title {
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+}
+
+.downlevel .d-title h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1em;
+  margin: 0 0 0.5rem;
+}
+
+.downlevel .d-title p {
+  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.55em;
+  margin-top: 0;
+}
+
+.downlevel .d-byline {
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  font-size: 0.8rem;
+  line-height: 1.8em;
+}
+
+.downlevel .section-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.downlevel .d-article {
+  font-size: 1.06rem;
+  line-height: 1.7em;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+
+.downlevel .d-appendix {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: none;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.5);
+  padding-top: 40px;
+  padding-bottom: 48px;
+}
+
+.downlevel .footnotes ol {
+  padding-left: 13px;
+}
+
+.downlevel .base-grid,
+.downlevel .distill-header,
+.downlevel .d-title,
+.downlevel .d-abstract,
+.downlevel .d-article,
+.downlevel .d-appendix,
+.downlevel .distill-appendix,
+.downlevel .d-byline,
+.downlevel .d-footnote-list,
+.downlevel .d-citation-list,
+.downlevel .distill-footer,
+.downlevel .appendix-bottom,
+.downlevel .posts-container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media(min-width: 768px) {
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+  padding-left: 150px;
+  padding-right: 150px;
+  max-width: 900px;
+}
+}
+
+.downlevel pre code {
+  display: block;
+  border-left: 2px solid rgba(0, 0, 0, .1);
+  padding: 0 0 0 20px;
+  font-size: 14px;
+}
+
+.downlevel code, .downlevel pre {
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+.downlevel .posts-list .post-preview {
+  color: inherit;
+}
+
+
+
+</style>
+
+<script type="application/javascript">
+
+function is_downlevel_browser() {
+  if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                 window.navigator.userAgent)) {
+    return true;
+  } else {
+    return window.load_distill_framework === undefined;
+  }
+}
+
+// show body when load is complete
+function on_load_complete() {
+
+  // add anchors
+  if (window.anchors) {
+    window.anchors.options.placement = 'left';
+    window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+  }
+
+
+  // set body to visible
+  document.body.style.visibility = 'visible';
+
+  // force redraw for leaflet widgets
+  if (window.HTMLWidgets) {
+    var maps = window.HTMLWidgets.findAll(".leaflet");
+    $.each(maps, function(i, el) {
+      var map = this.getMap();
+      map.invalidateSize();
+      map.eachLayer(function(layer) {
+        if (layer instanceof L.TileLayer)
+          layer.redraw();
+      });
+    });
+  }
+
+  // trigger 'shown' so htmlwidgets resize
+  $('d-article').trigger('shown');
+}
+
+function init_distill() {
+
+  init_common();
+
+  // create front matter
+  var front_matter = $('<d-front-matter></d-front-matter>');
+  $('#distill-front-matter').wrap(front_matter);
+
+  // create d-title
+  $('.d-title').changeElementType('d-title');
+
+  // create d-byline
+  var byline = $('<d-byline></d-byline>');
+  $('.d-byline').replaceWith(byline);
+
+  // create d-article
+  var article = $('<d-article></d-article>');
+  $('.d-article').wrap(article).children().unwrap();
+
+  // move posts container into article
+  $('.posts-container').appendTo($('d-article'));
+
+  // create d-appendix
+  $('.d-appendix').changeElementType('d-appendix');
+
+  // flag indicating that we have appendix items
+  var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+  // replace footnotes with <d-footnote>
+  $('.footnote-ref').each(function(i, val) {
+    appendix = true;
+    var href = $(this).attr('href');
+    var id = href.replace('#', '');
+    var fn = $('#' + id);
+    var fn_p = $('#' + id + '>p');
+    fn_p.find('.footnote-back').remove();
+    var text = fn_p.html();
+    var dtfn = $('<d-footnote></d-footnote>');
+    dtfn.html(text);
+    $(this).replaceWith(dtfn);
+  });
+  // remove footnotes
+  $('.footnotes').remove();
+
+  // move refs into #references-listing
+  $('#references-listing').replaceWith($('#refs'));
+
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    var id = $(this).attr('id');
+    $('.d-contents a[href="#' + id + '"]').parent().remove();
+    appendix = true;
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+  });
+
+  // show d-appendix if we have appendix content
+  $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+  // localize layout chunks to just output
+  $('.layout-chunk').each(function(i, val) {
+
+    // capture layout
+    var layout = $(this).attr('data-layout');
+
+    // apply layout to markdown level block elements
+    var elements = $(this).children().not('details, div.sourceCode, pre, script');
+    elements.each(function(i, el) {
+      var layout_div = $('<div class="' + layout + '"></div>');
+      if (layout_div.hasClass('shaded')) {
+        var shaded_content = $('<div class="shaded-content"></div>');
+        $(this).wrap(shaded_content);
+        $(this).parent().wrap(layout_div);
+      } else {
+        $(this).wrap(layout_div);
+      }
+    });
+
+
+    // unwrap the layout-chunk div
+    $(this).children().unwrap();
+  });
+
+  // remove code block used to force  highlighting css
+  $('.distill-force-highlighting-css').parent().remove();
+
+  // remove empty line numbers inserted by pandoc when using a
+  // custom syntax highlighting theme
+  $('code.sourceCode a:empty').remove();
+
+  // load distill framework
+  load_distill_framework();
+
+  // wait for window.distillRunlevel == 4 to do post processing
+  function distill_post_process() {
+
+    if (!window.distillRunlevel || window.distillRunlevel < 4)
+      return;
+
+    // hide author/affiliations entirely if we have no authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+    if (!have_authors)
+      $('d-byline').addClass('hidden');
+
+    // article with toc class
+    $('.d-contents').parent().addClass('d-article-with-toc');
+
+    // strip links that point to #
+    $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+    // add orcid ids
+    $('.authors-affiliations').find('.author').each(function(i, el) {
+      var orcid_id = front_matter.authors[i].orcidID;
+      if (orcid_id) {
+        var a = $('<a></a>');
+        a.attr('href', 'https://orcid.org/' + orcid_id);
+        var img = $('<img></img>');
+        img.addClass('orcid-id');
+        img.attr('alt', 'ORCID ID');
+        img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+        a.append(img);
+        $(this).append(a);
+      }
+    });
+
+    // hide elements of author/affiliations grid that have no value
+    function hide_byline_column(caption) {
+      $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+    }
+
+    // affiliations
+    var have_affiliations = false;
+    for (var i = 0; i<front_matter.authors.length; ++i) {
+      var author = front_matter.authors[i];
+      if (author.affiliation !== "&nbsp;") {
+        have_affiliations = true;
+        break;
+      }
+    }
+    if (!have_affiliations)
+      $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+    // published date
+    if (!front_matter.publishedDate)
+      hide_byline_column("Published");
+
+    // document object identifier
+    var doi = $('d-byline').find('h3:contains("DOI")');
+    var doi_p = doi.next().empty();
+    if (!front_matter.doi) {
+      // if we have a citation and valid citationText then link to that
+      if ($('#citation').length > 0 && front_matter.citationText) {
+        doi.html('Citation');
+        $('<a href="#citation"></a>')
+          .text(front_matter.citationText)
+          .appendTo(doi_p);
+      } else {
+        hide_byline_column("DOI");
+      }
+    } else {
+      $('<a></a>')
+         .attr('href', "https://doi.org/" + front_matter.doi)
+         .html(front_matter.doi)
+         .appendTo(doi_p);
+    }
+
+     // change plural form of authors/affiliations
+    if (front_matter.authors.length === 1) {
+      var grid = $('.authors-affiliations');
+      grid.children('h3:contains("Authors")').text('Author');
+      grid.children('h3:contains("Affiliations")').text('Affiliation');
+    }
+
+    // remove d-appendix and d-footnote-list local styles
+    $('d-appendix > style:first-child').remove();
+    $('d-footnote-list > style:first-child').remove();
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // hoverable references
+    $('span.citation[data-cites]').each(function() {
+      const citeChild = $(this).children()[0]
+      // Do not process if @xyz has been used without escaping and without bibliography activated
+      // https://github.com/rstudio/distill/issues/466
+      if (citeChild === undefined) return true
+
+      if (citeChild.nodeName == "D-FOOTNOTE") {
+        var fn = citeChild
+        $(this).html(fn.shadowRoot.querySelector("sup"))
+        $(this).id = fn.id
+        fn.remove()
+      }
+      var refs = $(this).attr('data-cites').split(" ");
+      var refHtml = refs.map(function(ref) {
+        // Could use CSS.escape too here, we insure backward compatibility in navigator
+        return "<p>" + $('div[id="ref-' + ref + '"]').html() + "</p>";
+      }).join("\n");
+      window.tippy(this, {
+        allowHTML: true,
+        content: refHtml,
+        maxWidth: 500,
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start'
+      });
+    });
+
+    // fix footnotes in tables (#411)
+    // replacing broken distill.pub feature
+    $('table d-footnote').each(function() {
+      // we replace internal showAtNode methode which is triggered when hovering a footnote
+      this.hoverBox.showAtNode = function(node) {
+        // ported from https://github.com/distillpub/template/pull/105/files
+        calcOffset = function(elem) {
+            let x = elem.offsetLeft;
+            let y = elem.offsetTop;
+            // Traverse upwards until an `absolute` element is found or `elem`
+            // becomes null.
+            while (elem = elem.offsetParent && elem.style.position != 'absolute') {
+                x += elem.offsetLeft;
+                y += elem.offsetTop;
+            }
+
+            return { left: x, top: y };
+        }
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop
+        const bbox = node.getBoundingClientRect();
+        const offset = calcOffset(node);
+        this.show([offset.left + bbox.width, offset.top + bbox.height]);
+      }
+    })
+
+    // clear polling timer
+    clearInterval(tid);
+
+    // show body now that everything is ready
+    on_load_complete();
+  }
+
+  var tid = setInterval(distill_post_process, 50);
+  distill_post_process();
+
+}
+
+function init_downlevel() {
+
+  init_common();
+
+   // insert hr after d-title
+  $('.d-title').after($('<hr class="section-separator"/>'));
+
+  // check if we have authors
+  var front_matter = JSON.parse($("#distill-front-matter").html());
+  var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+  // manage byline/border
+  if (!have_authors)
+    $('.d-byline').remove();
+  $('.d-byline').after($('<hr class="section-separator"/>'));
+  $('.d-byline a').remove();
+
+  // remove toc
+  $('.d-contents').remove();
+
+  // move appendix elements
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+  });
+
+
+  // inject headers into references and footnotes
+  var refs_header = $('<h3></h3>');
+  refs_header.text('References');
+  $('#refs').prepend(refs_header);
+
+  var footnotes_header = $('<h3></h3');
+  footnotes_header.text('Footnotes');
+  $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+  // move appendix-bottom entries to the bottom
+  $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+  $('.appendix-bottom').remove();
+
+  // remove appendix if it's empty
+  if ($('.d-appendix').children().length === 0)
+    $('.d-appendix').remove();
+
+  // prepend separator above appendix
+  $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+  // trim code
+  $('pre>code').each(function(i, val) {
+    $(this).html($.trim($(this).html()));
+  });
+
+  // move posts-container right before article
+  $('.posts-container').insertBefore($('.d-article'));
+
+  $('body').addClass('downlevel');
+
+  on_load_complete();
+}
+
+
+function init_common() {
+
+  // jquery plugin to change element types
+  (function($) {
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+        attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+        return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+  })(jQuery);
+
+  // prevent underline for linked images
+  $('a > img').parent().css({'border-bottom' : 'none'});
+
+  // mark non-body figures created by knitr chunks as 100% width
+  $('.layout-chunk').each(function(i, val) {
+    var figures = $(this).find('img, .html-widget');
+    // ignore leaflet img layers (#106)
+    figures = figures.filter(':not(img[class*="leaflet"])')
+    if ($(this).attr('data-layout') !== "l-body") {
+      figures.css('width', '100%');
+    } else {
+      figures.css('max-width', '100%');
+      figures.filter("[width]").each(function(i, val) {
+        var fig = $(this);
+        fig.css('width', fig.attr('width') + 'px');
+      });
+
+    }
+  });
+
+  // auto-append index.html to post-preview links in file: protocol
+  // and in rstudio ide preview
+  $('.post-preview').each(function(i, val) {
+    if (window.location.protocol === "file:")
+      $(this).attr('href', $(this).attr('href') + "index.html");
+  });
+
+  // get rid of index.html references in header
+  if (window.location.protocol !== "file:") {
+    $('.distill-site-header a[href]').each(function(i,val) {
+      $(this).attr('href', $(this).attr('href').replace(/^index[.]html/, "./"));
+    });
+  }
+
+  // add class to pandoc style tables
+  $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+  $('.kable-table').children('table').addClass('pandoc-table');
+
+  // add figcaption style to table captions
+  $('caption').parent('table').addClass("figcaption");
+
+  // initialize posts list
+  if (window.init_posts_list)
+    window.init_posts_list();
+
+  // implmement disqus comment link
+  $('.disqus-comment-count').click(function() {
+    window.headroom_prevent_pin = true;
+    $('#disqus_thread').toggleClass('hidden');
+    if (!$('#disqus_thread').hasClass('hidden')) {
+      var offset = $(this).offset();
+      $(window).resize();
+      $('html, body').animate({
+        scrollTop: offset.top - 35
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (is_downlevel_browser())
+    init_downlevel();
+  else
+    window.addEventListener('WebComponentsReady', init_distill);
+});
+
+</script>
+
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    sans-serif;
+  --mono-font:       monospace;
+  --body-font:       sans-serif;
+  --navbar-font:     sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+</style>
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #881C03;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    'Fira Mono', sans-serif;
+  --mono-font:       monospace;
+  --body-font:       'Lato', sans-serif;
+  --navbar-font:     'Roboto', sans-serif;        /* edited */
+  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       white;
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #007fff;
+  --font-weight:      900;
+}
+
+
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+
+body {
+  background-color: whitesmoke;
+}
+
+/* snow, milk, ivory, pearl, paper, corn silk, seashell, linen, cream, alabaster */
+
+.screenshot {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* .panelset {
+  --panel-tab-foreground: currentColor;
+  --panel-tab-active-foreground: #0051BA;
+  --panel-tab-hover-foreground: #d22;
+  --panel-tabs-border-bottom: #ddd;
+  --panel-tab-inactive-opacity: 0.5;
+} */
+
+.darkmode d-article,
+.darkmode d-appendix,
+.darkmode body {
+  background-color: black;
+  color: white;
+}</style>
+<style type="text/css">
+/* base style */
+
+/* FONT FAMILIES */
+
+:root {
+  --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+body,
+.posts-list .post-preview p,
+.posts-list .description p {
+  font-family: var(--body-font), var(--body-default);
+}
+
+h1, h2, h3, h4, h5, h6,
+.posts-list .post-preview h2,
+.posts-list .description h2 {
+  font-family: var(--heading-font), var(--heading-default);
+}
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: var(--mono-font), var(--mono-default);
+}
+
+
+/*-- TITLE --*/
+d-title h1,
+.posts-list > h1 {
+  color: var(--title-color, black);
+}
+
+d-title h1 {
+  font-size: var(--title-size, 50px);
+}
+
+/*-- HEADERS --*/
+d-article h1,
+d-article h2,
+d-article h3,
+d-article h4,
+d-article h5,
+d-article h6 {
+  color: var(--header-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- BODY --*/
+d-article > p,  /* only text inside of <p> tags */
+d-article > ul, /* lists */
+d-article > ol {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+  font-size: var(--body-size, 1.06rem);
+}
+
+
+/*-- CODE --*/
+d-article div.sourceCode code,
+d-article pre code {
+  font-size: var(--code-size, 14px);
+}
+
+/*-- ASIDE --*/
+d-article aside {
+  font-size: var(--aside-size, 12px);
+  color: var(--aside-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- FIGURE CAPTIONS --*/
+figure .caption,
+figure figcaption,
+.figure .caption {
+  font-size: var(--fig-cap-size, 13px);
+  color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- METADATA --*/
+d-byline h3 {
+  font-size: var(--heading-size, 0.6rem);
+  color: var(--heading-color, rgba(0, 0, 0, 0.5));
+}
+
+d-byline {
+  font-size: var(--body-size, 0.8rem);
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+d-byline a,
+d-article d-byline a {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- TABLE OF CONTENTS --*/
+.d-contents nav h3 {
+  font-size: var(--heading-size, 18px);
+}
+
+.d-contents nav a {
+  font-size: var(--contents-size, 13px);
+}
+
+/*-- APPENDIX --*/
+d-appendix h3 {
+  font-size: var(--heading-size, 15px);
+  color: var(--heading-color, rgba(0, 0, 0, 0.65));
+}
+
+d-appendix {
+  font-size: var(--text-size, 0.8em);
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+d-appendix d-footnote-list a.footnote-backlink {
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+.distill-site-header .title {
+  font-size: var(--title-size, 18px);
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.distill-site-header a,
+.nav-dropdown .nav-dropbtn {
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.nav-dropdown .nav-dropbtn {
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  font-size: var(--text-size, 15px);
+}
+
+.distill-site-header a:hover,
+.nav-dropdown:hover .nav-dropbtn {
+  color: var(--hover-color, white);
+}
+
+.distill-site-header {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer a:hover {
+  color: var(--hover-color, white);
+}</style>
+<!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
+  <link href="../../site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="../../site_libs/panelset-0.2.6/panelset.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, orientation=auto"/>
+  <meta name="description" content="The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"/>
+  <meta name="twitter:title" content="LoR Meta Index (LMI) expansion by using Bo3 data"/>
+  <meta name="twitter:description" content="The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"/>
+  <meta name="twitter:url" content="https://www.llorr-stats.com"/>
+  <meta name="twitter:image" content="images/LMIv2"/>
+  <meta name="twitter:image:alt" content="LMIv2"/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:creator" content="@Maou_Legna"/>
+  <meta name="twitter:site" content="@Maou_Legna"/>
+  <meta property="og:title" content="LoR Meta Index (LMI) expansion by using Bo3 data"/>
+  <meta property="og:description" content="The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index"/>
+  <meta property="og:url" content="https://www.llorr-stats.com"/>
+  <meta property="og:image" content="images/LMIv2"/>
+  <meta property="og:image:alt" content="LMIv2"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="en_US"/>
+  <meta property="article:author" content="Legna"/>
+  <script src="../../site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+  <script src="../../site_libs/viz-1.8.2/viz.js"></script>
+  <link href="../../site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+  <script src="../../site_libs/grViz-binding-1.0.6.1/grViz.js"></script>
+  <script src="../../site_libs/plotly-binding-4.9.4.1/plotly.js"></script>
+  <script src="../../site_libs/typedarray-0.1/typedarray.min.js"></script>
+  <script src="../../site_libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="../../site_libs/crosstalk-1.1.1.9000/css/crosstalk.min.css" rel="stylesheet" />
+  <script src="../../site_libs/crosstalk-1.1.1.9000/js/crosstalk.min.js"></script>
+  <link href="../../site_libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet" />
+  <script src="../../site_libs/plotly-main-1.57.1/plotly-latest.min.js"></script>
+  <script src="../../site_libs/core-js-2.5.3/shim.min.js"></script>
+  <script src="../../site_libs/react-17.0.0/react.min.js"></script>
+  <script src="../../site_libs/react-17.0.0/react-dom.min.js"></script>
+  <script src="../../site_libs/reactwidget-1.0.0/react-tools.js"></script>
+  <script src="../../site_libs/reactable-binding-0.2.3/reactable.js"></script>
+  <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
+  <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="../../site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="../../site_libs/anchor-4.2.2/anchor.min.js"></script>
+  <script src="../../site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="../../site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+<script type="text/javascript" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=UA-204289277-1"></script>
+<script type="text/javascript" cookie-consent="tracking">
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-204289277-1');
+</script>
+<!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"LoR Meta Index (LMI) expansion by using Bo3 data","description":"The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index","authors":[{"author":"Valentino (Legna) Vazzoler","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-09-21T00:00:00.000+02:00","citationText":"Vazzoler, 2021"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a class="logo">
+<img src="../../images/logo.png" alt="Logo"/>
+</a>
+<a href="../../index.html" class="title">LLoRR Stats</a>
+</div>
+<div class="nav-right">
+<a href="../../report.html">MetaReport</a>
+<a href="https://www.llorr-stats.com/static/mu.html">MatchUps</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Meta
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="https://www.llorr-stats.com/static/meta.html">Meta Stats</a>
+<a href="../../oldgrid.html">Old Meta MU grid</a>
+</div>
+</div>
+<a href="../../analysis.html">Analysis</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Resources
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="https://docs.google.com/spreadsheets/d/1MFb-6203FOHiK4KJJyjQI3dmJw2_6cFRWsEMQSYyDnQ">Master MU spreadsheet</a>
+<a href="https://docs.google.com/spreadsheets/d/1lYODIY3N-TP_0-zuJYcOZwqfOBVaTv66quUHaT8CG90">Diamond MU spreadsheet</a>
+<a href="https://docs.google.com/spreadsheets/d/12p0DflWMZHMge4bqFCzpY9X4DcmTKGM4qWUO-gkcsJA">Top50 PlayRate - by Region (All/7d/3d)</a>
+<a href="../../resources.html">Site tools</a>
+</div>
+</div>
+<a href="../../about.html">About</a>
+<a href="https://github.com/MaouLegna">
+<i class="fab fa-github-alt fa-1x" aria-hidden="true"></i>
+</a>
+<a href="https://twitter.com/Maou_Legna">
+<i class="fab fa-twitter fa-1x" aria-hidden="true"></i>
+</a>
+<a href="https://rpubs.com/Legna">
+<i class="fab fa-r-project" aria-hidden="true"></i>
+</a>
+<a href="https://www.paypal.com/donate/?hosted_button_id=NAL3LXU4W3HZ2" class="nav-image">
+<img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"/>
+</a>
+<a href="https://www.buymeacoffee.com/MaouLegna" class="nav-image">
+<img src="https://www.buymeacoffee.com/assets/img/bmc-meta-new/new/favicon.png"/>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>LoR Meta Index (LMI) expansion by using Bo3 data</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p><p>The LMI is limited in its current setting as it uses only playrates and win-rates. By using Bo3 data we propose a way to expand the LMI with a ban-index</p></p>
+</div>
+
+<div class="d-byline">
+  Valentino (Legna) Vazzoler  
+  
+<br/>09-21-2021
+</div>
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#data">Data</a></li>
+<li><a href="#methods">Methods</a>
+<ul>
+<li><a href="#composite-indicators---a-better-introduction">Composite Indicators - A Better Introduction</a></li>
+<li><a href="#the-lmi-composite-indicator">The LMI Composite Indicator</a>
+<ul>
+<li><a href="#base-lmi">Base LMI</a></li>
+<li><a href="#adding-banrate-information">Adding Banrate Information</a></li>
+</ul></li>
+<li><a href="#statistical-analysis">Statistical Analysis</a>
+<ul>
+<li><a href="#correlation">Correlation</a></li>
+<li><a href="#weigths">Weigths</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#results">Results</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
+<li><a href="#appendix">Appendix</a></li>
+<li><a href="#legal-bla-bla">Legal bla bla</a></li>
+</ul>
+</nav>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<p><style>.panelset{--panel-tab-active-foreground: white;--panel-tab-active-background: #007fff;--panel-tab-hover-foreground: black;--panel-tab-hover-border-color: black;--panel-tab-font-family: Roboto;}</style></p>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<h1 id="introduction">Introduction</h1>
+<p>Composite Indicators (CI) are a quantitative measure that aggregate multi-dimensional data into a single index. Differently from other aggregation methods as Principal Components Analysis (PCA) or Factorial Analysis (FA) they are not entirely data driven and they are compiled in order to communicate a concept. Mostly used in social or policy evaluation, they allows for a single and direct comparison between their units. Gamers commonly and intuitively use this tool when talking about tier list. In a card game like Hearthstone (HS) a simple but known example of CI is the Meta Score from <a href="https://www.vicioussyndicate.com">viciousSyndicate</a> (vS).</p>
+<p>In Legends of Runeterra (LoR) we created a similar CI defined as LoR-Meta-Index (LMI)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. The index didn’t just try to replicate the vS Meta Score but tried to adjust it to the LoR data and its differences from HS. A limitation of the proposed index is it’s composed by only two variables: play-rates and win-rates. While they are the most important variables of performance of a deck, they don’t fully catch the complexities on the meta-game performances. This can be solved by adding other variables to the index and a natural candidate is the ban-rate of a deck (in a contest of BoX matches).</p>
+<p>An experiment to add the ban-rate was done earlier this year, for ‘Rise of the Underworld - Seasonal Tournament’ report<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<p>The inclusion of such variable, was done without checking all the proper steps so that we wouldn’t compromise the quality of the CI. In this article we introduce in more detail the concept and framework of a CI and how to add the the information of the ban rates and their results.</p>
+<p>Following the necessary steps, the proposed variation of the LMI partially contradicts the expected theoretical-framework requiring an higher level of complexity to reach the aimed .</p>
+<h1 id="data">Data</h1>
+<p>Data are taken from the Seasonal tournaments ‘Guardian of the Ancient’ and ‘Rise of the Underworld’ Open Rounds.</p>
+<p>The Open Rounds are the are organized in a series of nine Bo3 Matches with open lists and a ban phase before the start of the games. The smaller amount of games from the Asian shard/server is allegedly because of the fewer players taking part of it<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p>Not all information about the tournament can be derived from the API. There is no direct data about the chosen ban deck or the entire line-up brought by a player at this have to be extracted by aggregating the metadata of games from a single match and all matches played during that day.</p>
+<p>We only consider the decks that appears in the cases of a full-line-up and whose we can extrapolate the banned deck.</p>
+<p>To evaluate win-rates on the ladder, as additional source, we includes Ranked games from Master players (at least one of the two players being Master) from up to two weeks before the start of the first game of the Seasonal (because of the time zone, two weeks, before the start of the Asian Seasonal).</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="sthbbxmept" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#sthbbxmept .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: transparent;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_heading {
+  background-color: transparent;
+  text-align: center;
+  border-bottom-color: transparent;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_title {
+  color: black;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: transparent;
+  border-bottom-width: 0;
+}
+
+#sthbbxmept .gt_subtitle {
+  color: black;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: transparent;
+  border-top-width: 0;
+}
+
+#sthbbxmept .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_col_heading {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#sthbbxmept .gt_column_spanner_outer {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#sthbbxmept .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#sthbbxmept .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#sthbbxmept .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#sthbbxmept .gt_group_heading {
+  padding: 8px;
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sthbbxmept .gt_empty_group_heading {
+  padding: 0.5px;
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sthbbxmept .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#sthbbxmept .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#sthbbxmept .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#sthbbxmept .gt_stub {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#sthbbxmept .gt_summary_row {
+  color: black;
+  background-color: transparent;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sthbbxmept .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_grand_summary_row {
+  color: black;
+  background-color: transparent;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sthbbxmept .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#sthbbxmept .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_footnotes {
+  color: black;
+  background-color: transparent;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#sthbbxmept .gt_sourcenotes {
+  color: black;
+  background-color: transparent;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sthbbxmept .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#sthbbxmept .gt_left {
+  text-align: left;
+}
+
+#sthbbxmept .gt_center {
+  text-align: center;
+}
+
+#sthbbxmept .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#sthbbxmept .gt_font_normal {
+  font-weight: normal;
+}
+
+#sthbbxmept .gt_font_bold {
+  font-weight: bold;
+}
+
+#sthbbxmept .gt_font_italic {
+  font-style: italic;
+}
+
+#sthbbxmept .gt_super {
+  font-size: 65%;
+}
+
+#sthbbxmept .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style>Bo3 Data</th>
+    </tr>
+    <tr>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Matches by Server</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Seasonal - Guardian of the Ancient</strong>, N = 20,637<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Seasonal - Rise of the Underworld</strong>, N = 20,511<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">server</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center"></td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">americas</td>
+<td class="gt_row gt_center">9,126 (44%)</td>
+<td class="gt_row gt_center">9,018 (44%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">asia</td>
+<td class="gt_row gt_center">2,457 (12%)</td>
+<td class="gt_row gt_center">2,421 (12%)</td></tr>
+    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">europe</td>
+<td class="gt_row gt_center">9,054 (44%)</td>
+<td class="gt_row gt_center">9,072 (44%)</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="3">Bo3 Data from Seasonal Open Rounds - Rise of the Underworld Open Rounds Matches - games extracted with Riot API</td>
+    </tr>
+  </tfoot>
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="3">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          n (%)
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+<p>Example and part of the raw-data used can be found in Appendix <a href="#tab:table-minmax"><strong>??</strong></a>)</p>
+<h1 id="methods">Methods</h1>
+<h2 id="composite-indicators---a-better-introduction">Composite Indicators - A Better Introduction</h2>
+<p>The LMI is a composite indicator (CI) and in a previous article we introduced the tool we gave a brief explanation about how to create them. Here, we want to give a better and more complete overview of the tool.</p>
+<p>For a manual on CI, a commonly referred guide is from the Joint Research Centre (JRC) of the European Commission: <a href="https://www.oecd.org/sdd/42495745.pdf">Handbook on Constructing Composite Indicators - METHODOLOGY AND USER GUIDE</a>. In that guide building a composite indicator requires the following 10 steps:</p>
+<ol type="1">
+<li>Theoretical Framework</li>
+</ol>
+<blockquote>
+<p>Provide the basis for the selection and combination of variables into a meaningful composite indicator under a fitness-for-porpuse principle (involment of experts and stakeholders is envisaged at this step)</p>
+</blockquote>
+<p>What is the concept that the CI wants to convey? Of what characteristics is it made and what variable can express them? This steps is all about setting the definition of what needs to be created.</p>
+<ol start="2" type="1">
+<li>Data selection</li>
+</ol>
+<blockquote>
+<p>Should be based on the analytical soundness, measurability, coverage and relevance of the indicators to the phenomenon being measured and relationship to each other. The use of proxy variables should be considered when data are scarce (involvement of experts and stakeholders is envisaged at this step)</p>
+</blockquote>
+<p>When defining the CI structure there is also the need to maintain a coherent structure. This means, among other, that values in the same sub-dimension should all follows the same direction. In an increase of a variable imply an increase in the final value of the sub-dimension index then all the other variables should be same.</p>
+<p>Example: if we have a sub-dimension index related to “quality of life” containing life expectancy and child mortality, the higher the value of life expectancy the better and higher the final index should be. But, for the values of child mortality it is the opposite, the smaller the value, the better it is. In this case it’s not a problem as a common practise is to just use the opposite values by changing the sign as it is a linear transformation and the smaller the value of child mortality (with opposite sign) the better it is in evalutating “quality of life”.</p>
+<p>The ‘polarity’ of an individual indicator is the sign of the relation between the indicator and the concept to be measured. For example, in the case of well-being, “Life expectancy” has positive polarity, whereas “Unemployment rate” has negative polarity. I</p>
+<ol start="3" type="1">
+<li>Imputation of missing data</li>
+</ol>
+<blockquote>
+<p>Is needed in order to provide a complete dataset (e.g by means or multiple imputation).</p>
+</blockquote>
+<p>In the real world rarely the available data are complete (and this article is no exception). If the missing value are MCAR (Missing Completely At Random) then there would be no problem to just remove the rows with missing values but this is not always the case and sometimes we can’t just remove units as they too important and so we must try to impute the missing values without compromising the end results or estimate these values to be as near as possible as what we would have obtain as the “true” value (not compromising the quality and trying to estimate the best imputation are not the same problem).</p>
+<p>Dealing with outliers is also part of this step. In our case it’s related to the minimum amount of games to require to a deck.</p>
+<ol start="4" type="1">
+<li>Multivariate analysis</li>
+</ol>
+<blockquote>
+<p>Should be used to study the overall structure of the dataset, assess its suitability, and guide subsequent methodological choices (e.g. weighting aggregation).</p>
+</blockquote>
+<p>Sometimes the framework is not enough to guide our decision and variables may actually behave differently from our exceptions. This step is about checking the underlying structure of the data, helps identify groups and evaluate statistically evaluated structure of the data set to the theoretical framework and discuss potential differences.</p>
+<p>In this article this will be done when looking at the correlations among our variables.</p>
+<ol start="5" type="1">
+<li>Normalization</li>
+</ol>
+<blockquote>
+<p>Should be carried out to render the variables comparable</p>
+</blockquote>
+<p>As this steps was invested with care in the previous article, we will maintain the choice for using a quantile normalization for our data.</p>
+<p>While it’s possible to use different normalization for the same CI at different groups of variables, it’s not a recommended practise.</p>
+<ol start="6" type="1">
+<li>Weighting and aggregation</li>
+</ol>
+<blockquote>
+<p>Should be done along the lines of the underying theoretical framework</p>
+</blockquote>
+<p>This steps mostly intertwined with the the Multivariate analysis as it can highlight</p>
+<p>Like the normalization step, this step too was was invested with care in the previous article and we will maintain the choice for using an harmonic mean when aggregating our data. It is possible to use different aggregation method for the same CI if it’s justified (like for compensability)</p>
+<ol start="7" type="1">
+<li>Uncertainty and sensitivity analysis</li>
+</ol>
+<blockquote>
+<p>Should be undertaken to assess the robustness of the composite indicator in terms of e.g. the mechanism for indulging or excluding an indicator, the normalization scheme, the imputation of missing data, the choice, the choice of weights, the aggregation method</p>
+</blockquote>
+<p>This is an highly complex step that will be left for future articles.</p>
+<ol start="8" type="1">
+<li>Back to the data</li>
+</ol>
+<blockquote>
+<p>Is needed to reveal the main drivers for an overall good or bad performance. Trasparency is promordial to good analysis</p>
+</blockquote>
+<p>As it can be done better with the results of a uncertainty and sensitivity analysis, this steps too will be left for the future.</p>
+<ol start="9" type="1">
+<li>Links to other indicators</li>
+</ol>
+<blockquote>
+<p>Should be made to correlate the composite indicator (or its dimension) with existing (simple or composite) indicators as well as to identify linkages through regressions.</p>
+</blockquote>
+<p>This can be done when comparing the result of <a href="https://lor-meta.com/tierlist/">Balco’s Meta-Score</a> which applies the same algorithm by vS but is not part of this article as we would also include the opinion of third-party experts (some high level players) to evaluate the different CI performances.</p>
+<ol start="10" type="1">
+<li>Visualization of the results</li>
+</ol>
+<blockquote>
+<p>Should receive proper attention, given that the visualization can influence (or help to enhance interpretability)</p>
+</blockquote>
+<p>While not the only choice we will maintain for now the same plot strcture used up until now in the meta-reports and the previous LMI article.</p>
+<hr />
+<p>When creating for the first time a CI these 10 steps aren’t done in a strict sequential order, so in this article we will sometimes return to what is are previous steps compared to the one we are mainly referring in a section of the article.</p>
+<h2 id="the-lmi-composite-indicator">The LMI Composite Indicator</h2>
+<h3 id="base-lmi">Base LMI</h3>
+<p>The basic LMI is made by aggregating play-rates and win-rates and its creation was was inspired by seeing the meta score on vS.</p>
+<p>While the base raw data are from the same concept, they are combined in a different way.</p>
+<p>From their F.A.Q.</p>
+<blockquote>
+<p><strong>Q: What is the meaning of the Meta Score and how do you compute it?</strong></p>
+<p>The Meta Score is a supplementary metric that measures each archetype’s relative standing in the meta, based on both win rate and prevalence, and in comparison to the theoretical “best deck”.</p>
+<p>How is it computed?</p>
+<p>…</p>
+<ol type="1">
+<li><p>We take the highest win rate recorded by a current archetype in a specific rank group, and set it to a fixed value of 100. We then determine the fixed value of 0 by deducting the highest win rate from 100%. For example, if the highest win rate recorded is 53%, a win rate of 47% will be set as the fixed value of 0. This is a deck’s <strong>Power Score</strong>. The range of 47% – 53%, whose power score ranges from 0 to 100, will contain “viable” decks. The length of this range will vary depending on the current state of the meta. Needless to say, it is possible for a deck to have a negative power score, but it can never have a power score that exceeds 100.</p></li>
+<li><p>We take the highest frequency recorded by a current archetype in a specific rank group, and set it to a fixed value of 100. The fixed value of 0 will then always be 0% popularity. This is a deck’s <strong>Frequency Score</strong>. A deck’s frequency score cannot be a negative number.</p></li>
+<li><p>We calculate the simple average of a deck’s Power Score and Frequency Score to find its <strong>vS Meta Score</strong>. The vS Meta Score is a deck’s relative distance to the hypothetical strongest deck in the game. Think of Power Score and Frequency Score as the coordinates (x, y) of a deck within a Scatter Plot. The Meta Score represents its relative placement in the plane between the fixed values of (0, 0) and (100,100).</p></li>
+<li><p>If a deck records both the highest popularity and the highest win rate, its Meta Score will be 100. It will be, undoubtedly, the best deck in the game.</p></li>
+</ol>
+</blockquote>
+<p>While for the LMI:</p>
+<ol type="1">
+<li><p>Only decks with at least 200 games are considered. A similar filter is most likely being applied by vS too, we just don’t know the values for the cut-off</p></li>
+<li><p>Play-rates and win-rates are normalized with a quantile normalization into a Freq-Index and a Win-Index</p></li>
+<li><p>Freq-Index and a Win-Index are aggregated by an harmonic mean of equal weights into the LMI</p></li>
+</ol>
+<p>The reasoning behind these choices compared to other options can be found in the <a href="https://www.llorr-stats.com/analysis/lmi/">LMI - early concept</a> article.</p>
+<h3 id="adding-banrate-information">Adding Banrate Information</h3>
+<p>As the number of variables increase from the two of the base-LMI to three we now have more options as to combine them. Normally, this doesn’t mean that each possible choice should be evaluated, the definition we want to communicate should guide our choices and so the characteristics of our variables, e.g. we don’t add a variable of Life expectancy in a sub-dimension of ‘Infrastructure quality’</p>
+<p>When creating the LMI we described it as a measure of <em>performance</em> of a deck and as definition of performance of a deck as:</p>
+<blockquote>
+<p>The performance of a deck is defined by its own strength and popularity inside the metagame.</p>
+</blockquote>
+<p>The definition of performance is probably not be as functional as it should as it seems a bit limiting in what it means. Yet, the term performance still remains appropriate.</p>
+<p>What information can be added to the index? An easy inspiration can be taken from Riot’s main games: League of Legends (LoL)</p>
+<p>In LoL a common value to describe the performance of a champion, in in addition to play-rates and win-rates is the ban-rate of a champion.</p>
+<p>The most infamous value of the ban-rate was 95% ban-rate of Kassadin in S3. If we consider the definition of performance given earlier we can see that the ban-rate doesn’t fir perfectly strength or popularity in the metagame but it is more a case in the middle. It can seen as an aspect of strength as people don’t want to deal with it, so banning it, but it can be as an aspect of popularity or better yet a more general <em>presence</em> as while it may have not been played it sort of lingers in the match. The banned champion was not present directly in the match but with its spirit (the ban).</p>
+<p>In the context of LoR such information can be added once we consider BoX data, currently only Bo3 with the easiest example being the Seasonal Tournaments and a possible way to define it is:</p>
+<ul>
+<li><strong>Ban Rate</strong> - ratio between the number of bans and the number of matches of a deck.</li>
+</ul>
+<p><span class="math display">\[\begin{equation}
+
+BanRate = \frac{\#ban}{\#match}
+
+\end{equation}\]</span></p>
+<p>Example: 2 Line-Ups contained a Teemo/Ezreal deck, both played all 9 matches and Teemo/Ezreal was banned respectively 3 and 6 times; the ban rate would be <span class="math inline">\(\frac{(3+6)}{(9+9)} = 50\%\)</span></p>
+<p>As the variable is deemed appropriate for the LMI purpose the following step is to define the structure of the LMI to account for the new variable.</p>
+<p>With just three variables the possible ways to combine them are exactly three as shown in Fig:<a href="#fig:example-LMI-framework-1">1</a>, Fig:<a href="#fig:example-LMI-framework-2">2</a> and Fig:<a href="#fig:example-LMI-framework-3">3</a></p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:example-LMI-framework-1"></span>
+<div id="htmlwidget-706d39052bbf7bd57617" style="width:864px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-706d39052bbf7bd57617">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  I1 [label = \"LMI\"]\n  IS10 [label = \"Strengh \n subdimension\"]\n  IS11 [label = \"WinRate Index\"]\n  \n  IP10 [label = \"Popularity/Presence \n subdimension\"]\n  IP11 [label = \"PlayRate Index\"]\n  \n  IB10 [label = \"Fear/Annoyance(?) \n subdimension\"]\n  IB11 [label = \"BanRate Index\"]\n  \n  # edge definitions with the node IDs\n  I1 -> {IS10,IP10,IB10} [dir=back]\n  IS10 -> {IS11} [dir=back]\n  IP10 -> {IP11} [dir=back]\n  IB10 -> {IB11} [dir=back]\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 1: (1/3) Possible theoretical framework for the LMI - All the variables are part of their own subdimension
+</p>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:example-LMI-framework-2"></span>
+<div id="htmlwidget-3f5ff352c61c6d0a7792" style="width:864px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3f5ff352c61c6d0a7792">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  I1 [label = \"LMI\"]\n  IS10 [label = \"Strengh \n subdimension\"]\n  IS11 [label = \"WinRate Index\"]\n  IS12 [label = \"BanRate Index\"]\n  \n  IP10 [label = \"Popularity/Presence \n subdimension\"]\n  \n  IP11 [label = \"PlayRate Index\"]\n  \n  \n  # edge definitions with the node IDs\n  I1 -> {IS10,IP10} [dir=back]\n  IS10 -> {IS11,IS12} [dir=back]\n  IP10 -> {IP11} [dir=back]\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 2: (2/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, ban-rate and win-rate are both used to measure the ‘strenght’ of a deck
+</p>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:example-LMI-framework-3"></span>
+<div id="htmlwidget-787018c42ba5333fb5bb" style="width:864px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-787018c42ba5333fb5bb">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  I1 [label = \"LMI\"]\n  IS10 [label = \"Strengh \n subdimension\"]\n  IS11 [label = \"WinRate Index\"]\n  \n  IP10 [label = \"Popularity/Presence \n subdimension\"]\n  \n  IP11 [label = \"PlayRate Index\"]\n  IP12 [label = \"BanRate Index\"]\n  \n  \n  # edge definitions with the node IDs\n  I1 -> {IS10,IP10} [dir=back]\n  IS10 -> IS11 [dir=back]\n  IP10 -> {IP11,IP12} [dir=back]\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 3: (3/3) Possible theoretical framework for the LMI - retaining two main subdimension of the base LMI, ban-rate and playrate are both used to measure the ‘presence’ of a deck
+</p>
+</div>
+</div>
+<p>Each different structure correspond to a different way to see the ban-rate relationship with the other variables.</p>
+<ul>
+<li><p>In the first structure it is considered a different characteristic altogether in comparison to play-rates and win-rates.</p></li>
+<li><p>In the second structure the ban-rate of a deck is considered a part of its ‘strength’, the higher it is the more it means that players don’t want to deal with it be it for play-patterns, expected win-rates, or other reasons one may have.</p></li>
+<li><p>In the third structure the ban-rate of a deck is considered a part of its ‘presence’, it may have not been played, but like in the Kassadin example before, it’s lingering in the matches as an unseen factor that is still influential to the results. After all the ban or not of a deck, so if it takes an active or passive role in a match can heavily influence the remaining Match Ups.</p></li>
+</ul>
+<p>While the second structure may seems the more intuitive choice, none of these strctures are the one proposed at the end. This is because of the results we found during the statistical analysis.</p>
+<h2 id="statistical-analysis">Statistical Analysis</h2>
+<p>In this section we describes how the analysis was done in its entirely and not just the final version of the steps to do in order to create the LMI. This is so to highlight some of the results we found and how we add the account for them.</p>
+<h3 id="correlation">Correlation</h3>
+<p>To assess which structure should be used we need to check the relationship between variables. This can be done by looking at their correlations.</p>
+<p>Using all the data and calculating the correlation would be wrong, as, as showed in the previous LMI article it is better to limit the analysis to a smaller pool of decks with a sufficient amount of games.</p>
+<p>At the Seasonal Tournament the number of games in total is overall small compared to the number of decks played so we tried a series of possible cut-off as min number of games played and find a compromise between not eliminating too many decks and having enough data to have quality results.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<p>We tried to decide the min number of games required by looking at the amount of remaining decks we would have. The effect of different choices can be seen in Tab:<a href="#tab:print-gt-summaryCor">1</a>.</p>
+<p><strong>Note</strong>: it’s the number of decks with also no missing values, as in the 296 decks there is 1 with no mean ban-rate even at cut-off of zero, the overall number is reduced by one.</p>
+<caption>
+<p><span id="tab:print-gt-summaryCor">Table 1: </span>Cut-off Table</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="qnzflvwxts" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#qnzflvwxts .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: transparent;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_heading {
+  background-color: transparent;
+  text-align: center;
+  border-bottom-color: transparent;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_title {
+  color: black;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: transparent;
+  border-bottom-width: 0;
+}
+
+#qnzflvwxts .gt_subtitle {
+  color: black;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: transparent;
+  border-top-width: 0;
+}
+
+#qnzflvwxts .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_col_heading {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qnzflvwxts .gt_column_spanner_outer {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qnzflvwxts .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qnzflvwxts .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qnzflvwxts .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qnzflvwxts .gt_group_heading {
+  padding: 8px;
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qnzflvwxts .gt_empty_group_heading {
+  padding: 0.5px;
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qnzflvwxts .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qnzflvwxts .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qnzflvwxts .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qnzflvwxts .gt_stub {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#qnzflvwxts .gt_summary_row {
+  color: black;
+  background-color: transparent;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnzflvwxts .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_grand_summary_row {
+  color: black;
+  background-color: transparent;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnzflvwxts .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qnzflvwxts .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_footnotes {
+  color: black;
+  background-color: transparent;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#qnzflvwxts .gt_sourcenotes {
+  color: black;
+  background-color: transparent;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qnzflvwxts .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#qnzflvwxts .gt_left {
+  text-align: left;
+}
+
+#qnzflvwxts .gt_center {
+  text-align: center;
+}
+
+#qnzflvwxts .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qnzflvwxts .gt_font_normal {
+  font-weight: normal;
+}
+
+#qnzflvwxts .gt_font_bold {
+  font-weight: bold;
+}
+
+#qnzflvwxts .gt_font_italic {
+  font-style: italic;
+}
+
+#qnzflvwxts .gt_super {
+  font-size: 65%;
+}
+
+#qnzflvwxts .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"><strong>minGames</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"><strong>#Deck</strong></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_right">0</td>
+<td class="gt_row gt_right">295</td></tr>
+    <tr><td class="gt_row gt_right">10</td>
+<td class="gt_row gt_right">145</td></tr>
+    <tr><td class="gt_row gt_right">30</td>
+<td class="gt_row gt_right">79</td></tr>
+    <tr><td class="gt_row gt_right">50</td>
+<td class="gt_row gt_right">52</td></tr>
+    <tr><td class="gt_row gt_right">100</td>
+<td class="gt_row gt_right">37</td></tr>
+    <tr><td class="gt_row gt_right">200</td>
+<td class="gt_row gt_right">29</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="2">Amount of remaining Decks<br />
+depending on the required min amount of Games</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+</div>
+<p>At the first glance, the 200 games used during the meta-reports seems excessive as it reduce the decks to 1/10th, 10 games is probably not enough as the win-rates would be too unstable making us gravitating mostly on 30,50,100 but we will truly decide being guided by the correlation results as shown in Tab:<a href="#tab:print-gt-correlation">2</a>.</p>
+<caption>
+<p><span id="tab:print-gt-correlation">Table 2: </span>Correlation Table at different cut-off</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="gnkxsyqyel" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#gnkxsyqyel .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: transparent;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_heading {
+  background-color: transparent;
+  text-align: center;
+  border-bottom-color: transparent;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_title {
+  color: black;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: transparent;
+  border-bottom-width: 0;
+}
+
+#gnkxsyqyel .gt_subtitle {
+  color: black;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: transparent;
+  border-top-width: 0;
+}
+
+#gnkxsyqyel .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_col_heading {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gnkxsyqyel .gt_column_spanner_outer {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gnkxsyqyel .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gnkxsyqyel .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gnkxsyqyel .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gnkxsyqyel .gt_group_heading {
+  padding: 8px;
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gnkxsyqyel .gt_empty_group_heading {
+  padding: 0.5px;
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gnkxsyqyel .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gnkxsyqyel .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gnkxsyqyel .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gnkxsyqyel .gt_stub {
+  color: black;
+  background-color: transparent;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#gnkxsyqyel .gt_summary_row {
+  color: black;
+  background-color: transparent;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gnkxsyqyel .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_grand_summary_row {
+  color: black;
+  background-color: transparent;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gnkxsyqyel .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gnkxsyqyel .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_footnotes {
+  color: black;
+  background-color: transparent;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#gnkxsyqyel .gt_sourcenotes {
+  color: black;
+  background-color: transparent;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gnkxsyqyel .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#gnkxsyqyel .gt_left {
+  text-align: left;
+}
+
+#gnkxsyqyel .gt_center {
+  text-align: center;
+}
+
+#gnkxsyqyel .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gnkxsyqyel .gt_font_normal {
+  font-weight: normal;
+}
+
+#gnkxsyqyel .gt_font_bold {
+  font-weight: bold;
+}
+
+#gnkxsyqyel .gt_font_italic {
+  font-style: italic;
+}
+
+#gnkxsyqyel .gt_super {
+  font-size: 65%;
+}
+
+#gnkxsyqyel .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Correlation</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">0</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">10</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">30</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">50</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">100</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">200</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_center">WR/playrate</td>
+<td class="gt_row gt_center">0.07</td>
+<td class="gt_row gt_center">0.12</td>
+<td class="gt_row gt_center">0.18</td>
+<td class="gt_row gt_center">0.16</td>
+<td class="gt_row gt_center">0.13</td>
+<td class="gt_row gt_center">0.08</td></tr>
+    <tr><td class="gt_row gt_center">meanBan/playrate</td>
+<td class="gt_row gt_center">0.09</td>
+<td class="gt_row gt_center" style="background-color: #F9E3D6; font-style: italic;">0.24</td>
+<td class="gt_row gt_center" style="background-color: #F9E3D6; font-style: italic;">0.29</td>
+<td class="gt_row gt_center" style="background-color: #F9E3D6; font-style: italic;">0.33</td>
+<td class="gt_row gt_center" style="background-color: #F9E3D6; font-style: italic;">0.28</td>
+<td class="gt_row gt_center" style="background-color: #F9E3D6; font-style: italic;">0.24</td></tr>
+    <tr><td class="gt_row gt_center">meanBan/WR</td>
+<td class="gt_row gt_center">-0.02</td>
+<td class="gt_row gt_center">0.09</td>
+<td class="gt_row gt_center">-0.07</td>
+<td class="gt_row gt_center">-0.03</td>
+<td class="gt_row gt_center">-0.08</td>
+<td class="gt_row gt_center">-0.02</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="7">Correlation between the three raw variables on different amount of required min amount of Games</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+</div>
+<p>The resulting correlations took us by surprise in a first moment. Not only the variable with the higher correlation to the ban-rate is the play-rate and not the win-rate (the expected initial result) but the correlation with win-rate seems to be negative. This is not strange, in Bo3 setting after the bans each player tries to enforce the best match-ups among the remaining decks so it easier to have bad match-ups even for highly-performing decks on the ladder. This made us question whatever to aggregate the ban-rate with play-rate, so the structure in Fig:<a href="#fig:example-LMI-framework-3">3</a>. What we actually did was to consider:</p>
+<ul>
+<li>If the ban-rate of a deck during the Seasonal is negative correlated its win-rate it’s probably because many brought counter line-ups to popular and strong decks. So it would also means that the ban-rate is also correlated to the performance of a decks in the ladder before the tournament.</li>
+</ul>
+<p>We tried to see if this is the case by looking at the correlation of the ban-rates with not just the win-rates at the Seasonal but also the win-rates from the ladder up to two weeks before the tournament starts. Since the aggregation is not done with the raw values but the normalized transformation the correlation is calculated after the normalization step using the quantile normalization as done in the previous iteration of the LMI. In addition, not to be affected by the particular tournament chosen this is why we also used the data from the ‘Seasonal Tournament - Guardian of the Ancient’ when the case-study was aimed to compute the LMI for the ‘Rise of the Underworld’ edition. As seens in Fig:<a href="#fig:print-seqCor">4</a> this was a crucial choice as the relationship of the ban-rates with the Seasonal win-rates can change radically. In the June tournament the metagame was more polarized and this probably affected the correlations.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:print-seqCor"></span>
+<img src="lmi-02-tentative-expansion_files/figure-html5/print-seqCor-1.png" alt="correlation of Seasonal Win-Rates and Ladder Win-Rates with the Ban-Rates at different benchmarks of minimum amount of games for each deck" width="864" />
+<p class="caption">
+Figure 4: correlation of Seasonal Win-Rates and Ladder Win-Rates with the Ban-Rates at different benchmarks of minimum amount of games for each deck
+</p>
+</div>
+</div>
+<p>How to continue was the hardest part of the analysis. The correlation of ladder win-rates have a strong positive orientation with the ban-rates while the correlation with the Sesonal win-rates is more unstable and tends to be negative for certain value. If we wanted to use the structure of Fig:<a href="#fig:example-LMI-framework-1">1</a> or Fig:<a href="#fig:example-LMI-framework-2">2</a> than our problem would have to aggregate variables with different orientations. While this is not a rule one must always follows in the cases mentioned this would negatively impact the quality of the LMI. We would have for sure that an high value of a deck would decrease the win-rate index and to have an high LMI we may not want an high ban-rates as it’s increase may decreae the win-rate. It would be harder to have decks with high LMI and high values of both win-rates and ban-rates. At the same time, can we really say the strength of the deck is the one we measured if the win-rates we observe seems to be a consequence of the metagame from the ladder and the high performances in Bo1 that is reflected by high ban-rates as to suggest people don’t want to deal with decks they in the ladder they found are difficult to deal with unless the line-up can handle them?</p>
+<p>The solution proposed is to use a win-index that is not created from just the Seasonal win-rates but also the ladder win-rates to include both informations and having the ladder value reduce if not remove the negative correlation of the Seasonal value. Both for this to work we have to check a couple of conditions:</p>
+<ul>
+<li><p>Win-rates from Seasonal and ladder needs to be correlated and the orientation shouldn’t change depending on the tournament, which is a legit worry after seeing the previous figure. A positive correlation can be found and seen in Fig:<a href="#fig:print-corWR">5</a>.</p></li>
+<li><p>The aggregated win-rates have works better as a component to aggregate with ban-rates. The results can be seen in Fig:<a href="#fig:print-corBanWin">6</a>.</p></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:print-corWR"></span>
+<img src="lmi-02-tentative-expansion_files/figure-html5/print-corWR-1.png" alt="correlation of Seasonal Win-Rates with Ladder Win-Rates at different benchmarks of minimum amount of games for each deck" width="864" />
+<p class="caption">
+Figure 5: correlation of Seasonal Win-Rates with Ladder Win-Rates at different benchmarks of minimum amount of games for each deck
+</p>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:print-corBanWin"></span>
+<img src="lmi-02-tentative-expansion_files/figure-html5/print-corBanWin-1.png" alt="correlation of Ban-rates with a Win-Index computed as harmonic mean of Seasonal and ladder win-Rates with Ladder at different benchmarks of minimum amount of games for each deck" width="864" />
+<p class="caption">
+Figure 6: correlation of Ban-rates with a Win-Index computed as harmonic mean of Seasonal and ladder win-Rates with Ladder at different benchmarks of minimum amount of games for each deck
+</p>
+</div>
+</div>
+<p>Considering the overall results the final choices to the LMI frameworks are the following:</p>
+<ul>
+<li>Having the LMI as seen in Fig:<a href="#fig:example-LMI-framework-4">7</a>. This is an aggregation of three subdimensions: popularity(playrate), ban and a win-subdimension which is made of the ladder and seasonal win rates. This can be justified by the correlation of the ban-index with both the play-index and the win-index. This option can</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:example-LMI-framework-4"></span>
+<div id="htmlwidget-730ff34fb5b90b46afbf" style="width:864px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-730ff34fb5b90b46afbf">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  I [label = \"LMI\"]\n  IS0 [label = \"Strengh \n subdimension\"]\n  IB0 [label = \"Ban \n subdimension\"]\n  IP0 [label = \"Popularity/Presence \n subdimension\"]\n  \n  IS1 [label = \"Strength Index\"]\n  IB1 [label = \"BanRate Index\"]\n  IP1 [label = \"PlayRate Index\"]\n  \n  IS21 [label = \"Seasonal WinRate Index\"]\n  IS22 [label = \"Ladder WinRate  Index\"]\n  \n  # edge definitions with the node IDs\n  I -> {IS0,IP0 IB0} [dir=back]\n  IS0 -> IS1 [dir=back]\n  IB0 -> IB1 [dir=back]\n  IP0 -> IP1 [dir=back]\n  \n  IS1 -> {IS21,IS22} [dir=back]\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 7: Possible theoretical framework for the LMI - adding both ban-rate and ladder win-rate, using three main subdimension: ban, playrate and strength
+</p>
+</div>
+</div>
+<ul>
+<li>Having the LMI as seen in Fig:<a href="#fig:LMI-framework">8</a>. The ban-rates shows a stronger causal relationship with the win-rates compared to the playrates (Fig:<a href="#fig:print-seqCor">4</a>) so considering it part of the <em>strenght</em> of a deck can be considered more appropriate. This the option which tries to follows the definition which was given before: ‘The performance of a deck is defined by its own strength and popularity inside the metagame.’ and is in fact the framework which is proposed.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:LMI-framework"></span>
+<div id="htmlwidget-bff3fc6d16edabbdf1ea" style="width:864px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-bff3fc6d16edabbdf1ea">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB]\n  \n  node [shape = rectangle]        \n  I [label = \"LMI\"]\n  IS0 [label = \"Strengh \n subdimension\"]\n  IP0 [label = \"Popularity/Presence \n subdimension\"]\n  \n  IS11 [label = \"BanRate Index\"]\n  IS12 [label = \"Strength Index\"]\n  IP1 [label = \"PlayRate Index\"]\n  \n  IS21 [label = \"Seasonal WinRate Index\"]\n  IS22 [label = \"Ladder WinRate  Index\"]\n  \n  # edge definitions with the node IDs\n  I -> {IS0,IP0} [dir=back]\n  IP0 -> IP1 [dir=back]\n  IS0 -> {IS11,IS12} [dir=back]\n  \n  IS12 -> {IS21,IS22} [dir=back]\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 8: Proposed LMI theoretical framework - mainteining two main subdimension and having the ban-rate as a component of the ‘strength’ subdimension
+</p>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body-outset">
+
+</div>
+<h3 id="weigths">Weigths</h3>
+<p>Aggregating variable into a single index this is always done by applying weights to each component, be them equal weights or another vector. The decision can be made by following different method not all being entirely data-driven. A common way to compute the weights is by using the normalized loading factors of the first eigenvalue from the principal components. With the proposed structure both the weights for the win-index and strength index resulted in a equal weights (0.50 and 0.50). As it is both the simplest case and being confirmed by a data-driven approach equal weights are the applied weights.</p>
+<p><strong>Note</strong>: if we used the 3-subdimension structure the resulting weights would have been</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<pre><code>PlayRate Index Strength Index  BanRate Index 
+         0.533         -0.070          0.537 </code></pre>
+</div>
+<h1 id="results">Results</h1>
+<p>If we tried to apply the proposed structure for the LMI and create again the graph from the <a href="https://www.llorr-stats.com/report/seasonal-001/#lmi---tournament-edition">Seasonal - Rise of the Underworld report</a> there is a clear difference from the past version. With the new framework Akshan/Sivir (DE/SH) is not in a league of its own while still being the best decks. We want to remember it is not like the previous or the current iteration is wrong and the other correct, they just measure the same/similar data in a different way. While the previous iteration created a more sensational graph we consider the current one more ‘realistic’ as the difference between Akshan/Sivir (DE/SH) and the other top performing decks was way too high. One may object that the difference is now too small but even it was the case we still consider it an improvement from the previous framework.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="htmlwidget-ecdfb71111f49891bc61" style="width:864px;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ecdfb71111f49891bc61">{"x":{"visdat":{"14d8280c1175":["function () ","plotlyVisDat"]},"cur_data":"14d8280c1175","attrs":{"14d8280c1175":{"mode":"markers","x":{},"y":{},"marker":{"size":{},"sizeref":0.1,"sizemode":"area"},"text":{},"hovertemplate":"<b>%{text}<\/b><br><extra><\/extra>","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Strenght Index","titlefont":{"family":"Courier New, monospace","size":18,"color":"#7f7f7f"}},"yaxis":{"domain":[0,1],"automargin":true,"title":"Popularity Index","titlefont":{"family":"Courier New, monospace","size":18,"color":"#7f7f7f"}},"title":"LoR-Meta Index (LMI)","hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"showSendToCloud":false},"data":[{"mode":"markers","x":[0.9773,0.9205,1,0.7045,0.625,0.8864,0.75,0.7955,0.5682,0.5114,0.8636,0.8409,0.7273,0.6591,0.625,0.9205,0.2614,0.7955,0.3409,0.4773,0.2614,0.6818,0.5114,0.9545,0.7955,0.5909,0.3864,0.2955,0.0455,0.4545],"y":[0.8864,0.8636,0.7727,0.9773,1,0.7273,0.8409,0.7045,0.9318,0.9545,0.5455,0.5682,0.6136,0.6818,0.6364,0.25,0.9091,0.3636,0.7955,0.6591,0.8182,0.3864,0.4773,0.0227,0.1591,0.3409,0.5227,0.5,0.75,0.3182],"marker":{"colorbar":{"title":"LMI","ticklen":2},"cmin":0.3409,"cmax":1,"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":false,"color":[1,0.9773,0.9545,0.9318,0.9091,0.8864,0.8636,0.8295,0.8295,0.7955,0.7614,0.7614,0.7159,0.7159,0.6818,0.6477,0.6477,0.6136,0.5795,0.5795,0.5455,0.5227,0.5,0.4773,0.4545,0.4318,0.4091,0.375,0.375,0.3409],"size":[[100],[96.55],[93.1],[89.66],[86.21],[82.76],[79.31],[74.14],[74.14],[68.97],[63.79],[63.79],[56.9],[56.9],[51.72],[46.55],[46.55],[41.38],[36.21],[36.21],[31.03],[27.59],[24.14],[20.69],[17.24],[13.79],[10.34],[5.17],[5.17],[0]],"sizeref":0.1,"sizemode":"area","line":{"colorbar":{"title":"","ticklen":2},"cmin":0.3409,"cmax":1,"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":false,"color":[1,0.9773,0.9545,0.9318,0.9091,0.8864,0.8636,0.8295,0.8295,0.7955,0.7614,0.7614,0.7159,0.7159,0.6818,0.6477,0.6477,0.6136,0.5795,0.5795,0.5455,0.5227,0.5,0.4773,0.4545,0.4318,0.4091,0.375,0.375,0.3409]}},"text":["LMI: 100<br />Deck: Akshan / Sivir (DE/SH)<br />Win Rate: 59.0%<br />Play Rate: 5.4%<br />mean Ban Rate: 38.0%","LMI: 97.73<br />Deck: Lulu / Zed (DE/IO)<br />Win Rate: 52.3%<br />Play Rate: 4.9%<br />mean Ban Rate: 40.2%","LMI: 95.45<br />Deck: Anivia (FR/SI)<br />Win Rate: 48.8%<br />Play Rate: 2.9%<br />mean Ban Rate: 55.4%","LMI: 93.18<br />Deck: Draven / Ezreal<br />Win Rate: 51.1%<br />Play Rate: 6.8%<br />mean Ban Rate: 35.6%","LMI: 90.91<br />Deck: Gangplank / Sejuani<br />Win Rate: 52.5%<br />Play Rate: 10.7%<br />mean Ban Rate: 29.9%","LMI: 88.64<br />Deck: Akshan / Sivir (IO/SH)<br />Win Rate: 51.6%<br />Play Rate: 2.5%<br />mean Ban Rate: 40.8%","LMI: 86.36<br />Deck: Lee Sin / Zoe<br />Win Rate: 53.9%<br />Play Rate: 4.5%<br />mean Ban Rate: 32.7%","LMI: 82.95<br />Deck: Akshan / Sivir / Zed<br />Win Rate: 49.7%<br />Play Rate: 2.3%<br />mean Ban Rate: 46.2%","LMI: 82.95<br />Deck: Swain / Twisted Fate<br />Win Rate: 50.6%<br />Play Rate: 5.7%<br />mean Ban Rate: 33.9%","LMI: 79.55<br />Deck: Azir / Irelia<br />Win Rate: 44.4%<br />Play Rate: 6.1%<br />mean Ban Rate: 39.7%","LMI: 76.14<br />Deck: Soraka / Tahm Kench<br />Win Rate: 55.3%<br />Play Rate: 1.0%<br />mean Ban Rate: 32.6%","LMI: 76.14<br />Deck: Thresh / Viego (IO/SI)<br />Win Rate: 54.1%<br />Play Rate: 1.0%<br />mean Ban Rate: 34.9%","LMI: 71.59<br />Deck: Elise / Twisted Fate<br />Win Rate: 54.3%<br />Play Rate: 1.3%<br />mean Ban Rate: 28.6%","LMI: 71.59<br />Deck: Ezreal / Karma<br />Win Rate: 50.7%<br />Play Rate: 1.8%<br />mean Ban Rate: 34.1%","LMI: 68.18<br />Deck: Lissandra / Taliyah<br />Win Rate: 50.4%<br />Play Rate: 1.3%<br />mean Ban Rate: 35.6%","LMI: 64.77<br />Deck: Fiora / Jarvan IV / Shen<br />Win Rate: 55.0%<br />Play Rate: 0.5%<br />mean Ban Rate: 33.3%","LMI: 64.77<br />Deck: Gangplank / Miss Fortune (BW/NX)<br />Win Rate: 48.4%<br />Play Rate: 5.6%<br />mean Ban Rate: 28.2%","LMI: 61.36<br />Deck: Karma / Thresh<br />Win Rate: 51.4%<br />Play Rate: 0.7%<br />mean Ban Rate: 37.4%","LMI: 57.95<br />Deck: Jarvan IV / Shen<br />Win Rate: 48.4%<br />Play Rate: 3.8%<br />mean Ban Rate: 31.8%","LMI: 57.95<br />Deck: Maokai / Nautilus<br />Win Rate: 54.3%<br />Play Rate: 1.6%<br />mean Ban Rate: 21.5%","LMI: 54.55<br />Deck: Draven / Jinx<br />Win Rate: 49.0%<br />Play Rate: 4.4%<br />mean Ban Rate: 27.8%","LMI: 52.27<br />Deck: Gangplank / Twisted Fate (BW/NX)<br />Win Rate: 55.7%<br />Play Rate: 0.7%<br />mean Ban Rate: 25.6%","LMI: 50<br />Deck: Viego (SI/SH)<br />Win Rate: 50.7%<br />Play Rate: 0.8%<br />mean Ban Rate: 13.9%","LMI: 47.73<br />Deck: Sivir / Twisted Fate<br />Win Rate: 53.4%<br />Play Rate: 0.2%<br />mean Ban Rate: 39.2%","LMI: 45.45<br />Deck: Twisted Fate / Viego<br />Win Rate: 57.6%<br />Play Rate: 0.3%<br />mean Ban Rate: 26.9%","LMI: 43.18<br />Deck: Sivir / Zed<br />Win Rate: 45.7%<br />Play Rate: 0.6%<br />mean Ban Rate: 46.2%","LMI: 40.91<br />Deck: Jinx / Lulu<br />Win Rate: 53.9%<br />Play Rate: 1.0%<br />mean Ban Rate: 24.5%","LMI: 37.5<br />Deck: Fiora / Shen<br />Win Rate: 41.4%<br />Play Rate: 0.9%<br />mean Ban Rate: 36.9%","LMI: 37.5<br />Deck: Pyke / Rek'Sai<br />Win Rate: 48.2%<br />Play Rate: 2.8%<br />mean Ban Rate: 13.4%","LMI: 34.09<br />Deck: Elise (NX/SI)<br />Win Rate: 46.9%<br />Play Rate: 0.5%<br />mean Ban Rate: 23.5%"],"hovertemplate":["<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>"],"type":"scatter","xaxis":"x","yaxis":"y","frame":null},{"x":[0.0455,1],"y":[0.0227,1],"type":"scatter","mode":"markers","opacity":0,"hoverinfo":"none","showlegend":false,"marker":{"colorbar":{"title":"LMI","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"cmin":0.3409,"cmax":1,"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"color":[0.3409,1],"line":{"color":"rgba(255,127,14,1)"}},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<h1 id="conclusions">Conclusions</h1>
+<p>We started this article with the aim of adding the ban-rate to the LMI, contrary from out expectations this required to consider more the relationship with the selected variables and the possible causal relationship among than (in particular the ban-rates with the seasonal win-rates). To solve this problem we proposed to add a forth variable in the ladder win-rates from ranked games prior to the tournament.</p>
+<p>A question that emerged during the analysis is about how to evaluate decks with a really small numbers of games because of an high ban-rate so if the selection filter should be adjusted to account for them. This could be done in future analysis that includes the uncertainty and sensitivity analysis.</p>
+<p>As the new LMI doesn’t create what seems to be an outlier in Akshan/Sivir (DE/SH) a possible research question is how to determine is an even simpler way the strength of a deck. Meaning is we can translate the LMI into a tier-value, for example from ‘tier-D’ to ‘tier-S’, the commonly system used by gamers.</p>
+<p>If we tried used the cut-off values used by Balco we would have the following results.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="htmlwidget-511aac3ac2bb1dc6917d" style="width:864px;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-511aac3ac2bb1dc6917d">{"x":{"visdat":{"14d8b3c6ec1":["function () ","plotlyVisDat"]},"cur_data":"14d8b3c6ec1","attrs":{"14d8b3c6ec1":{"mode":"markers","x":{},"y":{},"marker":{"size":{},"sizeref":0.1,"sizemode":"area"},"text":{},"hovertemplate":"<b>%{text}<\/b><br><extra><\/extra>","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Strenght Index","titlefont":{"family":"Courier New, monospace","size":18,"color":"#7f7f7f"}},"yaxis":{"domain":[0,1],"automargin":true,"title":"Popularity Index","titlefont":{"family":"Courier New, monospace","size":18,"color":"#7f7f7f"}},"title":"LoR-Meta Index (LMI)","hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"mode":"markers","x":[0.9773,0.9205,1,0.7045,0.625],"y":[0.8864,0.8636,0.7727,0.9773,1],"marker":{"color":"rgba(102,194,165,1)","size":[100,96.55,93.1,89.66,86.21],"sizeref":0.1,"sizemode":"area","line":{"color":"rgba(102,194,165,1)"}},"text":["LMI: 100<br />Deck: Akshan / Sivir (DE/SH)<br />Win Rate: 59.0%<br />Play Rate: 5.4%<br />mean Ban Rate: 38.0%","LMI: 97.73<br />Deck: Lulu / Zed (DE/IO)<br />Win Rate: 52.3%<br />Play Rate: 4.9%<br />mean Ban Rate: 40.2%","LMI: 95.45<br />Deck: Anivia (FR/SI)<br />Win Rate: 48.8%<br />Play Rate: 2.9%<br />mean Ban Rate: 55.4%","LMI: 93.18<br />Deck: Draven / Ezreal<br />Win Rate: 51.1%<br />Play Rate: 6.8%<br />mean Ban Rate: 35.6%","LMI: 90.91<br />Deck: Gangplank / Sejuani<br />Win Rate: 52.5%<br />Play Rate: 10.7%<br />mean Ban Rate: 29.9%"],"hovertemplate":["<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>"],"type":"scatter","name":"Tier1","textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"markers","x":[0.8864,0.75,0.7955,0.5682,0.5114,0.8636,0.8409,0.7273,0.6591,0.625,0.9205,0.2614,0.7955],"y":[0.7273,0.8409,0.7045,0.9318,0.9545,0.5455,0.5682,0.6136,0.6818,0.6364,0.25,0.9091,0.3636],"marker":{"color":"rgba(252,141,98,1)","size":[82.76,79.31,74.14,74.14,68.97,63.79,63.79,56.9,56.9,51.72,46.55,46.55,41.38],"sizeref":0.1,"sizemode":"area","line":{"color":"rgba(252,141,98,1)"}},"text":["LMI: 88.64<br />Deck: Akshan / Sivir (IO/SH)<br />Win Rate: 51.6%<br />Play Rate: 2.5%<br />mean Ban Rate: 40.8%","LMI: 86.36<br />Deck: Lee Sin / Zoe<br />Win Rate: 53.9%<br />Play Rate: 4.5%<br />mean Ban Rate: 32.7%","LMI: 82.95<br />Deck: Akshan / Sivir / Zed<br />Win Rate: 49.7%<br />Play Rate: 2.3%<br />mean Ban Rate: 46.2%","LMI: 82.95<br />Deck: Swain / Twisted Fate<br />Win Rate: 50.6%<br />Play Rate: 5.7%<br />mean Ban Rate: 33.9%","LMI: 79.55<br />Deck: Azir / Irelia<br />Win Rate: 44.4%<br />Play Rate: 6.1%<br />mean Ban Rate: 39.7%","LMI: 76.14<br />Deck: Soraka / Tahm Kench<br />Win Rate: 55.3%<br />Play Rate: 1.0%<br />mean Ban Rate: 32.6%","LMI: 76.14<br />Deck: Thresh / Viego (IO/SI)<br />Win Rate: 54.1%<br />Play Rate: 1.0%<br />mean Ban Rate: 34.9%","LMI: 71.59<br />Deck: Elise / Twisted Fate<br />Win Rate: 54.3%<br />Play Rate: 1.3%<br />mean Ban Rate: 28.6%","LMI: 71.59<br />Deck: Ezreal / Karma<br />Win Rate: 50.7%<br />Play Rate: 1.8%<br />mean Ban Rate: 34.1%","LMI: 68.18<br />Deck: Lissandra / Taliyah<br />Win Rate: 50.4%<br />Play Rate: 1.3%<br />mean Ban Rate: 35.6%","LMI: 64.77<br />Deck: Fiora / Jarvan IV / Shen<br />Win Rate: 55.0%<br />Play Rate: 0.5%<br />mean Ban Rate: 33.3%","LMI: 64.77<br />Deck: Gangplank / Miss Fortune (BW/NX)<br />Win Rate: 48.4%<br />Play Rate: 5.6%<br />mean Ban Rate: 28.2%","LMI: 61.36<br />Deck: Karma / Thresh<br />Win Rate: 51.4%<br />Play Rate: 0.7%<br />mean Ban Rate: 37.4%"],"hovertemplate":["<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>"],"type":"scatter","name":"Tier2","textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"markers","x":[0.3409,0.4773,0.2614,0.6818,0.5114,0.9545,0.7955,0.5909,0.3864,0.2955,0.0455,0.4545],"y":[0.7955,0.6591,0.8182,0.3864,0.4773,0.0227,0.1591,0.3409,0.5227,0.5,0.75,0.3182],"marker":{"color":"rgba(141,160,203,1)","size":[36.21,36.21,31.03,27.59,24.14,20.69,17.24,13.79,10.34,5.17,5.17,0],"sizeref":0.1,"sizemode":"area","line":{"color":"rgba(141,160,203,1)"}},"text":["LMI: 57.95<br />Deck: Jarvan IV / Shen<br />Win Rate: 48.4%<br />Play Rate: 3.8%<br />mean Ban Rate: 31.8%","LMI: 57.95<br />Deck: Maokai / Nautilus<br />Win Rate: 54.3%<br />Play Rate: 1.6%<br />mean Ban Rate: 21.5%","LMI: 54.55<br />Deck: Draven / Jinx<br />Win Rate: 49.0%<br />Play Rate: 4.4%<br />mean Ban Rate: 27.8%","LMI: 52.27<br />Deck: Gangplank / Twisted Fate (BW/NX)<br />Win Rate: 55.7%<br />Play Rate: 0.7%<br />mean Ban Rate: 25.6%","LMI: 50<br />Deck: Viego (SI/SH)<br />Win Rate: 50.7%<br />Play Rate: 0.8%<br />mean Ban Rate: 13.9%","LMI: 47.73<br />Deck: Sivir / Twisted Fate<br />Win Rate: 53.4%<br />Play Rate: 0.2%<br />mean Ban Rate: 39.2%","LMI: 45.45<br />Deck: Twisted Fate / Viego<br />Win Rate: 57.6%<br />Play Rate: 0.3%<br />mean Ban Rate: 26.9%","LMI: 43.18<br />Deck: Sivir / Zed<br />Win Rate: 45.7%<br />Play Rate: 0.6%<br />mean Ban Rate: 46.2%","LMI: 40.91<br />Deck: Jinx / Lulu<br />Win Rate: 53.9%<br />Play Rate: 1.0%<br />mean Ban Rate: 24.5%","LMI: 37.5<br />Deck: Fiora / Shen<br />Win Rate: 41.4%<br />Play Rate: 0.9%<br />mean Ban Rate: 36.9%","LMI: 37.5<br />Deck: Pyke / Rek'Sai<br />Win Rate: 48.2%<br />Play Rate: 2.8%<br />mean Ban Rate: 13.4%","LMI: 34.09<br />Deck: Elise (NX/SI)<br />Win Rate: 46.9%<br />Play Rate: 0.5%<br />mean Ban Rate: 23.5%"],"hovertemplate":["<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>","<b>%{text}<\/b><br><extra><\/extra>"],"type":"scatter","name":"Tier3","textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<p>As the cut-off values were chosen without any particular reason behind them, a future article will try to investigate different options for the cut-off values.</p>
+<p>To expand the application of this version of the LMI an analysis that will follow will try to apply this framework to Bo3 taken from the gauntlet and friendly Bo3.</p>
+<p>Lastly, as the variable we are using are a result of the state of the metagame of that time future article will try to check if we can add informations regarding the quota of counter-decks for a specific deck are played in a particular time of the meta/during the tournament.</p>
+<h1 class="appendix" id="appendix">Appendix</h1>
+<caption>
+<p><span id="tab:print-table-ban">Table 3: </span>Quantile table</p>
+</caption>
+<div class="layout-chunk" data-layout="l-body-outset">
+<div id="htmlwidget-9341baddbb3a04feeee6" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-9341baddbb3a04feeee6">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"deck":["Gangplank / Sejuani","Draven / Ezreal","Azir / Irelia","Swain / Twisted Fate","Gangplank / Miss Fortune (BW/NX)","Akshan / Sivir (DE/SH)","Lulu / Zed (DE/IO)","Lee Sin / Zoe","Draven / Jinx","Jarvan IV / Shen","Anivia (FR/SI)","Pyke / Rek'Sai","Akshan / Sivir (IO/SH)","Akshan / Sivir / Zed","Ezreal / Karma","Maokai / Nautilus","Lissandra / Taliyah","Elise / Twisted Fate","Nasus / Thresh","Thresh / Viego (IO/SI)","Soraka / Tahm Kench","Jinx / Lulu","Fiora / Shen","Viego (SI/SH)","LeBlanc / Sivir","Akshan / Lee Sin","Draven / Riven (NX/PZ)","Gangplank / Twisted Fate (BW/NX)","Karma / Thresh","Sivir / Zed","Elise (NX/SI)","Ashe / LeBlanc","Nasus / Viego","Fiora / Jarvan IV / Shen","Viego (IO/SI)","Miss Fortune / Quinn","Darius (NX/SH)","Twisted Fate / Viego","Nasus / Zilean (SI/SH)","Maokai / Viego (SI/SH)","Viego (FR/SI)","Ezreal / Teemo (FR/PZ)","Renekton / Sejuani","Sivir / Twisted Fate","Gangplank / Sejuani / Twisted Fate","Ekko / Zilean","Renekton / Sejuani / Sivir","Darius / Sivir","Diana / Nocturne","Draven / Fizz","Malphite / Taliyah","Gangplank / Miss Fortune / Twisted Fate (BW/NX)","Sejuani / Swain","Twisted Fate / Zilean","Aurelion Sol / Thresh","Championless (FR/PZ)","Gangplank / Twisted Fate (BW/SI)","Vi / Zoe","Aurelion Sol / Shyvana / Zoe","Braum / Vladimir","Lucian / Miss Fortune","Akshan / Jarvan IV","Elise / Viego (NX/SI)","Maokai / Nautilus / Twisted Fate","Akshan / Riven","Draven / Jinx / Teemo","Elise / Gangplank / Twisted Fate","Lucian / Zed","Akshan / Taliyah (MT/SH)","Jarvan IV / Taric","Leona / Vi / Zoe","Lissandra / Trundle (FR/SI)","Aurelion Sol / Shyvana","Viego / Zed","Akshan / Zilean (IO/SH)","Maokai / Viego (IO/SI)","Darius / Draven (NX/SH)","Lee Sin / Riven","Riven / Swain (BW/NX)","Elise / Vi","Swain / Trundle","Teemo / Zed","Akshan / Jarvan IV / Sivir","Aphelios / Zoe (MT/PZ)","Ezreal / Sejuani / Teemo","Trundle / Tryndamere (FR/SI)","Akshan / Draven / Riven","Draven / Riven (IO/NX)","Ezreal / Twisted Fate","Jarvan IV / Sivir","Lissandra / Taliyah / Zilean","Teemo (NX/PZ)","Ezreal / Teemo (PZ/SI)","Fizz / Twisted Fate (BW/PZ)","Jarvan IV / Lulu / Shen","Akshan / Draven","Lulu / Teemo","Akshan / Sivir (FR/SH)","Elise / Kalista (SI/SH)","Kalista / Viego (IO/SI)","Elise / Viego (IO/SI)","Leona / Yasuo","Irelia / Miss Fortune","Miss Fortune / Sejuani","Teemo (PZ/SI)","Lee Sin / Zed / Zoe","Swain / Yasuo","Akshan / Darius / Sivir","Akshan / Malphite / Taliyah","Akshan / Viego","Shyvana / Viego","Akshan / Viktor","Championless (FR/SI)","Lucian / Zoe","Sejuani / Teemo","Akshan / Darius","Draven / Sivir","Ezreal (PZ/SI)","Ezreal / Kindred","Championless (NX/PZ)","Draven / Ezreal / Vi","Fiora (DE/FR)","LeBlanc (FR/NX)","Azir / Darius","Karma / Lux","Zoe (MT/NX)","Akshan / Renekton (DE/SH)","Aurelion Sol / Leona / Sejuani","Fiora (DE/SH)","Gangplank / Twisted Fate","Garen / Jarvan IV / Shen","Heimerdinger / Vi (MT/PZ)","Karma (IO/PZ)","Kindred / Nasus / Zilean","Riven / Sivir","Aurelion Sol / Leona (DE/MT)","Braum (FR/PZ)","Darius / Miss Fortune","Elise / Katarina","Gangplank / Twisted Fate (BW/PZ)","Jarvan IV / Trundle","Lucian / Sivir","Swain (FR/NX)","Trundle (FR/SI)","Viego / Zoe","Championless (NX/SH)","Draven / Elise","Draven / Katarina / Riven (NX/PZ)","Ekko / Sivir / Zilean","Elise / Viego (FR/SI)","Garen / Jarvan IV / Lucian / Zed","Garen / Shen","Hecarim / Trundle","Miss Fortune / Twisted Fate (BW/SH)","Thresh / Viego (FR/SI)","Zed (FR/IO)","Akshan / Miss Fortune","Akshan / Shyvana","Ashe / Kindred","Braum / Trundle (FR/SI)","Darius / LeBlanc (NX/SH)","Draven / Teemo","Elise / Nocturne (SI/SH)","Elise / Thresh / Viego (IO/SI)","Gangplank / Miss Fortune / Twisted Fate (BW/PZ)","Lulu / Shen (DE/IO)","Lulu / Shen / Zed (DE/IO)","Malphite / Renekton / Taliyah","Nasus (SI/SH)","Sejuani / Tryndamere (FR/NX)","Teemo (BW/PZ)","Teemo (IO/PZ)","Akshan / Renekton (FR/SH)","Akshan / Sivir (NX/SH)","Ashe / Katarina / LeBlanc","Ashe / LeBlanc / Riven","Ashe / Sejuani (FR/NX)","Braum / Trundle (FR/NX)","Championless (FR/NX)","Darius / LeBlanc (NX/SI)","Diana / Zoe (MT/SI)","Ezreal / Jinx","Heimerdinger / Zoe","Katarina / LeBlanc / Teemo","Leona / Viego / Zoe","Lissandra (FR/SH)","Lucian / Viego","Nasus / Pyke","Sejuani / Trundle (DE/FR)","Akshan / Darius / Draven","Anivia / Braum (FR/SI)","Ashe / Riven","Aurelion Sol / Zoe (DE/MT)","Azir / Hecarim","Draven / Ezreal / Swain","Draven / Lucian","Ezreal / Swain","Gangplank (BW/NX)","Gangplank / Miss Fortune (BW/PZ)","Hecarim / Zed","Jarvan IV / Quinn","Karma (IO/SI)","Lee Sin / Zed (IO/MT)","Leona / Zoe (MT/PZ)","Miss Fortune / Zed","Renekton / Sivir (BW/SH)","Renekton / Zed","Taric (DE/MT)","Viktor / Zoe","Akshan / Renekton / Sejuani","Aurelion Sol / Tryndamere","Azir / Irelia / Zed","Darius (NX/PZ)","Diana / Lee Sin","Draven / Sejuani / Swain","Elise / LeBlanc","Ezreal / Fizz","Fiora / Zed","Fizz / Zoe","Gangplank / Swain","Garen / Jarvan IV (DE/FR)","Heimerdinger / Viktor (FR/PZ)","Irelia / Karma (IO/PZ)","Jarvan IV / Lucian / Sivir","Jarvan IV / Shyvana / Taric","Kalista / Viego (NX/SI)","Karma / Zoe","Lee Sin (IO/MT)","Miss Fortune / Riven","Miss Fortune / Twisted Fate (BW/PZ)","Pyke / Twisted Fate (BW/SI)","Renekton / Sejuani / Tryndamere","Renekton / Sivir (FR/SH)","Renekton / Taliyah (BW/SH)","Thresh / Viego","Trundle / Tryndamere (FR/IO)","Akshan / Karma","Akshan / LeBlanc / Sivir","Anivia / Viego","Ashe / LeBlanc / Sejuani","Aurelion Sol / Jarvan IV / Shyvana","Championless (BW/SI)","Darius / Draven / Teemo","Darius / Elise","Gangplank / Miss Fortune / Sejuani","Gangplank / Twisted Fate (BW/SH)","Jinx / Lulu / Teemo","Jinx / Zed","Leona / Vi","Lissandra / Swain","Lulu / Zoe","Sejuani / Twisted Fate","Teemo / Zoe","Trundle (FR/PZ)","Zed (DE/IO)","Akshan / Ekko","Akshan / Karma / Lee Sin","Aphelios / Zoe (FR/MT)","Ashe / Sivir","Ezreal / Sejuani","Gangplank / Zilean","Garen / Lulu / Zed","Jinx / Vi (FR/PZ)","Lulu / Taric","Nasus / Thresh / Viego","Sivir (NX/SH)","Akshan / Fiora","Anivia / Tryndamere (FR/SI)","Ashe / Darius / Sejuani / Tryndamere","Aurelion Sol / Trundle","Azir (NX/SH)","Azir / Draven","Azir / Yasuo / Zed","Elise (PZ/SI)","Elise / Kalista (FR/SI)","Elise / Kalista (MT/SI)","Ezreal / Gangplank","Kalista / Karma","Kalista / Viego (FR/SI)","Lissandra / Taliyah / Trundle","Lissandra / Trundle (FR/SH)","Renekton (NX/SH)","Shyvana / Soraka","Aphelios / Aurelion Sol / Zoe (MT/SI)","Aphelios / Karma / Zoe","Braum / Vi","Elise / Jinx / Teemo","Fizz / Miss Fortune (BW/PZ)","Gangplank / Sivir","Garen / Jarvan IV","Garen / Sivir","Heimerdinger / Vi (IO/PZ)","Jarvan IV / Viego","Kalista / Viego","Renekton / Sivir (DE/SH)","Sejuani (FR/SI)"],"nGames":[3478,2214,1996,1844,1822,1760,1602,1475,1439,1251,950,906,826,738,603,508,417,409,328,320,311,310,290,278,268,245,242,221,216,197,177,173,161,149,138,117,114,99,96,91,86,85,85,73,67,62,61,59,58,57,54,51,48,48,47,47,43,41,40,38,37,35,35,35,34,34,34,34,33,33,33,33,32,32,31,31,30,30,30,29,29,29,26,25,25,25,24,24,23,23,23,23,22,22,22,21,21,20,20,20,19,19,18,18,18,17,17,16,16,16,16,15,15,15,15,14,14,14,14,13,13,13,13,12,12,12,11,11,11,11,11,11,11,11,11,10,10,10,10,10,10,10,10,10,10,9,9,9,9,9,9,9,9,9,9,9,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1],"playrate":[0.106837869386251,0.0680100755667506,0.0613135098605394,0.0566443447809793,0.0559685445720956,0.0540640167106961,0.0492105424832586,0.0453093321865209,0.0442034772992566,0.0384284573324323,0.0291822817472507,0.0278306813294833,0.0253732260244517,0.0226700251889169,0.018523069361676,0.0156048411869509,0.0128094857774774,0.0125637402469743,0.0100755667506297,0.00982982122012656,0.0095533574983105,0.0095226393069976,0.00890827548073969,0.00853965718498495,0.00823247527185599,0.0075259568716594,0.00743380229772071,0.0067887202801499,0.00663512932358543,0.00605148368864041,0.0054371198623825,0.00531424709713092,0.00494562880137618,0.00457701050562143,0.00423911040117958,0.00359402838360877,0.00350187380967009,0.00304110093997665,0.00294894636603797,0.00279535540947349,0.00264176445290901,0.00261104626159612,0.00261104626159612,0.00224242796584137,0.002058118817964,0.00190452786139952,0.00187380967008663,0.00181237328746083,0.00178165509614794,0.00175093690483504,0.00165878233089636,0.00156662775695767,0.00147447318301898,0.00147447318301898,0.00144375499170609,0.00144375499170609,0.00132088222645451,0.00125944584382872,0.00122872765251582,0.00116729126989003,0.00113657307857713,0.00107513669595134,0.00107513669595134,0.00107513669595134,0.00104441850463845,0.00104441850463845,0.00104441850463845,0.00104441850463845,0.00101370031332555,0.00101370031332555,0.00101370031332555,0.00101370031332555,0.000982982122012656,0.000982982122012656,0.00095226393069976,0.00095226393069976,0.000921545739386865,0.000921545739386865,0.000921545739386865,0.000890827548073969,0.000890827548073969,0.000890827548073969,0.000798672974135283,0.000767954782822387,0.000767954782822387,0.000767954782822387,0.000737236591509492,0.000737236591509492,0.000706518400196596,0.000706518400196596,0.000706518400196596,0.000706518400196596,0.000675800208883701,0.000675800208883701,0.000675800208883701,0.000645082017570805,0.000645082017570805,0.00061436382625791,0.00061436382625791,0.00061436382625791,0.000583645634945014,0.000583645634945014,0.000552927443632119,0.000552927443632119,0.000552927443632119,0.000522209252319223,0.000522209252319223,0.000491491061006328,0.000491491061006328,0.000491491061006328,0.000491491061006328,0.000460772869693432,0.000460772869693432,0.000460772869693432,0.000460772869693432,0.000430054678380537,0.000430054678380537,0.000430054678380537,0.000430054678380537,0.000399336487067641,0.000399336487067641,0.000399336487067641,0.000399336487067641,0.000368618295754746,0.000368618295754746,0.000368618295754746,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.00033790010444185,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000307181913128955,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000276463721816059,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000245745530503164,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000215027339190268,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000184309147877373,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000153590956564477,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,0.000122872765251582,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,9.21545739386865e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,6.1436382625791e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05,3.07181913128955e-05],"WR":[0.525301897642323,0.511291779584462,0.44438877755511,0.505965292841649,0.484083424807903,0.590340909090909,0.523096129837703,0.538983050847458,0.489923558026407,0.48361310951239,0.488421052631579,0.48233995584989,0.515738498789346,0.497289972899729,0.507462686567164,0.543307086614173,0.503597122302158,0.54278728606357,0.466463414634146,0.540625,0.553054662379421,0.538709677419355,0.413793103448276,0.507194244604317,0.425373134328358,0.43265306122449,0.541322314049587,0.556561085972851,0.513888888888889,0.456852791878173,0.468926553672316,0.404624277456647,0.434782608695652,0.550335570469799,0.420289855072464,0.504273504273504,0.614035087719298,0.575757575757576,0.604166666666667,0.483516483516484,0.453488372093023,0.411764705882353,0.458823529411765,0.534246575342466,0.462686567164179,0.419354838709677,0.639344262295082,0.474576271186441,0.5,0.333333333333333,0.37037037037037,0.450980392156863,0.354166666666667,0.520833333333333,0.468085106382979,0.297872340425532,0.581395348837209,0.51219512195122,0.325,0.578947368421053,0.540540540540541,0.485714285714286,0.457142857142857,0.485714285714286,0.235294117647059,0.323529411764706,0.676470588235294,0.382352941176471,0.484848484848485,0.424242424242424,0.333333333333333,0.363636363636364,0.21875,0.65625,0.516129032258065,0.580645161290323,0.466666666666667,0.433333333333333,0.4,0.517241379310345,0.379310344827586,0.275862068965517,0.653846153846154,0.64,0.32,0.48,0.375,0.5,0.478260869565217,0.608695652173913,0.608695652173913,0.304347826086957,0.454545454545455,0.454545454545455,0.5,0.523809523809524,0.333333333333333,0.55,0.3,0.65,0.684210526315789,0.263157894736842,0.388888888888889,0.555555555555556,0.222222222222222,0.529411764705882,0.117647058823529,0.5,0.5,0.375,0.5625,0.4,0.6,0.6,0.4,0.571428571428571,0.5,0.5,0.214285714285714,0.538461538461538,0.538461538461538,0.461538461538462,0.615384615384615,0.166666666666667,0.25,0.25,0.636363636363636,0.272727272727273,0.272727272727273,0.545454545454545,0.454545454545455,0.636363636363636,0.454545454545455,0.454545454545455,0.545454545454545,0.5,0.3,0.6,0.6,0.6,0.2,0.6,0.5,0.7,0.5,0.555555555555556,0.555555555555556,0.666666666666667,0.222222222222222,0.555555555555556,0.444444444444444,0.333333333333333,0.444444444444444,0.888888888888889,0.222222222222222,0.555555555555556,0.375,0.5,0.25,0.25,0.5,0.625,0.625,0.5,0.5,0.75,0.625,0.375,0.625,0.75,0.125,0.5,0.571428571428571,0.428571428571429,0.142857142857143,0.285714285714286,0.285714285714286,0.714285714285714,0.571428571428571,0.285714285714286,0.285714285714286,0.285714285714286,0.714285714285714,0.571428571428571,0.285714285714286,0.857142857142857,0.571428571428571,0.428571428571429,0.285714285714286,0.166666666666667,0.666666666666667,0.5,0.333333333333333,0.666666666666667,0.666666666666667,0,0.166666666666667,0.5,0.166666666666667,0.166666666666667,0,0,0.166666666666667,0.5,0.5,1,0.5,0.5,0.333333333333333,0.4,0.4,0,0.2,0.8,0.2,0.6,0.6,0.4,0.4,0,0.4,0.2,0,0.8,0.2,0.6,0.2,0.6,0.4,0.6,0.2,1,0.6,0.6,0.2,0.2,0.25,0.25,0.5,0.5,0.5,0.5,0.75,0,0.75,1,0.25,0,0,0.25,0.75,0.5,0,0.75,0,0.333333333333333,0.333333333333333,0,0,0.333333333333333,1,0.333333333333333,0.333333333333333,0.333333333333333,0.666666666666667,0.333333333333333,0.5,0.5,0,0.5,0,1,0,0,0.5,0,0.5,1,0,0.5,0,0.5,0,1,1,0,0,1,0,1,1,0,1,0,1,0],"meanBan":[0.298765432098765,0.356025758969641,0.397163120567376,0.33889816360601,0.281967213114754,0.37991718426501,0.402431962941517,0.326869806094183,0.278151260504202,0.318295739348371,0.554315476190476,0.134003350083752,0.407922912205567,0.462165308498254,0.3407917383821,0.214814814814815,0.356234096692112,0.286472148541114,0.191836734693878,0.348684210526316,0.325878594249201,0.245059288537549,0.369402985074627,0.139423076923077,0.229357798165138,0.312796208530806,0.189189189189189,0.256281407035176,0.37378640776699,0.461883408071749,0.235294117647059,0.264900662251656,0.252100840336134,0.333333333333333,0.271186440677966,0.195876288659794,0.142857142857143,0.268817204301075,0.0555555555555556,0.189873417721519,0.260869565217391,0.206349206349206,0.246376811594203,0.391891891891892,0.359375,0.0833333333333333,0.213114754098361,0.30188679245283,0.0652173913043478,0.361111111111111,0.0833333333333333,0.333333333333333,0.45,0.172413793103448,0.268292682926829,0.0869565217391304,0.2,0.176470588235294,0.379310344827586,0.35,0.34375,0.230769230769231,0.2,0.290322580645161,0.347826086956522,0.333333333333333,0.212121212121212,0.0952380952380952,0.125,0.366666666666667,0.391304347826087,0.40625,0.277777777777778,0.305555555555556,0.2,0.28125,0.181818181818182,0.111111111111111,0.2,0.136363636363636,0.304347826086957,0.416666666666667,0.393939393939394,0.0476190476190476,0.368421052631579,0.533333333333333,0.0666666666666667,0.2,0.166666666666667,0.4,0.375,0.173913043478261,0.133333333333333,0.153846153846154,0.391304347826087,0.1,0.25,0.3,0.25,0.423076923076923,0.157894736842105,0.176470588235294,0.357142857142857,0.176470588235294,0,0.222222222222222,0.2,0.266666666666667,0.285714285714286,0.357142857142857,0.153846153846154,0.333333333333333,0.421052631578947,0,0.4,0.357142857142857,0.142857142857143,0,0,0.357142857142857,0.307692307692308,0.272727272727273,0.272727272727273,0.2,0.230769230769231,0.1,0.111111111111111,0.142857142857143,0.2,0.25,0.428571428571429,0,0,0,0.3,0.111111111111111,0,0.125,0.25,0.3,0.2,0,0.416666666666667,0.454545454545455,0.166666666666667,0.25,0.125,0,0,0.166666666666667,0,0.5,0.545454545454545,0.111111111111111,0,0.125,0.285714285714286,0.2,0.125,0.6,0.166666666666667,0.4,0.222222222222222,0.25,0,0.333333333333333,0,0,0.285714285714286,0.142857142857143,0.25,0,0,0.375,0,0,0,0,0.25,0,0,0.333333333333333,0.166666666666667,0,0.25,0,0,0.166666666666667,0,0.285714285714286,0.444444444444444,0,0.333333333333333,0.166666666666667,0.166666666666667,0.25,0,0.428571428571429,0.333333333333333,0.4,0.666666666666667,0,0,0.166666666666667,0.25,0.25,0.25,0.4,0,0.5,0.6,0.666666666666667,0.2,0.5,0.2,0.4,0.25,0.333333333333333,0.2,0.333333333333333,0.333333333333333,0.333333333333333,0,0,0.25,0.285714285714286,0,0.5,0,0.333333333333333,0.4,0.285714285714286,0.636363636363636,0.428571428571429,0.4,0.25,0.25,0.5,0.571428571428571,0.25,0.4,0,0,0.5,0.571428571428571,0.333333333333333,0.2,0,"NaN",0.4,0.25,0.5,0,0.692307692307692,0,0,0,0,0.333333333333333,0.8,0,0.5,0.25,0.333333333333333,0.333333333333333,0.5,0.5,0.5,0.333333333333333,0,0.5,0.333333333333333,0.333333333333333,1,0,0.5,0.5,0.666666666666667,0.5,0.75,0.5,0.333333333333333,0.5,0,0.5,0,0.75,0,0,0.5,0.875,0.5,0,0.5,0.5,0.5]},"columns":[{"accessor":"deck","name":"Deck","type":"character","align":"left","style":{"fontWeight":500,"color":"black","fontFamily":"Work Sans, sans-serif","fontSize":"12px"},"headerStyle":{"background":"steelblue","color":"white","fontFamily":"Work Sans, sans-serif","fontSize":"14px"}},{"accessor":"nGames","name":"#Games","type":"numeric","align":"center","style":{"fontWeight":500,"color":"black","fontFamily":"Work Sans, sans-serif","fontSize":"12px"},"headerStyle":{"background":"steelblue","color":"white","fontFamily":"Work Sans, sans-serif","fontSize":"14px"}},{"accessor":"playrate","name":"PlayRate","type":"numeric","align":"center","style":{"fontWeight":500,"color":"black","fontFamily":"Work Sans, sans-serif","fontSize":"12px"},"headerStyle":{"background":"steelblue","color":"white","fontFamily":"Work Sans, sans-serif","fontSize":"14px"},"format":{"cell":{"digits":2,"percent":true},"aggregated":{"digits":2,"percent":true}}},{"accessor":"WR","name":"Win Rate","type":"numeric","align":"center","style":{"fontWeight":500,"color":"black","fontFamily":"Work Sans, sans-serif","fontSize":"12px"},"headerStyle":{"background":"steelblue","color":"white","fontFamily":"Work Sans, sans-serif","fontSize":"14px"},"format":{"cell":{"digits":2,"percent":true},"aggregated":{"digits":2,"percent":true}}},{"accessor":"meanBan","name":"Ban Rate","type":"numeric","align":"center","style":{"fontWeight":500,"color":"black","fontFamily":"Work Sans, sans-serif","fontSize":"12px"},"headerStyle":{"background":"steelblue","color":"white","fontFamily":"Work Sans, sans-serif","fontSize":"14px"},"format":{"cell":{"digits":2,"percent":true},"aggregated":{"digits":2,"percent":true}}}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"highlight":true,"bordered":true,"striped":true,"compact":true,"theme":{"color":"grey25","borderColor":"#dfe2e5","stripedColor":"#f6f8fa","highlightColor":"#f0f5f9","cellPadding":"8px 13px","style":{"fontFamily":"-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Roboto, sans-serif"},"headerStyle":{"background":"steelblue","color":"white"},"searchInputStyle":{"width":"100%"}},"dataKey":"575e67208d7187fdaa95bd063fc6da36","key":"575e67208d7187fdaa95bd063fc6da36"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<h1 id="legal-bla-bla">Legal bla bla</h1>
+<p>This Meta Report was created under Riot Games’ “Legal Jibber Jabber” policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p><a href="https://www.llorr-stats.com/analysis/lmi/">LMI - early concept</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p><a href="https://www.llorr-stats.com/report/seasonal-001/#lmi---tournament-edition">LMI with Ban Rate - from Seasonal Rerport</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>No official data are known at the moment of the writing. Supposition made from a series of points like the fewer amount of Master rank players when the cut-off takes place.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom"></div>
+<!--/radix_placeholder_appendices-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<!--radix_placeholder_navigation_after_body--><html><body>
+<div class="distill-site-nav distill-site-footer">
+<p>© 2021 Vazzoler Valentino</p>
+<p>LlorR Stats was created under Riot Games’ “Legal Jibber Jabber”
+policy using assets owned by Riot Games. Riot Games does not endorse or
+sponsor this project.</p>
+</div>
+<!--/radix_placeholder_navigation_after_body-->
+</body></html>
+
+
+</body>
+
+</html>
