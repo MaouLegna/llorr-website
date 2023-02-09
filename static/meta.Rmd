@@ -5,8 +5,8 @@ base_url: https://www.llorr-stats.com
 output:
   flexdashboard::flex_dashboard:
     theme:
-      bg: "#404040"
-      fg: "#FDF7F7"
+      # bg: "#404040"
+      # fg: "#FDF7F7"
       base_font:
         google: "Prompt"
       code_font:

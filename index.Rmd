@@ -20,7 +20,13 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 2023-01-07: Data 'resetted' after the january hotfix
+Update 2023-02-09: Data from the Beta Season is up.
+
+Early days are usual are from the previous seasonal players.
+
+Light-mode is reinstated in the pages because of a bandwich issue, sorry.
+
+More stuff should be restored in the following weeks once some personal stuffs are solved.
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
