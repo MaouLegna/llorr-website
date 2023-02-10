@@ -151,33 +151,33 @@ Row {.tabset}
 hourly_master_plot + hourly_master_line
 ```
 
-<!-- Fresh Stats (last 24 hours - Empty today) {data-icon="fa-table"} -->
-<!-- ================================ -->
+Fresh Stats (last 24 hours - Empty today) {data-icon="fa-table"}
+================================
 
-<!-- Row {data-heigth="100"} -->
-<!-- ----------------------------------------------------------------------- -->
+Row {data-heigth="100"}
+-----------------------------------------------------------------------
 
-<!-- ### Time Frame -->
+### Time Frame
 
-<!-- ```{r} -->
-<!-- flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),  -->
-<!--                         caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),  -->
-<!--                         icon = "fa-clock",  -->
-<!--                         # color = "lightgreen" -->
-<!--                         color = "red") -->
-<!-- ``` -->
+```{r}
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
+                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),
+                        icon = "fa-clock",
+                        # color = "lightgreen"
+                        color = "red")
+```
 
-<!-- ### Last Update -->
+### Last Update
 
-<!-- ```{r} -->
-<!-- last_update_box -->
-<!-- ``` -->
+```{r}
+last_update_box
+```
 
-<!-- Row {data-heigth="900"} -->
-<!-- ----------------------------------------------------------------------- -->
+Row {data-heigth="900"}
+-----------------------------------------------------------------------
 
-<!-- ### Previous Day -->
+### Previous Day
 
-<!-- ```{r 24hrs-process-winRate} -->
-<!-- # meta_24hrs$meta_table   -->
-<!-- ``` -->
+```{r 24hrs-process-winRate}
+meta_24hrs$meta_table
+```
