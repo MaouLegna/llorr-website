@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (Post January Hotfix Patch 4.00)"
+title: "Meta & Decks (Beta Season Patch 4.1)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -59,18 +59,17 @@ last_update_box <- flexdashboard::valueBox(
 ```
 
 ```{r load-data}
-summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info.rds") )
 
-meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_week.rds") )
-meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_all.rds") )
+meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week.rds") )
+meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_all.rds") )
 
-meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","meta_24hrs.rds") )
+meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_24hrs.rds") )
 
-
-hourly_master_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_plot.rds") )
-hourly_master_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_master_line.rds") )
-hourly_diamond_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_diamond_plot.rds") )
-hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean","hourly_diamond_line.rds") )
+hourly_master_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_master_plot.rds") )
+hourly_master_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_master_line.rds") )
+hourly_diamond_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_diamond_plot.rds") )
+hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_diamond_line.rds") )
 ```
 
 Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
@@ -82,8 +81,8 @@ Row {data-heigth="100"}
 ### Number of Games
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{meta_7days$nGames} Games"), 
-                        caption = glue::glue("Number of Ranked Games - Master"), 
+flexdashboard::valueBox(glue::glue("{meta_7days$n} Games"), 
+                        caption = glue::glue("Number of Ranked Games"), 
                         icon = "fa-table", 
                         color = "#a88b32")
 ```
@@ -131,8 +130,8 @@ Row {data-heigth="100"}
 ### Master
 
 ```{r value-player-master}
-flexdashboard::valueBox(value = summary_info$nMaster,
-                        caption = glue::glue("Master Players"), 
+flexdashboard::valueBox(value = summary_info$n_master, 
+                        caption = glue::glue("Seasonal Players (until master are many)"), 
                         icon = "fa-medal", 
                         color = "#65c0a9")
 ```
@@ -140,7 +139,7 @@ flexdashboard::valueBox(value = summary_info$nMaster,
 ### Diamond
 
 ```{r value-player-diamond}
-flexdashboard::valueBox(value = summary_info$nDiamond, 
+flexdashboard::valueBox(value = summary_info$n_diamond, 
                         caption = glue::glue("HighDiamond Players"), 
                         icon = "fa-diamond", 
                         color = "#ff7f24")
@@ -167,53 +166,53 @@ hourly_master_plot + hourly_master_line
 hourly_diamond_plot + hourly_diamond_line
 ```
 
-Stats (whole patch) {data-icon="fa-table"}
-================================
+<!-- Stats (whole patch) {data-icon="fa-table"} -->
+<!-- ================================ -->
 
-Row {data-heigth="100"}
------------------------------------------------------------------------
+<!-- Row {data-heigth="100"} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### Number of Games
+<!-- ### Number of Games -->
 
-```{r value-games}
-flexdashboard::valueBox(glue::glue("{meta_all$nGames} Games"), 
-                        caption = glue::glue("Number of Ranked Games - by Master players"), 
-                        icon = "fa-table", 
-                        color = "#a88b32")
-```
+<!-- ```{r value-games} -->
+<!-- flexdashboard::valueBox(glue::glue("{meta_all$nGames} Games"),  -->
+<!--                         caption = glue::glue("Number of Ranked Games - by Master players"),  -->
+<!--                         icon = "fa-table",  -->
+<!--                         color = "#a88b32") -->
+<!-- ``` -->
 
-### Number of Meta Decks
+<!-- ### Number of Meta Decks -->
 
-```{r value-meta}
-flexdashboard::valueBox(glue::glue("{length(meta_all$fct_meta)} Meta Decks"), 
-                        caption = glue::glue("Decks with PlayRate with at least 1%"), 
-                        icon = "fa-trophy", 
-                        color = "#65c0a9")
-```
+<!-- ```{r value-meta} -->
+<!-- flexdashboard::valueBox(glue::glue("{length(meta_all$fct_meta)} Meta Decks"),  -->
+<!--                         caption = glue::glue("Decks with PlayRate with at least 1%"),  -->
+<!--                         icon = "fa-trophy",  -->
+<!--                         color = "#65c0a9") -->
+<!-- ``` -->
 
-### Number of Underdog Decks
+<!-- ### Number of Underdog Decks -->
 
-```{r value-underdog}
-flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Decks"), 
-                        caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"), 
-                        icon = "fa-dog", 
-                        color = "#ff7f24")
-```
+<!-- ```{r value-underdog} -->
+<!-- flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Decks"),  -->
+<!--                         caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"),  -->
+<!--                         icon = "fa-dog",  -->
+<!--                         color = "#ff7f24") -->
+<!-- ``` -->
 
-### Last Update
+<!-- ### Last Update -->
 
-```{r}
-last_update_box
-```
+<!-- ```{r} -->
+<!-- last_update_box -->
+<!-- ``` -->
 
-Row {data-heigth="900"}
------------------------------------------------------------------------
+<!-- Row {data-heigth="900"} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### Decks Performances
+<!-- ### Decks Performances -->
 
-```{r stats-all}
-meta_all$meta_table
-```
+<!-- ```{r stats-all} -->
+<!-- meta_all$meta_table -->
+<!-- ``` -->
 
 Fresh Stats (last 24 hours) {data-icon="fa-table"}
 ================================

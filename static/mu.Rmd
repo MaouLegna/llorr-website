@@ -1,5 +1,5 @@
 ---
-title: "Match Ups Data (Post January Hotfix Patch 4.00)"
+title: "Match Ups Data (Beta Season Patch 4.1)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -62,24 +62,24 @@ last_update_box <- flexdashboard::valueBox(
 
 ```{r load-data}
 MU_tbl <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","mu_master_minimal.csv"),
+  file = file.path("C:", "LlorR", "data", "clean", "updates", "mu_master_minimal.csv"), 
   header = T, na.strings = c("", NA), encoding = "UTF-8"
 )
 
 MU_diamond <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean","mu_diamond_minimal.csv"),
+  file = file.path("C:", "LlorR", "data", "clean", "updates", "mu_diamond_minimal.csv"), 
   header = T, 
-  na.strings = c("", NA),
+  na.strings = c("", NA), 
   encoding = "UTF-8"
 )
 
-nMuMaster  = setDT(MU_tbl)[ ,sum(muGames)]
-nMuDiamond = setDT(MU_diamond) [ ,sum(muGames)]
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info.rds") )
 
-summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","summary_info.rds") )
+nMuMaster  = summary_info$used_ranked_master
+nMuDiamond = summary_info$used_ranked_diamond
 ```
 
-Master {data-icon="fa-table"}
+Previous Seasonal {data-icon="fa-table"}
 ================================
 
 Inputs {.sidebar}
@@ -90,15 +90,15 @@ Inputs {.sidebar}
 ```{r filters-master}
 crosstalk_data <- crosstalk::SharedData$new(MU_tbl)
 
-crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_data, ~playerDeck)
-crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_data, ~opponentDeck)
+crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_data, ~archetype_1)
+crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_data, ~archetype_2)
 
-crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_data, ~muWin,   step = 50 , min = 0)
-crosstalk::filter_slider("muGames", "#Games",               crosstalk_data, ~muGames, step = 100, min = 0)
+crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_data, ~mu_win, step = 50 , min = 0)
+crosstalk::filter_slider("muGames", "#Games",               crosstalk_data, ~mu_n,   step = 100, min = 0)
 
-crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_data, ~muWR, step=0.01, min = 0, max = 1)
-crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_data, ~playrate, step=0.01, min = 0,   max = round(max(MU_tbl$playrate),   4) )
-crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_data, ~opponentPR, step=0.01, min = 0, max = round(max(MU_tbl$opponentPR), 4) )
+crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_data, ~mu_wr, step=0.01, min = 0, max = 1)
+crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_data, ~playrate_1, step=0.01, min = 0, max = round(max(MU_tbl$playrate_1),   4) )
+crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_data, ~playrate_2, step=0.01, min = 0, max = round(max(MU_tbl$playrate_2), 4) )
 
 crosstalk::filter_select("direction", "MU-Direction",       crosstalk_data, ~direction)
 crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_data, ~mirror, inline = TRUE)
@@ -110,8 +110,8 @@ Row {data-heigth="100"}
 ### Box MU
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{summary_info$nRankedMaster} Master Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {nMuMaster} games used"), 
+flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_master} Seasonal Ranked Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_master} games used - Up until Master are Many"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> master_valuebox
 
@@ -121,8 +121,8 @@ master_valuebox
 ### Box Master
 
 ```{r value-player-master}
-flexdashboard::valueBox(value = summary_info$nMaster, 
-                        caption = glue::glue("Master Players"), 
+flexdashboard::valueBox(value = summary_info$n_master, 
+                        caption = glue::glue("Seasonal Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9") -> box_master
 
@@ -139,11 +139,11 @@ last_update_box
 
 ```{r}
 downloadthis::download_link(
-  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_master.csv",
-  button_label = "MU (Master)",
-  # output_name = "mutable",
-  button_type = "danger",
-  has_icon = TRUE,
+  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_prevs.csv", 
+  button_label = "MU as csv", 
+  # output_name = "mutable", 
+  button_type = "danger", 
+  has_icon = TRUE, 
   icon = "fa fa-save"
   # self_contained = FALSE
 )
@@ -169,15 +169,15 @@ Inputs {.sidebar}
 ```{r filters-diamond}
 crosstalk_diamond <- crosstalk::SharedData$new(MU_diamond)
 
-crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_diamond, ~playerDeck)
-crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_diamond, ~opponentDeck)
+crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_diamond, ~archetype_1)
+crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_diamond, ~archetype_2)
 
-crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_diamond, ~muWin,   step = 50 , min = 0)
-crosstalk::filter_slider("muGames", "#Games",               crosstalk_diamond, ~muGames, step = 100, min = 0)
+crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_diamond, ~mu_win, step = 50 , min = 0)
+crosstalk::filter_slider("muGames", "#Games",               crosstalk_diamond, ~mu_n,   step = 100, min = 0)
 
-crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_diamond, ~muWR, step=0.01, min = 0, max = 1)
-crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_diamond, ~playrate,   step=0.01, min = 0, max = round(max(MU_diamond$playrate),   4) )
-crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_diamond, ~opponentPR, step=0.01, min = 0, max = round(max(MU_diamond$opponentPR), 4) )
+crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_diamond, ~mu_wr, step=0.01, min = 0, max = 1)
+crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_diamond, ~playrate_1,   step=0.01, min = 0, max = round(max(MU_diamond$playrate_1),   4) )
+crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_diamond, ~playrate_2, step=0.01, min = 0, max = round(max(MU_diamond$playrate_2), 4) )
 
 crosstalk::filter_select("direction", "MU-Direction",       crosstalk_diamond, ~direction)
 crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_diamond, ~mirror, inline = TRUE)
@@ -189,19 +189,22 @@ Row {data-heigth="100"}
 ### Box MU
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{summary_info$nRankedDiamond} Master Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {nMuDiamond} games used"), 
+flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_diamond} HighDiamond Ranked Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_diamond} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> diamond_valuebox
 
 diamond_valuebox
 ```
 
+### Box Diamond
+
 ```{r value-player-diamond}
-flexdashboard::valueBox(value = summary_info$nDiamond, 
+flexdashboard::valueBox(value = summary_info$n_diamond, 
                         caption = glue::glue("HighDiamond Players"), 
-                        icon = "fa-diamond",
-                        color = "#ff7f24") -> box_diamond
+                        icon = "fa-diamond", 
+                        color = "#65c0a9"
+                        ) -> box_diamond
 
 box_diamond
 ```
@@ -217,11 +220,11 @@ last_update_box
 ```{r}
 ## Link in Github repo
 downloadthis::download_link(
-  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_diamond.csv",
-  button_label = "Download as",
-  # output_name = "mutable",
-  button_type = "danger",
-  has_icon = TRUE,
+  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_diamond.csv", 
+  button_label = "MU as csv",  
+  # output_name = "mutable", 
+  button_type = "danger", 
+  has_icon = TRUE, 
   icon = "fa fa-save"
   # self_contained = FALSE
 )
@@ -266,35 +269,34 @@ Row {data-heigth="900" .tabset}
 ### MU Grid
 
 ```{r print-grid}
-gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_master.rds"))
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_prevs.rds"))
 
 gtMU_grid |>
   gt::tab_options(
-    data_row.padding = gt::px(8),
-    table.font.size  = gt::px(13),
+    data_row.padding = gt::px(8), 
+    table.font.size  = gt::px(13), 
     column_labels.font.size = gt::px(10)
   ) |>
   gt::cols_width(
-    -1 ~ gt::px(90),
-    1  ~ gt::px(150),
-  ) |>
-  gtExtras::gt_theme_dark()
+    -1 ~ gt::px(90), 
+    1  ~ gt::px(150), 
+  )
 ```
 
 ### MU Grid - Diamond
 
 ```{r print-diamond-grid}
-gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean","grid_diamond.rds"))
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_diamond.rds"))
 
 gtMU_grid |>
   gt::tab_options(
-    data_row.padding = gt::px(8),
-    table.font.size  = gt::px(13),
+    data_row.padding = gt::px(8), 
+    table.font.size  = gt::px(13), 
     column_labels.font.size = gt::px(10)
   ) |>
   gt::cols_width(
-    -1 ~ gt::px(90),
-    1  ~ gt::px(150),
-  ) |>
-  gtExtras::gt_theme_dark()
+    -1 ~ gt::px(90), 
+    1  ~ gt::px(150), 
+  )
+  # gtExtras::gt_theme_dark()
 ```
