@@ -131,7 +131,7 @@ Row {data-heigth="100"}
 
 ```{r value-player-master}
 flexdashboard::valueBox(value = summary_info$n_master, 
-                        caption = glue::glue("Seasonal Players (until master are many)"), 
+                        caption = glue::glue("Master Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9")
 ```

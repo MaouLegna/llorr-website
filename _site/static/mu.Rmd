@@ -110,8 +110,8 @@ Row {data-heigth="100"}
 ### Box MU
 
 ```{r}
-flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_master} Seasonal Ranked Games"), 
-                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_master} games used - Up until Master are Many"), 
+flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_master} Master Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_master} games used"), 
                         icon = "fa-table", 
                         color = "#FA7404") -> master_valuebox
 
@@ -122,7 +122,7 @@ master_valuebox
 
 ```{r value-player-master}
 flexdashboard::valueBox(value = summary_info$n_master, 
-                        caption = glue::glue("Seasonal Players"), 
+                        caption = glue::glue("Master Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9") -> box_master
 
@@ -139,7 +139,7 @@ last_update_box
 
 ```{r}
 downloadthis::download_link(
-  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_prevs.csv", 
+  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_master.csv", 
   button_label = "MU as csv", 
   # output_name = "mutable", 
   button_type = "danger", 
@@ -269,7 +269,7 @@ Row {data-heigth="900" .tabset}
 ### MU Grid
 
 ```{r print-grid}
-gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_prevs.rds"))
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_master.rds"))
 
 gtMU_grid |>
   gt::tab_options(
