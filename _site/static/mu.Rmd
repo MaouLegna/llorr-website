@@ -17,7 +17,7 @@ output:
     orientation: row
     
 params:
-  min_mu_games: 10
+  min_mu_games: 20
 ---
 
 ```{r setup, include=FALSE}
