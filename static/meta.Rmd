@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (Beta Season Patch 4.1)"
+title: "Meta & Decks (Glory in Navori Patch 4.3)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -52,7 +52,7 @@ xaringanExtra::use_panelset()
 ```{r constants}
 last_update_box <- flexdashboard::valueBox(
   Sys.Date(), 
-  caption = glue::glue("Last Update / Usually done around 5:00 UTC / 7:00 CET"), 
+  caption = glue::glue("Last Update"), 
   icon = "fa-clock", 
   color = "#1A9850"
 )
@@ -60,6 +60,7 @@ last_update_box <- flexdashboard::valueBox(
 
 ```{r load-data}
 summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info.rds") )
+summary_info$n_master <- 3072
 
 meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week.rds") )
 meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_all.rds") )
@@ -131,19 +132,19 @@ Row {data-heigth="100"}
 
 ```{r value-player-master}
 flexdashboard::valueBox(value = summary_info$n_master, 
-                        caption = glue::glue("Master Players"), 
+                        caption = glue::glue("Prev Season Top 1024 Master Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9")
 ```
 
-### Diamond
+<!-- ### Diamond -->
 
-```{r value-player-diamond}
-flexdashboard::valueBox(value = summary_info$n_diamond, 
-                        caption = glue::glue("HighDiamond Players"), 
-                        icon = "fa-diamond", 
-                        color = "#ff7f24")
-```
+<!-- ```{r value-player-diamond} -->
+<!-- flexdashboard::valueBox(value = summary_info$n_diamond,  -->
+<!--                         caption = glue::glue("HighDiamond Players"),  -->
+<!--                         icon = "fa-diamond",  -->
+<!--                         color = "#ff7f24") -->
+<!-- ``` -->
 
 ### Last Update
 
@@ -160,11 +161,11 @@ Row {.tabset}
 hourly_master_plot + hourly_master_line
 ```
 
-### Diamond
+<!-- ### Diamond -->
 
-```{r meta-evo-diamond, fig.width=20, fig.height=8}
-hourly_diamond_plot + hourly_diamond_line
-```
+<!-- ```{r meta-evo-diamond, fig.width=20, fig.height=8} -->
+<!-- hourly_diamond_plot + hourly_diamond_line -->
+<!-- ``` -->
 
 <!-- Stats (whole patch) {data-icon="fa-table"} -->
 <!-- ================================ -->
@@ -175,27 +176,27 @@ hourly_diamond_plot + hourly_diamond_line
 <!-- ### Number of Games -->
 
 <!-- ```{r value-games} -->
-<!-- flexdashboard::valueBox(glue::glue("{meta_all$nGames} Games"),  -->
-<!--                         caption = glue::glue("Number of Ranked Games - by Master players"),  -->
-<!--                         icon = "fa-table",  -->
+<!-- flexdashboard::valueBox(glue::glue("{meta_all$n} Games"), -->
+<!--                         caption = glue::glue("Number of Ranked Games - by ~Prev Master players"), -->
+<!--                         icon = "fa-table", -->
 <!--                         color = "#a88b32") -->
 <!-- ``` -->
 
 <!-- ### Number of Meta Decks -->
 
 <!-- ```{r value-meta} -->
-<!-- flexdashboard::valueBox(glue::glue("{length(meta_all$fct_meta)} Meta Decks"),  -->
-<!--                         caption = glue::glue("Decks with PlayRate with at least 1%"),  -->
-<!--                         icon = "fa-trophy",  -->
+<!-- flexdashboard::valueBox(glue::glue("{length(meta_all$fct_meta)} Meta Decks"), -->
+<!--                         caption = glue::glue("Decks with PlayRate with at least 1%"), -->
+<!--                         icon = "fa-trophy", -->
 <!--                         color = "#65c0a9") -->
 <!-- ``` -->
 
 <!-- ### Number of Underdog Decks -->
 
 <!-- ```{r value-underdog} -->
-<!-- flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Decks"),  -->
-<!--                         caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"),  -->
-<!--                         icon = "fa-dog",  -->
+<!-- flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Decks"), -->
+<!--                         caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"), -->
+<!--                         icon = "fa-dog", -->
 <!--                         color = "#ff7f24") -->
 <!-- ``` -->
 
@@ -214,33 +215,33 @@ hourly_diamond_plot + hourly_diamond_line
 <!-- meta_all$meta_table -->
 <!-- ``` -->
 
-Fresh Stats (last 24 hours) {data-icon="fa-table"}
-================================
+<!-- Fresh Stats (last 24 hours) {data-icon="fa-table"} -->
+<!-- ================================ -->
 
-Row {data-heigth="100"}
------------------------------------------------------------------------
+<!-- Row {data-heigth="100"} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### Time Frame
+<!-- ### Time Frame -->
 
-```{r}
-flexdashboard::valueBox(glue::glue("24 Hours Time Frame"), 
-                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"), 
-                        icon = "fa-clock", 
-                        # color = "lightgreen"
-                        color = "red")
-```
+<!-- ```{r} -->
+<!-- flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),  -->
+<!--                         caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),  -->
+<!--                         icon = "fa-clock",  -->
+<!--                         # color = "lightgreen" -->
+<!--                         color = "red") -->
+<!-- ``` -->
 
-### Last Update
+<!-- ### Last Update -->
 
-```{r}
-last_update_box
-```
+<!-- ```{r} -->
+<!-- last_update_box -->
+<!-- ``` -->
 
-Row {data-heigth="900"}
------------------------------------------------------------------------
+<!-- Row {data-heigth="900"} -->
+<!-- ----------------------------------------------------------------------- -->
 
-### Previous Day
+<!-- ### Previous Day -->
 
-```{r 24hrs-process-winRate}
-meta_24hrs$meta_table  
-```
+<!-- ```{r 24hrs-process-winRate} -->
+<!-- meta_24hrs$meta_table   -->
+<!-- ``` -->

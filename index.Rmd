@@ -20,13 +20,13 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 2023-02-09: Data from the Beta Season is up.
+Update 2023-03-30: Data from the **Glory in Navori** is up.
 
-Early days are usual are from the previous seasonal players.
+As the seasonal are no more I'm using the Top 1024 at the end of the season.
 
 Light-mode is reinstated in the pages because of a bandwich issue, sorry.
 
-More stuff should be restored in the following weeks once some personal stuffs are solved.
+Note: goddamit so much stuff wasn't done in another season, thanks life...
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
