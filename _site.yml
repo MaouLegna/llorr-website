@@ -11,7 +11,6 @@ output_dir: "_site"
 navbar:
   logo:
     image: images/logo.png
-    # href: https://www.rstudio.com
   search: false
   source_url: true
   right:
@@ -36,10 +35,14 @@ navbar:
           href: https://docs.google.com/spreadsheets/d/1MFb-6203FOHiK4KJJyjQI3dmJw2_6cFRWsEMQSYyDnQ
         - text: "Diamond MU spreadsheet"
           href: https://docs.google.com/spreadsheets/d/1lYODIY3N-TP_0-zuJYcOZwqfOBVaTv66quUHaT8CG90
+        - text: "Previous Season 'Top' Players"
+          href: https://docs.google.com/spreadsheets/d/10XP4e08nBj8-gVPGXxTMrtWajwsLWohoGiLjlcLB1g0
+        - text: "Deck(code) Stats"
+          href: https://docs.google.com/spreadsheets/d/1NxZtlggGcl75LopKEVYjYMpmADG57fxAcR2fhGHhGy8    
         - text: "Top50 PlayRate - by Region (All/7d/3d)"
           href: https://docs.google.com/spreadsheets/d/12p0DflWMZHMge4bqFCzpY9X4DcmTKGM4qWUO-gkcsJA  
-        - text: "Site tools"
-          href: resources.html
+    #    - text: "Site tools"
+    #      href: resources.html
     # - text: "Other"
     #   menu:
     #     - text: "Analysis"

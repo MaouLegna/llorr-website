@@ -73,14 +73,21 @@ MU_diamond <- data.table::fread(
   encoding = "UTF-8"
 )
 
+MU_prevs <- data.table::fread(
+  file = file.path("C:", "LlorR", "data", "clean", "updates", "mu_prevs_minimal.csv"), 
+  header = T, 
+  na.strings = c("", NA), 
+  encoding = "UTF-8"
+)
+
 summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info.rds") )
-summary_info$n_master <- 3072
 
 nMuMaster  = summary_info$used_ranked_master
 nMuDiamond = summary_info$used_ranked_diamond
+nMuPrevs   = summary_info$used_ranked_prevs
 ```
 
-Previous Seasonal {data-icon="fa-table"}
+Master {data-icon="fa-table"}
 ================================
 
 Inputs {.sidebar}
@@ -105,6 +112,8 @@ crosstalk::filter_select("direction", "MU-Direction",       crosstalk_data, ~dir
 crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_data, ~mirror, inline = TRUE)
 ```
 
+Please remember that previous seasonal will be removed once Master data is *big* enough
+
 Row {data-heigth="100"}
 -----------------------------------------------------------------------
 
@@ -123,7 +132,7 @@ master_valuebox
 
 ```{r value-player-master}
 flexdashboard::valueBox(value = summary_info$n_master, 
-                        caption = glue::glue("~Prev Season Top1024 - Master Players"), 
+                        caption = glue::glue("Master Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9") -> box_master
 
@@ -240,6 +249,85 @@ Row {data-heigth="900"}
 reactable_mu(crosstalk_diamond)
 ```
 
+Previous Season (Top 1024) {data-icon="fa-table"}
+================================
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+### Filters
+
+```{r filters-prevs}
+crosstalk_prevs <- crosstalk::SharedData$new(MU_prevs)
+
+crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_prevs, ~archetype_1)
+crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_prevs, ~archetype_2)
+
+crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_prevs, ~mu_win, step = 50 , min = 0)
+crosstalk::filter_slider("muGames", "#Games",               crosstalk_prevs, ~mu_n,   step = 100, min = 0)
+
+crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_prevs, ~mu_wr, step=0.01, min = 0, max = 1)
+crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_prevs, ~playrate_1, step=0.01, min = 0, max = round(max(MU_prevs$playrate_1), 4) )
+crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_prevs, ~playrate_2, step=0.01, min = 0, max = round(max(MU_prevs$playrate_2), 4) )
+
+crosstalk::filter_select("direction", "MU-Direction",       crosstalk_prevs, ~direction)
+crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_prevs, ~mirror, inline = TRUE)
+```
+
+Row {data-heigth="100"}
+-----------------------------------------------------------------------
+
+### Box MU
+
+```{r}
+flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_prev} (Prevs) Master Games"), 
+                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_prevs} games used"), 
+                        icon = "fa-table", 
+                        color = "#FA7404") -> prevs_valuebox
+
+prevs_valuebox
+```
+
+### Box Master
+
+```{r value-player-prevs}
+flexdashboard::valueBox(value = summary_info$n_prevs, 
+                        caption = glue::glue("~Prev Season Top1024 - Master Players"), 
+                        icon = "fa-medal", 
+                        color = "#65c0a9") -> box_prevs
+
+box_prevs
+```
+
+### Last Update
+
+```{r}
+last_update_box
+```
+
+### Download Data
+
+```{r}
+downloadthis::download_link(
+  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_prevs.csv", 
+  button_label = "MU as csv", 
+  # output_name = "mutable", 
+  button_type = "danger", 
+  has_icon = TRUE, 
+  icon = "fa fa-save"
+  # self_contained = FALSE
+)
+```
+
+Row {data-heigth="900"}
+-----------------------------------------------------------------------
+
+### MU table
+
+```{r print-react-prevs}
+reactable_mu(crosstalk_prevs)
+```
+
 Grid {data-icon="fa-file-image"}
 ================================
 
@@ -258,6 +346,12 @@ master_valuebox
 diamond_valuebox
 ```
 
+<!-- ### Box3 MU -->
+
+<!-- ```{r} -->
+<!-- prevs_valuebox -->
+<!-- ``` -->
+
 ### Last Update
 
 ```{r}
@@ -267,7 +361,7 @@ last_update_box
 Row {data-heigth="900" .tabset}
 -----------------------------------------------------------------------
 
-### MU Grid
+### MU Grid - Master
 
 ```{r print-grid}
 gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_master.rds"))
@@ -288,6 +382,24 @@ gtMU_grid |>
 
 ```{r print-diamond-grid}
 gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_diamond.rds"))
+
+gtMU_grid |>
+  gt::tab_options(
+    data_row.padding = gt::px(8),
+    table.font.size  = gt::px(13),
+    column_labels.font.size = gt::px(10)
+  ) |>
+  gt::cols_width(
+    -1 ~ gt::px(90),
+    1  ~ gt::px(150),
+  )
+  # gtExtras::gt_theme_dark()
+```
+
+### MU Grid - Prev.S. Top 1024
+
+```{r print-prevs-grid}
+gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_prevs.rds"))
 
 gtMU_grid |>
   gt::tab_options(

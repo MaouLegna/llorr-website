@@ -131,7 +131,7 @@ Row {data-heigth="100"}
 
 ```{r value-player-master}
 flexdashboard::valueBox(value = summary_info$n_master, 
-                        caption = glue::glue("Prev Season Top 1024 Master Players"), 
+                        caption = glue::glue("Master Players"), 
                         icon = "fa-medal", 
                         color = "#65c0a9")
 ```
@@ -176,7 +176,7 @@ Row {data-heigth="100"}
 
 ```{r value-games}
 flexdashboard::valueBox(glue::glue("{meta_all$n} Games"),
-                        caption = glue::glue("Number of Ranked Games - by ~Prev Master players"),
+                        caption = glue::glue("Master players"),
                         icon = "fa-table",
                         color = "#a88b32")
 ```
