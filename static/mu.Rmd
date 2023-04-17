@@ -112,8 +112,6 @@ crosstalk::filter_select("direction", "MU-Direction",       crosstalk_data, ~dir
 crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_data, ~mirror, inline = TRUE)
 ```
 
-Please remember that previous seasonal will be removed once Master data is *big* enough
-
 Row {data-heigth="100"}
 -----------------------------------------------------------------------
 
