@@ -394,20 +394,20 @@ gtMU_grid |>
   # gtExtras::gt_theme_dark()
 ```
 
-### MU Grid - Prev.S. Top 1024
+<!-- ### MU Grid - Prev.S. Top 1024 -->
 
-```{r print-prevs-grid}
-gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_prevs.rds"))
+<!-- ```{r print-prevs-grid} -->
+<!-- gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_prevs.rds")) -->
 
-gtMU_grid |>
-  gt::tab_options(
-    data_row.padding = gt::px(8),
-    table.font.size  = gt::px(13),
-    column_labels.font.size = gt::px(10)
-  ) |>
-  gt::cols_width(
-    -1 ~ gt::px(90),
-    1  ~ gt::px(150),
-  )
-  # gtExtras::gt_theme_dark()
-```
+<!-- gtMU_grid |> -->
+<!--   gt::tab_options( -->
+<!--     data_row.padding = gt::px(8), -->
+<!--     table.font.size  = gt::px(13), -->
+<!--     column_labels.font.size = gt::px(10) -->
+<!--   ) |> -->
+<!--   gt::cols_width( -->
+<!--     -1 ~ gt::px(90), -->
+<!--     1  ~ gt::px(150), -->
+<!--   ) -->
+<!--   # gtExtras::gt_theme_dark() -->
+<!-- ``` -->
