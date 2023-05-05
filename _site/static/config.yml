@@ -3,7 +3,7 @@ default:
   end_date:   !expr lubridate::as_datetime("2099-12-31 10:00:00", tz = "US/Pacific") |> lubridate::with_tz("UTC")
   last_season: "S19"
   min_games: 10
-  min_min_games: 10
+  min_min_games: 25
   dim_grid: 15
   patch_name: "404"
   set_names: "Set07-01"
