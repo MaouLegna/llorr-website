@@ -20,13 +20,16 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 2023-03-30: Data from the **Glory in Navori** is up.
+Update 2023-05:
 
-As the seasonal are no more I'm using the Top 1024 at the end of the season.
+Ops, a few days ago, I occidentally deleted all the Master data from this season ( Patch 4.3 )
 
-Light-mode is reinstated in the pages because of a bandwich issue, sorry.
+As the Master data is the main content and necessary to create the Diamond data I have to hold on up until next patch
 
-Note: goddamit so much stuff wasn't done in another season, thanks life...
+Sorry
+
+Legna
+
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
