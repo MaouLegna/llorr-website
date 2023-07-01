@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (Glory in Navori Patch 4.5 - Eternal Ranked Patch )"
+title: "Meta & Decks (Heart of The Huntress Patch 4.6)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -19,18 +19,228 @@ output:
     vertical_layout: fill
 ---
 
-Update 2023-06:
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE, 
+  eval       = TRUE, 
+  warning    = FALSE, 
+  error      = FALSE, 
+  message    = FALSE, 
+  comment    = NA, 
+  R.options  = list(width = 140, digits.secs=6), 
+  dev.args   = list(bg = 'whitesmoke'), 
+  fig.align  = 'center', 
+  fig.width  = 12, 
+  fig.height = 8, 
+  fig.path   = glue::glue("images/"), 
+  layout     = "l-page", 
+  preview    = TRUE
+)
 
-Regarding the new patch and season everything should return by the **1st of July**.
+source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
+source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
+# source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
+xaringanExtra::use_panelset()
+```
 
-( Can't do it already the day before because of timing with other issues )
+```{css}
+.value-box {
+  height: 100px;
+}
+```
 
-Update 2023-05:
+```{r constants}
+last_update_box <- flexdashboard::valueBox(
+  Sys.Date(), 
+  caption = glue::glue("Last Update"), 
+  icon = "fa-clock", 
+  color = "#1A9850"
+)
+```
 
-Ops, a few days ago, I occidentally deleted all the Master data from this season ( Patch 4.3 )
+```{r load-data}
+summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info.rds") )
 
-As the Master data is the main content and necessary to create the Diamond data I have to hold on up until next patch
+meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week.rds") )
+meta_all   <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_all.rds") )
 
-Sorry
+meta_24hrs <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_24hrs.rds") )
 
-Legna
+hourly_master_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_master_plot.rds") )
+hourly_master_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_master_line.rds") )
+hourly_diamond_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_diamond_plot.rds") )
+hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_diamond_line.rds") )
+```
+
+Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
+================================
+
+Row {data-heigth="100"}
+-----------------------------------------------------------------------
+
+### Number of Games
+
+```{r}
+flexdashboard::valueBox(glue::glue("{meta_7days$n} Games"), 
+                        caption = glue::glue("Number of Ranked Games"), 
+                        icon = "fa-table", 
+                        color = "#a88b32")
+```
+
+### Number of Meta Decks
+
+```{r}
+flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_meta)} Meta Decks"), 
+                        caption = glue::glue("Decks with PlayRate with at least 1%"), 
+                        icon = "fa-trophy", 
+                        color = "#65c0a9")
+```
+
+### Number of Underdog Decks
+
+```{r}
+flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_underdog)} Underdog Decks"), 
+                        caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"), 
+                        icon = "fa-dog", 
+                        color = "#ff7f24")
+```
+
+### Last-Update
+
+```{r}
+last_update_box
+```
+
+Row {data-heigth="900"}
+-----------------------------------------------------------------------
+
+### Decks Performances
+
+```{r}
+meta_7days$meta_table
+```
+
+
+Meta-Evolution {data-icon="fa-chart-line"}
+================================
+
+Row {data-heigth="100"}
+-----------------------------------------------------------------------
+
+### Master
+
+```{r value-player-master}
+flexdashboard::valueBox(value = summary_info$n_master, 
+                        caption = glue::glue("Master Players"), 
+                        icon = "fa-medal", 
+                        color = "#65c0a9")
+```
+
+### Diamond
+
+```{r value-player-diamond}
+flexdashboard::valueBox(value = summary_info$n_diamond,
+                        caption = glue::glue("HighDiamond Players"),
+                        icon = "fa-diamond",
+                        color = "#ff7f24")
+```
+
+### Last Update
+
+```{r}
+last_update_box
+```
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Master
+
+```{r meta-evo-master, fig.width=20, fig.height=8}
+hourly_master_plot + hourly_master_line
+```
+
+### Diamond
+
+```{r meta-evo-diamond, fig.width=20, fig.height=8}
+hourly_diamond_plot + hourly_diamond_line
+```
+
+Stats (whole patch) {data-icon="fa-table"}
+================================
+
+Row {data-heigth="100"}
+-----------------------------------------------------------------------
+
+### Number of Games
+
+```{r value-games}
+flexdashboard::valueBox(glue::glue("{meta_all$n} Games"),
+                        caption = glue::glue("Master players"),
+                        icon = "fa-table",
+                        color = "#a88b32")
+```
+
+### Number of Meta Decks
+
+```{r value-meta}
+flexdashboard::valueBox(glue::glue("{length(meta_all$fct_meta)} Meta Decks"),
+                        caption = glue::glue("Decks with PlayRate with at least 1%"),
+                        icon = "fa-trophy",
+                        color = "#65c0a9")
+```
+
+### Number of Underdog Decks
+
+```{r value-underdog}
+flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Decks"),
+                        caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"),
+                        icon = "fa-dog",
+                        color = "#ff7f24")
+```
+
+### Last Update
+
+```{r}
+last_update_box
+```
+
+Row {data-heigth="900"}
+-----------------------------------------------------------------------
+
+### Decks Performances
+
+```{r stats-all}
+meta_all$meta_table
+```
+
+Fresh Stats (last 24 hours) {data-icon="fa-table"}
+================================
+
+Row {data-heigth="100"}
+-----------------------------------------------------------------------
+
+### Time Frame
+
+```{r}
+flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
+                        caption = glue::glue("from {Sys.Date()+hours(18)-days(2)} to {Sys.Date()+hours(18)-days(1)}"),
+                        icon = "fa-clock",
+                        # color = "lightgreen"
+                        color = "red")
+```
+
+### Last Update
+
+```{r}
+last_update_box
+```
+
+Row {data-heigth="900"}
+-----------------------------------------------------------------------
+
+### Previous Day
+
+```{r 24hrs-process-winRate}
+meta_24hrs$meta_table
+```
