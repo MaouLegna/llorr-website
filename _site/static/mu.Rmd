@@ -372,7 +372,7 @@ gtMU_grid |>
   ) |>
   gt::cols_width(
     -1 ~ gt::px(90),
-    1  ~ gt::px(150),
+    1  ~ gt::px(120),
   )
 ```
 
@@ -389,7 +389,7 @@ gtMU_grid |>
   ) |>
   gt::cols_width(
     -1 ~ gt::px(90),
-    1  ~ gt::px(150),
+    1  ~ gt::px(120),
   )
   # gtExtras::gt_theme_dark()
 ```
