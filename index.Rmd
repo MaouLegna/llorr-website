@@ -20,14 +20,6 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 2023-06-29: **Heart of The Huntress** / Patch 4.6 data are up
-
-As Master and HighDiamond data are still few I suggest also using the googlesheet of the previous ~1024 top players for each server.
-
-Sorry for all the issues.
-
-Legna
-
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
