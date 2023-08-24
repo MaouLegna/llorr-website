@@ -1,0 +1,55 @@
+---
+title: "Eternal Data (Patch 4.8 - Mid August Patch)"
+author: "by Legna"
+base_url: https://www.llorr-stats.com
+output:
+  flexdashboard::flex_dashboard:
+    theme:
+      # bg: "#404040"
+      # fg: "#FDF7F7"
+      base_font:
+        google: "Prompt"
+      code_font:
+        google: "JetBrains Mono"
+    navbar:
+      - { icon: "fa-trophy", text: "Meta", href: "https://www.llorr-stats.com/static/meta.html", align: right }
+      - { icon: "fa-home", href: "https://www.llorr-stats.com", align: right }
+    orientation: row
+    
+params:
+  min_mu_games: 10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE, 
+  eval       = TRUE, 
+  warning    = FALSE, 
+  error      = FALSE, 
+  message    = FALSE, 
+  comment    = NA, 
+  R.options  = list(width = 140, digits.secs=6), 
+  dev.args   = list(bg = 'whitesmoke'), 
+  fig.align  = 'center', 
+  fig.width  = 12, 
+  fig.height = 8, 
+  fig.path   = glue::glue("images/"), 
+  layout     = "l-page", 
+  preview    = TRUE
+)
+
+#' R Option
+options(scipen = 999)
+source(file.path("C:", "LlorR", "scripts", "lor_main.R"))
+source(file.path("C:", "LlorR", "scripts", "functions", "lor_functions.R"))
+# source(file.path("C:", "LlorR", "scripts", "functions", "lor_constants.R"))
+xaringanExtra::use_panelset()
+```
+
+```{css}
+.value-box {
+  height: 100px;
+}
+```
+
+The page will be filled in a day
