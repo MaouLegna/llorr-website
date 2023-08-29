@@ -204,7 +204,7 @@ Row {data-heigth="100"}
 ### Number of Games
 
 ```{r}
-meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week.rds") )
+meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week_eternal.rds") )
 ```
 
 
