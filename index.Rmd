@@ -20,10 +20,9 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 26-Aug-2023: After weeks of sickness I was finally able to give time and update the data with the Mid August Patch.
+Update 15-Sep-2023: Fate's Voyage data are up
 
-Eternal data has been added with a dedicated googlespreadsheet and a site section.
-
+As usual in the early days I suggest using the Previsous Top Players data.
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)
