@@ -1,38 +1,17 @@
 archetype_1,archetype_2,mu_win,mu_n,mu_wr
-Nidalee (BC/SH),Nidalee (BC/SH),1,2,0.5
-Aurelion Sol/Volibear (FR/MT),Janna/Volibear (FR/PZ),1,2,0.5
-Janna/Volibear (FR/PZ),Aurelion Sol/Volibear (FR/MT),1,2,0.5
-Fizz/Samira (BW/NX),Janna/Volibear (FR/PZ),1,2,0.5
-Janna/Volibear (FR/PZ),Fizz/Samira (BW/NX),1,2,0.5
-Fizz/Nilah (BW/PZ),Janna/Samira (NX/PZ),1,2,0.5
-Janna/Samira (NX/PZ),Fizz/Nilah (BW/PZ),1,2,0.5
-Fizz/Nilah (BW/PZ),Volibear (FR/SI),1,2,0.5
-Volibear (FR/SI),Fizz/Nilah (BW/PZ),1,2,0.5
-Teemo (IO/PZ),Gwen/Vayne (DE/SI),1,2,0.5
-Gwen/Vayne (DE/SI),Teemo (IO/PZ),1,2,0.5
-Nilah/Volibear (BW/FR),Teemo (IO/PZ),1,2,0.5
-Teemo (IO/PZ),Nilah/Volibear (BW/FR),1,2,0.5
-Sett/The Poro King (IO/RU),Gnar/Jarvan IV (DE/FR),1,2,0.5
-Gnar/Jarvan IV (DE/FR),Sett/The Poro King (IO/RU),1,2,0.5
-Sett/The Poro King (IO/RU),Janna/Seraphine (BC/PZ),1,2,0.5
-Janna/Seraphine (BC/PZ),Sett/The Poro King (IO/RU),1,2,0.5
-Galio/Volibear (DE/FR),Nidalee (BC/SH),0,2,0
-Aurelion Sol/Volibear (FR/MT),Janna/Samira (NX/PZ),0,2,0
-Janna/Volibear (FR/PZ),Teemo (IO/PZ),0,2,0
-Fizz/Nilah (BW/PZ),Garen/Illaoi (BW/DE),0,2,0
-Heimerdinger/Jayce (PZ/SI),Teemo (IO/PZ),0,2,0
-Fizz/Samira (BW/NX),Sett/The Poro King (IO/RU),0,2,0
-Sett/The Poro King (IO/RU),Jinx/Samira (NX/PZ),0,2,0
-Nidalee (BC/SH),Galio/Volibear (DE/FR),2,2,1
-Janna/Samira (NX/PZ),Aurelion Sol/Volibear (FR/MT),2,2,1
-Teemo (IO/PZ),Janna/Volibear (FR/PZ),2,2,1
-Garen/Illaoi (BW/DE),Fizz/Nilah (BW/PZ),2,2,1
-Teemo (IO/PZ),Heimerdinger/Jayce (PZ/SI),2,2,1
-Sett/The Poro King (IO/RU),Fizz/Samira (BW/NX),2,2,1
-Jinx/Samira (NX/PZ),Sett/The Poro King (IO/RU),2,2,1
+Nidalee (BC/SH),Nidalee (BC/SH),2,4,0.5
+Nidalee (BC/SH),Pyke/Rek'Sai (BW/SH),2,4,0.5
+Pyke/Rek'Sai (BW/SH),Nidalee (BC/SH),2,4,0.5
+Galio/Volibear (DE/FR),Janna/Seraphine (IO/PZ),2,4,0.5
+Janna/Seraphine (IO/PZ),Galio/Volibear (DE/FR),2,4,0.5
+Fizz/Nilah (BW/PZ),Fizz/Samira (BW/NX),2,4,0.5
+Fizz/Samira (BW/NX),Fizz/Nilah (BW/PZ),2,4,0.5
+Galio/Volibear (DE/FR),Nidalee (BC/SH),0,4,0
+Sejuani/Volibear (FR/SI),Gnar/Neeko (FR/RU),0,4,0
+Nidalee (BC/SH),Galio/Volibear (DE/FR),4,4,1
+Gnar/Neeko (FR/RU),Sejuani/Volibear (FR/SI),4,4,1
 Nidalee (BC/SH),Caitlyn/Teemo (BC/PZ),1,1,1
 Fizz/Nami (BC/BW),Nidalee (BC/SH),1,1,1
-Nidalee (BC/SH),Jinx/Nilah (BW/PZ),1,1,1
 Kennen/Samira (IO/NX),Ekko/Janna (PZ/SH),1,1,1
 Kennen/Samira (IO/NX),Janna/Nilah (BW/PZ),1,1,1
 Nidalee (BC/SH),Aatrox/Vayne (RU/DE),1,1,1
@@ -42,60 +21,255 @@ Evelynn (RU/MT),Jinx/Nilah (BW/PZ),1,1,1
 Jinx/Nilah (BW/PZ),Heimerdinger/Jayce (PZ/SI),1,1,1
 Jinx/Nilah (BW/PZ),Jarvan IV/Jayce (DE/PZ),1,1,1
 Heimerdinger/Jayce (PZ/SI),Teemo (BC/PZ),1,1,1
-Nidalee (BC/SH),Maokai/Nautilus (BW/SI),1,1,1
 Janna/Samira (NX/PZ),Jayce (MT/PZ),1,1,1
-Janna/Samira (NX/PZ),Azir/Nasus/Renekton (SH),1,1,1
 Janna/Samira (NX/PZ),Karma/Kennen (IO/SH),1,1,1
+Ekko/Janna (PZ/SH),Heimerdinger/Jayce (PZ/SI),1,1,1
+Annie/Samira (IO/NX),Heimerdinger/Jayce (PZ/SI),1,1,1
+Galio/Volibear (DE/FR),Ekko/Janna (PZ/SH),1,1,1
 Janna/Volibear (FR/PZ),Maokai/Nautilus (BW/SI),1,1,1
-Janna/Volibear (FR/PZ),Gnar/Nidalee (BC/SH),1,1,1
+Pyke/Rek'Sai (BW/SH),Sejuani/Zed (FR/IO),1,1,1
 Riven/Zed (IO/NX),Janna/Volibear (FR/PZ),1,1,1
 Janna/Volibear (FR/PZ),Garen/Volibear (DE/FR),1,1,1
-Pyke/Rek'Sai (BW/SH),Norra/Teemo (BC/BW),1,1,1
 Aatrox/Vayne (RU/DE),Fizz/Nami (BC/BW),1,1,1
-Fizz/Nami (BC/BW),Pyke/Rek'Sai (BW/SH),1,1,1
 Riven/Zed (IO/NX),Kennen/Samira (IO/NX),1,1,1
-Norra (BC/FR),Janna/Nilah (BW/PZ),1,1,1
-Heimerdinger/Jayce (PZ/SI),Bard/Gnar (RU/FR),1,1,1
-Galio/Volibear (DE/FR),Bard/Gnar (RU/FR),1,1,1
-Nasus (SI/SH),The Poro King (FR/RU),1,1,1
+Riven/Zed (IO/NX),Aatrox/Vayne (RU/DE),1,1,1
+Riven/Zed (IO/NX),Jinx/Nilah (BW/PZ),1,1,1
+Riven/Zed (IO/NX),Galio/Volibear (DE/FR),1,1,1
 Leona/Samira (MT/NX),Jinx/Nilah (BW/PZ),1,1,1
 Illaoi/Swain (BW/NX),Jinx/Nilah (BW/PZ),1,1,1
-Kennen/Samira (IO/NX),Jinx/Sion (NX/PZ),1,1,1
+Janna/Volibear (FR/PZ),Azir/Nasus/Renekton (SH),1,1,1
+Riven/Zed (IO/NX),Volibear (FR/SI),1,1,1
+Riven/Zed (IO/NX),Pyke/Rek'Sai (BW/SH),1,1,1
+Illaoi/Swain (BW/NX),Heimerdinger/Jayce (PZ/SI),1,1,1
+Illaoi/Swain (BW/NX),Kennen/Samira (IO/NX),1,1,1
+Janna/Volibear (FR/PZ),Gwen/Kalista (DE/SI),1,1,1
+Galio/Volibear (DE/FR),Illaoi/Swain (BW/NX),1,1,1
+Riven/Zed (IO/NX),Jinx/Samira (NX/PZ),1,1,1
+Riven/Zed (IO/NX),Seraphine (IO/PZ),1,1,1
+Janna (FR/PZ),Leona/Samira (MT/NX),1,1,1
+Jinx/Samira (NX/PZ),Illaoi/Swain (BW/NX),1,1,1
+Galio/Garen (DE/FR),Illaoi/Swain (BW/NX),1,1,1
+Janna/Samira (NX/PZ),Zed (FR/IO),1,1,1
+Janna/Volibear (FR/PZ),Jinx/Nilah (BW/PZ),1,1,1
+Janna/Samira (NX/PZ),Kennen/Samira (IO/NX),1,1,1
+Volibear (FR/MT),Azir/Nasus/Renekton (SH),1,1,1
+Azir/Nasus/Renekton (SH),Galio/Garen (DE/FR),1,1,1
+Teemo (IO/PZ),Aatrox/Vayne (RU/DE),1,1,1
+Janna/Samira (NX/PZ),Volibear (FR/SI),1,1,1
+Janna/Volibear (FR/PZ),Leona/Senna (MT/SI),1,1,1
+Janna/Samira (NX/PZ),Aatrox/Vayne (RU/DE),1,1,1
+Janna/Volibear (FR/PZ),Janna (PZ/SI),1,1,1
+Nidalee (BC/SH),Janna/The Poro King (PZ/RU),1,1,1
+Ekko/Jinx (PZ/SH),Nidalee (BC/SH),1,1,1
+Ekko/Jinx (PZ/SH),Aurelion Sol/Volibear (FR/MT),1,1,1
+Nidalee (BC/SH),The Poro King (IO/RU),1,1,1
+Ekko/Jinx (PZ/SH),Riven/Zed (IO/NX),1,1,1
+Janna/Volibear (FR/PZ),Annie/Jhin (RU/NX),1,1,1
+Janna/Volibear (FR/PZ),Jinx/Kennen (BC/PZ),1,1,1
+Janna/Samira (NX/PZ),Garen (DE/SH),1,1,1
+Garen/Jarvan IV (DE/SH),Jayce (MT/PZ),1,1,1
+Garen/Jarvan IV (DE/SH),Janna/Nilah (BW/PZ),1,1,1
+Miss Fortune/Quinn (BW/DE),Janna/Jinx (BC/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Gnar/Jarvan IV (DE/FR),1,1,1
+Garen/Jarvan IV (DE/SH),Teemo (IO/PZ),1,1,1
+Riven/Samira (IO/NX),Galio/Volibear (DE/FR),1,1,1
+Garen/Jarvan IV (DE/SH),Jarvan IV/Jayce (DE/PZ),1,1,1
+Heimerdinger/Jayce (PZ/SI),Garen/Jarvan IV (DE/SH),1,1,1
+Heimerdinger/Jayce (PZ/SI),Galio/Volibear (DE/FR),1,1,1
+Annie/Jhin (RU/NX),Janna/Samira (NX/PZ),1,1,1
+Janna/Volibear (FR/PZ),Volibear (DE/FR),1,1,1
+Galio/Volibear (DE/FR),Gnar/Jarvan IV (DE/FR),1,1,1
+Illaoi/Volibear (BW/FR),Miss Fortune/Quinn (BW/DE),1,1,1
+Garen/Jarvan IV (DE/SH),Galio/Volibear (DE/FR),1,1,1
+Garen/Jarvan IV (DE/SH),Volibear (DE/FR),1,1,1
+Garen/Jarvan IV (DE/SH),Aurelion Sol/Volibear (FR/MT),1,1,1
+Annie/Jhin (RU/NX),Garen/Jarvan IV (DE/SH),1,1,1
+Janna/Seraphine (NX/PZ),Janna/Seraphine (IO/PZ),1,1,1
+Jhin/Norra (BC/RU),Pyke/Rek'Sai (BW/SH),1,1,1
+Maokai/Nautilus (BW/SI),Galio/Volibear (DE/FR),1,1,1
+Aatrox/Vayne (RU/DE),Azir/Nasus/Renekton (SH),1,1,1
+Azir/Nasus/Renekton (SH),Pyke/Rek'Sai (BW/SH),1,1,1
+Azir/Nasus/Renekton (SH),Galio/Udyr (DE/FR),1,1,1
+Maokai/Nautilus (BW/SI),The Poro King (FR/RU),1,1,1
+Maokai/Nautilus (BW/SI),Janna/Seraphine (NX/PZ),1,1,1
+Janna/Seraphine (PZ/SI),Janna/Volibear (FR/PZ),1,1,1
+Diana/Leona (MT/SH),Janna/Samira (NX/PZ),1,1,1
+Riven/Zed (IO/NX),Heimerdinger/Jayce (PZ/SI),1,1,1
+Janna/Seraphine (PZ/SI),Riven/Zed (IO/NX),1,1,1
+Janna/Seraphine (PZ/SI),Aurelion Sol/Volibear (FR/MT),1,1,1
+Galio/Garen (DE/FR),Janna/Samira (NX/PZ),1,1,1
+Aurelion Sol/Volibear (FR/MT),Samira (IO/NX),1,1,1
+Galio/Volibear (DE/FR),Akshan/Pantheon (MT/SH),1,1,1
+Aurelion Sol/Volibear (FR/MT),Galio/Garen (DE/FR),1,1,1
+Aurelion Sol/Volibear (FR/MT),Volibear (FR/MT),1,1,1
+Aurelion Sol/Volibear (FR/MT),Pyke/Rek'Sai (BW/SH),1,1,1
+Aurelion Sol/Volibear (FR/MT),Nilah/Norra (BC/BW),1,1,1
+Teemo (BC/PZ),Janna/The Poro King (PZ/RU),1,1,1
+Janna/Samira (NX/PZ),Bard/Janna (RU/PZ),1,1,1
+Janna/Samira (NX/PZ),Caitlyn/Vayne (DE/PZ),1,1,1
+Galio/Volibear (DE/FR),Nami/Samira (BW/NX),1,1,1
+Galio/Volibear (DE/FR),Gwen/Vayne (DE/SI),1,1,1
+Galio/Volibear (DE/FR),Kennen (IO/SH),1,1,1
+Jinx/Nilah (BW/PZ),Galio/Volibear (DE/FR),1,1,1
+Jinx/Nilah (BW/PZ),Bard/Janna (RU/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Viego (SI/SH),1,1,1
+Janna/Jinx (BW/PZ),Janna/Samira (NX/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Karma/Sett (IO/PZ),1,1,1
+Senna/Veigar (BC/SI),Pyke/Rek'Sai (BW/SH),1,1,1
+Karma/Sett (IO/PZ),Galio/Volibear (DE/FR),1,1,1
+Pyke/Rek'Sai (BW/SH),Teemo (BC/PZ),1,1,1
+Janna/Samira (NX/PZ),Teemo (BC/PZ),1,1,1
+Volibear (BW/FR),Janna/Volibear (FR/PZ),1,1,1
+Janna/Nilah (BW/PZ),Janna/Seraphine (PZ/SI),1,1,1
+Janna/Seraphine (PZ/SI),Aatrox/Kayn (RU/RU),1,1,1
 Fizz/Nilah (BW/PZ),Gnar/Volibear (FR/SI),1,1,1
 Jayce/Seraphine (MT/PZ),Fizz/Nilah (BW/PZ),1,1,1
-Fizz/Nilah (BW/PZ),Janna/Nilah (BW/PZ),1,1,1
+Fizz/Nilah (BW/PZ),Volibear (FR/SI),1,1,1
 Fizz/Nilah (BW/PZ),Annie/Jhin (RU/NX),1,1,1
-Nidalee (BC/SH),Teemo (IO/PZ),1,1,1
 Teemo (IO/PZ),Janna/Ryze (PZ/RU),1,1,1
-Teemo (IO/PZ),Volibear (FR/SI),1,1,1
-Illaoi/Swain (BW/NX),Fizz/Nilah (BW/PZ),1,1,1
-Garen/Illaoi (BW/DE),Teemo (IO/PZ),1,1,1
-Teemo (IO/PZ),Janna/Seraphine (IO/PZ),1,1,1
-Teemo (IO/PZ),Nidalee (IO/SH),1,1,1
-Annie/Samira (IO/NX),Teemo (IO/PZ),1,1,1
-Heimerdinger/Jayce (PZ/SI),Janna/Samira (NX/PZ),1,1,1
-Janna/Samira (NX/PZ),Riven/Zed (IO/NX),1,1,1
-The Poro King (IO/RU),Janna/Samira (NX/PZ),1,1,1
-Janna/Samira (NX/PZ),Pyke/Rek'Sai (BW/SH),1,1,1
-Janna/Samira (NX/PZ),Gnar/Jarvan IV (DE/FR),1,1,1
+Garen/Illaoi (BW/DE),Nidalee (BC/SH),1,1,1
+Janna/Seraphine (IO/PZ),Volibear (BW/FR),1,1,1
+Caitlyn/Teemo (FR/PZ),Illaoi/Volibear (BW/FR),1,1,1
+Caitlyn/Teemo (FR/PZ),Janna/Samira (NX/PZ),1,1,1
+Nilah/Volibear (BW/FR),Caitlyn/Teemo (FR/PZ),1,1,1
+Nilah/Volibear (BW/FR),Janna/Volibear (FR/PZ),1,1,1
+Janna/Norra (BC/PZ),Neeko/Teemo (RU/PZ),1,1,1
+Caitlyn/Teemo (FR/PZ),Janna/Nilah (BW/PZ),1,1,1
+Nilah/Volibear (BW/FR),Jinx/Samira (NX/PZ),1,1,1
+Nilah/Volibear (BW/FR),Gwen/Volibear (FR/SI),1,1,1
+Nilah/Volibear (BW/FR),Pyke/Rek'Sai (BW/SH),1,1,1
+Nidalee (BC/SH),Miss Fortune/Quinn (BW/DE),1,1,1
+Janna/Norra (BC/PZ),Galio/Volibear (DE/FR),1,1,1
+Galio/Volibear (DE/FR),Nilah/Volibear (BW/FR),1,1,1
+Nilah/Volibear (BW/FR),Illaoi/Volibear (BW/FR),1,1,1
+Garen/Jarvan IV (DE/SH),Nilah/Volibear (BW/FR),1,1,1
+Janna/Norra (BC/PZ),Neeko (DE/RU),1,1,1
+Nilah/Volibear (BW/FR),Janna/Jinx/Nilah (BW/PZ),1,1,1
+Fizz/Nilah (BW/PZ),Neeko (DE/RU),1,1,1
+Janna/Teemo (MT/PZ),Fizz/Nilah (BW/PZ),1,1,1
+Janna/Seraphine (BW/PZ),Teemo (IO/PZ),1,1,1
+Teemo (IO/PZ),Neeko (DE/RU),1,1,1
+Janna/Seraphine (BW/PZ),Janna/Norra (BC/PZ),1,1,1
+Janna/Norra (BC/PZ),Fizz/Nilah (BW/PZ),1,1,1
+Teemo (IO/PZ),Maokai/Nautilus (BW/SI),1,1,1
+Gnar/Nidalee (BC/SH),Janna/Seraphine (BW/PZ),1,1,1
+Janna/Samira (NX/PZ),Janna/Norra (BC/PZ),1,1,1
+Janna/Samira (NX/PZ),Diana/Leona (MT/SI),1,1,1
+Janna/Seraphine (BW/PZ),Miss Fortune/Quinn (BW/DE),1,1,1
+Janna/Seraphine (BW/PZ),Illaoi/Vayne (BW/DE),1,1,1
+Gnar/Volibear (BW/FR),Janna/Seraphine (BW/PZ),1,1,1
+Janna/Samira (NX/PZ),Gwen/Vayne (DE/SI),1,1,1
+Janna/Norra (BC/PZ),Nidalee (BC/SH),1,1,1
+Janna/Seraphine (BW/PZ),Galio/Volibear (DE/FR),1,1,1
+Fizz/Nilah (BW/PZ),Illaoi/Volibear (BW/FR),1,1,1
+Heimerdinger/Jayce (PZ/SI),Janna/Seraphine (BW/PZ),1,1,1
+Janna/Seraphine (BW/PZ),Fizz/Samira (BW/NX),1,1,1
+Nidalee (BC/SH),Janna/Seraphine (BC/PZ),1,1,1
+Janna/Seraphine (BW/PZ),Illaoi/Swain (BW/NX),1,1,1
+Janna/Seraphine (BW/PZ),Gnar/Volibear (FR/SI),1,1,1
+Teemo (IO/PZ),Gnar/Nidalee (BC/SH),1,1,1
+Fizz/Nilah (BW/PZ),Janna/Seraphine (IO/PZ),1,1,1
+Annie/Samira (IO/NX),Janna/Seraphine (IO/PZ),1,1,1
+Fizz/Samira (BW/NX),Teemo (IO/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Janna (PZ/SI),1,1,1
+Fizz/Nilah (BW/PZ),Annie/Samira (IO/NX),1,1,1
+Fizz/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),1,1,1
+Kayle/Leona (MT/SH),Fizz/Nilah (BW/PZ),1,1,1
+Fizz/Nilah (BW/PZ),Jayce (MT/PZ),1,1,1
+Nilah/Seraphine (BW/PZ),Aatrox/Evelynn (RU/RU),1,1,1
+Nilah/Seraphine (BW/PZ),Teemo (IO/PZ),1,1,1
+Nilah/Volibear (BW/FR),Aatrox/Evelynn (RU/RU),1,1,1
+Janna (MT/PZ),Aatrox/Evelynn (RU/RU),1,1,1
 Janna/Samira (NX/PZ),Sett/The Poro King (IO/RU),1,1,1
 Galio (DE/FR),The Poro King (IO/RU),1,1,1
-Janna/Seraphine (BC/PZ),Janna/Samira (NX/PZ),1,1,1
-Janna/Samira (NX/PZ),Galio (DE/FR),1,1,1
+Gnar/Jarvan IV (DE/FR),Sett/The Poro King (IO/RU),1,1,1
 Janna/Nilah (BW/PZ),The Poro King (IO/RU),1,1,1
 The Poro King (IO/RU),Teemo (IO/PZ),1,1,1
 The Poro King (IO/RU),Pyke/Rek'Sai (BW/SH),1,1,1
 The Poro King (IO/RU),Lissandra/Taliyah (FR/SH),1,1,1
 The Poro King (IO/RU),Tryndamere/Volibear (FR/SI),1,1,1
-Janna/Samira (NX/PZ),Fizz/Samira (BW/NX),1,1,1
 Sett/The Poro King (IO/RU),Aurelion Sol/Volibear (FR/MT),1,1,1
 The Poro King/Yuumi (BC/RU),Fizz/Samira (BW/NX),1,1,1
 Fizz/Samira (BW/NX),Leona/Volibear (FR/MT),1,1,1
 The Poro King/Yuumi (BC/RU),Aurelion Sol/Volibear (FR/MT),1,1,1
 The Poro King/Yuumi (BC/RU),Gnar/Neeko (FR/RU),1,1,1
+Janna/Samira (NX/PZ),Jax/Volibear (FR/RU),1,1,1
+Janna/Samira (NX/PZ),Janna (PZ/SI),1,1,1
+Janna/Samira (NX/PZ),Maokai/Norra (BC/SI),1,1,1
+Fizz/Teemo (BC/MT),Nidalee (IO/SH),1,1,1
+Janna/Samira (NX/PZ),Akshan/Pantheon (MT/SH),1,1,1
+Nidalee (IO/SH),Janna/Teemo (BC/PZ),1,1,1
+Nidalee (IO/SH),Janna/Seraphine (PZ/SI),1,1,1
+Nidalee (IO/SH),Lissandra/Taliyah (FR/SH),1,1,1
+Nidalee (IO/SH),Samira/Seraphine (NX/PZ),1,1,1
+Annie/Samira (IO/NX),Nidalee (IO/SH),1,1,1
+Nidalee (IO/SH),Jayce (MT/PZ),1,1,1
+Nidalee (IO/SH),Gnar/Jarvan IV (DE/FR),1,1,1
+Nidalee (IO/SH),Garen/Jarvan IV (DE/SH),1,1,1
+Janna/Samira (NX/PZ),Annie/Samira (IO/NX),1,1,1
+Nidalee (IO/SH),Taliyah/Volibear (FR/SH),1,1,1
+Nidalee (IO/SH),Pyke/Rek'Sai (BW/SH),1,1,1
+Taliyah/Volibear (FR/SH),Janna/Nilah (BW/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Janna/Nilah (BW/PZ),1,1,1
+Janna/Samira (NX/PZ),Bard/Evelynn (RU/RU),1,1,1
+Ashe/LeBlanc/Volibear (FR/NX),Janna/Samira (NX/PZ),1,1,1
+Galio/Volibear (DE/FR),Nidalee (IO/SH),1,1,1
+Janna/Samira (NX/PZ),Caitlyn/Teemo (BC/PZ),1,1,1
+Janna/Samira (NX/PZ),Leona (MT/SH),1,1,1
+Akshan/Samira (NX/SH),Galio (DE/FR),1,1,1
+LeBlanc/Vayne (DE/NX),Volibear (FR/MT),1,1,1
+Gnar/Jarvan IV (DE/FR),Sejuani/Volibear (FR/SI),1,1,1
+Sejuani/Volibear (FR/SI),Caitlyn/Teemo (BC/PZ),1,1,1
+Gnar/Nidalee (BC/SH),Sejuani/Volibear (FR/SI),1,1,1
+Janna (FR/PZ),Annie/Samira (IO/NX),1,1,1
+Gnar/Neeko (FR/RU),Janna/Samira (NX/PZ),1,1,1
+The Poro King (IO/RU),Gnar/Neeko (FR/RU),1,1,1
+Gwen/Volibear (FR/SI),Jinx/Nilah (BW/PZ),1,1,1
+Janna (FR/PZ),The Poro King (PZ/RU),1,1,1
+Gnar/Nidalee (BC/SH),Gnar/Jarvan IV (DE/FR),1,1,1
+Janna/Samira (NX/PZ),Gnar/Nidalee (BC/SH),1,1,1
+Gnar/Nidalee (BC/SH),Akshan/Master Yi (IO/SH),1,1,1
+Janna/Samira (NX/PZ),Neeko (RU/PZ),1,1,1
+Annie/Samira (IO/NX),Gnar/Neeko (FR/RU),1,1,1
+Annie/Samira (IO/NX),Jinx/Samira (NX/PZ),1,1,1
+Galio/Shyvana (DE/FR),Nilah/Samira/Sion (BW/NX),1,1,1
+Galio/Jarvan IV (DE/FR),Nilah/Sion (BW/NX),1,1,1
+Nilah/Sion (BW/NX),Illaoi/Swain (BW/NX),1,1,1
+Janna/Samira (NX/PZ),Nilah/Sion (BW/NX),1,1,1
+Gwen/Volibear (FR/SI),The Poro King (IO/RU),1,1,1
+Janna/Samira (NX/PZ),Samira/Volibear (FR/NX),1,1,1
+Malphite/Taliyah (MT/SH),Gnar/Nidalee (BC/SH),1,1,1
+Shyvana/Volibear (DE/FR),Annie/Samira (IO/NX),1,1,1
+Pyke/Rek'Sai (BW/SH),Nilah/Samira/Sion (BW/NX),1,1,1
+Galio/Shyvana (DE/FR),Gnar/Neeko (FR/RU),1,1,1
+Gnar/Nidalee (BC/SH),Galio/Shyvana (DE/FR),1,1,1
+Akshan/Master Yi (IO/SH),Nasus (SI/SH),1,1,1
+Garen/Jarvan IV (DE/SH),Leona/Volibear (FR/MT),1,1,1
+Malphite/Taliyah (MT/SH),Samira/Volibear (FR/NX),1,1,1
+Garen/Jarvan IV (DE/SH),Samira/Volibear (FR/NX),1,1,1
+Samira/Volibear (FR/NX),Pyke/Rek'Sai (BW/SH),1,1,1
+Janna/Nilah (BW/PZ),Samira/Volibear (FR/NX),1,1,1
+Diana/Leona (MT/SH),Samira/Volibear (FR/NX),1,1,1
+Jinx/Samira (NX/PZ),Samira/Volibear (FR/NX),1,1,1
+Vayne (DE/PZ),Samira/Volibear (FR/NX),1,1,1
+Nasus (SI/SH),Annie/Gwen (NX/SI),1,1,1
+Nasus (SI/SH),Ahri/Kennen (IO/NX),1,1,1
+Teemo (IO/PZ),Janna (FR/PZ),1,1,1
+Janna/Samira (NX/PZ),Galio/Shyvana (DE/FR),1,1,1
+Sejuani/Volibear (FR/SI),Galio/Volibear (DE/FR),1,1,1
+Sejuani/Volibear (FR/SI),Janna (FR/PZ),1,1,1
+Galio/Shyvana (DE/FR),Caitlyn/Teemo (BC/PZ),1,1,1
+Galio/Shyvana (DE/FR),Kalista/Maokai (BW/SI),1,1,1
+Nasus (SI/SH),Janna (FR/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Leona/Volibear (FR/MT),1,1,1
+Nasus (SI/SH),Heimerdinger/Jayce (PZ/SI),1,1,1
+Nasus (SI/SH),Teemo (IO/PZ),1,1,1
+Nasus (SI/SH),Diana/Leona (MT/SH),1,1,1
+Lissandra/Volibear (FR/IO),Janna/Seraphine (IO/PZ),1,1,1
+Janna/Seraphine (IO/PZ),Janna/Samira (NX/PZ),1,1,1
+Bard/Garen (RU/DE),Diana/Leona (MT/SH),1,1,1
 Caitlyn/Teemo (BC/PZ),Nidalee (BC/SH),0,1,0
 Nidalee (BC/SH),Fizz/Nami (BC/BW),0,1,0
-Jinx/Nilah (BW/PZ),Nidalee (BC/SH),0,1,0
 Ekko/Janna (PZ/SH),Kennen/Samira (IO/NX),0,1,0
 Janna/Nilah (BW/PZ),Kennen/Samira (IO/NX),0,1,0
 Aatrox/Vayne (RU/DE),Nidalee (BC/SH),0,1,0
@@ -105,91 +279,495 @@ Jinx/Nilah (BW/PZ),Evelynn (RU/MT),0,1,0
 Heimerdinger/Jayce (PZ/SI),Jinx/Nilah (BW/PZ),0,1,0
 Jarvan IV/Jayce (DE/PZ),Jinx/Nilah (BW/PZ),0,1,0
 Teemo (BC/PZ),Heimerdinger/Jayce (PZ/SI),0,1,0
-Maokai/Nautilus (BW/SI),Nidalee (BC/SH),0,1,0
 Jayce (MT/PZ),Janna/Samira (NX/PZ),0,1,0
-Azir/Nasus/Renekton (SH),Janna/Samira (NX/PZ),0,1,0
 Karma/Kennen (IO/SH),Janna/Samira (NX/PZ),0,1,0
+Heimerdinger/Jayce (PZ/SI),Ekko/Janna (PZ/SH),0,1,0
+Heimerdinger/Jayce (PZ/SI),Annie/Samira (IO/NX),0,1,0
+Ekko/Janna (PZ/SH),Galio/Volibear (DE/FR),0,1,0
 Maokai/Nautilus (BW/SI),Janna/Volibear (FR/PZ),0,1,0
-Gnar/Nidalee (BC/SH),Janna/Volibear (FR/PZ),0,1,0
+Sejuani/Zed (FR/IO),Pyke/Rek'Sai (BW/SH),0,1,0
 Janna/Volibear (FR/PZ),Riven/Zed (IO/NX),0,1,0
 Garen/Volibear (DE/FR),Janna/Volibear (FR/PZ),0,1,0
-Norra/Teemo (BC/BW),Pyke/Rek'Sai (BW/SH),0,1,0
 Fizz/Nami (BC/BW),Aatrox/Vayne (RU/DE),0,1,0
-Pyke/Rek'Sai (BW/SH),Fizz/Nami (BC/BW),0,1,0
 Kennen/Samira (IO/NX),Riven/Zed (IO/NX),0,1,0
-Janna/Nilah (BW/PZ),Norra (BC/FR),0,1,0
-Bard/Gnar (RU/FR),Heimerdinger/Jayce (PZ/SI),0,1,0
-Bard/Gnar (RU/FR),Galio/Volibear (DE/FR),0,1,0
-The Poro King (FR/RU),Nasus (SI/SH),0,1,0
+Aatrox/Vayne (RU/DE),Riven/Zed (IO/NX),0,1,0
+Jinx/Nilah (BW/PZ),Riven/Zed (IO/NX),0,1,0
+Galio/Volibear (DE/FR),Riven/Zed (IO/NX),0,1,0
 Jinx/Nilah (BW/PZ),Leona/Samira (MT/NX),0,1,0
 Jinx/Nilah (BW/PZ),Illaoi/Swain (BW/NX),0,1,0
-Jinx/Sion (NX/PZ),Kennen/Samira (IO/NX),0,1,0
+Azir/Nasus/Renekton (SH),Janna/Volibear (FR/PZ),0,1,0
+Volibear (FR/SI),Riven/Zed (IO/NX),0,1,0
+Pyke/Rek'Sai (BW/SH),Riven/Zed (IO/NX),0,1,0
+Heimerdinger/Jayce (PZ/SI),Illaoi/Swain (BW/NX),0,1,0
+Kennen/Samira (IO/NX),Illaoi/Swain (BW/NX),0,1,0
+Gwen/Kalista (DE/SI),Janna/Volibear (FR/PZ),0,1,0
+Illaoi/Swain (BW/NX),Galio/Volibear (DE/FR),0,1,0
+Jinx/Samira (NX/PZ),Riven/Zed (IO/NX),0,1,0
+Seraphine (IO/PZ),Riven/Zed (IO/NX),0,1,0
+Leona/Samira (MT/NX),Janna (FR/PZ),0,1,0
+Illaoi/Swain (BW/NX),Jinx/Samira (NX/PZ),0,1,0
+Illaoi/Swain (BW/NX),Galio/Garen (DE/FR),0,1,0
+Zed (FR/IO),Janna/Samira (NX/PZ),0,1,0
+Jinx/Nilah (BW/PZ),Janna/Volibear (FR/PZ),0,1,0
+Kennen/Samira (IO/NX),Janna/Samira (NX/PZ),0,1,0
+Azir/Nasus/Renekton (SH),Volibear (FR/MT),0,1,0
+Galio/Garen (DE/FR),Azir/Nasus/Renekton (SH),0,1,0
+Aatrox/Vayne (RU/DE),Teemo (IO/PZ),0,1,0
+Volibear (FR/SI),Janna/Samira (NX/PZ),0,1,0
+Leona/Senna (MT/SI),Janna/Volibear (FR/PZ),0,1,0
+Aatrox/Vayne (RU/DE),Janna/Samira (NX/PZ),0,1,0
+Janna (PZ/SI),Janna/Volibear (FR/PZ),0,1,0
+Janna/The Poro King (PZ/RU),Nidalee (BC/SH),0,1,0
+Nidalee (BC/SH),Ekko/Jinx (PZ/SH),0,1,0
+Aurelion Sol/Volibear (FR/MT),Ekko/Jinx (PZ/SH),0,1,0
+The Poro King (IO/RU),Nidalee (BC/SH),0,1,0
+Riven/Zed (IO/NX),Ekko/Jinx (PZ/SH),0,1,0
+Annie/Jhin (RU/NX),Janna/Volibear (FR/PZ),0,1,0
+Jinx/Kennen (BC/PZ),Janna/Volibear (FR/PZ),0,1,0
+Garen (DE/SH),Janna/Samira (NX/PZ),0,1,0
+Jayce (MT/PZ),Garen/Jarvan IV (DE/SH),0,1,0
+Janna/Nilah (BW/PZ),Garen/Jarvan IV (DE/SH),0,1,0
+Janna/Jinx (BC/PZ),Miss Fortune/Quinn (BW/DE),0,1,0
+Gnar/Jarvan IV (DE/FR),Pyke/Rek'Sai (BW/SH),0,1,0
+Teemo (IO/PZ),Garen/Jarvan IV (DE/SH),0,1,0
+Galio/Volibear (DE/FR),Riven/Samira (IO/NX),0,1,0
+Jarvan IV/Jayce (DE/PZ),Garen/Jarvan IV (DE/SH),0,1,0
+Garen/Jarvan IV (DE/SH),Heimerdinger/Jayce (PZ/SI),0,1,0
+Galio/Volibear (DE/FR),Heimerdinger/Jayce (PZ/SI),0,1,0
+Janna/Samira (NX/PZ),Annie/Jhin (RU/NX),0,1,0
+Volibear (DE/FR),Janna/Volibear (FR/PZ),0,1,0
+Gnar/Jarvan IV (DE/FR),Galio/Volibear (DE/FR),0,1,0
+Miss Fortune/Quinn (BW/DE),Illaoi/Volibear (BW/FR),0,1,0
+Galio/Volibear (DE/FR),Garen/Jarvan IV (DE/SH),0,1,0
+Volibear (DE/FR),Garen/Jarvan IV (DE/SH),0,1,0
+Aurelion Sol/Volibear (FR/MT),Garen/Jarvan IV (DE/SH),0,1,0
+Garen/Jarvan IV (DE/SH),Annie/Jhin (RU/NX),0,1,0
+Janna/Seraphine (IO/PZ),Janna/Seraphine (NX/PZ),0,1,0
+Pyke/Rek'Sai (BW/SH),Jhin/Norra (BC/RU),0,1,0
+Galio/Volibear (DE/FR),Maokai/Nautilus (BW/SI),0,1,0
+Azir/Nasus/Renekton (SH),Aatrox/Vayne (RU/DE),0,1,0
+Pyke/Rek'Sai (BW/SH),Azir/Nasus/Renekton (SH),0,1,0
+Galio/Udyr (DE/FR),Azir/Nasus/Renekton (SH),0,1,0
+The Poro King (FR/RU),Maokai/Nautilus (BW/SI),0,1,0
+Janna/Seraphine (NX/PZ),Maokai/Nautilus (BW/SI),0,1,0
+Janna/Volibear (FR/PZ),Janna/Seraphine (PZ/SI),0,1,0
+Janna/Samira (NX/PZ),Diana/Leona (MT/SH),0,1,0
+Heimerdinger/Jayce (PZ/SI),Riven/Zed (IO/NX),0,1,0
+Riven/Zed (IO/NX),Janna/Seraphine (PZ/SI),0,1,0
+Aurelion Sol/Volibear (FR/MT),Janna/Seraphine (PZ/SI),0,1,0
+Janna/Samira (NX/PZ),Galio/Garen (DE/FR),0,1,0
+Samira (IO/NX),Aurelion Sol/Volibear (FR/MT),0,1,0
+Akshan/Pantheon (MT/SH),Galio/Volibear (DE/FR),0,1,0
+Galio/Garen (DE/FR),Aurelion Sol/Volibear (FR/MT),0,1,0
+Volibear (FR/MT),Aurelion Sol/Volibear (FR/MT),0,1,0
+Pyke/Rek'Sai (BW/SH),Aurelion Sol/Volibear (FR/MT),0,1,0
+Nilah/Norra (BC/BW),Aurelion Sol/Volibear (FR/MT),0,1,0
+Janna/The Poro King (PZ/RU),Teemo (BC/PZ),0,1,0
+Bard/Janna (RU/PZ),Janna/Samira (NX/PZ),0,1,0
+Caitlyn/Vayne (DE/PZ),Janna/Samira (NX/PZ),0,1,0
+Nami/Samira (BW/NX),Galio/Volibear (DE/FR),0,1,0
+Gwen/Vayne (DE/SI),Galio/Volibear (DE/FR),0,1,0
+Kennen (IO/SH),Galio/Volibear (DE/FR),0,1,0
+Galio/Volibear (DE/FR),Jinx/Nilah (BW/PZ),0,1,0
+Bard/Janna (RU/PZ),Jinx/Nilah (BW/PZ),0,1,0
+Viego (SI/SH),Pyke/Rek'Sai (BW/SH),0,1,0
+Janna/Samira (NX/PZ),Janna/Jinx (BW/PZ),0,1,0
+Karma/Sett (IO/PZ),Pyke/Rek'Sai (BW/SH),0,1,0
+Pyke/Rek'Sai (BW/SH),Senna/Veigar (BC/SI),0,1,0
+Galio/Volibear (DE/FR),Karma/Sett (IO/PZ),0,1,0
+Teemo (BC/PZ),Pyke/Rek'Sai (BW/SH),0,1,0
+Teemo (BC/PZ),Janna/Samira (NX/PZ),0,1,0
+Janna/Volibear (FR/PZ),Volibear (BW/FR),0,1,0
+Janna/Seraphine (PZ/SI),Janna/Nilah (BW/PZ),0,1,0
+Aatrox/Kayn (RU/RU),Janna/Seraphine (PZ/SI),0,1,0
 Gnar/Volibear (FR/SI),Fizz/Nilah (BW/PZ),0,1,0
 Fizz/Nilah (BW/PZ),Jayce/Seraphine (MT/PZ),0,1,0
-Janna/Nilah (BW/PZ),Fizz/Nilah (BW/PZ),0,1,0
+Volibear (FR/SI),Fizz/Nilah (BW/PZ),0,1,0
 Annie/Jhin (RU/NX),Fizz/Nilah (BW/PZ),0,1,0
-Teemo (IO/PZ),Nidalee (BC/SH),0,1,0
 Janna/Ryze (PZ/RU),Teemo (IO/PZ),0,1,0
-Volibear (FR/SI),Teemo (IO/PZ),0,1,0
-Fizz/Nilah (BW/PZ),Illaoi/Swain (BW/NX),0,1,0
-Teemo (IO/PZ),Garen/Illaoi (BW/DE),0,1,0
-Janna/Seraphine (IO/PZ),Teemo (IO/PZ),0,1,0
-Nidalee (IO/SH),Teemo (IO/PZ),0,1,0
-Teemo (IO/PZ),Annie/Samira (IO/NX),0,1,0
-Janna/Samira (NX/PZ),Heimerdinger/Jayce (PZ/SI),0,1,0
-Riven/Zed (IO/NX),Janna/Samira (NX/PZ),0,1,0
-Janna/Samira (NX/PZ),The Poro King (IO/RU),0,1,0
-Pyke/Rek'Sai (BW/SH),Janna/Samira (NX/PZ),0,1,0
-Gnar/Jarvan IV (DE/FR),Janna/Samira (NX/PZ),0,1,0
+Nidalee (BC/SH),Garen/Illaoi (BW/DE),0,1,0
+Volibear (BW/FR),Janna/Seraphine (IO/PZ),0,1,0
+Illaoi/Volibear (BW/FR),Caitlyn/Teemo (FR/PZ),0,1,0
+Janna/Samira (NX/PZ),Caitlyn/Teemo (FR/PZ),0,1,0
+Caitlyn/Teemo (FR/PZ),Nilah/Volibear (BW/FR),0,1,0
+Janna/Volibear (FR/PZ),Nilah/Volibear (BW/FR),0,1,0
+Neeko/Teemo (RU/PZ),Janna/Norra (BC/PZ),0,1,0
+Janna/Nilah (BW/PZ),Caitlyn/Teemo (FR/PZ),0,1,0
+Jinx/Samira (NX/PZ),Nilah/Volibear (BW/FR),0,1,0
+Gwen/Volibear (FR/SI),Nilah/Volibear (BW/FR),0,1,0
+Pyke/Rek'Sai (BW/SH),Nilah/Volibear (BW/FR),0,1,0
+Miss Fortune/Quinn (BW/DE),Nidalee (BC/SH),0,1,0
+Galio/Volibear (DE/FR),Janna/Norra (BC/PZ),0,1,0
+Nilah/Volibear (BW/FR),Galio/Volibear (DE/FR),0,1,0
+Illaoi/Volibear (BW/FR),Nilah/Volibear (BW/FR),0,1,0
+Nilah/Volibear (BW/FR),Garen/Jarvan IV (DE/SH),0,1,0
+Neeko (DE/RU),Janna/Norra (BC/PZ),0,1,0
+Janna/Jinx/Nilah (BW/PZ),Nilah/Volibear (BW/FR),0,1,0
+Neeko (DE/RU),Fizz/Nilah (BW/PZ),0,1,0
+Fizz/Nilah (BW/PZ),Janna/Teemo (MT/PZ),0,1,0
+Teemo (IO/PZ),Janna/Seraphine (BW/PZ),0,1,0
+Neeko (DE/RU),Teemo (IO/PZ),0,1,0
+Janna/Norra (BC/PZ),Janna/Seraphine (BW/PZ),0,1,0
+Fizz/Nilah (BW/PZ),Janna/Norra (BC/PZ),0,1,0
+Maokai/Nautilus (BW/SI),Teemo (IO/PZ),0,1,0
+Janna/Seraphine (BW/PZ),Gnar/Nidalee (BC/SH),0,1,0
+Janna/Norra (BC/PZ),Janna/Samira (NX/PZ),0,1,0
+Diana/Leona (MT/SI),Janna/Samira (NX/PZ),0,1,0
+Miss Fortune/Quinn (BW/DE),Janna/Seraphine (BW/PZ),0,1,0
+Illaoi/Vayne (BW/DE),Janna/Seraphine (BW/PZ),0,1,0
+Janna/Seraphine (BW/PZ),Gnar/Volibear (BW/FR),0,1,0
+Gwen/Vayne (DE/SI),Janna/Samira (NX/PZ),0,1,0
+Nidalee (BC/SH),Janna/Norra (BC/PZ),0,1,0
+Galio/Volibear (DE/FR),Janna/Seraphine (BW/PZ),0,1,0
+Illaoi/Volibear (BW/FR),Fizz/Nilah (BW/PZ),0,1,0
+Janna/Seraphine (BW/PZ),Heimerdinger/Jayce (PZ/SI),0,1,0
+Fizz/Samira (BW/NX),Janna/Seraphine (BW/PZ),0,1,0
+Janna/Seraphine (BC/PZ),Nidalee (BC/SH),0,1,0
+Illaoi/Swain (BW/NX),Janna/Seraphine (BW/PZ),0,1,0
+Gnar/Volibear (FR/SI),Janna/Seraphine (BW/PZ),0,1,0
+Gnar/Nidalee (BC/SH),Teemo (IO/PZ),0,1,0
+Janna/Seraphine (IO/PZ),Fizz/Nilah (BW/PZ),0,1,0
+Janna/Seraphine (IO/PZ),Annie/Samira (IO/NX),0,1,0
+Teemo (IO/PZ),Fizz/Samira (BW/NX),0,1,0
+Janna (PZ/SI),Pyke/Rek'Sai (BW/SH),0,1,0
+Annie/Samira (IO/NX),Fizz/Nilah (BW/PZ),0,1,0
+Pyke/Rek'Sai (BW/SH),Fizz/Nilah (BW/PZ),0,1,0
+Fizz/Nilah (BW/PZ),Kayle/Leona (MT/SH),0,1,0
+Jayce (MT/PZ),Fizz/Nilah (BW/PZ),0,1,0
+Aatrox/Evelynn (RU/RU),Nilah/Seraphine (BW/PZ),0,1,0
+Teemo (IO/PZ),Nilah/Seraphine (BW/PZ),0,1,0
+Aatrox/Evelynn (RU/RU),Nilah/Volibear (BW/FR),0,1,0
+Aatrox/Evelynn (RU/RU),Janna (MT/PZ),0,1,0
 Sett/The Poro King (IO/RU),Janna/Samira (NX/PZ),0,1,0
 The Poro King (IO/RU),Galio (DE/FR),0,1,0
-Janna/Samira (NX/PZ),Janna/Seraphine (BC/PZ),0,1,0
-Galio (DE/FR),Janna/Samira (NX/PZ),0,1,0
+Sett/The Poro King (IO/RU),Gnar/Jarvan IV (DE/FR),0,1,0
 The Poro King (IO/RU),Janna/Nilah (BW/PZ),0,1,0
 Teemo (IO/PZ),The Poro King (IO/RU),0,1,0
 Pyke/Rek'Sai (BW/SH),The Poro King (IO/RU),0,1,0
 Lissandra/Taliyah (FR/SH),The Poro King (IO/RU),0,1,0
 Tryndamere/Volibear (FR/SI),The Poro King (IO/RU),0,1,0
-Fizz/Samira (BW/NX),Janna/Samira (NX/PZ),0,1,0
 Aurelion Sol/Volibear (FR/MT),Sett/The Poro King (IO/RU),0,1,0
 Fizz/Samira (BW/NX),The Poro King/Yuumi (BC/RU),0,1,0
 Leona/Volibear (FR/MT),Fizz/Samira (BW/NX),0,1,0
 Aurelion Sol/Volibear (FR/MT),The Poro King/Yuumi (BC/RU),0,1,0
 Gnar/Neeko (FR/RU),The Poro King/Yuumi (BC/RU),0,1,0
+Jax/Volibear (FR/RU),Janna/Samira (NX/PZ),0,1,0
+Janna (PZ/SI),Janna/Samira (NX/PZ),0,1,0
+Maokai/Norra (BC/SI),Janna/Samira (NX/PZ),0,1,0
+Nidalee (IO/SH),Fizz/Teemo (BC/MT),0,1,0
+Akshan/Pantheon (MT/SH),Janna/Samira (NX/PZ),0,1,0
+Janna/Teemo (BC/PZ),Nidalee (IO/SH),0,1,0
+Janna/Seraphine (PZ/SI),Nidalee (IO/SH),0,1,0
+Lissandra/Taliyah (FR/SH),Nidalee (IO/SH),0,1,0
+Samira/Seraphine (NX/PZ),Nidalee (IO/SH),0,1,0
+Nidalee (IO/SH),Annie/Samira (IO/NX),0,1,0
+Jayce (MT/PZ),Nidalee (IO/SH),0,1,0
+Gnar/Jarvan IV (DE/FR),Nidalee (IO/SH),0,1,0
+Garen/Jarvan IV (DE/SH),Nidalee (IO/SH),0,1,0
+Annie/Samira (IO/NX),Janna/Samira (NX/PZ),0,1,0
+Taliyah/Volibear (FR/SH),Nidalee (IO/SH),0,1,0
+Pyke/Rek'Sai (BW/SH),Nidalee (IO/SH),0,1,0
+Janna/Nilah (BW/PZ),Taliyah/Volibear (FR/SH),0,1,0
+Janna/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),0,1,0
+Bard/Evelynn (RU/RU),Janna/Samira (NX/PZ),0,1,0
+Janna/Samira (NX/PZ),Ashe/LeBlanc/Volibear (FR/NX),0,1,0
+Nidalee (IO/SH),Galio/Volibear (DE/FR),0,1,0
+Caitlyn/Teemo (BC/PZ),Janna/Samira (NX/PZ),0,1,0
+Leona (MT/SH),Janna/Samira (NX/PZ),0,1,0
+Galio (DE/FR),Akshan/Samira (NX/SH),0,1,0
+Volibear (FR/MT),LeBlanc/Vayne (DE/NX),0,1,0
+Sejuani/Volibear (FR/SI),Gnar/Jarvan IV (DE/FR),0,1,0
+Caitlyn/Teemo (BC/PZ),Sejuani/Volibear (FR/SI),0,1,0
+Sejuani/Volibear (FR/SI),Gnar/Nidalee (BC/SH),0,1,0
+Annie/Samira (IO/NX),Janna (FR/PZ),0,1,0
+Janna/Samira (NX/PZ),Gnar/Neeko (FR/RU),0,1,0
+Gnar/Neeko (FR/RU),The Poro King (IO/RU),0,1,0
+Jinx/Nilah (BW/PZ),Gwen/Volibear (FR/SI),0,1,0
+The Poro King (PZ/RU),Janna (FR/PZ),0,1,0
+Gnar/Jarvan IV (DE/FR),Gnar/Nidalee (BC/SH),0,1,0
+Gnar/Nidalee (BC/SH),Janna/Samira (NX/PZ),0,1,0
+Akshan/Master Yi (IO/SH),Gnar/Nidalee (BC/SH),0,1,0
+Neeko (RU/PZ),Janna/Samira (NX/PZ),0,1,0
+Gnar/Neeko (FR/RU),Annie/Samira (IO/NX),0,1,0
+Jinx/Samira (NX/PZ),Annie/Samira (IO/NX),0,1,0
+Nilah/Samira/Sion (BW/NX),Galio/Shyvana (DE/FR),0,1,0
+Nilah/Sion (BW/NX),Galio/Jarvan IV (DE/FR),0,1,0
+Illaoi/Swain (BW/NX),Nilah/Sion (BW/NX),0,1,0
+Nilah/Sion (BW/NX),Janna/Samira (NX/PZ),0,1,0
+The Poro King (IO/RU),Gwen/Volibear (FR/SI),0,1,0
+Samira/Volibear (FR/NX),Janna/Samira (NX/PZ),0,1,0
+Gnar/Nidalee (BC/SH),Malphite/Taliyah (MT/SH),0,1,0
+Annie/Samira (IO/NX),Shyvana/Volibear (DE/FR),0,1,0
+Nilah/Samira/Sion (BW/NX),Pyke/Rek'Sai (BW/SH),0,1,0
+Gnar/Neeko (FR/RU),Galio/Shyvana (DE/FR),0,1,0
+Galio/Shyvana (DE/FR),Gnar/Nidalee (BC/SH),0,1,0
+Nasus (SI/SH),Akshan/Master Yi (IO/SH),0,1,0
+Leona/Volibear (FR/MT),Garen/Jarvan IV (DE/SH),0,1,0
+Samira/Volibear (FR/NX),Malphite/Taliyah (MT/SH),0,1,0
+Samira/Volibear (FR/NX),Garen/Jarvan IV (DE/SH),0,1,0
+Pyke/Rek'Sai (BW/SH),Samira/Volibear (FR/NX),0,1,0
+Samira/Volibear (FR/NX),Janna/Nilah (BW/PZ),0,1,0
+Samira/Volibear (FR/NX),Diana/Leona (MT/SH),0,1,0
+Samira/Volibear (FR/NX),Jinx/Samira (NX/PZ),0,1,0
+Samira/Volibear (FR/NX),Vayne (DE/PZ),0,1,0
+Annie/Gwen (NX/SI),Nasus (SI/SH),0,1,0
+Ahri/Kennen (IO/NX),Nasus (SI/SH),0,1,0
+Janna (FR/PZ),Teemo (IO/PZ),0,1,0
+Galio/Shyvana (DE/FR),Janna/Samira (NX/PZ),0,1,0
+Galio/Volibear (DE/FR),Sejuani/Volibear (FR/SI),0,1,0
+Janna (FR/PZ),Sejuani/Volibear (FR/SI),0,1,0
+Caitlyn/Teemo (BC/PZ),Galio/Shyvana (DE/FR),0,1,0
+Kalista/Maokai (BW/SI),Galio/Shyvana (DE/FR),0,1,0
+Janna (FR/PZ),Nasus (SI/SH),0,1,0
+Leona/Volibear (FR/MT),Pyke/Rek'Sai (BW/SH),0,1,0
+Heimerdinger/Jayce (PZ/SI),Nasus (SI/SH),0,1,0
+Teemo (IO/PZ),Nasus (SI/SH),0,1,0
+Diana/Leona (MT/SH),Nasus (SI/SH),0,1,0
+Janna/Seraphine (IO/PZ),Lissandra/Volibear (FR/IO),0,1,0
+Janna/Samira (NX/PZ),Janna/Seraphine (IO/PZ),0,1,0
+Diana/Leona (MT/SH),Bard/Garen (RU/DE),0,1,0
 Nidalee (BC/SH),Janna/Volibear (FR/PZ),4,6,0.666666666666667
 Aatrox/Vayne (RU/DE),Kennen/Samira (IO/NX),4,6,0.666666666666667
 Janna/Volibear (FR/PZ),Nidalee (BC/SH),2,6,0.333333333333333
 Kennen/Samira (IO/NX),Aatrox/Vayne (RU/DE),2,6,0.333333333333333
 Nidalee (BC/SH),Kennen/Samira (IO/NX),1,3,0.333333333333333
 Heimerdinger/Jayce (PZ/SI),Nidalee (BC/SH),1,3,0.333333333333333
-Janna/Volibear (FR/PZ),Janna/Samira (NX/PZ),1,3,0.333333333333333
-Janna/Volibear (FR/PZ),Pyke/Rek'Sai (BW/SH),1,3,0.333333333333333
-Fizz/Nilah (BW/PZ),Nidalee (BC/SH),1,3,0.333333333333333
+Janna/Volibear (FR/PZ),Aurelion Sol/Volibear (FR/MT),1,3,0.333333333333333
+Riven/Zed (IO/NX),Teemo (IO/PZ),1,3,0.333333333333333
+Illaoi/Swain (BW/NX),Riven/Zed (IO/NX),1,3,0.333333333333333
+Janna/Volibear (FR/PZ),Galio/Volibear (DE/FR),1,3,0.333333333333333
+Nidalee (BC/SH),Riven/Zed (IO/NX),1,3,0.333333333333333
+Riven/Zed (IO/NX),Janna/Samira (NX/PZ),1,3,0.333333333333333
+Annie/Samira (IO/NX),Janna/Volibear (FR/PZ),1,3,0.333333333333333
+Aurelion Sol/Volibear (FR/MT),Galio/Volibear (DE/FR),1,3,0.333333333333333
+Pyke/Rek'Sai (BW/SH),Janna/Seraphine (PZ/SI),1,3,0.333333333333333
+Janna/Samira (NX/PZ),Fizz/Nilah (BW/PZ),1,3,0.333333333333333
+Teemo (IO/PZ),Nilah/Volibear (BW/FR),1,3,0.333333333333333
+Janna/Jinx (DE/PZ),Gnar/Gwen (FR/SI),1,3,0.333333333333333
+Pyke/Rek'Sai (BW/SH),Teemo (IO/PZ),1,3,0.333333333333333
+Janna/Samira (NX/PZ),Nilah/Volibear (BW/FR),1,3,0.333333333333333
+The Poro King (IO/RU),Janna/Samira (NX/PZ),1,3,0.333333333333333
+Sejuani/Volibear (FR/SI),Aurelion Sol/Volibear (FR/MT),1,3,0.333333333333333
+The Poro King (IO/RU),Janna (FR/PZ),1,3,0.333333333333333
+Jinx/Samira (NX/PZ),Sejuani/Volibear (FR/SI),1,3,0.333333333333333
 Kennen/Samira (IO/NX),Nidalee (BC/SH),2,3,0.666666666666667
 Nidalee (BC/SH),Heimerdinger/Jayce (PZ/SI),2,3,0.666666666666667
-Janna/Samira (NX/PZ),Janna/Volibear (FR/PZ),2,3,0.666666666666667
-Pyke/Rek'Sai (BW/SH),Janna/Volibear (FR/PZ),2,3,0.666666666666667
-Nidalee (BC/SH),Fizz/Nilah (BW/PZ),2,3,0.666666666666667
-Nidalee (BC/SH),Volibear (FR/MT),3,3,1
-Janna/Samira (NX/PZ),Janna/Nilah (BW/PZ),3,3,1
-Teemo (IO/PZ),Janna/Jinx (DE/PZ),3,3,1
-Janna/Samira (NX/PZ),Teemo/Yuumi (MT/PZ),3,3,1
+Aurelion Sol/Volibear (FR/MT),Janna/Volibear (FR/PZ),2,3,0.666666666666667
+Teemo (IO/PZ),Riven/Zed (IO/NX),2,3,0.666666666666667
+Riven/Zed (IO/NX),Illaoi/Swain (BW/NX),2,3,0.666666666666667
+Galio/Volibear (DE/FR),Janna/Volibear (FR/PZ),2,3,0.666666666666667
+Riven/Zed (IO/NX),Nidalee (BC/SH),2,3,0.666666666666667
+Janna/Samira (NX/PZ),Riven/Zed (IO/NX),2,3,0.666666666666667
+Janna/Volibear (FR/PZ),Annie/Samira (IO/NX),2,3,0.666666666666667
+Galio/Volibear (DE/FR),Aurelion Sol/Volibear (FR/MT),2,3,0.666666666666667
+Janna/Seraphine (PZ/SI),Pyke/Rek'Sai (BW/SH),2,3,0.666666666666667
+Fizz/Nilah (BW/PZ),Janna/Samira (NX/PZ),2,3,0.666666666666667
+Nilah/Volibear (BW/FR),Teemo (IO/PZ),2,3,0.666666666666667
+Gnar/Gwen (FR/SI),Janna/Jinx (DE/PZ),2,3,0.666666666666667
+Teemo (IO/PZ),Pyke/Rek'Sai (BW/SH),2,3,0.666666666666667
+Nilah/Volibear (BW/FR),Janna/Samira (NX/PZ),2,3,0.666666666666667
+Janna/Samira (NX/PZ),The Poro King (IO/RU),2,3,0.666666666666667
+Aurelion Sol/Volibear (FR/MT),Sejuani/Volibear (FR/SI),2,3,0.666666666666667
+Janna (FR/PZ),The Poro King (IO/RU),2,3,0.666666666666667
+Sejuani/Volibear (FR/SI),Jinx/Samira (NX/PZ),2,3,0.666666666666667
+Jinx/Nilah (BW/PZ),Nidalee (BC/SH),0,3,0
 Volibear (FR/MT),Nidalee (BC/SH),0,3,0
-Janna/Nilah (BW/PZ),Janna/Samira (NX/PZ),0,3,0
-Janna/Jinx (DE/PZ),Teemo (IO/PZ),0,3,0
+Ekko/Janna (PZ/SH),Janna/Samira (NX/PZ),0,3,0
+Annie/Samira (IO/NX),Nidalee (BC/SH),0,3,0
+Janna/Volibear (FR/PZ),Garen/Jarvan IV (DE/SH),0,3,0
+Janna/Samira (NX/PZ),Maokai/Nautilus (BW/SI),0,3,0
+Galio/Volibear (DE/FR),Teemo (IO/PZ),0,3,0
+Janna/Samira (NX/PZ),Jinx/Nilah (BW/PZ),0,3,0
+Heimerdinger/Jayce (PZ/SI),Teemo (IO/PZ),0,3,0
+Janna/Seraphine (IO/PZ),Nidalee (BC/SH),0,3,0
+Nidalee/Yuumi (BC/SH),Janna/Norra (BC/PZ),0,3,0
 Teemo/Yuumi (MT/PZ),Janna/Samira (NX/PZ),0,3,0
+Nidalee (BC/SH),Jinx/Nilah (BW/PZ),3,3,1
+Nidalee (BC/SH),Volibear (FR/MT),3,3,1
+Janna/Samira (NX/PZ),Ekko/Janna (PZ/SH),3,3,1
+Nidalee (BC/SH),Annie/Samira (IO/NX),3,3,1
+Garen/Jarvan IV (DE/SH),Janna/Volibear (FR/PZ),3,3,1
+Maokai/Nautilus (BW/SI),Janna/Samira (NX/PZ),3,3,1
+Teemo (IO/PZ),Galio/Volibear (DE/FR),3,3,1
+Jinx/Nilah (BW/PZ),Janna/Samira (NX/PZ),3,3,1
+Teemo (IO/PZ),Heimerdinger/Jayce (PZ/SI),3,3,1
+Nidalee (BC/SH),Janna/Seraphine (IO/PZ),3,3,1
+Janna/Norra (BC/PZ),Nidalee/Yuumi (BC/SH),3,3,1
+Janna/Samira (NX/PZ),Teemo/Yuumi (MT/PZ),3,3,1
 Lissandra/Volibear (FR/MT),Nidalee (BC/SH),1,4,0.25
-Illaoi/Swain (BW/NX),Teemo (IO/PZ),1,4,0.25
+Janna/Volibear (FR/PZ),Pyke/Rek'Sai (BW/SH),1,4,0.25
+Gnar/Jarvan IV (DE/FR),Janna/Samira (NX/PZ),1,4,0.25
+Garen/Jarvan IV (DE/SH),Janna/Samira (NX/PZ),1,4,0.25
+Nidalee (IO/SH),Janna/Samira (NX/PZ),1,4,0.25
+Nasus (SI/SH),Janna/Samira (NX/PZ),1,4,0.25
+Janna/Seraphine (PZ/SI),Janna/Seraphine (NX/PZ),1,4,0.25
+Teemo (IO/PZ),Nidalee (BC/SH),1,4,0.25
+Nidalee (BC/SH),Janna/Seraphine (BW/PZ),1,4,0.25
+Annie/Samira (IO/NX),Gnar/Nidalee (BC/SH),1,4,0.25
 Nidalee (BC/SH),Lissandra/Volibear (FR/MT),3,4,0.75
-Teemo (IO/PZ),Illaoi/Swain (BW/NX),3,4,0.75
-Galio/Volibear (DE/FR),Janna/Samira (NX/PZ),0,4,0
-Kennen/Samira (IO/NX),Janna/Volibear (FR/PZ),0,4,0
-Teemo (IO/PZ),Fizz/Nilah (BW/PZ),0,4,0
-Janna/Samira (NX/PZ),Galio/Volibear (DE/FR),4,4,1
-Janna/Volibear (FR/PZ),Kennen/Samira (IO/NX),4,4,1
-Fizz/Nilah (BW/PZ),Teemo (IO/PZ),4,4,1
-Janna/Samira (NX/PZ),Janna/Samira (NX/PZ),3,6,0.5
+Pyke/Rek'Sai (BW/SH),Janna/Volibear (FR/PZ),3,4,0.75
+Janna/Samira (NX/PZ),Gnar/Jarvan IV (DE/FR),3,4,0.75
+Janna/Samira (NX/PZ),Garen/Jarvan IV (DE/SH),3,4,0.75
+Janna/Samira (NX/PZ),Nidalee (IO/SH),3,4,0.75
+Janna/Samira (NX/PZ),Nasus (SI/SH),3,4,0.75
+Janna/Seraphine (NX/PZ),Janna/Seraphine (PZ/SI),3,4,0.75
+Nidalee (BC/SH),Teemo (IO/PZ),3,4,0.75
+Janna/Seraphine (BW/PZ),Nidalee (BC/SH),3,4,0.75
+Gnar/Nidalee (BC/SH),Annie/Samira (IO/NX),3,4,0.75
+Galio/Volibear (DE/FR),Janna/Samira (NX/PZ),13,27,0.481481481481482
+Janna/Samira (NX/PZ),Galio/Volibear (DE/FR),14,27,0.518518518518519
+Janna/Volibear (FR/PZ),Janna/Samira (NX/PZ),5,18,0.277777777777778
+Janna/Samira (NX/PZ),Janna/Volibear (FR/PZ),13,18,0.722222222222222
+Aurelion Sol/Volibear (FR/MT),Janna/Samira (NX/PZ),1,7,0.142857142857143
+Janna/Samira (NX/PZ),Aurelion Sol/Volibear (FR/MT),6,7,0.857142857142857
+Janna/Samira (NX/PZ),Janna/Samira (NX/PZ),28,56,0.5
+Azir/Nasus/Renekton (SH),Janna/Samira (NX/PZ),2,5,0.4
+Teemo (IO/PZ),Janna/Volibear (FR/PZ),2,5,0.4
+Illaoi/Swain (BW/NX),Teemo (IO/PZ),2,5,0.4
+Janna/Seraphine (IO/PZ),Nilah/Volibear (BW/FR),2,5,0.4
+Janna/Samira (NX/PZ),Illaoi/Volibear (BW/FR),2,5,0.4
+Janna/Samira (NX/PZ),Janna/Seraphine (BW/PZ),2,5,0.4
+Janna/Samira (NX/PZ),Azir/Nasus/Renekton (SH),3,5,0.6
+Janna/Volibear (FR/PZ),Teemo (IO/PZ),3,5,0.6
+Teemo (IO/PZ),Illaoi/Swain (BW/NX),3,5,0.6
+Nilah/Volibear (BW/FR),Janna/Seraphine (IO/PZ),3,5,0.6
+Illaoi/Volibear (BW/FR),Janna/Samira (NX/PZ),3,5,0.6
+Janna/Seraphine (BW/PZ),Janna/Samira (NX/PZ),3,5,0.6
+Janna/Samira (NX/PZ),Janna/Nilah (BW/PZ),7,10,0.7
+Janna/Nilah (BW/PZ),Janna/Samira (NX/PZ),3,10,0.3
+Ekko/Janna (PZ/SH),Aurelion Sol/Volibear (FR/MT),4,5,0.8
+Janna/Seraphine (BW/PZ),Fizz/Nilah (BW/PZ),4,5,0.8
+Nidalee (IO/SH),Janna/Nilah (BW/PZ),4,5,0.8
+Aurelion Sol/Volibear (FR/MT),Ekko/Janna (PZ/SH),1,5,0.2
+Fizz/Nilah (BW/PZ),Janna/Seraphine (BW/PZ),1,5,0.2
+Janna/Nilah (BW/PZ),Nidalee (IO/SH),1,5,0.2
+Annie/Samira (IO/NX),Annie/Samira (IO/NX),3,6,0.5
+Janna/Samira (NX/PZ),Heimerdinger/Jayce (PZ/SI),6,10,0.6
+Janna/Seraphine (PZ/SI),Janna/Samira (NX/PZ),6,10,0.6
+Heimerdinger/Jayce (PZ/SI),Janna/Samira (NX/PZ),4,10,0.4
+Janna/Samira (NX/PZ),Janna/Seraphine (PZ/SI),4,10,0.4
 Janna/Volibear (FR/PZ),Janna/Volibear (FR/PZ),5,10,0.5
-Fizz/Nilah (BW/PZ),Fizz/Nilah (BW/PZ),7,14,0.5
-Teemo (IO/PZ),Janna/Samira (NX/PZ),1,5,0.2
-Janna/Samira (NX/PZ),Teemo (IO/PZ),4,5,0.8
+Kennen/Samira (IO/NX),Janna/Volibear (FR/PZ),2,7,0.285714285714286
+Janna/Nilah (BW/PZ),Fizz/Nilah (BW/PZ),2,7,0.285714285714286
+Janna/Volibear (FR/PZ),Kennen/Samira (IO/NX),5,7,0.714285714285714
+Fizz/Nilah (BW/PZ),Janna/Nilah (BW/PZ),5,7,0.714285714285714
+Illaoi/Swain (BW/NX),Illaoi/Swain (BW/NX),1,2,0.5
+Miss Fortune/Quinn (BW/DE),Janna/Samira (NX/PZ),1,2,0.5
+Janna/Samira (NX/PZ),Miss Fortune/Quinn (BW/DE),1,2,0.5
+Annie/Jhin (RU/NX),Teemo (IO/PZ),1,2,0.5
+Teemo (IO/PZ),Annie/Jhin (RU/NX),1,2,0.5
+Garen/Jarvan IV (DE/SH),Caitlyn/Teemo (FR/PZ),1,2,0.5
+Caitlyn/Teemo (FR/PZ),Garen/Jarvan IV (DE/SH),1,2,0.5
+Aurelion Sol/Volibear (FR/MT),Riven/Zed (IO/NX),1,2,0.5
+Riven/Zed (IO/NX),Aurelion Sol/Volibear (FR/MT),1,2,0.5
+Aurelion Sol/Volibear (FR/MT),Aurelion Sol/Volibear (FR/MT),1,2,0.5
+Volibear (BW/FR),Janna/Seraphine (NX/PZ),1,2,0.5
+Janna/Seraphine (NX/PZ),Volibear (BW/FR),1,2,0.5
+Fizz/Nilah (BW/PZ),Illaoi/Swain (BW/NX),1,2,0.5
+Illaoi/Swain (BW/NX),Fizz/Nilah (BW/PZ),1,2,0.5
+Teemo (IO/PZ),Janna/Seraphine (IO/PZ),1,2,0.5
+Janna/Seraphine (IO/PZ),Teemo (IO/PZ),1,2,0.5
+Teemo (IO/PZ),Annie/Samira (IO/NX),1,2,0.5
+Annie/Samira (IO/NX),Teemo (IO/PZ),1,2,0.5
+Jinx/Samira (NX/PZ),Teemo (IO/PZ),1,2,0.5
+Teemo (IO/PZ),Jinx/Samira (NX/PZ),1,2,0.5
+Fizz/Nilah (BW/PZ),Aatrox/Evelynn (RU/RU),1,2,0.5
+Aatrox/Evelynn (RU/RU),Fizz/Nilah (BW/PZ),1,2,0.5
+Fizz/Nilah (BW/PZ),Heimerdinger/Jayce (PZ/SI),1,2,0.5
+Heimerdinger/Jayce (PZ/SI),Fizz/Nilah (BW/PZ),1,2,0.5
+Galio (DE/FR),Janna/Samira (NX/PZ),1,2,0.5
+Janna/Samira (NX/PZ),Galio (DE/FR),1,2,0.5
+Sett/The Poro King (IO/RU),Janna/Seraphine (BC/PZ),1,2,0.5
+Janna/Seraphine (BC/PZ),Sett/The Poro King (IO/RU),1,2,0.5
+Fizz/Samira (BW/NX),Janna/Samira (NX/PZ),1,2,0.5
+Janna/Samira (NX/PZ),Fizz/Samira (BW/NX),1,2,0.5
+Nidalee (IO/SH),Nidalee (IO/SH),1,2,0.5
+Nidalee (IO/SH),Maokai/Nautilus (BW/SI),1,2,0.5
+Maokai/Nautilus (BW/SI),Nidalee (IO/SH),1,2,0.5
+Janna/Samira (NX/PZ),Janna (FR/PZ),1,2,0.5
+Janna (FR/PZ),Janna/Samira (NX/PZ),1,2,0.5
+Gwen/Volibear (FR/SI),Gnar/Nidalee (BC/SH),1,2,0.5
+Gnar/Nidalee (BC/SH),Gwen/Volibear (FR/SI),1,2,0.5
+Shyvana/Volibear (DE/FR),Janna/Samira (NX/PZ),1,2,0.5
+Janna/Samira (NX/PZ),Shyvana/Volibear (DE/FR),1,2,0.5
+Kalista/Maokai (BW/SI),Sejuani/Volibear (FR/SI),1,2,0.5
+Sejuani/Volibear (FR/SI),Kalista/Maokai (BW/SI),1,2,0.5
+Nidalee (BC/SH),Jinx/Samira (NX/PZ),0,2,0
+Ekko/Jinx (PZ/SH),Janna/Volibear (FR/PZ),0,2,0
+Heimerdinger/Jayce (PZ/SI),Ekko/Jinx (PZ/SH),0,2,0
+Nidalee (IO/SH),Teemo (IO/PZ),0,2,0
+Janna/Samira (NX/PZ),Janna/Seraphine (NX/PZ),0,2,0
+Galio/Volibear (DE/FR),Janna/Seraphine (PZ/SI),0,2,0
+Heimerdinger/Jayce (PZ/SI),Janna/Seraphine (PZ/SI),0,2,0
+Janna/Nilah (BW/PZ),Nidalee (BC/SH),0,2,0
+Ekko/Janna (PZ/SH),Teemo (BC/PZ),0,2,0
+Bard/Janna (RU/PZ),Pyke/Rek'Sai (BW/SH),0,2,0
+Pyke/Rek'Sai (BW/SH),Heimerdinger/Jayce (PZ/SI),0,2,0
+Ekko/Jinx (PZ/SH),Janna/Samira (NX/PZ),0,2,0
+Janna/Jinx (DE/PZ),Teemo (IO/PZ),0,2,0
+Annie/Janna (NX/PZ),Janna/Jinx (DE/PZ),0,2,0
+Illaoi/Swain (BW/NX),Janna/Norra (BC/PZ),0,2,0
+Janna/Samira (NX/PZ),Janna/Seraphine (BC/PZ),0,2,0
+Fizz/Samira (BW/NX),Sett/The Poro King (IO/RU),0,2,0
+Sett/The Poro King (IO/RU),Jinx/Samira (NX/PZ),0,2,0
+Diana (MT/PZ),Nidalee (IO/SH),0,2,0
+Janna/Seraphine (MT/PZ),Janna/Samira (NX/PZ),0,2,0
+Jinx/Samira (NX/PZ),Akshan/Samira (NX/SH),0,2,0
+Sejuani/Volibear (FR/SI),Janna/Samira (NX/PZ),0,2,0
+Janna (FR/PZ),Aurelion Sol/Volibear (FR/MT),0,2,0
+Illaoi/Volibear (BW/FR),The Poro King (IO/RU),0,2,0
+Annie/Samira (IO/NX),Samira/Volibear (FR/NX),0,2,0
+Annie/Samira (IO/NX),Gwen/Volibear (FR/SI),0,2,0
+Gwen/Volibear (FR/SI),Janna/Samira (NX/PZ),0,2,0
+Pyke/Rek'Sai (BW/SH),Gnar/Nidalee (BC/SH),0,2,0
+Galio/Shyvana (DE/FR),Nasus (SI/SH),0,2,0
+Nasus (SI/SH),Akshan/Pantheon (MT/SH),0,2,0
+Sejuani/Volibear (FR/SI),Annie/Jhin (RU/NX),0,2,0
+Jinx/Samira (NX/PZ),Nidalee (BC/SH),2,2,1
+Janna/Volibear (FR/PZ),Ekko/Jinx (PZ/SH),2,2,1
+Ekko/Jinx (PZ/SH),Heimerdinger/Jayce (PZ/SI),2,2,1
+Teemo (IO/PZ),Nidalee (IO/SH),2,2,1
+Janna/Seraphine (NX/PZ),Janna/Samira (NX/PZ),2,2,1
+Janna/Seraphine (PZ/SI),Galio/Volibear (DE/FR),2,2,1
+Janna/Seraphine (PZ/SI),Heimerdinger/Jayce (PZ/SI),2,2,1
+Nidalee (BC/SH),Janna/Nilah (BW/PZ),2,2,1
+Teemo (BC/PZ),Ekko/Janna (PZ/SH),2,2,1
+Pyke/Rek'Sai (BW/SH),Bard/Janna (RU/PZ),2,2,1
+Heimerdinger/Jayce (PZ/SI),Pyke/Rek'Sai (BW/SH),2,2,1
+Janna/Samira (NX/PZ),Ekko/Jinx (PZ/SH),2,2,1
+Teemo (IO/PZ),Janna/Jinx (DE/PZ),2,2,1
+Janna/Jinx (DE/PZ),Annie/Janna (NX/PZ),2,2,1
+Janna/Norra (BC/PZ),Illaoi/Swain (BW/NX),2,2,1
+Janna/Seraphine (BC/PZ),Janna/Samira (NX/PZ),2,2,1
+Sett/The Poro King (IO/RU),Fizz/Samira (BW/NX),2,2,1
+Jinx/Samira (NX/PZ),Sett/The Poro King (IO/RU),2,2,1
+Nidalee (IO/SH),Diana (MT/PZ),2,2,1
+Janna/Samira (NX/PZ),Janna/Seraphine (MT/PZ),2,2,1
+Akshan/Samira (NX/SH),Jinx/Samira (NX/PZ),2,2,1
+Janna/Samira (NX/PZ),Sejuani/Volibear (FR/SI),2,2,1
+Aurelion Sol/Volibear (FR/MT),Janna (FR/PZ),2,2,1
+The Poro King (IO/RU),Illaoi/Volibear (BW/FR),2,2,1
+Samira/Volibear (FR/NX),Annie/Samira (IO/NX),2,2,1
+Gwen/Volibear (FR/SI),Annie/Samira (IO/NX),2,2,1
+Janna/Samira (NX/PZ),Gwen/Volibear (FR/SI),2,2,1
+Gnar/Nidalee (BC/SH),Pyke/Rek'Sai (BW/SH),2,2,1
+Nasus (SI/SH),Galio/Shyvana (DE/FR),2,2,1
+Akshan/Pantheon (MT/SH),Nasus (SI/SH),2,2,1
+Annie/Jhin (RU/NX),Sejuani/Volibear (FR/SI),2,2,1
+Teemo (IO/PZ),Janna/Samira (NX/PZ),2,12,0.166666666666667
+Janna/Samira (NX/PZ),Teemo (IO/PZ),10,12,0.833333333333333
+Pyke/Rek'Sai (BW/SH),Janna/Samira (NX/PZ),4,16,0.25
+Janna/Samira (NX/PZ),Pyke/Rek'Sai (BW/SH),12,16,0.75
+Nidalee (BC/SH),Janna/Samira (NX/PZ),4,8,0.5
+Janna/Samira (NX/PZ),Nidalee (BC/SH),4,8,0.5
+Pyke/Rek'Sai (BW/SH),Galio/Volibear (DE/FR),5,5,1
+Galio/Volibear (DE/FR),Pyke/Rek'Sai (BW/SH),0,5,0
+Fizz/Nilah (BW/PZ),Teemo (IO/PZ),15,16,0.9375
+Teemo (IO/PZ),Fizz/Nilah (BW/PZ),1,16,0.0625
+Fizz/Nilah (BW/PZ),Fizz/Nilah (BW/PZ),8,16,0.5
+Fizz/Nilah (BW/PZ),Nidalee (BC/SH),1,8,0.125
+Nidalee (BC/SH),Fizz/Nilah (BW/PZ),7,8,0.875
+Nidalee (BC/SH),Nilah/Volibear (BW/FR),3,7,0.428571428571429
+Sejuani/Volibear (FR/SI),Nasus (SI/SH),3,7,0.428571428571429
+Nilah/Volibear (BW/FR),Nidalee (BC/SH),4,7,0.571428571428571
+Nasus (SI/SH),Sejuani/Volibear (FR/SI),4,7,0.571428571428571
