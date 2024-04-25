@@ -20,9 +20,11 @@ knitr::opts_chunk$set(
 # (Legna’s) Legends of Runeterra Stats (with R)
 ```
 
-Update 07-Dec-2023: Fate's Voyage: Beyond data are up
+Update 25-Apr-2024: Dreamlith Path data is up
 
-As usual in the early days I suggest using the Previsous Top Players data.
+As usual in the early days I suggest using the Previous Top Players data.
+
+Update are back to be frequent after there weere issues connected to the previous long ranked season.
 
 ```{r title-page-plot, layout="l-page", eval=T, fig.width=15, fig.asp=.25}
 library(tidyverse)

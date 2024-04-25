@@ -1,6 +1,6 @@
 ---
 # title: "Eternal Data ( Future )"
-title: "Eternal Data (Patch 5.1 - February PostState 2024)"
+title: "Eternal Data (Patch 5.4 - Dreamlith Path)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -53,200 +53,202 @@ xaringanExtra::use_panelset()
 }
 ```
 
-<!-- See you at the next Eternal Ranked Meta! -->
-
-```{r constants}
-last_update_box <- flexdashboard::valueBox(
-  Sys.Date(),
-  caption = glue::glue("Last Update"),
-  icon = "fa-clock",
-  color = "#1A9850")
-```
-
-```{r load-data}
-MU_tbl <- data.table::fread(
-  file = file.path("C:", "LlorR", "data", "clean", "updates", "mu_eternal_minimal.csv"),
-  header = T, na.strings = c("", NA), encoding = "UTF-8"
-)
-
-summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info_eternal.rds") )
-nMuEternal  = summary_info$used_ranked_eternal
-```
-
-Eternal {data-icon="fa-table"}
-================================
-
-Inputs {.sidebar}
------------------------------------------------------------------------
-
-### Filters
-
-```{r filters-Eternal}
-crosstalk_data <- crosstalk::SharedData$new(MU_tbl)
-
-crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_data, ~archetype_1)
-crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_data, ~archetype_2)
-
-crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_data, ~mu_win, step = 50 , min = 0)
-crosstalk::filter_slider("muGames", "#Games",               crosstalk_data, ~mu_n,   step = 100, min = 0)
-
-crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_data, ~mu_wr, step=0.01, min = 0, max = 1)
-crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_data, ~playrate_1, step=0.01, min = 0, max = round(max(MU_tbl$playrate_1),   4) )
-crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_data, ~playrate_2, step=0.01, min = 0, max = round(max(MU_tbl$playrate_2), 4) )
-
-crosstalk::filter_select("direction", "MU-Direction",       crosstalk_data, ~direction)
-crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_data, ~mirror, inline = TRUE)
-```
-
-Row {data-heigth="100"}
------------------------------------------------------------------------
-
-### Box MU
-
-```{r}
-flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_eternal} Eternal Ranked Games"),
-                        caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_eternal} games used"),
-                        icon = "fa-table",
-                        color = "#FA7404") -> Eternal_valuebox
-
-Eternal_valuebox
-```
-
-### Box Eternal
-
-```{r value-player-Eternal}
-flexdashboard::valueBox(value = summary_info$n_eternal,
-                        caption = glue::glue("(Standard) Master Players"),
-                        icon = "fa-medal",
-                        color = "#65c0a9") -> box_eternal
-
-box_eternal
-```
-
-### Last Update
-
-```{r}
-last_update_box
-```
-
-### Download Data
-
-```{r}
-downloadthis::download_link(
-  link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_eternal.csv",
-  button_label = "MU as csv",
-  # output_name = "mutable",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save"
-  # self_contained = FALSE
-)
-```
-
-Row {data-heigth="900"}
------------------------------------------------------------------------
-
-### MU table
-
-```{r print-react-Eternal}
-reactable_mu(crosstalk_data)
-```
-
-Plot {data-icon="fa-file-image"}
-================================
-
-Row {data-heigth="100"}
------------------------------------------------------------------------
-
-### Box1 MU
-
-```{r}
-box_eternal
-```
-
-### Last Update
-
-```{r}
-last_update_box
-```
-
-Row {data-heigth="900" .tabset}
------------------------------------------------------------------------
-
-### MU Grid - Eternal
-
-```{r print-grid}
-gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_eternal.rds"))
-
-gtMU_grid |>
-  gt::tab_options(
-    data_row.padding = gt::px(8),
-    table.font.size  = gt::px(13),
-    column_labels.font.size = gt::px(10)
-  ) |>
-  gt::cols_width(
-    -1 ~ gt::px(90),
-    1  ~ gt::px(120),
-  )
-```
-
-### Meta Evolution
-
-```{r print-diamond-grid}
-hourly_eternal_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_eternal_line.rds") )
-
-hourly_eternal_line
-```
-
-Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
-================================
-
-Row {data-heigth="100"}
------------------------------------------------------------------------
-
-### Number of Games
-
-```{r}
-meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week_eternal.rds") )
-```
+See you at the next Eternal Ranked Meta!
 
 
-```{r}
-flexdashboard::valueBox(glue::glue("{meta_7days$n} Games"),
-                        caption = glue::glue("Number of Ranked Games"),
-                        icon = "fa-table",
-                        color = "#a88b32")
-```
 
-### Number of Meta Decks
+<!-- ```{r constants} -->
+<!-- last_update_box <- flexdashboard::valueBox( -->
+<!--   Sys.Date(), -->
+<!--   caption = glue::glue("Last Update"), -->
+<!--   icon = "fa-clock", -->
+<!--   color = "#1A9850") -->
+<!-- ``` -->
 
-```{r}
-flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_meta)} Meta Decks"),
-                        caption = glue::glue("Decks with PlayRate with at least 1%"),
-                        icon = "fa-trophy",
-                        color = "#65c0a9")
-```
+<!-- ```{r load-data} -->
+<!-- MU_tbl <- data.table::fread( -->
+<!--   file = file.path("C:", "LlorR", "data", "clean", "updates", "mu_eternal_minimal.csv"), -->
+<!--   header = T, na.strings = c("", NA), encoding = "UTF-8" -->
+<!-- ) -->
 
-### Number of Underdog Decks
+<!-- summary_info <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "summary_info_eternal.rds") ) -->
+<!-- nMuEternal  = summary_info$used_ranked_eternal -->
+<!-- ``` -->
 
-```{r}
-flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_underdog)} Underdog Decks"),
-                        caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"),
-                        icon = "fa-dog",
-                        color = "#ff7f24")
-```
+<!-- Eternal {data-icon="fa-table"} -->
+<!-- ================================ -->
 
-### Last-Update
+<!-- Inputs {.sidebar} -->
+<!-- ----------------------------------------------------------------------- -->
 
-```{r}
-last_update_box
-```
+<!-- ### Filters -->
 
-Row {data-heigth="900"}
------------------------------------------------------------------------
+<!-- ```{r filters-Eternal} -->
+<!-- crosstalk_data <- crosstalk::SharedData$new(MU_tbl) -->
 
-### Decks Performances
+<!-- crosstalk::filter_select("playerDeck", "Player's Deck",     crosstalk_data, ~archetype_1) -->
+<!-- crosstalk::filter_select("opponentDeck", "Opponent's Deck", crosstalk_data, ~archetype_2) -->
 
-```{r}
-meta_7days$meta_table
-```
+<!-- crosstalk::filter_slider("muWin",   "#Win",                 crosstalk_data, ~mu_win, step = 50 , min = 0) -->
+<!-- crosstalk::filter_slider("muGames", "#Games",               crosstalk_data, ~mu_n,   step = 100, min = 0) -->
+
+<!-- crosstalk::filter_slider("muWR", "WinRate",                 crosstalk_data, ~mu_wr, step=0.01, min = 0, max = 1) -->
+<!-- crosstalk::filter_slider("playrate", "Player PlayRate",     crosstalk_data, ~playrate_1, step=0.01, min = 0, max = round(max(MU_tbl$playrate_1),   4) ) -->
+<!-- crosstalk::filter_slider("opponentPR", "Opponent PlayRate", crosstalk_data, ~playrate_2, step=0.01, min = 0, max = round(max(MU_tbl$playrate_2), 4) ) -->
+
+<!-- crosstalk::filter_select("direction", "MU-Direction",       crosstalk_data, ~direction) -->
+<!-- crosstalk::filter_checkbox("mirror", "Mirror",              crosstalk_data, ~mirror, inline = TRUE) -->
+<!-- ``` -->
+
+<!-- Row {data-heigth="100"} -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### Box MU -->
+
+<!-- ```{r} -->
+<!-- flexdashboard::valueBox(glue::glue("{summary_info$total_ranked_eternal} Eternal Ranked Games"), -->
+<!--                         caption = glue::glue("min {params$min_mu_games} games - {summary_info$used_ranked_eternal} games used"), -->
+<!--                         icon = "fa-table", -->
+<!--                         color = "#FA7404") -> Eternal_valuebox -->
+
+<!-- Eternal_valuebox -->
+<!-- ``` -->
+
+<!-- ### Box Eternal -->
+
+<!-- ```{r value-player-Eternal} -->
+<!-- flexdashboard::valueBox(value = summary_info$n_eternal, -->
+<!--                         caption = glue::glue("(Standard) Master Players"), -->
+<!--                         icon = "fa-medal", -->
+<!--                         color = "#65c0a9") -> box_eternal -->
+
+<!-- box_eternal -->
+<!-- ``` -->
+
+<!-- ### Last Update -->
+
+<!-- ```{r} -->
+<!-- last_update_box -->
+<!-- ``` -->
+
+<!-- ### Download Data -->
+
+<!-- ```{r} -->
+<!-- downloadthis::download_link( -->
+<!--   link = "https://raw.githubusercontent.com/MaouLegna/llorr-website/main/static/data/mu_eternal.csv", -->
+<!--   button_label = "MU as csv", -->
+<!--   # output_name = "mutable", -->
+<!--   button_type = "danger", -->
+<!--   has_icon = TRUE, -->
+<!--   icon = "fa fa-save" -->
+<!--   # self_contained = FALSE -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- Row {data-heigth="900"} -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### MU table -->
+
+<!-- ```{r print-react-Eternal} -->
+<!-- reactable_mu(crosstalk_data) -->
+<!-- ``` -->
+
+<!-- Plot {data-icon="fa-file-image"} -->
+<!-- ================================ -->
+
+<!-- Row {data-heigth="100"} -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### Box1 MU -->
+
+<!-- ```{r} -->
+<!-- box_eternal -->
+<!-- ``` -->
+
+<!-- ### Last Update -->
+
+<!-- ```{r} -->
+<!-- last_update_box -->
+<!-- ``` -->
+
+<!-- Row {data-heigth="900" .tabset} -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### MU Grid - Eternal -->
+
+<!-- ```{r print-grid} -->
+<!-- gtMU_grid <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "grid_eternal.rds")) -->
+
+<!-- gtMU_grid |> -->
+<!--   gt::tab_options( -->
+<!--     data_row.padding = gt::px(8), -->
+<!--     table.font.size  = gt::px(13), -->
+<!--     column_labels.font.size = gt::px(10) -->
+<!--   ) |> -->
+<!--   gt::cols_width( -->
+<!--     -1 ~ gt::px(90), -->
+<!--     1  ~ gt::px(120), -->
+<!--   ) -->
+<!-- ``` -->
+
+<!-- ### Meta Evolution -->
+
+<!-- ```{r print-diamond-grid} -->
+<!-- hourly_eternal_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_eternal_line.rds") ) -->
+
+<!-- hourly_eternal_line -->
+<!-- ``` -->
+
+<!-- Stats (last 7days) {data-icon="fa-table" data-orientation=rows} -->
+<!-- ================================ -->
+
+<!-- Row {data-heigth="100"} -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### Number of Games -->
+
+<!-- ```{r} -->
+<!-- meta_7days <- readr::read_rds(file = file.path("C:", "LlorR", "data", "clean", "updates", "meta_week_eternal.rds") ) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- flexdashboard::valueBox(glue::glue("{meta_7days$n} Games"), -->
+<!--                         caption = glue::glue("Number of Ranked Games"), -->
+<!--                         icon = "fa-table", -->
+<!--                         color = "#a88b32") -->
+<!-- ``` -->
+
+<!-- ### Number of Meta Decks -->
+
+<!-- ```{r} -->
+<!-- flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_meta)} Meta Decks"), -->
+<!--                         caption = glue::glue("Decks with PlayRate with at least 1%"), -->
+<!--                         icon = "fa-trophy", -->
+<!--                         color = "#65c0a9") -->
+<!-- ``` -->
+
+<!-- ### Number of Underdog Decks -->
+
+<!-- ```{r} -->
+<!-- flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_underdog)} Underdog Decks"), -->
+<!--                         caption = glue::glue("Decks with positive WR and PR in 0.1% to 1%"), -->
+<!--                         icon = "fa-dog", -->
+<!--                         color = "#ff7f24") -->
+<!-- ``` -->
+
+<!-- ### Last-Update -->
+
+<!-- ```{r} -->
+<!-- last_update_box -->
+<!-- ``` -->
+
+<!-- Row {data-heigth="900"} -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ### Decks Performances -->
+
+<!-- ```{r} -->
+<!-- meta_7days$meta_table -->
+<!-- ``` -->
