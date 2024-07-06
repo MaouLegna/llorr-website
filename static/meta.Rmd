@@ -1,5 +1,5 @@
 ---
-title: "Meta & Decks (Patch 5.4 - Dreamlith Path)"
+title: "Meta & Decks (Patch 5.6 - Mid June Patch)"
 author: "by Legna"
 base_url: https://www.llorr-stats.com
 output:
@@ -72,11 +72,9 @@ hourly_diamond_plot <- readr::read_rds( file = file.path("C:", "LlorR", "data", 
 hourly_diamond_line <- readr::read_rds( file = file.path("C:", "LlorR", "data", "clean", "updates", "hourly_diamond_line.rds") )
 ```
 
-Stats (last 7days) {data-icon="fa-table" data-orientation=rows}
-================================
+# Stats (last 7days) {data-icon="fa-table" data-orientation="rows"}
 
-Row {data-heigth="100"}
------------------------------------------------------------------------
+## Row {data-heigth="100"}
 
 ### Number of Games
 
@@ -111,8 +109,7 @@ flexdashboard::valueBox(glue::glue("{length(meta_7days$fct_underdog)} Underdog D
 last_update_box
 ```
 
-Row {data-heigth="900"}
------------------------------------------------------------------------
+## Row {data-heigth="900"}
 
 ### Decks Performances
 
@@ -120,12 +117,9 @@ Row {data-heigth="900"}
 meta_7days$meta_table
 ```
 
+# Meta-Evolution {data-icon="fa-chart-line"}
 
-Meta-Evolution {data-icon="fa-chart-line"}
-================================
-
-Row {data-heigth="100"}
------------------------------------------------------------------------
+## Row {data-heigth="100"}
 
 ### Master
 
@@ -151,8 +145,7 @@ flexdashboard::valueBox(value = summary_info$n_diamond,
 last_update_box
 ```
 
-Row {.tabset}
------------------------------------------------------------------------
+## Row {.tabset}
 
 ### Master
 
@@ -166,11 +159,9 @@ hourly_master_plot + hourly_master_line
 hourly_diamond_plot + hourly_diamond_line
 ```
 
-Stats (whole patch) {data-icon="fa-table"}
-================================
+# Stats (whole patch) {data-icon="fa-table"}
 
-Row {data-heigth="100"}
------------------------------------------------------------------------
+## Row {data-heigth="100"}
 
 ### Number of Games
 
@@ -205,8 +196,7 @@ flexdashboard::valueBox(glue::glue("{length(meta_all$fct_underdog)} Underdog Dec
 last_update_box
 ```
 
-Row {data-heigth="900"}
------------------------------------------------------------------------
+## Row {data-heigth="900"}
 
 ### Decks Performances
 
@@ -214,11 +204,9 @@ Row {data-heigth="900"}
 meta_all$meta_table
 ```
 
-Fresh Stats (last 24 hours) {data-icon="fa-table"}
-================================
+# Fresh Stats (last 24 hours) {data-icon="fa-table"}
 
-Row {data-heigth="100"}
------------------------------------------------------------------------
+## Row {data-heigth="100"}
 
 ### Time Frame
 
@@ -236,8 +224,7 @@ flexdashboard::valueBox(glue::glue("24 Hours Time Frame"),
 last_update_box
 ```
 
-Row {data-heigth="900"}
------------------------------------------------------------------------
+## Row {data-heigth="900"}
 
 ### Previous Day
 
