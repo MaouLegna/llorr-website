@@ -636,7 +636,6 @@ Janna/Nilah (BW/PZ),Rumble/Sion (BC/NX),0,1,0
 Nocturne (SI),Elise (FR/SI),0,1,0
 Nocturne (SI),Championless (SI),0,1,0
 Nocturne (FR/SI),Elise (FR/SI),0,1,0
-Nocturne (FR/SI),Azir/Renekton (SH),0,1,0
 Viktor (BC/PZ),Pyke/Rek'Sai (BW/SH),0,1,0
 Aatrox/Kayn (RU/RU),Nocturne (SI),0,1,0
 Akshan/Lee Sin (IO/SH),Janna/Nilah (BW/PZ),0,1,0
@@ -654,6 +653,13 @@ Udyr (FR/NX),Elise/Nocturne (NX/SI),0,1,0
 Akshan/Lee Sin (IO/SH),Elise/Nocturne (SI),0,1,0
 Jayce/Lux (DE/PZ),Galio/Jarvan IV (DE/FR),0,1,0
 Mordekaiser/Norra (BC/SI),LeBlanc (FR/NX),0,1,0
+Pyke/Rek'Sai (BW/SH),Lux: Illuminated/Morgana (DE/MT),0,1,0
+Azir/Sivir (SH),Pyke/Rek'Sai (BW/SH),0,1,0
+Aatrox/Varus (RU/RU),Morgana/Udyr (DE/FR),0,1,0
+Kindred (SI/SH),Jayce/Lux (DE/PZ),0,1,0
+Pyke/Rek'Sai (BW/SH),Kindred (SI/SH),0,1,0
+Akshan/Lee Sin (IO/SH),Lissandra/Trundle (FR/SI),0,1,0
+Ezreal/Nilah (BW/PZ),Braum/Galio (DE/FR),0,1,0
 Fiora/Lucian (DE/FR),Draven/Jinx (NX/PZ),0,1,0
 Championless (IO/SI),Nilah/Twisted Fate (BW/PZ),0,1,0
 Swain/Thresh (NX/SI),Annie/Jhin (RU/NX),0,1,0
@@ -3198,7 +3204,6 @@ Braum/Norra (BC/FR),Aatrox/Varus (RU/RU),0,1,0
 Morgana/Udyr (DE/FR),Akshan/Lee Sin (IO/SH),0,1,0
 LeBlanc/Sion (FR/NX),Fizz (BW/FR),0,1,0
 Heimerdinger/Viktor (IO/PZ),LeBlanc/Sion (FR/NX),0,1,0
-Championless (MT/SI),Janna/Nilah (BW/PZ),0,1,0
 Braum/Jarvan IV (DE/FR),Elise/Nocturne (MT/SI),0,1,0
 Kayle/Lux: Illuminated (DE/MT),Lillia/Lux: Illuminated (DE/IO),0,1,0
 Lee Sin/Viktor (IO/PZ),Janna/Nilah (BW/PZ),0,1,0
@@ -3239,7 +3244,6 @@ Pyke/Rek'Sai (BW/SH),Renekton/Udyr (FR/SH),0,1,0
 Galio (DE),Heimerdinger/Viktor (IO/PZ),0,1,0
 Aatrox/Kayn (RU/RU),Draven/Sejuani (FR/NX),0,1,0
 Janna/Zoe (MT/PZ),Udyr/Zed (FR/IO),0,1,0
-Ezreal/Nilah (BW/PZ),Mordekaiser/Norra (BC/SI),0,1,0
 Norra/Zed (BC/IO),Elise/Nocturne (NX/SI),0,1,0
 Pyke/Rek'Sai (BW/SH),Miss Fortune/Rek'Sai (BW/SH),0,1,0
 Rek'Sai (BW/SH),Elise/Nocturne (SI),0,1,0
@@ -3286,7 +3290,6 @@ Janna/Nilah (BW/PZ),Mordekaiser (SI),0,1,0
 Pyke/Rek'Sai (BW/SH),Akshan/Sivir (IO/SH),0,1,0
 Braum/Udyr (FR/NX),Pyke/Rek'Sai (BW/SH),0,1,0
 Kindred/Mordekaiser (PZ/SI),Akshan/Pantheon (MT/SH),0,1,0
-Nocturne (SI),Elise/Nocturne (MT/SI),0,1,0
 Pantheon/Yuumi (MT/PZ),Elise/Nocturne (NX/SI),0,1,0
 Pantheon/Yuumi (MT/PZ),Janna/Nilah (BW/PZ),0,1,0
 Elise/Nocturne (NX/SI),Kayle/Yuumi (FR/MT),0,1,0
@@ -3333,7 +3336,6 @@ Azir/Renekton/Sivir (SH),Pyke/Rek'Sai (BW/SH),0,1,0
 Master Yi/Zoe (IO/MT),Nocturne (SI),0,1,0
 Kayle/Lux: Illuminated/Pantheon (DE/MT),Elise/Nocturne (NX/SI),0,1,0
 Pyke/Rek'Sai (BW/SH),Diana/Zoe (MT/SI),0,1,0
-Azir/Renekton (SH),Diana/Nocturne (MT/SI),0,1,0
 Pyke/Rek'Sai (BW/SH),Kayle/Morgana/Udyr (FR/MT),0,1,0
 Katarina/Miss Fortune (BW/NX),Ezreal/Nilah (BW/PZ),0,1,0
 Elise/Nocturne (NX/SI),Braum/Udyr/Zoe (FR/MT),0,1,0
@@ -3342,7 +3344,25 @@ Akshan/Pantheon (MT/SH),Ezreal/Nilah (BW/PZ),0,1,0
 Heimerdinger/Norra (BC/IO),Elise/Nocturne (NX/SI),0,1,0
 Lissandra/Trundle (FR/SI),Lissandra/Sejuani (FR/SH),0,1,0
 Galio/Udyr (DE/FR),Mordekaiser/Norra (BC/SI),0,1,0
-Diana/Nocturne (MT/SI),Elise/Nocturne (NX/SI),0,1,0
+Aatrox/Kayn (RU/RU),Lux: Illuminated/Vi (DE/PZ),0,1,0
+Ezreal/Nilah (BW/PZ),Senna (PZ/SI),0,1,0
+Azir/Renekton (SH),Elise/Nocturne (MT/SI),0,1,0
+Diana/Nocturne (MT/SI),Elise/Nocturne (MT/SI),0,1,0
+Rumble/Sion (BC/NX),Braum/Galio (DE/FR),0,1,0
+Heimerdinger/Norra (BC/SI),Mordekaiser/Norra (BC/SI),0,1,0
+Jayce/Lux (DE/PZ),Heimerdinger/Viktor (IO/PZ),0,1,0
+Elise/Nocturne (NX/SI),Braum (FR/SI),0,1,0
+Sejuani/Udyr (FR/PZ),Pantheon/Yuumi (BC/MT),0,1,0
+Sejuani/Udyr (FR/PZ),Braum/Udyr (DE/FR),0,1,0
+Fizz/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),0,1,0
+Janna/Vi/Zoe (MT/PZ),Udyr/Zed (FR/IO),0,1,0
+Viktor/Zoe (MT/PZ),Akshan/Lee Sin (IO/SH),0,1,0
+Pyke/Rek'Sai (BW/SH),Heimerdinger/Norra (BC/SI),0,1,0
+Sejuani/Udyr (FR/PZ),Udyr/Zed (FR/IO),0,1,0
+Rumble/Sion (NX/SH),Heimerdinger/Viktor (IO/PZ),0,1,0
+Braum/Udyr/Zoe (FR/MT),Kayle/Yuumi (FR/MT),0,1,0
+Jayce (PZ/SI),Akshan/Pantheon (MT/SH),0,1,0
+Pyke/Rek'Sai (BW/SH),Janna/Norra (BC/PZ),0,1,0
 Jack/Nami (BW/PZ),Draven/Ezreal (NX/PZ),0,1,0
 Elder Dragon/Volibear (RU/FR),Aphelios/Zoe (MT/PZ),0,1,0
 Aatrox/Kayn (RU/RU),Aphelios/Zoe (MT/PZ),0,1,0
@@ -6415,7 +6435,6 @@ Janna/Norra (BC/PZ),Championless (NX/SI),0,1,0
 Championless (SI/SH),Illaoi (BW/FR),0,1,0
 Akshan/Fizz (BC/SH),Master Yi/Zoe (IO/MT),0,1,0
 Norra/Zoe (BC/MT),Championless (NX/SI),0,1,0
-Championless (NX/SI),Pyke/Rek'Sai (BW/SH),0,1,0
 Nilah/Norra (BC/BW),Braum/Zoe (FR/MT),0,1,0
 Lux: Illuminated/Zoe (DE/MT),Kayle/Lux: Illuminated (DE/MT),0,1,0
 Elise (NX/SI),Lee Sin/Viktor (IO/PZ),0,1,0
@@ -6429,7 +6448,6 @@ Aatrox/Varus (RU/RU),Yuumi/Zoe (BC/MT),0,1,0
 Janna/Viktor (BC/PZ),Aatrox/Kayn (RU/RU),0,1,0
 Akshan/Morgana (MT/SH),Championless (FR/IO),0,1,0
 Aatrox/Varus (RU/RU),Championless (FR/IO),0,1,0
-Pyke/Rek'Sai (BW/SH),Senna (PZ/SI),0,1,0
 Pantheon/Yuumi (FR/MT),Janna/Nilah (BW/PZ),0,1,0
 Illaoi (BW/SI),Elise (NX/SI),0,1,0
 Azir/Nilah (BW/SH),Janna/Nilah (BW/PZ),0,1,0
@@ -6515,7 +6533,6 @@ Elise/Nocturne (NX/SI),Morgana/Udyr (DE/FR),0,1,0
 Rumble/Sion (BC/NX),Aatrox/Kayn (RU/RU),0,1,0
 Ezreal/Jhin (RU/PZ),Aatrox/Morgana (RU/DE),0,1,0
 Elise (NX/SI),Master Yi/Zoe (IO/MT),0,1,0
-Akshan/Lee Sin (IO/SH),Mordekaiser/Norra (BC/SI),0,1,0
 Championless (FR/SI),Janna/Nilah (BW/PZ),0,1,0
 Elise (NX/SI),Elise/Nocturne (NX/SI),0,1,0
 Elise/Nocturne (NX/SI),Kayle/Pyke (BW/MT),0,1,0
@@ -6591,6 +6608,21 @@ Jarvan IV/Udyr (DE/FR),Pyke/Rek'Sai (BW/SH),0,1,0
 Azir/Renekton (SH),Pyke (BW/SH),0,1,0
 Renekton (BW/SH),Udyr/Zed (FR/IO),0,1,0
 Lillia/Mordekaiser (IO/SI),Morgana/Norra (BC/DE),0,1,0
+Akshan/Pantheon/Zoe (MT/SH),Pyke/Rek'Sai (BW/SH),0,1,0
+Pyke/Rek'Sai (BW/SH),Heimerdinger/Mordekaiser (PZ/SI),0,1,0
+Pantheon/Varus (MT/RU),Azir (MT/SH),0,1,0
+Norra (BC/SI),Diana/Nocturne (MT/SI),0,1,0
+Akshan/Morgana/Zoe (MT/SH),Lee Sin/Zoe (IO/MT),0,1,0
+Braum/Zoe (FR/MT),Azir (SH),0,1,0
+Renekton/Zilean (SH),Heimerdinger/Viktor (IO/PZ),0,1,0
+Lissandra (FR/SH),Diana/Nocturne (MT/SI),0,1,0
+Kayle/Udyr (FR/MT),Kindred/Mordekaiser (SI/SH),0,1,0
+Lux: Illuminated/Zoe (DE/MT),Galio (DE/FR),0,1,0
+Elise (FR/SI),Championless (PZ/SI),0,1,0
+Akshan/Lee Sin (IO/SH),Aatrox/Varus (RU/RU),0,1,0
+Aatrox/Varus (RU/RU),Mordekaiser/Norra (BC/SI),0,1,0
+Heimerdinger/Jayce (PZ/SI),Kindred/Morgana (MT/SI),0,1,0
+Elise/Nocturne (NX/SI),Master Yi/Zoe (IO/MT),0,1,0
 Elder Dragon/Galio/Morgana (RU/DE),Elder Dragon (RU/FR),1,1,1
 Elder Dragon/Galio/Morgana (RU/DE),Gnar/Teemo (BC/PZ),1,1,1
 Vayne/Zed (DE/IO),Azir/Irelia (IO/SH),1,1,1
@@ -7228,7 +7260,6 @@ Rumble/Sion (BC/NX),Janna/Nilah (BW/PZ),1,1,1
 Elise (FR/SI),Nocturne (SI),1,1,1
 Championless (SI),Nocturne (SI),1,1,1
 Elise (FR/SI),Nocturne (FR/SI),1,1,1
-Azir/Renekton (SH),Nocturne (FR/SI),1,1,1
 Pyke/Rek'Sai (BW/SH),Viktor (BC/PZ),1,1,1
 Nocturne (SI),Aatrox/Kayn (RU/RU),1,1,1
 Janna/Nilah (BW/PZ),Akshan/Lee Sin (IO/SH),1,1,1
@@ -7246,6 +7277,13 @@ Elise/Nocturne (NX/SI),Udyr (FR/NX),1,1,1
 Elise/Nocturne (SI),Akshan/Lee Sin (IO/SH),1,1,1
 Galio/Jarvan IV (DE/FR),Jayce/Lux (DE/PZ),1,1,1
 LeBlanc (FR/NX),Mordekaiser/Norra (BC/SI),1,1,1
+Lux: Illuminated/Morgana (DE/MT),Pyke/Rek'Sai (BW/SH),1,1,1
+Pyke/Rek'Sai (BW/SH),Azir/Sivir (SH),1,1,1
+Morgana/Udyr (DE/FR),Aatrox/Varus (RU/RU),1,1,1
+Jayce/Lux (DE/PZ),Kindred (SI/SH),1,1,1
+Kindred (SI/SH),Pyke/Rek'Sai (BW/SH),1,1,1
+Lissandra/Trundle (FR/SI),Akshan/Lee Sin (IO/SH),1,1,1
+Braum/Galio (DE/FR),Ezreal/Nilah (BW/PZ),1,1,1
 Draven/Jinx (NX/PZ),Fiora/Lucian (DE/FR),1,1,1
 Nilah/Twisted Fate (BW/PZ),Championless (IO/SI),1,1,1
 Annie/Jhin (RU/NX),Swain/Thresh (NX/SI),1,1,1
@@ -9790,7 +9828,6 @@ Aatrox/Varus (RU/RU),Braum/Norra (BC/FR),1,1,1
 Akshan/Lee Sin (IO/SH),Morgana/Udyr (DE/FR),1,1,1
 Fizz (BW/FR),LeBlanc/Sion (FR/NX),1,1,1
 LeBlanc/Sion (FR/NX),Heimerdinger/Viktor (IO/PZ),1,1,1
-Janna/Nilah (BW/PZ),Championless (MT/SI),1,1,1
 Elise/Nocturne (MT/SI),Braum/Jarvan IV (DE/FR),1,1,1
 Lillia/Lux: Illuminated (DE/IO),Kayle/Lux: Illuminated (DE/MT),1,1,1
 Janna/Nilah (BW/PZ),Lee Sin/Viktor (IO/PZ),1,1,1
@@ -9831,7 +9868,6 @@ Renekton/Udyr (FR/SH),Pyke/Rek'Sai (BW/SH),1,1,1
 Heimerdinger/Viktor (IO/PZ),Galio (DE),1,1,1
 Draven/Sejuani (FR/NX),Aatrox/Kayn (RU/RU),1,1,1
 Udyr/Zed (FR/IO),Janna/Zoe (MT/PZ),1,1,1
-Mordekaiser/Norra (BC/SI),Ezreal/Nilah (BW/PZ),1,1,1
 Elise/Nocturne (NX/SI),Norra/Zed (BC/IO),1,1,1
 Miss Fortune/Rek'Sai (BW/SH),Pyke/Rek'Sai (BW/SH),1,1,1
 Elise/Nocturne (SI),Rek'Sai (BW/SH),1,1,1
@@ -9878,7 +9914,6 @@ Mordekaiser (SI),Janna/Nilah (BW/PZ),1,1,1
 Akshan/Sivir (IO/SH),Pyke/Rek'Sai (BW/SH),1,1,1
 Pyke/Rek'Sai (BW/SH),Braum/Udyr (FR/NX),1,1,1
 Akshan/Pantheon (MT/SH),Kindred/Mordekaiser (PZ/SI),1,1,1
-Elise/Nocturne (MT/SI),Nocturne (SI),1,1,1
 Elise/Nocturne (NX/SI),Pantheon/Yuumi (MT/PZ),1,1,1
 Janna/Nilah (BW/PZ),Pantheon/Yuumi (MT/PZ),1,1,1
 Kayle/Yuumi (FR/MT),Elise/Nocturne (NX/SI),1,1,1
@@ -9925,7 +9960,6 @@ Pyke/Rek'Sai (BW/SH),Azir/Renekton/Sivir (SH),1,1,1
 Nocturne (SI),Master Yi/Zoe (IO/MT),1,1,1
 Elise/Nocturne (NX/SI),Kayle/Lux: Illuminated/Pantheon (DE/MT),1,1,1
 Diana/Zoe (MT/SI),Pyke/Rek'Sai (BW/SH),1,1,1
-Diana/Nocturne (MT/SI),Azir/Renekton (SH),1,1,1
 Kayle/Morgana/Udyr (FR/MT),Pyke/Rek'Sai (BW/SH),1,1,1
 Ezreal/Nilah (BW/PZ),Katarina/Miss Fortune (BW/NX),1,1,1
 Braum/Udyr/Zoe (FR/MT),Elise/Nocturne (NX/SI),1,1,1
@@ -9934,7 +9968,25 @@ Ezreal/Nilah (BW/PZ),Akshan/Pantheon (MT/SH),1,1,1
 Elise/Nocturne (NX/SI),Heimerdinger/Norra (BC/IO),1,1,1
 Lissandra/Sejuani (FR/SH),Lissandra/Trundle (FR/SI),1,1,1
 Mordekaiser/Norra (BC/SI),Galio/Udyr (DE/FR),1,1,1
-Elise/Nocturne (NX/SI),Diana/Nocturne (MT/SI),1,1,1
+Lux: Illuminated/Vi (DE/PZ),Aatrox/Kayn (RU/RU),1,1,1
+Senna (PZ/SI),Ezreal/Nilah (BW/PZ),1,1,1
+Elise/Nocturne (MT/SI),Azir/Renekton (SH),1,1,1
+Elise/Nocturne (MT/SI),Diana/Nocturne (MT/SI),1,1,1
+Braum/Galio (DE/FR),Rumble/Sion (BC/NX),1,1,1
+Mordekaiser/Norra (BC/SI),Heimerdinger/Norra (BC/SI),1,1,1
+Heimerdinger/Viktor (IO/PZ),Jayce/Lux (DE/PZ),1,1,1
+Braum (FR/SI),Elise/Nocturne (NX/SI),1,1,1
+Pantheon/Yuumi (BC/MT),Sejuani/Udyr (FR/PZ),1,1,1
+Braum/Udyr (DE/FR),Sejuani/Udyr (FR/PZ),1,1,1
+Pyke/Rek'Sai (BW/SH),Fizz/Nilah (BW/PZ),1,1,1
+Udyr/Zed (FR/IO),Janna/Vi/Zoe (MT/PZ),1,1,1
+Akshan/Lee Sin (IO/SH),Viktor/Zoe (MT/PZ),1,1,1
+Heimerdinger/Norra (BC/SI),Pyke/Rek'Sai (BW/SH),1,1,1
+Udyr/Zed (FR/IO),Sejuani/Udyr (FR/PZ),1,1,1
+Heimerdinger/Viktor (IO/PZ),Rumble/Sion (NX/SH),1,1,1
+Kayle/Yuumi (FR/MT),Braum/Udyr/Zoe (FR/MT),1,1,1
+Akshan/Pantheon (MT/SH),Jayce (PZ/SI),1,1,1
+Janna/Norra (BC/PZ),Pyke/Rek'Sai (BW/SH),1,1,1
 Draven/Ezreal (NX/PZ),Jack/Nami (BW/PZ),1,1,1
 Aphelios/Zoe (MT/PZ),Elder Dragon/Volibear (RU/FR),1,1,1
 Aphelios/Zoe (MT/PZ),Aatrox/Kayn (RU/RU),1,1,1
@@ -13007,7 +13059,6 @@ Championless (NX/SI),Janna/Norra (BC/PZ),1,1,1
 Illaoi (BW/FR),Championless (SI/SH),1,1,1
 Master Yi/Zoe (IO/MT),Akshan/Fizz (BC/SH),1,1,1
 Championless (NX/SI),Norra/Zoe (BC/MT),1,1,1
-Pyke/Rek'Sai (BW/SH),Championless (NX/SI),1,1,1
 Braum/Zoe (FR/MT),Nilah/Norra (BC/BW),1,1,1
 Kayle/Lux: Illuminated (DE/MT),Lux: Illuminated/Zoe (DE/MT),1,1,1
 Lee Sin/Viktor (IO/PZ),Elise (NX/SI),1,1,1
@@ -13021,7 +13072,6 @@ Yuumi/Zoe (BC/MT),Aatrox/Varus (RU/RU),1,1,1
 Aatrox/Kayn (RU/RU),Janna/Viktor (BC/PZ),1,1,1
 Championless (FR/IO),Akshan/Morgana (MT/SH),1,1,1
 Championless (FR/IO),Aatrox/Varus (RU/RU),1,1,1
-Senna (PZ/SI),Pyke/Rek'Sai (BW/SH),1,1,1
 Janna/Nilah (BW/PZ),Pantheon/Yuumi (FR/MT),1,1,1
 Elise (NX/SI),Illaoi (BW/SI),1,1,1
 Janna/Nilah (BW/PZ),Azir/Nilah (BW/SH),1,1,1
@@ -13107,7 +13157,6 @@ Morgana/Udyr (DE/FR),Elise/Nocturne (NX/SI),1,1,1
 Aatrox/Kayn (RU/RU),Rumble/Sion (BC/NX),1,1,1
 Aatrox/Morgana (RU/DE),Ezreal/Jhin (RU/PZ),1,1,1
 Master Yi/Zoe (IO/MT),Elise (NX/SI),1,1,1
-Mordekaiser/Norra (BC/SI),Akshan/Lee Sin (IO/SH),1,1,1
 Janna/Nilah (BW/PZ),Championless (FR/SI),1,1,1
 Elise/Nocturne (NX/SI),Elise (NX/SI),1,1,1
 Kayle/Pyke (BW/MT),Elise/Nocturne (NX/SI),1,1,1
@@ -13183,6 +13232,21 @@ Pyke/Rek'Sai (BW/SH),Jarvan IV/Udyr (DE/FR),1,1,1
 Pyke (BW/SH),Azir/Renekton (SH),1,1,1
 Udyr/Zed (FR/IO),Renekton (BW/SH),1,1,1
 Morgana/Norra (BC/DE),Lillia/Mordekaiser (IO/SI),1,1,1
+Pyke/Rek'Sai (BW/SH),Akshan/Pantheon/Zoe (MT/SH),1,1,1
+Heimerdinger/Mordekaiser (PZ/SI),Pyke/Rek'Sai (BW/SH),1,1,1
+Azir (MT/SH),Pantheon/Varus (MT/RU),1,1,1
+Diana/Nocturne (MT/SI),Norra (BC/SI),1,1,1
+Lee Sin/Zoe (IO/MT),Akshan/Morgana/Zoe (MT/SH),1,1,1
+Azir (SH),Braum/Zoe (FR/MT),1,1,1
+Heimerdinger/Viktor (IO/PZ),Renekton/Zilean (SH),1,1,1
+Diana/Nocturne (MT/SI),Lissandra (FR/SH),1,1,1
+Kindred/Mordekaiser (SI/SH),Kayle/Udyr (FR/MT),1,1,1
+Galio (DE/FR),Lux: Illuminated/Zoe (DE/MT),1,1,1
+Championless (PZ/SI),Elise (FR/SI),1,1,1
+Aatrox/Varus (RU/RU),Akshan/Lee Sin (IO/SH),1,1,1
+Mordekaiser/Norra (BC/SI),Aatrox/Varus (RU/RU),1,1,1
+Kindred/Morgana (MT/SI),Heimerdinger/Jayce (PZ/SI),1,1,1
+Master Yi/Zoe (IO/MT),Elise/Nocturne (NX/SI),1,1,1
 Elise (NX/SI),Nilah/Twisted Fate (BW/PZ),1,2,0.5
 Nilah/Twisted Fate (BW/PZ),Elise (NX/SI),1,2,0.5
 Braum/Vladimir (FR/NX),Elise/Nocturne (NX/SI),1,2,0.5
@@ -13285,6 +13349,8 @@ Pyke/Rek'Sai (BW/SH),Illaoi/Jarvan IV (BW/DE),1,2,0.5
 Pyke/Rek'Sai (BW/SH),Championless (SI/SH),1,2,0.5
 Championless (SI/SH),Pyke/Rek'Sai (BW/SH),1,2,0.5
 Akshan/Varus (SH/RU),Akshan/Varus (SH/RU),1,2,0.5
+Nocturne (FR/SI),Azir/Renekton (SH),1,2,0.5
+Azir/Renekton (SH),Nocturne (FR/SI),1,2,0.5
 Janna/Nilah (BW/PZ),Mordekaiser/Norra (BC/SI),1,2,0.5
 Mordekaiser/Norra (BC/SI),Janna/Nilah (BW/PZ),1,2,0.5
 Pyke/Rek'Sai (BW/SH),Akshan/Sivir (NX/SH),1,2,0.5
@@ -13609,6 +13675,8 @@ Norra (BC/PZ),Janna/Nilah (BW/PZ),1,2,0.5
 Janna/Nilah (BW/PZ),Norra (BC/PZ),1,2,0.5
 Zoe (MT),Pyke/Rek'Sai (BW/SH),1,2,0.5
 Pyke/Rek'Sai (BW/SH),Zoe (MT),1,2,0.5
+Janna/Nilah (BW/PZ),Championless (MT/SI),1,2,0.5
+Championless (MT/SI),Janna/Nilah (BW/PZ),1,2,0.5
 Mordekaiser/Norra (BC/SI),Akshan/Master Yi (IO/SH),1,2,0.5
 Akshan/Master Yi (IO/SH),Mordekaiser/Norra (BC/SI),1,2,0.5
 Akshan/Pantheon (MT/SH),Heimerdinger/Viktor (IO/PZ),1,2,0.5
@@ -13630,9 +13698,15 @@ Diana/Zoe (MT/SI),Elise/Nocturne (NX/SI),1,2,0.5
 Elise/Nocturne (NX/SI),Diana/Zoe (MT/SI),1,2,0.5
 Kindred/Morgana (DE/SI),Kindred/Mordekaiser (BC/SI),1,2,0.5
 Kindred/Mordekaiser (BC/SI),Kindred/Morgana (DE/SI),1,2,0.5
+Elise/Nocturne (MT/SI),Nocturne (SI),1,2,0.5
+Nocturne (SI),Elise/Nocturne (MT/SI),1,2,0.5
 Morgana/Udyr (DE/FR),Morgana/Udyr (DE/FR),1,2,0.5
 Pyke/Rek'Sai (BW/SH),Rek'Sai (BW/SH),1,2,0.5
 Rek'Sai (BW/SH),Pyke/Rek'Sai (BW/SH),1,2,0.5
+Braum/Galio (DE/FR),Braum/Galio (DE/FR),1,2,0.5
+Braum/Lux: Illuminated (DE/FR),Udyr/Zed (FR/IO),1,2,0.5
+Udyr/Zed (FR/IO),Braum/Lux: Illuminated (DE/FR),1,2,0.5
+Akshan/Lee Sin (IO/SH),Akshan/Lee Sin (IO/SH),1,2,0.5
 Akshan/Sivir (FR/SH),Karma/Sett (IO/PZ),1,2,0.5
 Karma/Sett (IO/PZ),Akshan/Sivir (FR/SH),1,2,0.5
 Poppy/Ziggs (BC/NX),Poppy/Ziggs (BC/NX),1,2,0.5
@@ -13827,6 +13901,7 @@ Janna/Nilah (BW/PZ),Illaoi (BW/FR),1,2,0.5
 Illaoi (BW/FR),Janna/Nilah (BW/PZ),1,2,0.5
 Pyke/Rek'Sai (BW/SH),Illaoi/Kayle (BW/MT),1,2,0.5
 Illaoi/Kayle (BW/MT),Pyke/Rek'Sai (BW/SH),1,2,0.5
+Diana/Nocturne (MT/SI),Diana/Nocturne (MT/SI),1,2,0.5
 Nilah/Twisted Fate (BW/PZ),Aurelion Sol/Shyvana (DE/MT),3,4,0.75
 Pyke/Rek'Sai (BW/SH),Braum/Norra (BC/FR),3,4,0.75
 Elder Dragon/Trundle (RU/FR),Azir/Irelia (IO/SH),3,4,0.75
@@ -13841,6 +13916,7 @@ Azir/Irelia (IO/SH),Bard/Gnar (RU/FR),3,4,0.75
 Annie/Jhin (RU/NX),Azir/Hecarim (SI/SH),3,4,0.75
 Elder Dragon/Volibear (RU/FR),Aatrox/Kayn (RU/RU),3,4,0.75
 Teemo (BC/PZ),Bard/Mordekaiser (RU/SI),3,4,0.75
+Ezreal/Senna (PZ/SI),Pyke/Rek'Sai (BW/SH),3,4,0.75
 Braum/Galio (DE/FR),Pyke/Rek'Sai (BW/SH),3,4,0.75
 Aurelion Sol/Elder Dragon (RU/MT),Teemo (BC/PZ),3,4,0.75
 Elise/Nocturne (SI),Yuumi/Zoe (FR/MT),3,4,0.75
@@ -13865,6 +13941,7 @@ Bard/Gnar (RU/FR),Azir/Irelia (IO/SH),1,4,0.25
 Azir/Hecarim (SI/SH),Annie/Jhin (RU/NX),1,4,0.25
 Aatrox/Kayn (RU/RU),Elder Dragon/Volibear (RU/FR),1,4,0.25
 Bard/Mordekaiser (RU/SI),Teemo (BC/PZ),1,4,0.25
+Pyke/Rek'Sai (BW/SH),Ezreal/Senna (PZ/SI),1,4,0.25
 Pyke/Rek'Sai (BW/SH),Braum/Galio (DE/FR),1,4,0.25
 Teemo (BC/PZ),Aurelion Sol/Elder Dragon (RU/MT),1,4,0.25
 Yuumi/Zoe (FR/MT),Elise/Nocturne (SI),1,4,0.25
@@ -13882,7 +13959,7 @@ Elder Dragon/Volibear (RU/FR),Taliyah/Zilean (IO/SH),4,6,0.666666666666667
 Illaoi/Swain (BW/NX),Yuumi/Zoe (FR/MT),4,6,0.666666666666667
 Zoe (FR/MT),Caitlyn/Teemo (BC/PZ),4,6,0.666666666666667
 Annie/Gwen (NX/SI),Annie/Jhin (RU/NX),4,6,0.666666666666667
-Nocturne (NX/SI),Pyke/Rek'Sai (BW/SH),4,6,0.666666666666667
+Ezreal/Nilah (BW/PZ),Heimerdinger/Viktor (IO/PZ),4,6,0.666666666666667
 Nilah/Twisted Fate (BW/PZ),Elder Dragon/Volibear (RU/FR),2,6,0.333333333333333
 Evelynn/Norra (BC/RU),Azir/Irelia (IO/SH),2,6,0.333333333333333
 Galio/Udyr (DE/FR),Pyke/Rek'Sai (BW/SH),2,6,0.333333333333333
@@ -13890,7 +13967,7 @@ Taliyah/Zilean (IO/SH),Elder Dragon/Volibear (RU/FR),2,6,0.333333333333333
 Yuumi/Zoe (FR/MT),Illaoi/Swain (BW/NX),2,6,0.333333333333333
 Caitlyn/Teemo (BC/PZ),Zoe (FR/MT),2,6,0.333333333333333
 Annie/Jhin (RU/NX),Annie/Gwen (NX/SI),2,6,0.333333333333333
-Pyke/Rek'Sai (BW/SH),Nocturne (NX/SI),2,6,0.333333333333333
+Heimerdinger/Viktor (IO/PZ),Ezreal/Nilah (BW/PZ),2,6,0.333333333333333
 Maokai/Nautilus (BW/SI),Elder Dragon/Galio/Morgana (RU/DE),0,2,0
 Azir/Xerath (SH),Elder Dragon (RU/FR),0,2,0
 Draven/Jinx (NX/PZ),Annie/Gwen (NX/SI),0,2,0
@@ -13944,7 +14021,6 @@ Gnar/Teemo (BC/PZ),Jax/Ornn (FR/RU),0,2,0
 Braum/Norra (BC/FR),Nocturne (SI),0,2,0
 Nocturne (SI),Yuumi/Zoe (IO/MT),0,2,0
 Championless (SI/SH),Nocturne (SI),0,2,0
-Nocturne (SI),Mordekaiser/Norra (BC/SI),0,2,0
 Lissandra/Trundle (FR/SI),Morgana/Udyr (DE/FR),0,2,0
 Jayce/Lux (DE/PZ),Mordekaiser/Norra (BC/SI),0,2,0
 Diana/Nocturne (MT/SI),Nocturne (SI),0,2,0
@@ -13952,6 +14028,8 @@ Udyr (DE/FR),Nocturne (SI),0,2,0
 Kindred (SI/SH),Udyr (FR/NX),0,2,0
 Diana/Nocturne (MT/SI),Elise/Nocturne (SI),0,2,0
 Janna/Nilah (BW/PZ),Elise (NX/SI),0,2,0
+Akshan/Lee Sin (IO/SH),Mordekaiser/Norra (BC/SI),0,2,0
+Pyke/Rek'Sai (BW/SH),Janna (PZ/SI),0,2,0
 Katarina/Norra (BC/NX),Elder Dragon (RU/FR),0,2,0
 Elder Dragon/Morgana (RU/DE),Championless (NX/PZ),0,2,0
 Maokai/Nautilus (BW/SI),Taliyah/Zilean (IO/SH),0,2,0
@@ -14112,6 +14190,8 @@ Jayce/Lux (DE/PZ),Lissandra/Trundle (FR/SI),0,2,0
 Akshan/Pantheon (MT/SH),Morgana/Udyr (DE/FR),0,2,0
 Zoe (MT/SI),Elise/Nocturne (NX/SI),0,2,0
 Rek'Sai (BW/SH),Braum/Zoe (FR/MT),0,2,0
+Azir/Renekton (SH),Diana/Nocturne (MT/SI),0,2,0
+Championless (NX/SI),Pyke/Rek'Sai (BW/SH),0,2,0
 Zoe (IO/MT),Nilah/Twisted Fate (BW/PZ),0,2,0
 Karma/Sett (FR/IO),Poppy/Ziggs (BC/NX),0,2,0
 Elder Dragon/Tryndamere (RU/FR),Azir/Irelia (IO/SH),0,2,0
@@ -14251,7 +14331,6 @@ Championless (FR/SI),Pyke/Rek'Sai (BW/SH),0,2,0
 Yuumi/Zoe (BC/MT),Championless (FR/SI),0,2,0
 Pyke/Rek'Sai (BW/SH),Master Yi/Zoe (IO/MT),0,2,0
 Elise/Nocturne (FR/SI),Pyke/Rek'Sai (BW/SH),0,2,0
-Aatrox/Kayn (RU/RU),Lee Sin/Viktor (IO/PZ),0,2,0
 Pyke/Rek'Sai (BW/SH),Lillia/Norra (BC/IO),0,2,0
 Elder Dragon/Galio/Morgana (RU/DE),Maokai/Nautilus (BW/SI),2,2,1
 Elder Dragon (RU/FR),Azir/Xerath (SH),2,2,1
@@ -14306,7 +14385,6 @@ Jax/Ornn (FR/RU),Gnar/Teemo (BC/PZ),2,2,1
 Nocturne (SI),Braum/Norra (BC/FR),2,2,1
 Yuumi/Zoe (IO/MT),Nocturne (SI),2,2,1
 Nocturne (SI),Championless (SI/SH),2,2,1
-Mordekaiser/Norra (BC/SI),Nocturne (SI),2,2,1
 Morgana/Udyr (DE/FR),Lissandra/Trundle (FR/SI),2,2,1
 Mordekaiser/Norra (BC/SI),Jayce/Lux (DE/PZ),2,2,1
 Nocturne (SI),Diana/Nocturne (MT/SI),2,2,1
@@ -14314,6 +14392,8 @@ Nocturne (SI),Udyr (DE/FR),2,2,1
 Udyr (FR/NX),Kindred (SI/SH),2,2,1
 Elise/Nocturne (SI),Diana/Nocturne (MT/SI),2,2,1
 Elise (NX/SI),Janna/Nilah (BW/PZ),2,2,1
+Mordekaiser/Norra (BC/SI),Akshan/Lee Sin (IO/SH),2,2,1
+Janna (PZ/SI),Pyke/Rek'Sai (BW/SH),2,2,1
 Elder Dragon (RU/FR),Katarina/Norra (BC/NX),2,2,1
 Championless (NX/PZ),Elder Dragon/Morgana (RU/DE),2,2,1
 Taliyah/Zilean (IO/SH),Maokai/Nautilus (BW/SI),2,2,1
@@ -14474,6 +14554,8 @@ Lissandra/Trundle (FR/SI),Jayce/Lux (DE/PZ),2,2,1
 Morgana/Udyr (DE/FR),Akshan/Pantheon (MT/SH),2,2,1
 Elise/Nocturne (NX/SI),Zoe (MT/SI),2,2,1
 Braum/Zoe (FR/MT),Rek'Sai (BW/SH),2,2,1
+Diana/Nocturne (MT/SI),Azir/Renekton (SH),2,2,1
+Pyke/Rek'Sai (BW/SH),Championless (NX/SI),2,2,1
 Nilah/Twisted Fate (BW/PZ),Zoe (IO/MT),2,2,1
 Poppy/Ziggs (BC/NX),Karma/Sett (FR/IO),2,2,1
 Azir/Irelia (IO/SH),Elder Dragon/Tryndamere (RU/FR),2,2,1
@@ -14613,7 +14695,6 @@ Pyke/Rek'Sai (BW/SH),Championless (FR/SI),2,2,1
 Championless (FR/SI),Yuumi/Zoe (BC/MT),2,2,1
 Master Yi/Zoe (IO/MT),Pyke/Rek'Sai (BW/SH),2,2,1
 Pyke/Rek'Sai (BW/SH),Elise/Nocturne (FR/SI),2,2,1
-Lee Sin/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),2,2,1
 Lillia/Norra (BC/IO),Pyke/Rek'Sai (BW/SH),2,2,1
 Elder Dragon (RU/FR),Taliyah/Zilean (IO/SH),2,3,0.666666666666667
 Annie/Gwen (NX/SI),Evelynn/Kai'Sa (RU/SH),2,3,0.666666666666667
@@ -14635,13 +14716,12 @@ Aatrox/Kayn (RU/RU),Morgana/Udyr (DE/FR),2,3,0.666666666666667
 Elder Dragon (RU/FR),Elder Dragon/Volibear (RU/FR),2,3,0.666666666666667
 Azir/Irelia (IO/SH),Gwen/Vayne (DE/SI),2,3,0.666666666666667
 Pyke/Rek'Sai (BW/SH),Renekton (SH),2,3,0.666666666666667
-Akshan/Lee Sin (IO/SH),Aatrox/Kayn (RU/RU),2,3,0.666666666666667
 Mordekaiser/Norra (BC/SI),Akshan/Pantheon (MT/SH),2,3,0.666666666666667
-Elise/Nocturne (SI),Nocturne (SI),2,3,0.666666666666667
 Renekton (BW/SH),Pyke/Rek'Sai (BW/SH),2,3,0.666666666666667
 Akshan/Lee Sin (IO/SH),Jarvan IV/Udyr (DE/FR),2,3,0.666666666666667
 Heimerdinger/Viktor (IO/PZ),Mordekaiser/Norra (BC/SI),2,3,0.666666666666667
 Pyke/Rek'Sai (BW/SH),Jayce/Lux (DE/PZ),2,3,0.666666666666667
+Elise/Nocturne (NX/SI),Diana/Nocturne (MT/SI),2,3,0.666666666666667
 Ezreal/Seraphine (IO/PZ),Azir/Irelia (IO/SH),2,3,0.666666666666667
 Yuumi/Zoe (FR/MT),Shyvana/Yuumi (DE/MT),2,3,0.666666666666667
 Championless (PZ/SI),Senna/Veigar (BC/SI),2,3,0.666666666666667
@@ -14658,7 +14738,6 @@ Fiora/Udyr (DE/FR),Azir/Irelia (IO/SH),2,3,0.666666666666667
 Annie/Jhin (RU/NX),Bard/Norra (BC/RU),2,3,0.666666666666667
 Soraka/Tahm Kench (BW/MT),Championless (BC/PZ),2,3,0.666666666666667
 Draven/Jinx (NX/PZ),Azir/Hecarim (SI/SH),2,3,0.666666666666667
-Yuumi/Zoe (FR/MT),Janna/Nilah (BW/PZ),2,3,0.666666666666667
 Annie/Jhin (RU/NX),Hecarim/Lucian (DE/SI),2,3,0.666666666666667
 Seraphine/Sett (IO/PZ),Azir/Irelia (IO/SH),2,3,0.666666666666667
 Elder Dragon/Mordekaiser/Viego (RU/SI),Azir/Irelia (IO/SH),2,3,0.666666666666667
@@ -14672,7 +14751,6 @@ Caitlyn/Teemo (BC/PZ),Illaoi/Swain (BW/NX),2,3,0.666666666666667
 Braum/Vladimir (FR/NX),Pyke/Rek'Sai (BW/SH),2,3,0.666666666666667
 Azir/Irelia (IO/SH),Lux: Illuminated/Vex (BC/DE),2,3,0.666666666666667
 Annie/Gwen (NX/SI),Fizz/Samira (BW/NX),2,3,0.666666666666667
-Ezreal/Senna (PZ/SI),Pyke/Rek'Sai (BW/SH),2,3,0.666666666666667
 Hecarim/Zed (IO/SI),Bard/Mordekaiser (RU/SI),2,3,0.666666666666667
 The Poro King (RU/SH),Braum/Vladimir (FR/NX),2,3,0.666666666666667
 Bard/Gnar (RU/FR),Braum/Kayle (FR/MT),2,3,0.666666666666667
@@ -14680,7 +14758,6 @@ Braum/Kayle (FR/MT),Azir/Irelia (IO/SH),2,3,0.666666666666667
 Azir/Irelia (IO/SH),Trundle/Tryndamere (FR/SI),2,3,0.666666666666667
 Elder Dragon/Volibear (RU/FR),Kindred/Nasus (SI/SH),2,3,0.666666666666667
 Miss Fortune/Twisted Fate (BW/NX),Azir/Xerath (SH),2,3,0.666666666666667
-Braum/Zoe (FR/MT),Elise/Nocturne (NX/SI),2,3,0.666666666666667
 Braum/Vladimir (FR/NX),Evelynn/Lucian (DE/RU),2,3,0.666666666666667
 Norra/Zoe (BC/MT),Azir/Irelia (IO/SH),2,3,0.666666666666667
 Caitlyn/Teemo (BC/PZ),Seraphine/Sett (IO/PZ),2,3,0.666666666666667
@@ -14699,6 +14776,7 @@ Azir/Irelia (IO/SH),Shyvana (DE/MT),2,3,0.666666666666667
 Maokai/Nautilus (BW/SI),Hecarim (IO/SI),2,3,0.666666666666667
 Janna/Nilah (BW/PZ),Janna/Norra (BC/PZ),2,3,0.666666666666667
 Heimerdinger/Viktor (IO/PZ),Morgana/Udyr (DE/FR),2,3,0.666666666666667
+Mordekaiser/Norra (BC/SI),Ezreal/Nilah (BW/PZ),2,3,0.666666666666667
 Elder Dragon/Morgana (RU/DE),Taliyah/Zilean (IO/SH),2,3,0.666666666666667
 The Poro King (RU/SH),Annie/Gwen (NX/SI),2,3,0.666666666666667
 Nami/Samira (BW/NX),Annie/Jhin (RU/NX),2,3,0.666666666666667
@@ -14733,13 +14811,12 @@ Morgana/Udyr (DE/FR),Aatrox/Kayn (RU/RU),1,3,0.333333333333333
 Elder Dragon/Volibear (RU/FR),Elder Dragon (RU/FR),1,3,0.333333333333333
 Gwen/Vayne (DE/SI),Azir/Irelia (IO/SH),1,3,0.333333333333333
 Renekton (SH),Pyke/Rek'Sai (BW/SH),1,3,0.333333333333333
-Aatrox/Kayn (RU/RU),Akshan/Lee Sin (IO/SH),1,3,0.333333333333333
 Akshan/Pantheon (MT/SH),Mordekaiser/Norra (BC/SI),1,3,0.333333333333333
-Nocturne (SI),Elise/Nocturne (SI),1,3,0.333333333333333
 Pyke/Rek'Sai (BW/SH),Renekton (BW/SH),1,3,0.333333333333333
 Jarvan IV/Udyr (DE/FR),Akshan/Lee Sin (IO/SH),1,3,0.333333333333333
 Mordekaiser/Norra (BC/SI),Heimerdinger/Viktor (IO/PZ),1,3,0.333333333333333
 Jayce/Lux (DE/PZ),Pyke/Rek'Sai (BW/SH),1,3,0.333333333333333
+Diana/Nocturne (MT/SI),Elise/Nocturne (NX/SI),1,3,0.333333333333333
 Azir/Irelia (IO/SH),Ezreal/Seraphine (IO/PZ),1,3,0.333333333333333
 Shyvana/Yuumi (DE/MT),Yuumi/Zoe (FR/MT),1,3,0.333333333333333
 Senna/Veigar (BC/SI),Championless (PZ/SI),1,3,0.333333333333333
@@ -14756,7 +14833,6 @@ Azir/Irelia (IO/SH),Fiora/Udyr (DE/FR),1,3,0.333333333333333
 Bard/Norra (BC/RU),Annie/Jhin (RU/NX),1,3,0.333333333333333
 Championless (BC/PZ),Soraka/Tahm Kench (BW/MT),1,3,0.333333333333333
 Azir/Hecarim (SI/SH),Draven/Jinx (NX/PZ),1,3,0.333333333333333
-Janna/Nilah (BW/PZ),Yuumi/Zoe (FR/MT),1,3,0.333333333333333
 Hecarim/Lucian (DE/SI),Annie/Jhin (RU/NX),1,3,0.333333333333333
 Azir/Irelia (IO/SH),Seraphine/Sett (IO/PZ),1,3,0.333333333333333
 Azir/Irelia (IO/SH),Elder Dragon/Mordekaiser/Viego (RU/SI),1,3,0.333333333333333
@@ -14770,7 +14846,6 @@ Illaoi/Swain (BW/NX),Caitlyn/Teemo (BC/PZ),1,3,0.333333333333333
 Pyke/Rek'Sai (BW/SH),Braum/Vladimir (FR/NX),1,3,0.333333333333333
 Lux: Illuminated/Vex (BC/DE),Azir/Irelia (IO/SH),1,3,0.333333333333333
 Fizz/Samira (BW/NX),Annie/Gwen (NX/SI),1,3,0.333333333333333
-Pyke/Rek'Sai (BW/SH),Ezreal/Senna (PZ/SI),1,3,0.333333333333333
 Bard/Mordekaiser (RU/SI),Hecarim/Zed (IO/SI),1,3,0.333333333333333
 Braum/Vladimir (FR/NX),The Poro King (RU/SH),1,3,0.333333333333333
 Braum/Kayle (FR/MT),Bard/Gnar (RU/FR),1,3,0.333333333333333
@@ -14778,7 +14853,6 @@ Azir/Irelia (IO/SH),Braum/Kayle (FR/MT),1,3,0.333333333333333
 Trundle/Tryndamere (FR/SI),Azir/Irelia (IO/SH),1,3,0.333333333333333
 Kindred/Nasus (SI/SH),Elder Dragon/Volibear (RU/FR),1,3,0.333333333333333
 Azir/Xerath (SH),Miss Fortune/Twisted Fate (BW/NX),1,3,0.333333333333333
-Elise/Nocturne (NX/SI),Braum/Zoe (FR/MT),1,3,0.333333333333333
 Evelynn/Lucian (DE/RU),Braum/Vladimir (FR/NX),1,3,0.333333333333333
 Azir/Irelia (IO/SH),Norra/Zoe (BC/MT),1,3,0.333333333333333
 Seraphine/Sett (IO/PZ),Caitlyn/Teemo (BC/PZ),1,3,0.333333333333333
@@ -14797,6 +14871,7 @@ Shyvana (DE/MT),Azir/Irelia (IO/SH),1,3,0.333333333333333
 Hecarim (IO/SI),Maokai/Nautilus (BW/SI),1,3,0.333333333333333
 Janna/Norra (BC/PZ),Janna/Nilah (BW/PZ),1,3,0.333333333333333
 Morgana/Udyr (DE/FR),Heimerdinger/Viktor (IO/PZ),1,3,0.333333333333333
+Ezreal/Nilah (BW/PZ),Mordekaiser/Norra (BC/SI),1,3,0.333333333333333
 Taliyah/Zilean (IO/SH),Elder Dragon/Morgana (RU/DE),1,3,0.333333333333333
 Annie/Gwen (NX/SI),The Poro King (RU/SH),1,3,0.333333333333333
 Annie/Jhin (RU/NX),Nami/Samira (BW/NX),1,3,0.333333333333333
@@ -14812,9 +14887,7 @@ Elise (FR/SI),Norra/Zoe (BC/MT),1,3,0.333333333333333
 Braum/Norra (BC/FR),Norra/Zoe (BC/MT),1,3,0.333333333333333
 Elder Dragon/Morgana (RU/DE),Azir/Irelia (IO/SH),1,3,0.333333333333333
 Fiora/Shen (DE/IO),Yuumi/Zoe (FR/MT),1,8,0.125
-Elise/Nocturne (NX/SI),Nocturne (SI),1,8,0.125
 Yuumi/Zoe (FR/MT),Fiora/Shen (DE/IO),7,8,0.875
-Nocturne (SI),Elise/Nocturne (NX/SI),7,8,0.875
 Yuumi/Zoe (FR/MT),Gnar/Nidalee (BC/SH),2,4,0.5
 Gnar/Nidalee (BC/SH),Yuumi/Zoe (FR/MT),2,4,0.5
 Elder Dragon/Galio/Morgana (RU/DE),Azir/Xerath (SH),2,4,0.5
@@ -14831,12 +14904,17 @@ Jack/Sett (BW/IO),Azir/Irelia (IO/SH),2,4,0.5
 Azir/Irelia (IO/SH),Jack/Sett (BW/IO),2,4,0.5
 Elise/Nocturne (SI),Elise/Nocturne (NX/SI),2,4,0.5
 Elise/Nocturne (NX/SI),Elise/Nocturne (SI),2,4,0.5
-Udyr/Zed (FR/IO),Udyr/Zed (FR/IO),2,4,0.5
+Aatrox/Kayn (RU/RU),Akshan/Lee Sin (IO/SH),2,4,0.5
+Akshan/Lee Sin (IO/SH),Aatrox/Kayn (RU/RU),2,4,0.5
 Pyke/Rek'Sai (BW/SH),Lee Sin/Zoe (IO/MT),2,4,0.5
 Lee Sin/Zoe (IO/MT),Pyke/Rek'Sai (BW/SH),2,4,0.5
+Nocturne (SI),Elise/Nocturne (SI),2,4,0.5
+Elise/Nocturne (SI),Nocturne (SI),2,4,0.5
 Caitlyn/Teemo (FR/PZ),Caitlyn/Teemo (FR/PZ),2,4,0.5
 Braum/Vladimir (FR/NX),Bard/Gnar (RU/FR),2,4,0.5
 Bard/Gnar (RU/FR),Braum/Vladimir (FR/NX),2,4,0.5
+Yuumi/Zoe (FR/MT),Janna/Nilah (BW/PZ),2,4,0.5
+Janna/Nilah (BW/PZ),Yuumi/Zoe (FR/MT),2,4,0.5
 Nami/Nilah (BW/SI),Nami/Nilah (BW/SI),2,4,0.5
 Braum/Vladimir (FR/NX),Braum/Vladimir (FR/NX),2,4,0.5
 Braum/Kayle (FR/MT),Annie/Gwen (NX/SI),2,4,0.5
@@ -14849,6 +14927,8 @@ Annie/Gwen (NX/SI),Janna/Nilah (BW/PZ),2,4,0.5
 Janna/Nilah (BW/PZ),Annie/Gwen (NX/SI),2,4,0.5
 Yuumi/Zoe (FR/MT),Caitlyn/Teemo (BC/PZ),2,4,0.5
 Caitlyn/Teemo (BC/PZ),Yuumi/Zoe (FR/MT),2,4,0.5
+Elise/Nocturne (NX/SI),Braum/Zoe (FR/MT),2,4,0.5
+Braum/Zoe (FR/MT),Elise/Nocturne (NX/SI),2,4,0.5
 Yuumi/Zoe (FR/MT),The Poro King (RU/SH),2,4,0.5
 The Poro King (RU/SH),Yuumi/Zoe (FR/MT),2,4,0.5
 Heimerdinger/Jayce (PZ/SI),Heimerdinger/Viktor (IO/PZ),2,4,0.5
@@ -14862,8 +14942,6 @@ Morgana/Udyr (DE/FR),Azir/Irelia (IO/SH),2,4,0.5
 Senna/Veigar (BC/SI),Azir/Irelia (IO/SH),2,4,0.5
 Azir/Irelia (IO/SH),Senna/Veigar (BC/SI),2,4,0.5
 Teemo (BC/PZ),Teemo (BC/PZ),2,4,0.5
-Azir/Renekton (SH),Norra/Zoe (BC/MT),2,4,0.5
-Norra/Zoe (BC/MT),Azir/Renekton (SH),2,4,0.5
 Elise/Nocturne (NX/SI),Yuumi/Zoe (FR/MT),0,3,0
 Elder Dragon/Morgana/Shyvana (RU/DE),Pyke/Rek'Sai (BW/SH),0,3,0
 Pyke/Rek'Sai (BW/SH),Fizz/Yuumi (BC/FR),0,3,0
@@ -14874,7 +14952,10 @@ Gnar/Teemo (BC/PZ),Elder Dragon/Volibear (RU/FR),0,3,0
 Azir/Renekton (SH),Elise/Nocturne (SI),0,3,0
 Kindred/Nasus (SI/SH),Poppy/Ziggs (BC/NX),0,3,0
 Akshan/Lee Sin (IO/SH),Heimerdinger/Viktor (IO/PZ),0,3,0
+Nocturne (SI),Mordekaiser/Norra (BC/SI),0,3,0
 Kindred/Mordekaiser (BC/SI),Pyke/Rek'Sai (BW/SH),0,3,0
+Pyke/Rek'Sai (BW/SH),Senna (PZ/SI),0,3,0
+Aatrox/Kayn (RU/RU),Lee Sin/Viktor (IO/PZ),0,3,0
 Aurelion Sol/Shyvana (DE/MT),Poppy/Ziggs (BC/NX),0,3,0
 Janna/Nilah (BW/PZ),Draven/Jinx (NX/PZ),0,3,0
 Caitlyn/Teemo (DE/PZ),Yuumi/Zoe (FR/MT),0,3,0
@@ -14928,7 +15009,10 @@ Elder Dragon/Volibear (RU/FR),Gnar/Teemo (BC/PZ),3,3,1
 Elise/Nocturne (SI),Azir/Renekton (SH),3,3,1
 Poppy/Ziggs (BC/NX),Kindred/Nasus (SI/SH),3,3,1
 Heimerdinger/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),3,3,1
+Mordekaiser/Norra (BC/SI),Nocturne (SI),3,3,1
 Pyke/Rek'Sai (BW/SH),Kindred/Mordekaiser (BC/SI),3,3,1
+Senna (PZ/SI),Pyke/Rek'Sai (BW/SH),3,3,1
+Lee Sin/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),3,3,1
 Poppy/Ziggs (BC/NX),Aurelion Sol/Shyvana (DE/MT),3,3,1
 Draven/Jinx (NX/PZ),Janna/Nilah (BW/PZ),3,3,1
 Yuumi/Zoe (FR/MT),Caitlyn/Teemo (DE/PZ),3,3,1
@@ -14974,14 +15058,12 @@ Teemo (BC/PZ),Ekko/Zilean (PZ/SH),3,3,1
 Norra (BC/SI),Braum/Zoe (FR/MT),3,3,1
 Elder Dragon/Volibear (RU/FR),Azir/Xerath (SH),5,8,0.625
 Braum/Zoe (FR/MT),Pyke/Rek'Sai (BW/SH),5,8,0.625
-Azir/Renekton (SH),Udyr/Zed (FR/IO),5,8,0.625
 Azir/Xerath (SH),Elder Dragon/Volibear (RU/FR),3,8,0.375
 Pyke/Rek'Sai (BW/SH),Braum/Zoe (FR/MT),3,8,0.375
-Udyr/Zed (FR/IO),Azir/Renekton (SH),3,8,0.375
 Braum/Zoe (FR/MT),Yuumi/Zoe (FR/MT),9,11,0.818181818181818
-Udyr/Zed (FR/IO),Pyke/Rek'Sai (BW/SH),9,11,0.818181818181818
+Norra/Zoe (BC/MT),Pyke/Rek'Sai (BW/SH),9,11,0.818181818181818
 Yuumi/Zoe (FR/MT),Braum/Zoe (FR/MT),2,11,0.181818181818182
-Pyke/Rek'Sai (BW/SH),Udyr/Zed (FR/IO),2,11,0.181818181818182
+Pyke/Rek'Sai (BW/SH),Norra/Zoe (BC/MT),2,11,0.181818181818182
 Annie/Gwen (NX/SI),Yuumi/Zoe (FR/MT),4,11,0.363636363636364
 Yuumi/Zoe (FR/MT),Annie/Gwen (NX/SI),7,11,0.636363636363636
 Nilah/Twisted Fate (BW/PZ),Elder Dragon (RU/FR),4,4,1
@@ -14989,7 +15071,6 @@ Nilah/Twisted Fate (BW/PZ),Senna/Veigar (BC/SI),4,4,1
 Pyke/Rek'Sai (BW/SH),Leona/Yasuo (IO/MT),4,4,1
 Elder Dragon (RU/FR),Mordekaiser/Norra (BC/SI),4,4,1
 Evelynn/Kai'Sa (RU/SH),Caitlyn/Teemo (BC/PZ),4,4,1
-Janna/Nilah (BW/PZ),Azir/Renekton (SH),4,4,1
 Azir/Irelia (IO/SH),Bard/Norra (BC/RU),4,4,1
 Hecarim/Zed (IO/SI),Caitlyn/Teemo (BC/PZ),4,4,1
 Braum/Zoe (FR/MT),Janna/Nilah (BW/PZ),4,4,1
@@ -15004,7 +15085,6 @@ Senna/Veigar (BC/SI),Nilah/Twisted Fate (BW/PZ),0,4,0
 Leona/Yasuo (IO/MT),Pyke/Rek'Sai (BW/SH),0,4,0
 Mordekaiser/Norra (BC/SI),Elder Dragon (RU/FR),0,4,0
 Caitlyn/Teemo (BC/PZ),Evelynn/Kai'Sa (RU/SH),0,4,0
-Azir/Renekton (SH),Janna/Nilah (BW/PZ),0,4,0
 Bard/Norra (BC/RU),Azir/Irelia (IO/SH),0,4,0
 Caitlyn/Teemo (BC/PZ),Hecarim/Zed (IO/SI),0,4,0
 Janna/Nilah (BW/PZ),Braum/Zoe (FR/MT),0,4,0
@@ -15019,7 +15099,6 @@ Gnar/Nidalee (BC/SH),Annie/Gwen (NX/SI),3,5,0.6
 Pyke/Rek'Sai (BW/SH),Championless (SI),3,5,0.6
 Azir/Irelia (IO/SH),Elder Dragon (RU/FR),3,5,0.6
 Janna/Nilah (BW/PZ),Norra/Zoe (BC/MT),3,5,0.6
-Udyr/Zed (FR/IO),Diana/Nocturne (MT/SI),3,5,0.6
 Azir/Irelia (IO/SH),Teemo (BC/PZ),3,5,0.6
 Fiora/Shen (DE/IO),Annie/Jhin (RU/NX),3,5,0.6
 Yuumi/Zoe (FR/MT),Fiora/Udyr (DE/FR),3,5,0.6
@@ -15030,16 +15109,14 @@ Caitlyn/Teemo (BC/PZ),Azir/Renekton (SH),3,5,0.6
 Fiora/Shen (DE/IO),Caitlyn/Teemo (BC/PZ),3,5,0.6
 Braum/Zoe (FR/MT),Caitlyn/Teemo (BC/PZ),3,5,0.6
 Azir/Irelia (IO/SH),Elise/Nocturne (SI),3,5,0.6
-Pyke/Rek'Sai (BW/SH),Lux: Illuminated/Zoe (DE/MT),3,5,0.6
-Ezreal/Nilah (BW/PZ),Heimerdinger/Viktor (IO/PZ),3,5,0.6
 Elise/Nocturne (NX/SI),Illaoi/Udyr (BW/FR),3,5,0.6
 Nilah/Twisted Fate (BW/PZ),Pyke/Rek'Sai (BW/SH),3,5,0.6
+Norra/Zoe (BC/MT),Azir/Renekton (SH),3,5,0.6
 Championless (FR/SI),Azir/Irelia (IO/SH),2,5,0.4
 Annie/Gwen (NX/SI),Gnar/Nidalee (BC/SH),2,5,0.4
 Championless (SI),Pyke/Rek'Sai (BW/SH),2,5,0.4
 Elder Dragon (RU/FR),Azir/Irelia (IO/SH),2,5,0.4
 Norra/Zoe (BC/MT),Janna/Nilah (BW/PZ),2,5,0.4
-Diana/Nocturne (MT/SI),Udyr/Zed (FR/IO),2,5,0.4
 Teemo (BC/PZ),Azir/Irelia (IO/SH),2,5,0.4
 Annie/Jhin (RU/NX),Fiora/Shen (DE/IO),2,5,0.4
 Fiora/Udyr (DE/FR),Yuumi/Zoe (FR/MT),2,5,0.4
@@ -15050,10 +15127,9 @@ Azir/Renekton (SH),Caitlyn/Teemo (BC/PZ),2,5,0.4
 Caitlyn/Teemo (BC/PZ),Fiora/Shen (DE/IO),2,5,0.4
 Caitlyn/Teemo (BC/PZ),Braum/Zoe (FR/MT),2,5,0.4
 Elise/Nocturne (SI),Azir/Irelia (IO/SH),2,5,0.4
-Lux: Illuminated/Zoe (DE/MT),Pyke/Rek'Sai (BW/SH),2,5,0.4
-Heimerdinger/Viktor (IO/PZ),Ezreal/Nilah (BW/PZ),2,5,0.4
 Illaoi/Udyr (BW/FR),Elise/Nocturne (NX/SI),2,5,0.4
 Pyke/Rek'Sai (BW/SH),Nilah/Twisted Fate (BW/PZ),2,5,0.4
+Azir/Renekton (SH),Norra/Zoe (BC/MT),2,5,0.4
 Azir/Xerath (SH),Azir/Irelia (IO/SH),0,6,0
 Azir/Irelia (IO/SH),Fiora/Shen (DE/IO),0,6,0
 Pyke/Rek'Sai (BW/SH),Ezreal/Jhin (RU/PZ),0,6,0
@@ -15067,51 +15143,59 @@ Azir/Irelia (IO/SH),Annie/Jhin (RU/NX),8,21,0.380952380952381
 Elise/Nocturne (NX/SI),Elise/Nocturne (NX/SI),19,38,0.5
 Azir/Irelia (IO/SH),Azir/Irelia (IO/SH),19,38,0.5
 Pyke/Rek'Sai (BW/SH),Caitlyn/Teemo (BC/PZ),6,7,0.857142857142857
+Nocturne (SI),Azir/Renekton (SH),6,7,0.857142857142857
+Udyr/Zed (FR/IO),Janna/Nilah (BW/PZ),6,7,0.857142857142857
 Nilah/Twisted Fate (BW/PZ),Azir/Irelia (IO/SH),6,7,0.857142857142857
 Azir/Irelia (IO/SH),Karma/Sett (FR/IO),6,7,0.857142857142857
 Caitlyn/Teemo (BC/PZ),Pyke/Rek'Sai (BW/SH),1,7,0.142857142857143
+Azir/Renekton (SH),Nocturne (SI),1,7,0.142857142857143
+Janna/Nilah (BW/PZ),Udyr/Zed (FR/IO),1,7,0.142857142857143
 Azir/Irelia (IO/SH),Nilah/Twisted Fate (BW/PZ),1,7,0.142857142857143
 Karma/Sett (FR/IO),Azir/Irelia (IO/SH),1,7,0.142857142857143
 Annie/Gwen (NX/SI),Annie/Gwen (NX/SI),10,20,0.5
-Pyke/Rek'Sai (BW/SH),Pyke/Rek'Sai (BW/SH),102,204,0.5
+Pyke/Rek'Sai (BW/SH),Pyke/Rek'Sai (BW/SH),116,232,0.5
 Poppy/Ziggs (BC/NX),Azir/Irelia (IO/SH),5,6,0.833333333333333
 Azir/Irelia (IO/SH),Caitlyn/Teemo (FR/PZ),5,6,0.833333333333333
-Nocturne (SI),Azir/Renekton (SH),5,6,0.833333333333333
 Janna/Nilah (BW/PZ),Nocturne (SI),5,6,0.833333333333333
-Udyr/Zed (FR/IO),Janna/Nilah (BW/PZ),5,6,0.833333333333333
+Pyke/Rek'Sai (BW/SH),Kindred/Morgana (DE/SI),5,6,0.833333333333333
 Draven/Jinx (NX/PZ),Azir/Irelia (IO/SH),5,6,0.833333333333333
 Azir/Irelia (IO/SH),Poppy/Ziggs (BC/NX),1,6,0.166666666666667
 Caitlyn/Teemo (FR/PZ),Azir/Irelia (IO/SH),1,6,0.166666666666667
-Azir/Renekton (SH),Nocturne (SI),1,6,0.166666666666667
 Nocturne (SI),Janna/Nilah (BW/PZ),1,6,0.166666666666667
-Janna/Nilah (BW/PZ),Udyr/Zed (FR/IO),1,6,0.166666666666667
+Kindred/Morgana (DE/SI),Pyke/Rek'Sai (BW/SH),1,6,0.166666666666667
 Azir/Irelia (IO/SH),Draven/Jinx (NX/PZ),1,6,0.166666666666667
-Nocturne (SI),Pyke/Rek'Sai (BW/SH),14,21,0.666666666666667
-Pyke/Rek'Sai (BW/SH),Nocturne (SI),7,21,0.333333333333333
+Nocturne (SI),Pyke/Rek'Sai (BW/SH),17,24,0.708333333333333
+Pyke/Rek'Sai (BW/SH),Nocturne (SI),7,24,0.291666666666667
 Braum/Vladimir (FR/NX),Azir/Irelia (IO/SH),5,10,0.5
 Azir/Irelia (IO/SH),Braum/Vladimir (FR/NX),5,10,0.5
 Elder Dragon/Volibear (RU/FR),Elder Dragon/Volibear (RU/FR),5,10,0.5
-Aatrox/Kayn (RU/RU),Aatrox/Kayn (RU/RU),5,10,0.5
-Pyke/Rek'Sai (BW/SH),Janna/Nilah (BW/PZ),13,35,0.371428571428571
-Janna/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),22,35,0.628571428571429
+Pyke/Rek'Sai (BW/SH),Janna/Nilah (BW/PZ),13,36,0.361111111111111
+Janna/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),23,36,0.638888888888889
 Azir/Irelia (IO/SH),Aurelion Sol/Shyvana (DE/MT),5,5,1
+Janna/Nilah (BW/PZ),Azir/Renekton (SH),5,5,1
 Fiora/Udyr (DE/FR),Caitlyn/Teemo (BC/PZ),5,5,1
 Mordekaiser (SI),Pyke/Rek'Sai (BW/SH),5,5,1
 Aurelion Sol/Shyvana (DE/MT),Azir/Irelia (IO/SH),0,5,0
+Azir/Renekton (SH),Janna/Nilah (BW/PZ),0,5,0
 Caitlyn/Teemo (BC/PZ),Fiora/Udyr (DE/FR),0,5,0
 Pyke/Rek'Sai (BW/SH),Mordekaiser (SI),0,5,0
 Azir/Irelia (IO/SH),Annie/Gwen (NX/SI),4,10,0.4
-Udyr/Zed (FR/IO),Elise/Nocturne (NX/SI),4,10,0.4
 Annie/Gwen (NX/SI),Azir/Irelia (IO/SH),6,10,0.6
-Elise/Nocturne (NX/SI),Udyr/Zed (FR/IO),6,10,0.6
 Pyke/Rek'Sai (BW/SH),Azir/Irelia (IO/SH),4,9,0.444444444444444
 Elise/Nocturne (SI),Pyke/Rek'Sai (BW/SH),4,9,0.444444444444444
+Udyr/Zed (FR/IO),Azir/Renekton (SH),4,9,0.444444444444444
 Azir/Irelia (IO/SH),Pyke/Rek'Sai (BW/SH),5,9,0.555555555555556
 Pyke/Rek'Sai (BW/SH),Elise/Nocturne (SI),5,9,0.555555555555556
+Azir/Renekton (SH),Udyr/Zed (FR/IO),5,9,0.555555555555556
 Maokai/Nautilus (BW/SI),Elder Dragon/Volibear (RU/FR),3,6,0.5
 Elder Dragon/Volibear (RU/FR),Maokai/Nautilus (BW/SI),3,6,0.5
+Udyr/Zed (FR/IO),Udyr/Zed (FR/IO),3,6,0.5
+Udyr/Zed (FR/IO),Diana/Nocturne (MT/SI),3,6,0.5
+Diana/Nocturne (MT/SI),Udyr/Zed (FR/IO),3,6,0.5
 Udyr/Zed (FR/IO),Nocturne (SI),3,6,0.5
 Nocturne (SI),Udyr/Zed (FR/IO),3,6,0.5
+Pyke/Rek'Sai (BW/SH),Lux: Illuminated/Zoe (DE/MT),3,6,0.5
+Lux: Illuminated/Zoe (DE/MT),Pyke/Rek'Sai (BW/SH),3,6,0.5
 Elise/Nocturne (SI),Annie/Jhin (RU/NX),3,6,0.5
 Annie/Jhin (RU/NX),Elise/Nocturne (SI),3,6,0.5
 Caitlyn/Teemo (BC/PZ),Caitlyn/Teemo (BC/PZ),3,6,0.5
@@ -15121,9 +15205,9 @@ Braum/Zoe (FR/MT),Azir/Irelia (IO/SH),6,12,0.5
 Azir/Irelia (IO/SH),Braum/Zoe (FR/MT),6,12,0.5
 Annie/Jhin (RU/NX),Annie/Jhin (RU/NX),6,12,0.5
 Heimerdinger/Viktor (IO/PZ),Heimerdinger/Viktor (IO/PZ),6,12,0.5
+Aatrox/Kayn (RU/RU),Aatrox/Kayn (RU/RU),6,12,0.5
 Illaoi/Swain (BW/NX),Braum/Zoe (FR/MT),4,5,0.8
 Azir/Irelia (IO/SH),Ryze (IO/RU),4,5,0.8
-Pyke/Rek'Sai (BW/SH),Kindred/Morgana (DE/SI),4,5,0.8
 Pyke/Rek'Sai (BW/SH),Championless (PZ/SI),4,5,0.8
 Pyke/Rek'Sai (BW/SH),Elise (FR/SI),4,5,0.8
 Poppy/Ziggs (BC/NX),Elder Dragon/Volibear (RU/FR),4,5,0.8
@@ -15134,7 +15218,6 @@ Draven/Jinx (NX/PZ),Caitlyn/Teemo (BC/PZ),4,5,0.8
 Pyke/Rek'Sai (BW/SH),Illaoi (BW/SI),4,5,0.8
 Braum/Zoe (FR/MT),Illaoi/Swain (BW/NX),1,5,0.2
 Ryze (IO/RU),Azir/Irelia (IO/SH),1,5,0.2
-Kindred/Morgana (DE/SI),Pyke/Rek'Sai (BW/SH),1,5,0.2
 Championless (PZ/SI),Pyke/Rek'Sai (BW/SH),1,5,0.2
 Elise (FR/SI),Pyke/Rek'Sai (BW/SH),1,5,0.2
 Elder Dragon/Volibear (RU/FR),Poppy/Ziggs (BC/NX),1,5,0.2
@@ -15143,34 +15226,44 @@ Maokai/Nautilus (BW/SI),Azir/Irelia (IO/SH),1,5,0.2
 Annie/Jhin (RU/NX),Braum/Vladimir (FR/NX),1,5,0.2
 Caitlyn/Teemo (BC/PZ),Draven/Jinx (NX/PZ),1,5,0.2
 Illaoi (BW/SI),Pyke/Rek'Sai (BW/SH),1,5,0.2
+Udyr/Zed (FR/IO),Elise/Nocturne (NX/SI),5,11,0.454545454545455
+Elise/Nocturne (NX/SI),Udyr/Zed (FR/IO),6,11,0.545454545454545
 Azir/Renekton (SH),Pyke/Rek'Sai (BW/SH),5,12,0.416666666666667
-Pyke/Rek'Sai (BW/SH),Ezreal/Nilah (BW/PZ),5,12,0.416666666666667
 Pyke/Rek'Sai (BW/SH),Azir/Renekton (SH),7,12,0.583333333333333
-Ezreal/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),7,12,0.583333333333333
-Elise/Nocturne (NX/SI),Pyke/Rek'Sai (BW/SH),30,60,0.5
-Pyke/Rek'Sai (BW/SH),Elise/Nocturne (NX/SI),30,60,0.5
-Aatrox/Kayn (RU/RU),Pyke/Rek'Sai (BW/SH),13,23,0.565217391304348
-Janna/Nilah (BW/PZ),Elise/Nocturne (NX/SI),13,23,0.565217391304348
-Pyke/Rek'Sai (BW/SH),Aatrox/Kayn (RU/RU),10,23,0.434782608695652
+Elise/Nocturne (NX/SI),Pyke/Rek'Sai (BW/SH),32,63,0.507936507936508
+Pyke/Rek'Sai (BW/SH),Elise/Nocturne (NX/SI),31,63,0.492063492063492
+Aatrox/Kayn (RU/RU),Pyke/Rek'Sai (BW/SH),13,24,0.541666666666667
+Pyke/Rek'Sai (BW/SH),Aatrox/Kayn (RU/RU),11,24,0.458333333333333
 Elise/Nocturne (NX/SI),Janna/Nilah (BW/PZ),10,23,0.434782608695652
-Pyke/Rek'Sai (BW/SH),Akshan/Lee Sin (IO/SH),12,15,0.8
-Akshan/Lee Sin (IO/SH),Pyke/Rek'Sai (BW/SH),3,15,0.2
-Heimerdinger/Viktor (IO/PZ),Pyke/Rek'Sai (BW/SH),10,18,0.555555555555556
-Pyke/Rek'Sai (BW/SH),Heimerdinger/Viktor (IO/PZ),8,18,0.444444444444444
+Janna/Nilah (BW/PZ),Elise/Nocturne (NX/SI),13,23,0.565217391304348
+Nocturne (SI),Elise/Nocturne (NX/SI),9,12,0.75
+Elise/Nocturne (NX/SI),Nocturne (SI),3,12,0.25
+Pyke/Rek'Sai (BW/SH),Akshan/Lee Sin (IO/SH),13,17,0.764705882352941
+Akshan/Lee Sin (IO/SH),Pyke/Rek'Sai (BW/SH),4,17,0.235294117647059
+Pyke/Rek'Sai (BW/SH),Ezreal/Nilah (BW/PZ),7,14,0.5
+Ezreal/Nilah (BW/PZ),Pyke/Rek'Sai (BW/SH),7,14,0.5
+Azir/Irelia (IO/SH),Yuumi/Zoe (FR/MT),7,14,0.5
+Yuumi/Zoe (FR/MT),Azir/Irelia (IO/SH),7,14,0.5
+Udyr/Zed (FR/IO),Pyke/Rek'Sai (BW/SH),13,15,0.866666666666667
+Azir/Irelia (IO/SH),Elder Dragon/Volibear (RU/FR),13,15,0.866666666666667
+Pyke/Rek'Sai (BW/SH),Udyr/Zed (FR/IO),2,15,0.133333333333333
+Elder Dragon/Volibear (RU/FR),Azir/Irelia (IO/SH),2,15,0.133333333333333
+Heimerdinger/Viktor (IO/PZ),Pyke/Rek'Sai (BW/SH),11,19,0.578947368421053
+Pyke/Rek'Sai (BW/SH),Heimerdinger/Viktor (IO/PZ),8,19,0.421052631578947
 Mordekaiser/Norra (BC/SI),Mordekaiser/Norra (BC/SI),4,8,0.5
 Pyke/Rek'Sai (BW/SH),Elise (NX/SI),0,7,0
 Elise (NX/SI),Pyke/Rek'Sai (BW/SH),7,7,1
-Pyke/Rek'Sai (BW/SH),Mordekaiser/Norra (BC/SI),8,27,0.296296296296296
-Mordekaiser/Norra (BC/SI),Pyke/Rek'Sai (BW/SH),19,27,0.703703703703704
-Nocturne (SI),Nocturne (SI),7,14,0.5
-Azir/Irelia (IO/SH),Yuumi/Zoe (FR/MT),7,14,0.5
-Yuumi/Zoe (FR/MT),Azir/Irelia (IO/SH),7,14,0.5
-Pyke/Rek'Sai (BW/SH),Norra/Zoe (BC/MT),1,10,0.1
-Norra/Zoe (BC/MT),Pyke/Rek'Sai (BW/SH),9,10,0.9
+Pyke/Rek'Sai (BW/SH),Mordekaiser/Norra (BC/SI),8,28,0.285714285714286
+Mordekaiser/Norra (BC/SI),Pyke/Rek'Sai (BW/SH),20,28,0.714285714285714
+Nocturne (SI),Nocturne (SI),9,18,0.5
 Aatrox/Kayn (RU/RU),Mordekaiser/Norra (BC/SI),2,7,0.285714285714286
-Janna/Nilah (BW/PZ),Diana/Nocturne (MT/SI),2,7,0.285714285714286
+Pyke/Rek'Sai (BW/SH),Nocturne (NX/SI),2,7,0.285714285714286
 Mordekaiser/Norra (BC/SI),Aatrox/Kayn (RU/RU),5,7,0.714285714285714
-Diana/Nocturne (MT/SI),Janna/Nilah (BW/PZ),5,7,0.714285714285714
+Nocturne (NX/SI),Pyke/Rek'Sai (BW/SH),5,7,0.714285714285714
+Diana/Nocturne (MT/SI),Pyke/Rek'Sai (BW/SH),8,16,0.5
+Pyke/Rek'Sai (BW/SH),Diana/Nocturne (MT/SI),8,16,0.5
+Aatrox/Kayn (RU/RU),Heimerdinger/Viktor (IO/PZ),3,11,0.272727272727273
+Heimerdinger/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),8,11,0.727272727272727
 Yuumi/Zoe (FR/MT),Yuumi/Zoe (FR/MT),13,26,0.5
 Yuumi/Zoe (FR/MT),Braum/Vladimir (FR/NX),7,10,0.7
 Braum/Vladimir (FR/NX),Yuumi/Zoe (FR/MT),3,10,0.3
@@ -15178,8 +15271,6 @@ Caitlyn/Teemo (BC/PZ),Annie/Gwen (NX/SI),3,9,0.333333333333333
 Yuumi/Zoe (FR/MT),Annie/Jhin (RU/NX),3,9,0.333333333333333
 Annie/Gwen (NX/SI),Caitlyn/Teemo (BC/PZ),6,9,0.666666666666667
 Annie/Jhin (RU/NX),Yuumi/Zoe (FR/MT),6,9,0.666666666666667
-Azir/Irelia (IO/SH),Elder Dragon/Volibear (RU/FR),13,15,0.866666666666667
-Elder Dragon/Volibear (RU/FR),Azir/Irelia (IO/SH),2,15,0.133333333333333
 Caitlyn/Teemo (BC/PZ),Azir/Irelia (IO/SH),5,21,0.238095238095238
 Azir/Irelia (IO/SH),Caitlyn/Teemo (BC/PZ),16,21,0.761904761904762
 Caitlyn/Teemo (BC/PZ),Annie/Jhin (RU/NX),5,14,0.357142857142857
@@ -15194,8 +15285,6 @@ Annie/Jhin (RU/NX),Pyke/Rek'Sai (BW/SH),4,7,0.571428571428571
 Pantheon/Yuumi (BC/MT),Pyke/Rek'Sai (BW/SH),4,7,0.571428571428571
 Miss Fortune/Twisted Fate (BW/NX),Azir/Irelia (IO/SH),4,7,0.571428571428571
 Ezreal/Nilah (BW/PZ),Aatrox/Kayn (RU/RU),4,7,0.571428571428571
-Diana/Nocturne (MT/SI),Pyke/Rek'Sai (BW/SH),4,12,0.333333333333333
-Pyke/Rek'Sai (BW/SH),Diana/Nocturne (MT/SI),8,12,0.666666666666667
-Heimerdinger/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),7,9,0.777777777777778
-Aatrox/Kayn (RU/RU),Heimerdinger/Viktor (IO/PZ),2,9,0.222222222222222
-Janna/Nilah (BW/PZ),Janna/Nilah (BW/PZ),14,28,0.5
+Janna/Nilah (BW/PZ),Janna/Nilah (BW/PZ),15,30,0.5
+Diana/Nocturne (MT/SI),Janna/Nilah (BW/PZ),6,8,0.75
+Janna/Nilah (BW/PZ),Diana/Nocturne (MT/SI),2,8,0.25
