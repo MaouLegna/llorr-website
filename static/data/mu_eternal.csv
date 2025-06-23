@@ -1,10 +1,8 @@
 archetype_1,archetype_2,mu_win,mu_n,mu_wr
 Nocturne (SI),Nocturne (SI),22,44,0.5
 Azir/Irelia (IO/SH),Nocturne (SI),2,10,0.2
-Braum (FR/NX),Annie/Gwen (NX/SI),2,10,0.2
 Caitlyn/Teemo (FR/PZ),Azir/Irelia (IO/SH),2,10,0.2
 Nocturne (SI),Azir/Irelia (IO/SH),8,10,0.8
-Annie/Gwen (NX/SI),Braum (FR/NX),8,10,0.8
 Azir/Irelia (IO/SH),Caitlyn/Teemo (FR/PZ),8,10,0.8
 Annie/Jhin (RU/NX),Nocturne (SI),0,8,0
 Nocturne (SI),Annie/Jhin (RU/NX),8,8,1
@@ -1776,6 +1774,7 @@ Nocturne (SI),Caitlyn/Teemo (FR/PZ),3,5,0.6
 Annie/Gwen (NX/SI),Fizz/Illaoi (BW/FR),3,5,0.6
 Nocturne (SI),Gnar/Nidalee (BC/SH),3,5,0.6
 Ashe (FR/PZ),Elise/Nocturne (NX/SI),3,5,0.6
+Caitlyn/Teemo (FR/PZ),Braum/Zoe (FR/MT),3,5,0.6
 Yuumi/Zoe (FR/MT),Azir/Irelia (IO/SH),3,5,0.6
 Elise (FR/SI),Bard/Gnar (RU/FR),3,5,0.6
 The Poro King (MT/RU),Nidalee (BC/SH),3,5,0.6
@@ -1784,6 +1783,7 @@ Caitlyn/Teemo (FR/PZ),Nocturne (SI),2,5,0.4
 Fizz/Illaoi (BW/FR),Annie/Gwen (NX/SI),2,5,0.4
 Gnar/Nidalee (BC/SH),Nocturne (SI),2,5,0.4
 Elise/Nocturne (NX/SI),Ashe (FR/PZ),2,5,0.4
+Braum/Zoe (FR/MT),Caitlyn/Teemo (FR/PZ),2,5,0.4
 Azir/Irelia (IO/SH),Yuumi/Zoe (FR/MT),2,5,0.4
 Bard/Gnar (RU/FR),Elise (FR/SI),2,5,0.4
 Nidalee (BC/SH),The Poro King (MT/RU),2,5,0.4
@@ -1828,7 +1828,6 @@ Garen/Udyr (DE/FR),Elise/Nocturne (SI),1,3,0.333333333333333
 Bard/Gnar (RU/FR),Elise/Nocturne (SI),1,3,0.333333333333333
 Pantheon/Zoe (DE/MT),Annie/Gwen (NX/SI),1,3,0.333333333333333
 Bard/Gnar (RU/FR),Garen/Shyvana (DE/MT),1,3,0.333333333333333
-Braum/Zoe (FR/MT),Caitlyn/Teemo (FR/PZ),1,3,0.333333333333333
 Braum/Vladimir (FR/NX),Azir/Irelia (IO/SH),1,3,0.333333333333333
 The Poro King (MT/RU),Yuumi/Zoe (FR/MT),1,3,0.333333333333333
 Fizz/Samira (BW/NX),Annie/Gwen (NX/SI),1,3,0.333333333333333
@@ -1886,7 +1885,6 @@ Elise/Nocturne (SI),Garen/Udyr (DE/FR),2,3,0.666666666666667
 Elise/Nocturne (SI),Bard/Gnar (RU/FR),2,3,0.666666666666667
 Annie/Gwen (NX/SI),Pantheon/Zoe (DE/MT),2,3,0.666666666666667
 Garen/Shyvana (DE/MT),Bard/Gnar (RU/FR),2,3,0.666666666666667
-Caitlyn/Teemo (FR/PZ),Braum/Zoe (FR/MT),2,3,0.666666666666667
 Azir/Irelia (IO/SH),Braum/Vladimir (FR/NX),2,3,0.666666666666667
 Yuumi/Zoe (FR/MT),The Poro King (MT/RU),2,3,0.666666666666667
 Annie/Gwen (NX/SI),Fizz/Samira (BW/NX),2,3,0.666666666666667
@@ -1978,20 +1976,20 @@ Fiora/Shen (DE/IO),Azir/Irelia (IO/SH),1,4,0.25
 Yuumi/Zoe (FR/MT),Elise/Nocturne (NX/SI),1,4,0.25
 Nidalee (BC/SH),Nocturne (SI),4,6,0.666666666666667
 Annie/Gwen (NX/SI),Gwen/Jhin (RU/SI),4,6,0.666666666666667
-Braum/Zoe (FR/MT),Janna/Nilah (BW/PZ),4,6,0.666666666666667
 Elise (FR/SI),Braum/Zoe (FR/MT),4,6,0.666666666666667
 Pantheon/Yuumi (BC/MT),Annie/Gwen (NX/SI),4,6,0.666666666666667
 Caitlyn/Teemo (FR/PZ),Championless (SI),4,6,0.666666666666667
 Fiora/Shen (DE/IO),Norra (BC/SI),4,6,0.666666666666667
 Nocturne (SI),Nidalee (BC/SH),2,6,0.333333333333333
 Gwen/Jhin (RU/SI),Annie/Gwen (NX/SI),2,6,0.333333333333333
-Janna/Nilah (BW/PZ),Braum/Zoe (FR/MT),2,6,0.333333333333333
 Braum/Zoe (FR/MT),Elise (FR/SI),2,6,0.333333333333333
 Annie/Gwen (NX/SI),Pantheon/Yuumi (BC/MT),2,6,0.333333333333333
 Championless (SI),Caitlyn/Teemo (FR/PZ),2,6,0.333333333333333
 Norra (BC/SI),Fiora/Shen (DE/IO),2,6,0.333333333333333
 Janna/Nilah (BW/PZ),Nocturne (SI),7,19,0.368421052631579
+Braum/Zoe (FR/MT),Ashe (FR/PZ),7,19,0.368421052631579
 Nocturne (SI),Janna/Nilah (BW/PZ),12,19,0.631578947368421
+Ashe (FR/PZ),Braum/Zoe (FR/MT),12,19,0.631578947368421
 Yuumi/Zoe (FR/MT),Nocturne (SI),6,9,0.666666666666667
 Janna/Nilah (BW/PZ),Draven/Jinx (NX/PZ),6,9,0.666666666666667
 The Poro King (RU/SI),Annie/Gwen (NX/SI),6,9,0.666666666666667
@@ -2311,7 +2309,9 @@ Annie/Gwen (NX/SI),Fiora/Udyr (DE/FR),7,16,0.4375
 Annie/Gwen (NX/SI),Fiora (DE/MT),9,16,0.5625
 Fiora/Udyr (DE/FR),Annie/Gwen (NX/SI),9,16,0.5625
 Nami/Nilah (BW/SI),Nocturne (SI),3,11,0.272727272727273
+Braum (FR/NX),Annie/Gwen (NX/SI),3,11,0.272727272727273
 Nocturne (SI),Nami/Nilah (BW/SI),8,11,0.727272727272727
+Annie/Gwen (NX/SI),Braum (FR/NX),8,11,0.727272727272727
 Annie/Gwen (NX/SI),Yuumi/Zoe (FR/MT),11,29,0.379310344827586
 Yuumi/Zoe (FR/MT),Annie/Gwen (NX/SI),18,29,0.620689655172414
 Annie/Gwen (NX/SI),Nocturne (SI),61,106,0.575471698113208
@@ -2380,10 +2380,6 @@ Gnar/Neeko (FR/RU),Annie/Gwen (NX/SI),5,18,0.277777777777778
 Annie/Gwen (NX/SI),Gnar/Neeko (FR/RU),13,18,0.722222222222222
 Annie/Gwen (NX/SI),Bard/Gnar (RU/FR),4,14,0.285714285714286
 Bard/Gnar (RU/FR),Annie/Gwen (NX/SI),10,14,0.714285714285714
-Braum/Zoe (FR/MT),Ashe (FR/PZ),6,18,0.333333333333333
-The Poro King (MT/RU),Ashe (FR/PZ),6,18,0.333333333333333
-Ashe (FR/PZ),Braum/Zoe (FR/MT),12,18,0.666666666666667
-Ashe (FR/PZ),The Poro King (MT/RU),12,18,0.666666666666667
 Braum/Gnar/Kayle (FR/MT),Annie/Gwen (NX/SI),0,3,0
 Annie/Jhin (RU/NX),Nami/Nilah (BW/SI),0,3,0
 Bard/Norra (BC/RU),Annie/Gwen (NX/SI),0,3,0
@@ -2441,10 +2437,14 @@ Caitlyn/Teemo (BC/PZ),Annie/Gwen (NX/SI),3,10,0.3
 Pyke/Rek'Sai (BW/SH),Nocturne (SI),3,10,0.3
 Nocturne (SI),Elise/Nocturne (SI),3,10,0.3
 Annie/Gwen (NX/SI),Nocturne (FR/SI),6,8,0.75
+Braum/Zoe (FR/MT),Janna/Nilah (BW/PZ),6,8,0.75
 Azir/Irelia (IO/SH),The Poro King (MT/RU),6,8,0.75
+Braum/Zoe (FR/MT),Yuumi/Zoe (FR/MT),6,8,0.75
 Hecarim/Lucian (DE/SI),Annie/Gwen (NX/SI),6,8,0.75
 Nocturne (FR/SI),Annie/Gwen (NX/SI),2,8,0.25
+Janna/Nilah (BW/PZ),Braum/Zoe (FR/MT),2,8,0.25
 The Poro King (MT/RU),Azir/Irelia (IO/SH),2,8,0.25
+Yuumi/Zoe (FR/MT),Braum/Zoe (FR/MT),2,8,0.25
 Annie/Gwen (NX/SI),Hecarim/Lucian (DE/SI),2,8,0.25
 Nami/Nilah (BW/SI),Annie/Gwen (NX/SI),16,29,0.551724137931035
 Annie/Gwen (NX/SI),Nami/Nilah (BW/SI),13,29,0.448275862068966
@@ -2499,6 +2499,8 @@ Elise/Nocturne (SI),Yuumi/Zoe (FR/MT),7,8,0.875
 Annie/Gwen (NX/SI),Kayle/Nami (BW/MT),7,8,0.875
 Yuumi/Zoe (FR/MT),Elise/Nocturne (SI),1,8,0.125
 Kayle/Nami (BW/MT),Annie/Gwen (NX/SI),1,8,0.125
+The Poro King (MT/RU),Ashe (FR/PZ),6,18,0.333333333333333
+Ashe (FR/PZ),The Poro King (MT/RU),12,18,0.666666666666667
 Braum/Zoe (FR/MT),Nocturne (SI),7,12,0.583333333333333
 Ashe (FR/PZ),Pyke/Rek'Sai (BW/SH),7,12,0.583333333333333
 Nocturne (SI),Braum/Zoe (FR/MT),5,12,0.416666666666667
@@ -2516,22 +2518,20 @@ Elise (FR/SI),Caitlyn/Teemo (FR/PZ),0,5,0
 Elise (FR/SI),Elise (FR/SI),9,18,0.5
 Annie/Gwen (NX/SI),Championless (SI),13,22,0.590909090909091
 Championless (SI),Annie/Gwen (NX/SI),9,22,0.409090909090909
-Yuumi/Zoe (FR/MT),Braum/Zoe (FR/MT),1,7,0.142857142857143
-Annie/Gwen (NX/SI),The Poro King (IO/RU),1,7,0.142857142857143
-Yuumi/Zoe (FR/MT),Nidalee (BC/SH),1,7,0.142857142857143
-Braum/Zoe (FR/MT),Yuumi/Zoe (FR/MT),6,7,0.857142857142857
-The Poro King (IO/RU),Annie/Gwen (NX/SI),6,7,0.857142857142857
-Nidalee (BC/SH),Yuumi/Zoe (FR/MT),6,7,0.857142857142857
 The Poro King (MT/RU),Annie/Gwen (NX/SI),27,34,0.794117647058824
 Annie/Gwen (NX/SI),The Poro King (MT/RU),7,34,0.205882352941176
 Fiora/Shen (DE/IO),Championless (SI),8,13,0.615384615384615
 Championless (SI),Fiora/Shen (DE/IO),5,13,0.384615384615385
 Ashe (FR/PZ),Championless (SI),10,17,0.588235294117647
 Championless (SI),Ashe (FR/PZ),7,17,0.411764705882353
-Fiora/Shen (DE/IO),Braum/Zoe (FR/MT),5,11,0.454545454545455
-The Poro King (MT/RU),Draven/Jinx (NX/PZ),5,11,0.454545454545455
-Braum/Zoe (FR/MT),Fiora/Shen (DE/IO),6,11,0.545454545454545
-Draven/Jinx (NX/PZ),The Poro King (MT/RU),6,11,0.545454545454545
+Fiora/Shen (DE/IO),Braum/Zoe (FR/MT),6,12,0.5
+Braum/Zoe (FR/MT),Fiora/Shen (DE/IO),6,12,0.5
 Fiora/Shen (DE/IO),Fiora/Shen (DE/IO),6,12,0.5
 Norra (BC/SI),Braum/Zoe (FR/MT),2,12,0.166666666666667
 Braum/Zoe (FR/MT),Norra (BC/SI),10,12,0.833333333333333
+The Poro King (MT/RU),Draven/Jinx (NX/PZ),5,11,0.454545454545455
+Draven/Jinx (NX/PZ),The Poro King (MT/RU),6,11,0.545454545454545
+Annie/Gwen (NX/SI),The Poro King (IO/RU),1,7,0.142857142857143
+Yuumi/Zoe (FR/MT),Nidalee (BC/SH),1,7,0.142857142857143
+The Poro King (IO/RU),Annie/Gwen (NX/SI),6,7,0.857142857142857
+Nidalee (BC/SH),Yuumi/Zoe (FR/MT),6,7,0.857142857142857
