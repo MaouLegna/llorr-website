@@ -1,6 +1,6 @@
 archetype_1,archetype_2,mu_win,mu_n,mu_wr
-Jayce/Lux (DE/PZ),Akshan/Varus (SH/RU),8,23,0.347826086956522
-Akshan/Varus (SH/RU),Jayce/Lux (DE/PZ),15,23,0.652173913043478
+Jayce/Lux (DE/PZ),Akshan/Varus (SH/RU),10,31,0.32258064516129
+Akshan/Varus (SH/RU),Jayce/Lux (DE/PZ),21,31,0.67741935483871
 Aurelion Sol/Trundle (FR/MT),Karma/Sett (IO/PZ),1,1,1
 Championless (IO/SH),Galio/Morgana (DE/FR),1,1,1
 Aurelion Sol/Volibear (FR/MT),Akshan/Varus (SH/RU),1,1,1
@@ -9,7 +9,6 @@ Janna/Sett (IO/PZ),Akshan/Lee Sin (IO/SH),1,1,1
 Seraphine/Sett (IO/PZ),Trundle/Volibear (DE/FR),1,1,1
 Seraphine/Sett (IO/PZ),Akshan/Lee Sin (IO/SH),1,1,1
 Morgana/Riven (MT/NX),Gangplank/Swain (BW/NX),1,1,1
-Senna/Veigar (BC/SI),Illaoi/Swain (BW/NX),1,1,1
 Karma/Sett (IO/PZ),Aatrox/Kayn (RU/RU),1,1,1
 Janna/Sett (IO/PZ),Gangplank/Swain (BW/NX),1,1,1
 Akshan/Varus (SH/RU),Janna (PZ/SI),1,1,1
@@ -22,7 +21,6 @@ Karma/Sett (IO/PZ),Aurelion Sol/Shyvana (DE/MT),1,1,1
 Karma/Sett (IO/PZ),The Poro King (MT/RU),1,1,1
 Janna/Sett (IO/PZ),Akshan/Jayce (PZ/SH),1,1,1
 Akshan/Jayce (PZ/SH),Jayce/Lux (DE/PZ),1,1,1
-Karma/Sett (IO/PZ),Mordekaiser/Norra (BC/SI),1,1,1
 Heimerdinger/Viktor (IO/PZ),Aurelion Sol/Shyvana (DE/MT),1,1,1
 Akshan/Varus (SH/RU),Thresh/Veigar (DE/SI),1,1,1
 Senna/Veigar (BC/SI),Janna/Lee Sin/Viktor (IO/PZ),1,1,1
@@ -34,16 +32,13 @@ Galio/Morgana (DE/FR),Akshan/Viktor (PZ/SH),1,1,1
 Anivia (FR/SI),Karma/Sett (FR/IO),1,1,1
 Galio/Morgana (DE/FR),Morgana/Riven (MT/NX),1,1,1
 Maokai/Nautilus (BW/SI),Gwen (SI),1,1,1
-Akshan/Lee Sin (IO/SH),Morgana/Riven (MT/NX),1,1,1
 Morgana/Riven (MT/NX),Maokai/Nautilus (BW/SI),1,1,1
-Aatrox/Kayn (RU/RU),Galio/Morgana (DE/FR),1,1,1
-Jayce/Lux (DE/PZ),Morgana/Riven (MT/NX),1,1,1
 Senna/Veigar (PZ/SI),Aatrox/Kayn (RU/RU),1,1,1
 Aurelion Sol/Shyvana (DE/MT),Aatrox (RU/BW),1,1,1
-Championless (SI),Galio/Morgana (DE/FR),1,1,1
 Morgana/Riven (MT/NX),Janna/Sett (IO/PZ),1,1,1
 Karma/Sett (FR/IO),Anivia/Volibear (FR/NX),1,1,1
 Heimerdinger/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),1,1,1
+Championless (SI/SH),Kayle (BW/MT),1,1,1
 Janna/Mordekaiser (PZ/SI),Maokai/Nautilus (BW/SI),1,1,1
 Morgana/Trundle/Volibear (DE/FR),Aatrox/Kayn (RU/RU),1,1,1
 Kayle (BW/MT),Championless (IO/SH),1,1,1
@@ -60,32 +55,49 @@ Senna/Thresh (SI),Morgana/Riven (MT/NX),1,1,1
 Galio/Morgana (DE/FR),Maokai (BW/SI),1,1,1
 Janna/Viktor (IO/PZ),Galio/Morgana (DE/FR),1,1,1
 Karma/Sett (FR/IO),Maokai (BW/SI),1,1,1
-Championless (BW/PZ),Lee Sin/Viktor (IO/PZ),1,1,1
 Akshan/Varus (SH/RU),Janna/Viktor (PZ/SI),1,1,1
 Janna/Lee Sin/Viktor (IO/PZ),Galio/Morgana (DE/FR),1,1,1
 Championless (SI),Janna/Lee Sin/Viktor (IO/PZ),1,1,1
 Fizz/Twisted Fate (BW/PZ),Karma/Sett (IO/PZ),1,1,1
+Jarvan IV/Shen (DE/IO),Karma/Sett (FR/IO),1,1,1
+Akshan/Lee Sin (IO/SH),Rumble/Sion (NX/SH),1,1,1
+Kayle (BW/MT),Maokai (PZ/SI),1,1,1
+Akshan/Lee Sin (IO/SH),Aurelion Sol/Shyvana (DE/MT),1,1,1
+Janna/Sett (IO/PZ),Sett (IO/SH),1,1,1
+Riven/Viktor (NX/PZ),Aatrox (RU/BW),1,1,1
+Akshan (IO/SH),Aatrox/Kayn (RU/RU),1,1,1
+Championless (SI),Sett (IO/SH),1,1,1
+Galio/Morgana (DE/FR),Akshan/Morgana (MT/SH),1,1,1
+Akshan/Varus (SH/RU),Akshan/Morgana (MT/SH),1,1,1
+Maokai/Nautilus (BW/SI),Janna/Lee Sin (IO/PZ),1,1,1
+Aatrox/Kayn (RU/RU),Senna/Thresh (SI),1,1,1
+Lee Sin/Viktor (IO/PZ),Illaoi/Shen (BW/IO),1,1,1
+Jayce/Lux (DE/PZ),Akshan/Morgana (MT/SH),1,1,1
+Championless (SI),Morgana/Riven (MT/NX),1,1,1
+Maokai/Nautilus (BW/SI),Illaoi/Shen (BW/IO),1,1,1
+Janna/Sett (IO/PZ),Aatrox/Kayn (RU/RU),1,1,1
+Kindred/Norra (BC/SI),Aurelion Sol/Shyvana (DE/MT),1,1,1
+Kayle (BW/MT),Aatrox/Akshan (RU/SH),1,1,1
+Akshan/Morgana (MT/SH),Kayle (BW/MT),1,1,1
+Lee Sin/Master Yi (IO/SH),Kayle (BW/MT),1,1,1
+Janna/Viktor (IO/PZ),Aatrox (RU/BW),1,1,1
 Sett/Viktor (IO/PZ),Lee Sin/Viktor (IO/PZ),1,1,1
 The Poro King/Yuumi (MT/RU),Maokai/Nautilus (BW/SI),1,1,1
 Championless (SI/SH),Azir/Kayle (MT/SH),1,1,1
 Maokai/Nautilus (BW/SI),Janna (MT/PZ),1,1,1
 Lux: Illuminated/Shen (DE/IO),Aurelion Sol/Shyvana (DE/MT),1,1,1
-Maokai/Nautilus (BW/SI),Mordekaiser/Norra (BC/SI),1,1,1
 Janna/Sett/Viktor (IO/PZ),Akshan/Varus (SH/RU),1,1,1
 Maokai/Nautilus (BW/SI),Janna/Sett/Viktor (IO/PZ),1,1,1
 The Poro King/Yuumi (MT/RU),Sett/Trundle (FR/IO),1,1,1
 Akshan/Sett (IO/SH),Senna/Veigar (BC/SI),1,1,1
-Maokai/Nautilus (BW/SI),Riven/Viktor (NX/PZ),1,1,1
 Lux: Illuminated/Vex (BC/DE),Aurelion Sol/Trundle (FR/MT),1,1,1
 Championless (SI/SH),Viktor (BC/PZ),1,1,1
 Aatrox/Kayn (RU/RU),Viktor (BC/PZ),1,1,1
-Aatrox/Kayn (RU/RU),Senna (PZ/SI),1,1,1
 Lux: Illuminated/Vex (BC/DE),Maokai/Nautilus (BW/SI),1,1,1
 Championless (PZ/SI),Aatrox (RU/BW),1,1,1
 Galio/Illaoi (BW/DE),Kayle (BW/MT),1,1,1
 Riven/Viktor (NX/PZ),Galio/Illaoi (BW/DE),1,1,1
 Gwen/Kayn (RU/SI),Championless (SI/SH),1,1,1
-Maokai (BW/SI),Aatrox/Kayn (RU/RU),1,1,1
 Maokai (BW/SI),Galio/Morgana (DE/MT),1,1,1
 Galio/Illaoi (BW/DE),Senna/Veigar (BC/SI),1,1,1
 Championless (IO/SI),Akshan/Lee Sin (IO/SH),1,1,1
@@ -93,31 +105,21 @@ Akshan/Sett (IO/SH),Rumble/Sion (BC/NX),1,1,1
 Janna/Senna (PZ/SI),Akshan/Varus (SH/RU),1,1,1
 The Poro King/Yuumi (MT/RU),Akshan/Varus (SH/RU),1,1,1
 Championless (SI),Nasus/Senna (SI/SH),1,1,1
-Kayle (BW/MT),Galio/Morgana (DE/MT),1,1,1
 Jayce/Lux (DE/PZ),Morgana (MT/SI),1,1,1
 Mordekaiser/Viego (IO/SI),Karma/Sett (FR/IO),1,1,1
 Maokai (BW/SI),Championless (SI/SH),1,1,1
-Lee Sin/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),1,1,1
 Akshan/Lee Sin (IO/SH),Galio/Illaoi (BW/DE),1,1,1
-Maokai/Nautilus (BW/SI),Galio/Morgana (DE/MT),1,1,1
-Senna (PZ/SI),Akshan/Lee Sin (IO/SH),1,1,1
 Galio/Morgana (DE/MT),Akshan/Varus (SH/RU),1,1,1
 Gangplank/Sejuani (BW/FR),Senna/Veigar (BC/SI),1,1,1
 Gangplank/Sejuani (BW/FR),Maokai/Nautilus (BW/SI),1,1,1
 Tryndamere/Volibear (FR/SI),Sion (NX/SI),1,1,1
-Akshan/Varus (SH/RU),Championless (SI/SH),1,1,1
 Mordekaiser/Viego (IO/SI),Gwen/Sejuani (FR/SI),1,1,1
-Kayle (BW/MT),Riven/Viktor (NX/PZ),1,1,1
 Senna (PZ/SI),Sett/Viktor (IO/PZ),1,1,1
 Veigar (PZ/SI),Maokai/Nautilus (BW/SI),1,1,1
 Veigar (PZ/SI),Lissandra/Volibear (FR/SH),1,1,1
 Sion (NX/SI),Janna/Sett (IO/PZ),1,1,1
 Aurelion Sol/Morgana (FR/MT),Azir/Xerath (SH),1,1,1
 Championless (PZ/SI),Aurelion Sol/Shyvana (DE/MT),1,1,1
-Championless (PZ/SI),Aatrox/Kayn (RU/RU),1,1,1
-Janna/Viktor (PZ/SI),Senna/Veigar (BC/SI),1,1,1
-Senna (PZ/SI),Kayle (BW/MT),1,1,1
-Championless (SI),Janna (IO/PZ),1,1,1
 Norra (BC/SI),Maokai/Nautilus (BW/SI),1,1,1
 Karma/Sett (FR/IO),Akshan/Lee Sin (IO/SH),1,1,1
 Karma/Sett (FR/IO),Gwen/Katarina (NX/SI),1,1,1
@@ -125,7 +127,6 @@ Karma/Sett (IO/PZ),Sett/Trundle (FR/IO),1,1,1
 Norra (BC/SI),Akshan/Lee Sin (IO/SH),1,1,1
 Aatrox/Kayn (RU/RU),Gangplank/Sejuani (BW/FR),1,1,1
 Aatrox/Kayn (RU/RU),Akshan/Sett (IO/SH),1,1,1
-Aatrox/Kayn (RU/RU),Championless (MT/SI),1,1,1
 Akshan/Kayn (RU/SH),Maokai/Nautilus (BW/SI),1,1,1
 Sett/Viktor (IO/PZ),Akshan/Kayn (RU/SH),1,1,1
 Galio/Illaoi (BW/DE),Akshan/Varus (SH/RU),1,1,1
@@ -137,15 +138,9 @@ The Poro King (IO/RU),Seraphine/Sett (IO/PZ),1,1,1
 Lux: Illuminated/Vex (BC/DE),Jayce/Lux (DE/PZ),1,1,1
 Aatrox (RU/BW),Senna (PZ/SI),1,1,1
 The Poro King (RU),Mordekaiser/Viego (IO/SI),1,1,1
-Akshan/Varus (SH/RU),Riven/Viktor (NX/PZ),1,1,1
-Akshan/Sett (IO/SH),Kayle (BW/MT),1,1,1
 Lee Sin/Viktor (IO/PZ),Sion (NX/SI),1,1,1
 Jayce/Lux (DE/PZ),Morgana/Varus (MT/RU),1,1,1
-Janna (IO/PZ),Maokai/Nautilus (BW/SI),1,1,1
-Senna/Veigar (BC/SI),Janna/Viktor (IO/PZ),1,1,1
-Akshan/Lee Sin (IO/SH),Janna/Viktor (IO/PZ),1,1,1
 Janna/Viktor (IO/PZ),Illaoi (BW/MT),1,1,1
-Akshan/Varus (SH/RU),Janna/Viktor (IO/PZ),1,1,1
 Akshan/Kindred (SI/SH),Kayle (BW/MT),1,1,1
 Akshan/Sett (IO/SH),Akshan/Varus (SH/RU),1,1,1
 Kayle/Leona (MT),Championless (SI),1,1,1
@@ -155,32 +150,57 @@ Kayle (BW/MT),Janna (IO/PZ),1,1,1
 Sion (NX/SI),Malphite/Morgana (IO/MT),1,1,1
 Jayce/Lux (DE/PZ),Janna (IO/PZ),1,1,1
 Malphite/Morgana (IO/MT),Championless (SI/SH),1,1,1
-Championless (SI),Akshan/Morgana (MT/SH),1,1,1
+Maokai/Nautilus (BW/SI),Malphite/Morgana (IO/MT),1,1,1
+Senna/Veigar (BC/SI),Senna/Veigar (BW/SI),1,1,1
+Maokai/Nautilus (BW/SI),Fizz/Nami (BC/BW),1,1,1
+Senna/Veigar (BC/SI),Janna (IO/PZ),1,1,1
+Volibear (FR/SI),Karma/Sett (FR/IO),1,1,1
+Championless (SI/SH),Riven/Rumble (NX/SH),1,1,1
+Janna/Viktor (PZ/SI),Maokai (BW/SI),1,1,1
+Seraphine/Twisted Fate (BW/PZ),The Poro King (IO/RU),1,1,1
+Karma/Sett (IO/PZ),Aurelion Sol/Volibear (FR/MT),1,1,1
+Viktor (BC/PZ),Maokai/Nautilus (BW/SI),1,1,1
+Sett/Trundle (FR/IO),Aurelion Sol (FR/MT),1,1,1
+Lee Sin/Riven (IO/NX),Karma/Sett (FR/IO),1,1,1
+Maokai/Nautilus (BW/SI),Kayle/Shyvana (DE/MT),1,1,1
+Championless (PZ/SI),Akshan/Lee Sin (IO/SH),1,1,1
+Kayle (BW/MT),Janna/Senna (PZ/SI),1,1,1
+Master Yi/Taliyah (IO/SH),Aurelion Sol/Trundle (FR/MT),1,1,1
+Master Yi/Taliyah (IO/SH),Maokai/Nautilus (BW/SI),1,1,1
+Championless (SI/SH),Senna/Veigar (BC/SI),1,1,1
+Akshan/Lee Sin (IO/SH),Championless (SI/SH),1,1,1
+Trundle/Volibear (DE/FR),Volibear (FR/SI),1,1,1
+Kayle (BW/MT),Rumble/Sion (BC/NX),1,1,1
+Aurelion Sol/Shyvana (DE/MT),Gangplank/Norra (BC/BW),1,1,1
+Kayle (BW/MT),Lux/Morgana (DE/MT),1,1,1
+Aatrox (RU/BW),Janna (IO/PZ),1,1,1
+Maokai (SI),Senna/Veigar (BC/SI),1,1,1
+Akshan/Kayn (RU/SH),Aurelion Sol/Shyvana (DE/MT),1,1,1
+Gnar (BC/NX),Sett/Trundle (FR/IO),1,1,1
+Riven/Viktor (NX/PZ),Janna/Senna (PZ/SI),1,1,1
+The Poro King (MT/RU),Sett/Trundle (FR/IO),1,1,1
+Championless (SI),Akshan/Sett (IO/SH),1,1,1
+Gnar/Katarina (FR/NX),Trundle/Volibear (DE/FR),1,1,1
 Gangplank/Sejuani (BW/FR),Akshan/Morgana (MT/SH),1,1,1
 Gangplank/Sejuani (BW/FR),Maokai (BW/SI),1,1,1
 Senna/Veigar (BC/SI),Akshan/Morgana (MT/SH),1,1,1
 Aurelion Sol/Volibear (FR/MT),Kayle/Morgana (DE/MT),1,1,1
-Lee Sin/Viktor (IO/PZ),Championless (MT/SI),1,1,1
 Aatrox (RU/BW),Senna/Veigar (BC/SI),1,1,1
 Akshan/Lee Sin (IO/SH),Jayce/Morgana (MT/PZ),1,1,1
 Sett (IO/PZ),Akshan/Varus (SH/RU),1,1,1
-Riven/Viktor (NX/PZ),Jayce/Lux (DE/PZ),1,1,1
 Aatrox/Kayn (RU/RU),Riven/Viktor (NX/PZ),1,1,1
 Riven/Varus (NX/RU),Morgana/Viktor (MT/PZ),1,1,1
 Aatrox (RU/BW),Riven/Varus (NX/RU),1,1,1
 Championless (SI),Gnar/Kayle (FR/MT),1,1,1
 Gnar/Kayle (FR/MT),Maokai (BW/SI),1,1,1
-Janna/Senna (PZ/SI),Maokai/Nautilus (BW/SI),1,1,1
 Kayn (DE/RU),Jayce/Lux (DE/PZ),1,1,1
 Kayn (DE/RU),Maokai/Nautilus (BW/SI),1,1,1
 Riven/Varus (NX/RU),Akshan/Varus (SH/RU),1,1,1
 Gwen (SI),Championless (SI),1,1,1
 Riven/Varus (NX/RU),Akshan/Lee Sin (IO/SH),1,1,1
 Kayle (BW/MT),Galio (DE/FR),1,1,1
-Maokai/Nautilus (BW/SI),Riven/Varus (NX/RU),1,1,1
 Riven/Varus (NX/RU),Kayle (BW/MT),1,1,1
 Leona (MT),Gwen/Illaoi (BW/SI),1,1,1
-Riven/Shen (IO/NX),Maokai/Nautilus (BW/SI),1,1,1
 Akshan/Varus (SH/RU),Leona (MT),1,1,1
 Rumble/Sion (BC/NX),Senna/Veigar (BC/SI),1,1,1
 Sejuani/Swain (FR/NX),Riven/Varus (NX/RU),1,1,1
@@ -206,7 +226,6 @@ Heimerdinger/Viktor (IO/PZ),Seraphine/Sett (IO/PZ),1,1,1
 Kayle (BW/MT),Nasus/Senna (SI/SH),1,1,1
 Nasus/Senna (SI/SH),Jayce/Morgana (MT/PZ),1,1,1
 Janna/Seraphine (BC/PZ),Master Yi/Taliyah (IO/SH),1,1,1
-Nasus/Senna (SI/SH),Senna/Veigar (BC/SI),1,1,1
 Janna/Senna (PZ/SI),Shyvana (DE/SI),1,1,1
 Aurelion Sol/Lissandra (FR/MT),The Poro King (MT/RU),1,1,1
 Senna/Veigar (BC/SI),Lissandra/Taliyah (FR/SH),1,1,1
@@ -223,10 +242,8 @@ Jayce/Morgana (MT/PZ),Aatrox/Kayn (RU/RU),1,1,1
 Mordekaiser/Norra (BC/SI),Kayle/The Poro King (MT/RU),1,1,1
 Nami/Seraphine/Viktor (BW/PZ),Maokai/Nautilus (BW/SI),1,1,1
 Nami/Seraphine/Viktor (BW/PZ),Mordekaiser/Sion (NX/SI),1,1,1
-Morgana/Shyvana (DE/MT),Senna/Veigar (BC/SI),1,1,1
 Nami/Seraphine/Viktor (BW/PZ),Master Yi/Taliyah (IO/SH),1,1,1
 Aurelion Sol/Shyvana (DE/MT),Nami/Seraphine/Viktor (BW/PZ),1,1,1
-Senna/Veigar (BC/SI),Janna/Sett (IO/PZ),1,1,1
 Maokai (BW/SI),Jayce/Lux (DE/PZ),1,1,1
 Aatrox/Kayn (RU/RU),Gwen/Sett (IO/SI),1,1,1
 Senna/Veigar (BC/SI),Sett (IO/PZ),1,1,1
@@ -234,6 +251,7 @@ Senna/Veigar (BC/SI),Lee Sin/Master Yi/Varus (IO/RU),1,1,1
 Lee Sin/Viktor (IO/PZ),Aatrox/Morgana (RU/DE),1,1,1
 Gwen/Illaoi (BW/SI),Akshan/Varus (SH/RU),1,1,1
 Senna/Veigar (BC/SI),Senna (PZ/SI),1,1,1
+Senna/Veigar (BC/SI),Championless (NX/SI),1,1,1
 Janna (PZ/SI),Riven/Varus (NX/RU),1,1,1
 Sett/Viktor (IO/PZ),Shyvana (DE/SI),1,1,1
 Aatrox (RU/BW),Jayce/Lux (DE/PZ),1,1,1
@@ -251,6 +269,48 @@ Sion (NX/SI),Galio/Morgana (DE/FR),1,1,1
 Trundle/Volibear (DE/FR),Aatrox/Kayn (RU/RU),1,1,1
 Jayce/Lux (DE/PZ),Sett (IO/PZ),1,1,1
 Lee Sin/Viktor (IO/PZ),Janna/Senna (PZ/SI),1,1,1
+Maokai (BW/SI),Illaoi/Riven (BW/NX),1,1,1
+Rumble/Sion (BC/NX),Championless (PZ/SI),1,1,1
+Lee Sin/Viktor (IO/PZ),Maokai (BW/SI),1,1,1
+The Poro King (RU/SH),Mordekaiser/Norra (BC/SI),1,1,1
+Fiora (DE/MT),Azir/Xerath (SH),1,1,1
+Azir/Xerath (SH),The Poro King (MT/RU),1,1,1
+Riven/Shen (IO/NX),Akshan/Varus (SH/RU),1,1,1
+Janna (PZ/SI),Kayle (BW/MT),1,1,1
+Lee Sin/Viktor (IO/PZ),Aatrox/Akshan (RU/SH),1,1,1
+Galio/Shyvana (DE/MT),Senna/Veigar (BC/SI),1,1,1
+Vi/Viktor (IO/PZ),Senna/Veigar (BC/SI),1,1,1
+Maokai/Nautilus (BW/SI),Gnar/Sion (FR/NX),1,1,1
+Vi/Viktor (IO/PZ),Aatrox/Morgana (RU/DE),1,1,1
+Vi/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),1,1,1
+Heimerdinger/Jayce (IO/PZ),Maokai/Nautilus (BW/SI),1,1,1
+Championless (MT/SI),Riven/Viktor (NX/PZ),1,1,1
+Heimerdinger/Jayce (IO/PZ),The Poro King (IO/RU),1,1,1
+Akshan/Varus (SH/RU),Nasus/Senna (SI/SH),1,1,1
+Galio (DE/FR),Maokai (BW/SI),1,1,1
+Kayle/The Poro King (MT/RU),Heimerdinger/Jayce (IO/PZ),1,1,1
+Jayce/Lux (DE/PZ),Rumble/Sion (BC/NX),1,1,1
+Jayce/Lux (DE/PZ),Riven/Shen (IO/NX),1,1,1
+Championless (MT/SI),Sion (NX/SI),1,1,1
+Sett/Viktor (IO/PZ),Galio (DE/FR),1,1,1
+Gwen/Illaoi (BW/SI),Master Yi/Taliyah (IO/SH),1,1,1
+Aatrox/Akshan (RU/SH),Maokai/Nautilus (BW/SI),1,1,1
+Championless (SI),Rumble/Sion (BC/NX),1,1,1
+Master Yi/Taliyah (IO/SH),Karma/Norra (BC/IO),1,1,1
+Jayce/Lux (DE/PZ),Janna/Senna (PZ/SI),1,1,1
+Master Yi/Taliyah (IO/SH),Heimerdinger/Jayce (IO/PZ),1,1,1
+Heimerdinger/Viktor (IO/PZ),Karma/Sett (IO/PZ),1,1,1
+Lee Sin/Viktor (IO/PZ),Janna/Lee Sin/Viktor (IO/PZ),1,1,1
+Championless (MT/SI),Janna/Senna (PZ/SI),1,1,1
+The Poro King (MT/RU),Trundle/Volibear (DE/FR),1,1,1
+Lux: Illuminated/Vex (BC/DE),The Poro King (MT/RU),1,1,1
+The Poro King (RU/SH),Akshan/Master Yi (IO/SH),1,1,1
+Nasus/Senna (SI/SH),Championless (MT/SI),1,1,1
+The Poro King (MT/RU),Aurelion Sol/Volibear (FR/MT),1,1,1
+Lee Sin/Master Yi/Varus (IO/RU),Senna/Viktor (PZ/SI),1,1,1
+Championless (MT/SI),Janna (PZ/SI),1,1,1
+Akshan/Master Yi (IO/SH),Illaoi/Jarvan IV (BW/DE),1,1,1
+Sett/Viktor (IO/PZ),Janna (PZ/SI),1,1,1
 Karma/Sett (IO/PZ),Aurelion Sol/Trundle (FR/MT),0,1,0
 Galio/Morgana (DE/FR),Championless (IO/SH),0,1,0
 Akshan/Varus (SH/RU),Aurelion Sol/Volibear (FR/MT),0,1,0
@@ -259,7 +319,6 @@ Akshan/Lee Sin (IO/SH),Janna/Sett (IO/PZ),0,1,0
 Trundle/Volibear (DE/FR),Seraphine/Sett (IO/PZ),0,1,0
 Akshan/Lee Sin (IO/SH),Seraphine/Sett (IO/PZ),0,1,0
 Gangplank/Swain (BW/NX),Morgana/Riven (MT/NX),0,1,0
-Illaoi/Swain (BW/NX),Senna/Veigar (BC/SI),0,1,0
 Aatrox/Kayn (RU/RU),Karma/Sett (IO/PZ),0,1,0
 Gangplank/Swain (BW/NX),Janna/Sett (IO/PZ),0,1,0
 Janna (PZ/SI),Akshan/Varus (SH/RU),0,1,0
@@ -272,7 +331,6 @@ Aurelion Sol/Shyvana (DE/MT),Karma/Sett (IO/PZ),0,1,0
 The Poro King (MT/RU),Karma/Sett (IO/PZ),0,1,0
 Akshan/Jayce (PZ/SH),Janna/Sett (IO/PZ),0,1,0
 Jayce/Lux (DE/PZ),Akshan/Jayce (PZ/SH),0,1,0
-Mordekaiser/Norra (BC/SI),Karma/Sett (IO/PZ),0,1,0
 Aurelion Sol/Shyvana (DE/MT),Heimerdinger/Viktor (IO/PZ),0,1,0
 Thresh/Veigar (DE/SI),Akshan/Varus (SH/RU),0,1,0
 Janna/Lee Sin/Viktor (IO/PZ),Senna/Veigar (BC/SI),0,1,0
@@ -284,16 +342,13 @@ Akshan/Viktor (PZ/SH),Galio/Morgana (DE/FR),0,1,0
 Karma/Sett (FR/IO),Anivia (FR/SI),0,1,0
 Morgana/Riven (MT/NX),Galio/Morgana (DE/FR),0,1,0
 Gwen (SI),Maokai/Nautilus (BW/SI),0,1,0
-Morgana/Riven (MT/NX),Akshan/Lee Sin (IO/SH),0,1,0
 Maokai/Nautilus (BW/SI),Morgana/Riven (MT/NX),0,1,0
-Galio/Morgana (DE/FR),Aatrox/Kayn (RU/RU),0,1,0
-Morgana/Riven (MT/NX),Jayce/Lux (DE/PZ),0,1,0
 Aatrox/Kayn (RU/RU),Senna/Veigar (PZ/SI),0,1,0
 Aatrox (RU/BW),Aurelion Sol/Shyvana (DE/MT),0,1,0
-Galio/Morgana (DE/FR),Championless (SI),0,1,0
 Janna/Sett (IO/PZ),Morgana/Riven (MT/NX),0,1,0
 Anivia/Volibear (FR/NX),Karma/Sett (FR/IO),0,1,0
 Aatrox/Kayn (RU/RU),Heimerdinger/Viktor (IO/PZ),0,1,0
+Kayle (BW/MT),Championless (SI/SH),0,1,0
 Maokai/Nautilus (BW/SI),Janna/Mordekaiser (PZ/SI),0,1,0
 Aatrox/Kayn (RU/RU),Morgana/Trundle/Volibear (DE/FR),0,1,0
 Championless (IO/SH),Kayle (BW/MT),0,1,0
@@ -310,32 +365,49 @@ Morgana/Riven (MT/NX),Senna/Thresh (SI),0,1,0
 Maokai (BW/SI),Galio/Morgana (DE/FR),0,1,0
 Galio/Morgana (DE/FR),Janna/Viktor (IO/PZ),0,1,0
 Maokai (BW/SI),Karma/Sett (FR/IO),0,1,0
-Lee Sin/Viktor (IO/PZ),Championless (BW/PZ),0,1,0
 Janna/Viktor (PZ/SI),Akshan/Varus (SH/RU),0,1,0
 Galio/Morgana (DE/FR),Janna/Lee Sin/Viktor (IO/PZ),0,1,0
 Janna/Lee Sin/Viktor (IO/PZ),Championless (SI),0,1,0
 Karma/Sett (IO/PZ),Fizz/Twisted Fate (BW/PZ),0,1,0
+Karma/Sett (FR/IO),Jarvan IV/Shen (DE/IO),0,1,0
+Rumble/Sion (NX/SH),Akshan/Lee Sin (IO/SH),0,1,0
+Maokai (PZ/SI),Kayle (BW/MT),0,1,0
+Aurelion Sol/Shyvana (DE/MT),Akshan/Lee Sin (IO/SH),0,1,0
+Sett (IO/SH),Janna/Sett (IO/PZ),0,1,0
+Aatrox (RU/BW),Riven/Viktor (NX/PZ),0,1,0
+Aatrox/Kayn (RU/RU),Akshan (IO/SH),0,1,0
+Sett (IO/SH),Championless (SI),0,1,0
+Akshan/Morgana (MT/SH),Galio/Morgana (DE/FR),0,1,0
+Akshan/Morgana (MT/SH),Akshan/Varus (SH/RU),0,1,0
+Janna/Lee Sin (IO/PZ),Maokai/Nautilus (BW/SI),0,1,0
+Senna/Thresh (SI),Aatrox/Kayn (RU/RU),0,1,0
+Illaoi/Shen (BW/IO),Lee Sin/Viktor (IO/PZ),0,1,0
+Akshan/Morgana (MT/SH),Jayce/Lux (DE/PZ),0,1,0
+Morgana/Riven (MT/NX),Championless (SI),0,1,0
+Illaoi/Shen (BW/IO),Maokai/Nautilus (BW/SI),0,1,0
+Aatrox/Kayn (RU/RU),Janna/Sett (IO/PZ),0,1,0
+Aurelion Sol/Shyvana (DE/MT),Kindred/Norra (BC/SI),0,1,0
+Aatrox/Akshan (RU/SH),Kayle (BW/MT),0,1,0
+Kayle (BW/MT),Akshan/Morgana (MT/SH),0,1,0
+Kayle (BW/MT),Lee Sin/Master Yi (IO/SH),0,1,0
+Aatrox (RU/BW),Janna/Viktor (IO/PZ),0,1,0
 Lee Sin/Viktor (IO/PZ),Sett/Viktor (IO/PZ),0,1,0
 Maokai/Nautilus (BW/SI),The Poro King/Yuumi (MT/RU),0,1,0
 Azir/Kayle (MT/SH),Championless (SI/SH),0,1,0
 Janna (MT/PZ),Maokai/Nautilus (BW/SI),0,1,0
 Aurelion Sol/Shyvana (DE/MT),Lux: Illuminated/Shen (DE/IO),0,1,0
-Mordekaiser/Norra (BC/SI),Maokai/Nautilus (BW/SI),0,1,0
 Akshan/Varus (SH/RU),Janna/Sett/Viktor (IO/PZ),0,1,0
 Janna/Sett/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),0,1,0
 Sett/Trundle (FR/IO),The Poro King/Yuumi (MT/RU),0,1,0
 Senna/Veigar (BC/SI),Akshan/Sett (IO/SH),0,1,0
-Riven/Viktor (NX/PZ),Maokai/Nautilus (BW/SI),0,1,0
 Aurelion Sol/Trundle (FR/MT),Lux: Illuminated/Vex (BC/DE),0,1,0
 Viktor (BC/PZ),Championless (SI/SH),0,1,0
 Viktor (BC/PZ),Aatrox/Kayn (RU/RU),0,1,0
-Senna (PZ/SI),Aatrox/Kayn (RU/RU),0,1,0
 Maokai/Nautilus (BW/SI),Lux: Illuminated/Vex (BC/DE),0,1,0
 Aatrox (RU/BW),Championless (PZ/SI),0,1,0
 Kayle (BW/MT),Galio/Illaoi (BW/DE),0,1,0
 Galio/Illaoi (BW/DE),Riven/Viktor (NX/PZ),0,1,0
 Championless (SI/SH),Gwen/Kayn (RU/SI),0,1,0
-Aatrox/Kayn (RU/RU),Maokai (BW/SI),0,1,0
 Galio/Morgana (DE/MT),Maokai (BW/SI),0,1,0
 Senna/Veigar (BC/SI),Galio/Illaoi (BW/DE),0,1,0
 Akshan/Lee Sin (IO/SH),Championless (IO/SI),0,1,0
@@ -343,31 +415,21 @@ Rumble/Sion (BC/NX),Akshan/Sett (IO/SH),0,1,0
 Akshan/Varus (SH/RU),Janna/Senna (PZ/SI),0,1,0
 Akshan/Varus (SH/RU),The Poro King/Yuumi (MT/RU),0,1,0
 Nasus/Senna (SI/SH),Championless (SI),0,1,0
-Galio/Morgana (DE/MT),Kayle (BW/MT),0,1,0
 Morgana (MT/SI),Jayce/Lux (DE/PZ),0,1,0
 Karma/Sett (FR/IO),Mordekaiser/Viego (IO/SI),0,1,0
 Championless (SI/SH),Maokai (BW/SI),0,1,0
-Aatrox/Kayn (RU/RU),Lee Sin/Viktor (IO/PZ),0,1,0
 Galio/Illaoi (BW/DE),Akshan/Lee Sin (IO/SH),0,1,0
-Galio/Morgana (DE/MT),Maokai/Nautilus (BW/SI),0,1,0
-Akshan/Lee Sin (IO/SH),Senna (PZ/SI),0,1,0
 Akshan/Varus (SH/RU),Galio/Morgana (DE/MT),0,1,0
 Senna/Veigar (BC/SI),Gangplank/Sejuani (BW/FR),0,1,0
 Maokai/Nautilus (BW/SI),Gangplank/Sejuani (BW/FR),0,1,0
 Sion (NX/SI),Tryndamere/Volibear (FR/SI),0,1,0
-Championless (SI/SH),Akshan/Varus (SH/RU),0,1,0
 Gwen/Sejuani (FR/SI),Mordekaiser/Viego (IO/SI),0,1,0
-Riven/Viktor (NX/PZ),Kayle (BW/MT),0,1,0
 Sett/Viktor (IO/PZ),Senna (PZ/SI),0,1,0
 Maokai/Nautilus (BW/SI),Veigar (PZ/SI),0,1,0
 Lissandra/Volibear (FR/SH),Veigar (PZ/SI),0,1,0
 Janna/Sett (IO/PZ),Sion (NX/SI),0,1,0
 Azir/Xerath (SH),Aurelion Sol/Morgana (FR/MT),0,1,0
 Aurelion Sol/Shyvana (DE/MT),Championless (PZ/SI),0,1,0
-Aatrox/Kayn (RU/RU),Championless (PZ/SI),0,1,0
-Senna/Veigar (BC/SI),Janna/Viktor (PZ/SI),0,1,0
-Kayle (BW/MT),Senna (PZ/SI),0,1,0
-Janna (IO/PZ),Championless (SI),0,1,0
 Maokai/Nautilus (BW/SI),Norra (BC/SI),0,1,0
 Akshan/Lee Sin (IO/SH),Karma/Sett (FR/IO),0,1,0
 Gwen/Katarina (NX/SI),Karma/Sett (FR/IO),0,1,0
@@ -375,7 +437,6 @@ Sett/Trundle (FR/IO),Karma/Sett (IO/PZ),0,1,0
 Akshan/Lee Sin (IO/SH),Norra (BC/SI),0,1,0
 Gangplank/Sejuani (BW/FR),Aatrox/Kayn (RU/RU),0,1,0
 Akshan/Sett (IO/SH),Aatrox/Kayn (RU/RU),0,1,0
-Championless (MT/SI),Aatrox/Kayn (RU/RU),0,1,0
 Maokai/Nautilus (BW/SI),Akshan/Kayn (RU/SH),0,1,0
 Akshan/Kayn (RU/SH),Sett/Viktor (IO/PZ),0,1,0
 Akshan/Varus (SH/RU),Galio/Illaoi (BW/DE),0,1,0
@@ -387,15 +448,9 @@ Seraphine/Sett (IO/PZ),The Poro King (IO/RU),0,1,0
 Jayce/Lux (DE/PZ),Lux: Illuminated/Vex (BC/DE),0,1,0
 Senna (PZ/SI),Aatrox (RU/BW),0,1,0
 Mordekaiser/Viego (IO/SI),The Poro King (RU),0,1,0
-Riven/Viktor (NX/PZ),Akshan/Varus (SH/RU),0,1,0
-Kayle (BW/MT),Akshan/Sett (IO/SH),0,1,0
 Sion (NX/SI),Lee Sin/Viktor (IO/PZ),0,1,0
 Morgana/Varus (MT/RU),Jayce/Lux (DE/PZ),0,1,0
-Maokai/Nautilus (BW/SI),Janna (IO/PZ),0,1,0
-Janna/Viktor (IO/PZ),Senna/Veigar (BC/SI),0,1,0
-Janna/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),0,1,0
 Illaoi (BW/MT),Janna/Viktor (IO/PZ),0,1,0
-Janna/Viktor (IO/PZ),Akshan/Varus (SH/RU),0,1,0
 Kayle (BW/MT),Akshan/Kindred (SI/SH),0,1,0
 Akshan/Varus (SH/RU),Akshan/Sett (IO/SH),0,1,0
 Championless (SI),Kayle/Leona (MT),0,1,0
@@ -405,32 +460,57 @@ Janna (IO/PZ),Kayle (BW/MT),0,1,0
 Malphite/Morgana (IO/MT),Sion (NX/SI),0,1,0
 Janna (IO/PZ),Jayce/Lux (DE/PZ),0,1,0
 Championless (SI/SH),Malphite/Morgana (IO/MT),0,1,0
-Akshan/Morgana (MT/SH),Championless (SI),0,1,0
+Malphite/Morgana (IO/MT),Maokai/Nautilus (BW/SI),0,1,0
+Senna/Veigar (BW/SI),Senna/Veigar (BC/SI),0,1,0
+Fizz/Nami (BC/BW),Maokai/Nautilus (BW/SI),0,1,0
+Janna (IO/PZ),Senna/Veigar (BC/SI),0,1,0
+Karma/Sett (FR/IO),Volibear (FR/SI),0,1,0
+Riven/Rumble (NX/SH),Championless (SI/SH),0,1,0
+Maokai (BW/SI),Janna/Viktor (PZ/SI),0,1,0
+The Poro King (IO/RU),Seraphine/Twisted Fate (BW/PZ),0,1,0
+Aurelion Sol/Volibear (FR/MT),Karma/Sett (IO/PZ),0,1,0
+Maokai/Nautilus (BW/SI),Viktor (BC/PZ),0,1,0
+Aurelion Sol (FR/MT),Sett/Trundle (FR/IO),0,1,0
+Karma/Sett (FR/IO),Lee Sin/Riven (IO/NX),0,1,0
+Kayle/Shyvana (DE/MT),Maokai/Nautilus (BW/SI),0,1,0
+Akshan/Lee Sin (IO/SH),Championless (PZ/SI),0,1,0
+Janna/Senna (PZ/SI),Kayle (BW/MT),0,1,0
+Aurelion Sol/Trundle (FR/MT),Master Yi/Taliyah (IO/SH),0,1,0
+Maokai/Nautilus (BW/SI),Master Yi/Taliyah (IO/SH),0,1,0
+Senna/Veigar (BC/SI),Championless (SI/SH),0,1,0
+Championless (SI/SH),Akshan/Lee Sin (IO/SH),0,1,0
+Volibear (FR/SI),Trundle/Volibear (DE/FR),0,1,0
+Rumble/Sion (BC/NX),Kayle (BW/MT),0,1,0
+Gangplank/Norra (BC/BW),Aurelion Sol/Shyvana (DE/MT),0,1,0
+Lux/Morgana (DE/MT),Kayle (BW/MT),0,1,0
+Janna (IO/PZ),Aatrox (RU/BW),0,1,0
+Senna/Veigar (BC/SI),Maokai (SI),0,1,0
+Aurelion Sol/Shyvana (DE/MT),Akshan/Kayn (RU/SH),0,1,0
+Sett/Trundle (FR/IO),Gnar (BC/NX),0,1,0
+Janna/Senna (PZ/SI),Riven/Viktor (NX/PZ),0,1,0
+Sett/Trundle (FR/IO),The Poro King (MT/RU),0,1,0
+Akshan/Sett (IO/SH),Championless (SI),0,1,0
+Trundle/Volibear (DE/FR),Gnar/Katarina (FR/NX),0,1,0
 Akshan/Morgana (MT/SH),Gangplank/Sejuani (BW/FR),0,1,0
 Maokai (BW/SI),Gangplank/Sejuani (BW/FR),0,1,0
 Akshan/Morgana (MT/SH),Senna/Veigar (BC/SI),0,1,0
 Kayle/Morgana (DE/MT),Aurelion Sol/Volibear (FR/MT),0,1,0
-Championless (MT/SI),Lee Sin/Viktor (IO/PZ),0,1,0
 Senna/Veigar (BC/SI),Aatrox (RU/BW),0,1,0
 Jayce/Morgana (MT/PZ),Akshan/Lee Sin (IO/SH),0,1,0
 Akshan/Varus (SH/RU),Sett (IO/PZ),0,1,0
-Jayce/Lux (DE/PZ),Riven/Viktor (NX/PZ),0,1,0
 Riven/Viktor (NX/PZ),Aatrox/Kayn (RU/RU),0,1,0
 Morgana/Viktor (MT/PZ),Riven/Varus (NX/RU),0,1,0
 Riven/Varus (NX/RU),Aatrox (RU/BW),0,1,0
 Gnar/Kayle (FR/MT),Championless (SI),0,1,0
 Maokai (BW/SI),Gnar/Kayle (FR/MT),0,1,0
-Maokai/Nautilus (BW/SI),Janna/Senna (PZ/SI),0,1,0
 Jayce/Lux (DE/PZ),Kayn (DE/RU),0,1,0
 Maokai/Nautilus (BW/SI),Kayn (DE/RU),0,1,0
 Akshan/Varus (SH/RU),Riven/Varus (NX/RU),0,1,0
 Championless (SI),Gwen (SI),0,1,0
 Akshan/Lee Sin (IO/SH),Riven/Varus (NX/RU),0,1,0
 Galio (DE/FR),Kayle (BW/MT),0,1,0
-Riven/Varus (NX/RU),Maokai/Nautilus (BW/SI),0,1,0
 Kayle (BW/MT),Riven/Varus (NX/RU),0,1,0
 Gwen/Illaoi (BW/SI),Leona (MT),0,1,0
-Maokai/Nautilus (BW/SI),Riven/Shen (IO/NX),0,1,0
 Leona (MT),Akshan/Varus (SH/RU),0,1,0
 Senna/Veigar (BC/SI),Rumble/Sion (BC/NX),0,1,0
 Riven/Varus (NX/RU),Sejuani/Swain (FR/NX),0,1,0
@@ -456,7 +536,6 @@ Seraphine/Sett (IO/PZ),Heimerdinger/Viktor (IO/PZ),0,1,0
 Nasus/Senna (SI/SH),Kayle (BW/MT),0,1,0
 Jayce/Morgana (MT/PZ),Nasus/Senna (SI/SH),0,1,0
 Master Yi/Taliyah (IO/SH),Janna/Seraphine (BC/PZ),0,1,0
-Senna/Veigar (BC/SI),Nasus/Senna (SI/SH),0,1,0
 Shyvana (DE/SI),Janna/Senna (PZ/SI),0,1,0
 The Poro King (MT/RU),Aurelion Sol/Lissandra (FR/MT),0,1,0
 Lissandra/Taliyah (FR/SH),Senna/Veigar (BC/SI),0,1,0
@@ -473,10 +552,8 @@ Aatrox/Kayn (RU/RU),Jayce/Morgana (MT/PZ),0,1,0
 Kayle/The Poro King (MT/RU),Mordekaiser/Norra (BC/SI),0,1,0
 Maokai/Nautilus (BW/SI),Nami/Seraphine/Viktor (BW/PZ),0,1,0
 Mordekaiser/Sion (NX/SI),Nami/Seraphine/Viktor (BW/PZ),0,1,0
-Senna/Veigar (BC/SI),Morgana/Shyvana (DE/MT),0,1,0
 Master Yi/Taliyah (IO/SH),Nami/Seraphine/Viktor (BW/PZ),0,1,0
 Nami/Seraphine/Viktor (BW/PZ),Aurelion Sol/Shyvana (DE/MT),0,1,0
-Janna/Sett (IO/PZ),Senna/Veigar (BC/SI),0,1,0
 Jayce/Lux (DE/PZ),Maokai (BW/SI),0,1,0
 Gwen/Sett (IO/SI),Aatrox/Kayn (RU/RU),0,1,0
 Sett (IO/PZ),Senna/Veigar (BC/SI),0,1,0
@@ -484,6 +561,7 @@ Lee Sin/Master Yi/Varus (IO/RU),Senna/Veigar (BC/SI),0,1,0
 Aatrox/Morgana (RU/DE),Lee Sin/Viktor (IO/PZ),0,1,0
 Akshan/Varus (SH/RU),Gwen/Illaoi (BW/SI),0,1,0
 Senna (PZ/SI),Senna/Veigar (BC/SI),0,1,0
+Championless (NX/SI),Senna/Veigar (BC/SI),0,1,0
 Riven/Varus (NX/RU),Janna (PZ/SI),0,1,0
 Shyvana (DE/SI),Sett/Viktor (IO/PZ),0,1,0
 Jayce/Lux (DE/PZ),Aatrox (RU/BW),0,1,0
@@ -501,282 +579,437 @@ Galio/Morgana (DE/FR),Sion (NX/SI),0,1,0
 Aatrox/Kayn (RU/RU),Trundle/Volibear (DE/FR),0,1,0
 Sett (IO/PZ),Jayce/Lux (DE/PZ),0,1,0
 Janna/Senna (PZ/SI),Lee Sin/Viktor (IO/PZ),0,1,0
-Maokai/Nautilus (BW/SI),Maokai/Nautilus (BW/SI),28,56,0.5
-Jayce/Lux (DE/PZ),Maokai/Nautilus (BW/SI),9,20,0.45
-Maokai/Nautilus (BW/SI),Jayce/Lux (DE/PZ),11,20,0.55
+Illaoi/Riven (BW/NX),Maokai (BW/SI),0,1,0
+Championless (PZ/SI),Rumble/Sion (BC/NX),0,1,0
+Maokai (BW/SI),Lee Sin/Viktor (IO/PZ),0,1,0
+Mordekaiser/Norra (BC/SI),The Poro King (RU/SH),0,1,0
+Azir/Xerath (SH),Fiora (DE/MT),0,1,0
+The Poro King (MT/RU),Azir/Xerath (SH),0,1,0
+Akshan/Varus (SH/RU),Riven/Shen (IO/NX),0,1,0
+Kayle (BW/MT),Janna (PZ/SI),0,1,0
+Aatrox/Akshan (RU/SH),Lee Sin/Viktor (IO/PZ),0,1,0
+Senna/Veigar (BC/SI),Galio/Shyvana (DE/MT),0,1,0
+Senna/Veigar (BC/SI),Vi/Viktor (IO/PZ),0,1,0
+Gnar/Sion (FR/NX),Maokai/Nautilus (BW/SI),0,1,0
+Aatrox/Morgana (RU/DE),Vi/Viktor (IO/PZ),0,1,0
+Maokai/Nautilus (BW/SI),Vi/Viktor (IO/PZ),0,1,0
+Maokai/Nautilus (BW/SI),Heimerdinger/Jayce (IO/PZ),0,1,0
+Riven/Viktor (NX/PZ),Championless (MT/SI),0,1,0
+The Poro King (IO/RU),Heimerdinger/Jayce (IO/PZ),0,1,0
+Nasus/Senna (SI/SH),Akshan/Varus (SH/RU),0,1,0
+Maokai (BW/SI),Galio (DE/FR),0,1,0
+Heimerdinger/Jayce (IO/PZ),Kayle/The Poro King (MT/RU),0,1,0
+Rumble/Sion (BC/NX),Jayce/Lux (DE/PZ),0,1,0
+Riven/Shen (IO/NX),Jayce/Lux (DE/PZ),0,1,0
+Sion (NX/SI),Championless (MT/SI),0,1,0
+Galio (DE/FR),Sett/Viktor (IO/PZ),0,1,0
+Master Yi/Taliyah (IO/SH),Gwen/Illaoi (BW/SI),0,1,0
+Maokai/Nautilus (BW/SI),Aatrox/Akshan (RU/SH),0,1,0
+Rumble/Sion (BC/NX),Championless (SI),0,1,0
+Karma/Norra (BC/IO),Master Yi/Taliyah (IO/SH),0,1,0
+Janna/Senna (PZ/SI),Jayce/Lux (DE/PZ),0,1,0
+Heimerdinger/Jayce (IO/PZ),Master Yi/Taliyah (IO/SH),0,1,0
+Karma/Sett (IO/PZ),Heimerdinger/Viktor (IO/PZ),0,1,0
+Janna/Lee Sin/Viktor (IO/PZ),Lee Sin/Viktor (IO/PZ),0,1,0
+Janna/Senna (PZ/SI),Championless (MT/SI),0,1,0
+Trundle/Volibear (DE/FR),The Poro King (MT/RU),0,1,0
+The Poro King (MT/RU),Lux: Illuminated/Vex (BC/DE),0,1,0
+Akshan/Master Yi (IO/SH),The Poro King (RU/SH),0,1,0
+Championless (MT/SI),Nasus/Senna (SI/SH),0,1,0
+Aurelion Sol/Volibear (FR/MT),The Poro King (MT/RU),0,1,0
+Senna/Viktor (PZ/SI),Lee Sin/Master Yi/Varus (IO/RU),0,1,0
+Janna (PZ/SI),Championless (MT/SI),0,1,0
+Illaoi/Jarvan IV (BW/DE),Akshan/Master Yi (IO/SH),0,1,0
+Janna (PZ/SI),Sett/Viktor (IO/PZ),0,1,0
+Maokai/Nautilus (BW/SI),Maokai/Nautilus (BW/SI),52,104,0.5
+Jayce/Lux (DE/PZ),Maokai/Nautilus (BW/SI),16,33,0.484848484848485
+Maokai/Nautilus (BW/SI),Jayce/Lux (DE/PZ),17,33,0.515151515151515
 Maokai/Nautilus (BW/SI),Janna/Sett (IO/PZ),4,6,0.666666666666667
-Aatrox/Kayn (RU/RU),Senna/Veigar (BC/SI),4,6,0.666666666666667
+Akshan/Varus (SH/RU),Sion (NX/SI),4,6,0.666666666666667
 Janna/Sett (IO/PZ),Maokai/Nautilus (BW/SI),2,6,0.333333333333333
-Senna/Veigar (BC/SI),Aatrox/Kayn (RU/RU),2,6,0.333333333333333
-Akshan/Lee Sin (IO/SH),Akshan/Varus (SH/RU),5,9,0.555555555555556
-Akshan/Varus (SH/RU),Maokai (BW/SI),5,9,0.555555555555556
-Akshan/Varus (SH/RU),Akshan/Lee Sin (IO/SH),4,9,0.444444444444444
-Maokai (BW/SI),Akshan/Varus (SH/RU),4,9,0.444444444444444
-Aatrox/Kayn (RU/RU),Maokai/Nautilus (BW/SI),2,15,0.133333333333333
-Maokai/Nautilus (BW/SI),Aatrox/Kayn (RU/RU),13,15,0.866666666666667
+Sion (NX/SI),Akshan/Varus (SH/RU),2,6,0.333333333333333
+Akshan/Lee Sin (IO/SH),Akshan/Varus (SH/RU),9,15,0.6
+Akshan/Varus (SH/RU),Akshan/Lee Sin (IO/SH),6,15,0.4
+Maokai (BW/SI),Akshan/Varus (SH/RU),5,13,0.384615384615385
+Akshan/Varus (SH/RU),Maokai (BW/SI),8,13,0.615384615384615
+Aatrox/Kayn (RU/RU),Maokai/Nautilus (BW/SI),5,28,0.178571428571429
+Maokai/Nautilus (BW/SI),Aatrox/Kayn (RU/RU),23,28,0.821428571428571
 Maokai/Nautilus (BW/SI),Aatrox (RU/BW),2,2,1
+Senna/Veigar (BC/SI),Illaoi/Swain (BW/NX),2,2,1
 Sett (IO/SH),Jayce/Lux (DE/PZ),2,2,1
+Karma/Sett (IO/PZ),Mordekaiser/Norra (BC/SI),2,2,1
 Jayce/Lux (DE/PZ),Sion (NX/SI),2,2,1
+Akshan/Lee Sin (IO/SH),Morgana/Riven (MT/NX),2,2,1
+Jayce/Lux (DE/PZ),Morgana/Riven (MT/NX),2,2,1
+Championless (SI),Galio/Morgana (DE/FR),2,2,1
 Akshan/Varus (SH/RU),Championless (IO/SH),2,2,1
 Janna/Sett (IO/PZ),Sett/Viktor (IO/PZ),2,2,1
 Kayle (BW/MT),Karma/Sett (FR/IO),2,2,1
-Morgana/Riven (MT/NX),Akshan/Varus (SH/RU),2,2,1
 Akshan/Varus (SH/RU),Championless (PZ/SI),2,2,1
+Aatrox/Kayn (RU/RU),Senna (PZ/SI),2,2,1
+Championless (SI),Akshan/Morgana (MT/SH),2,2,1
+Lee Sin/Viktor (IO/PZ),Akshan/Morgana (MT/SH),2,2,1
+Maokai/Nautilus (BW/SI),Kindred/Norra (BC/SI),2,2,1
+Senna (PZ/SI),Akshan/Lee Sin (IO/SH),2,2,1
 Akshan/Varus (SH/RU),Aatrox (RU/BW),2,2,1
-Kayle (BW/MT),Sion (NX/SI),2,2,1
 Akshan/Sett (IO/SH),Sett/Viktor (IO/PZ),2,2,1
 Jayce/Lux (DE/PZ),Senna (PZ/SI),2,2,1
 Aurelion Sol/Shyvana (DE/MT),Maokai/Nautilus (BW/SI),2,2,1
 Akshan/Varus (SH/RU),Janna (IO/PZ),2,2,1
+Kayle (BW/MT),Galio/Morgana (DE/MT),2,2,1
 Akshan/Riven (NX/SH),Kayle (BW/MT),2,2,1
+Senna (PZ/SI),Kayle (BW/MT),2,2,1
+Championless (SI),Janna (IO/PZ),2,2,1
 Championless (SI/SH),Karma/Sett (FR/IO),2,2,1
 Aatrox/Kayn (RU/RU),Kayle/Shyvana (DE/MT),2,2,1
 Jayce/Lux (DE/PZ),Akshan/Sett (IO/SH),2,2,1
 Akshan/Sett (IO/SH),Maokai (BW/SI),2,2,1
+Janna/Viktor (PZ/SI),Maokai/Nautilus (BW/SI),2,2,1
+Championless (MT/SI),Championless (PZ/SI),2,2,1
 Aatrox/Kayn (RU/RU),Gwen/Illaoi (BW/SI),2,2,1
+Lee Sin/Viktor (IO/PZ),Championless (MT/SI),2,2,1
+Maokai/Nautilus (BW/SI),Riven/Varus (NX/RU),2,2,1
 Maokai/Nautilus (BW/SI),Gwen/Illaoi (BW/SI),2,2,1
 Riven/Shen (IO/NX),Championless (MT/SI),2,2,1
 Championless (PZ/SI),Championless (BW/PZ),2,2,1
-Kayle (BW/MT),Aatrox (RU/BW),2,2,1
-Jayce/Lux (DE/PZ),Championless (PZ/SI),2,2,1
 Sett/Viktor (IO/PZ),Nasus/Thresh (SI/SH),2,2,1
-Kayle (BW/MT),Championless (MT/SI),2,2,1
 Galio (DE/FR),Akshan/Varus (SH/RU),2,2,1
+Championless (MT/SI),Maokai (BW/SI),2,2,1
+The Poro King (MT/RU),Karma/Sett (FR/IO),2,2,1
 Aatrox (RU/BW),Maokai/Nautilus (BW/SI),0,2,0
+Illaoi/Swain (BW/NX),Senna/Veigar (BC/SI),0,2,0
 Jayce/Lux (DE/PZ),Sett (IO/SH),0,2,0
+Mordekaiser/Norra (BC/SI),Karma/Sett (IO/PZ),0,2,0
 Sion (NX/SI),Jayce/Lux (DE/PZ),0,2,0
+Morgana/Riven (MT/NX),Akshan/Lee Sin (IO/SH),0,2,0
+Morgana/Riven (MT/NX),Jayce/Lux (DE/PZ),0,2,0
+Galio/Morgana (DE/FR),Championless (SI),0,2,0
 Championless (IO/SH),Akshan/Varus (SH/RU),0,2,0
 Sett/Viktor (IO/PZ),Janna/Sett (IO/PZ),0,2,0
 Karma/Sett (FR/IO),Kayle (BW/MT),0,2,0
-Akshan/Varus (SH/RU),Morgana/Riven (MT/NX),0,2,0
 Championless (PZ/SI),Akshan/Varus (SH/RU),0,2,0
+Senna (PZ/SI),Aatrox/Kayn (RU/RU),0,2,0
+Akshan/Morgana (MT/SH),Championless (SI),0,2,0
+Akshan/Morgana (MT/SH),Lee Sin/Viktor (IO/PZ),0,2,0
+Kindred/Norra (BC/SI),Maokai/Nautilus (BW/SI),0,2,0
+Akshan/Lee Sin (IO/SH),Senna (PZ/SI),0,2,0
 Aatrox (RU/BW),Akshan/Varus (SH/RU),0,2,0
-Sion (NX/SI),Kayle (BW/MT),0,2,0
 Sett/Viktor (IO/PZ),Akshan/Sett (IO/SH),0,2,0
 Senna (PZ/SI),Jayce/Lux (DE/PZ),0,2,0
 Maokai/Nautilus (BW/SI),Aurelion Sol/Shyvana (DE/MT),0,2,0
 Janna (IO/PZ),Akshan/Varus (SH/RU),0,2,0
+Galio/Morgana (DE/MT),Kayle (BW/MT),0,2,0
 Kayle (BW/MT),Akshan/Riven (NX/SH),0,2,0
+Kayle (BW/MT),Senna (PZ/SI),0,2,0
+Janna (IO/PZ),Championless (SI),0,2,0
 Karma/Sett (FR/IO),Championless (SI/SH),0,2,0
 Kayle/Shyvana (DE/MT),Aatrox/Kayn (RU/RU),0,2,0
 Akshan/Sett (IO/SH),Jayce/Lux (DE/PZ),0,2,0
 Maokai (BW/SI),Akshan/Sett (IO/SH),0,2,0
+Maokai/Nautilus (BW/SI),Janna/Viktor (PZ/SI),0,2,0
+Championless (PZ/SI),Championless (MT/SI),0,2,0
 Gwen/Illaoi (BW/SI),Aatrox/Kayn (RU/RU),0,2,0
+Championless (MT/SI),Lee Sin/Viktor (IO/PZ),0,2,0
+Riven/Varus (NX/RU),Maokai/Nautilus (BW/SI),0,2,0
 Gwen/Illaoi (BW/SI),Maokai/Nautilus (BW/SI),0,2,0
 Championless (MT/SI),Riven/Shen (IO/NX),0,2,0
 Championless (BW/PZ),Championless (PZ/SI),0,2,0
-Aatrox (RU/BW),Kayle (BW/MT),0,2,0
-Championless (PZ/SI),Jayce/Lux (DE/PZ),0,2,0
 Nasus/Thresh (SI/SH),Sett/Viktor (IO/PZ),0,2,0
-Championless (MT/SI),Kayle (BW/MT),0,2,0
 Akshan/Varus (SH/RU),Galio (DE/FR),0,2,0
+Maokai (BW/SI),Championless (MT/SI),0,2,0
+Karma/Sett (FR/IO),The Poro King (MT/RU),0,2,0
 Karma/Sett (IO/PZ),Karma/Sett (IO/PZ),1,2,0.5
-Kayle (BW/MT),Janna/Sett (IO/PZ),1,2,0.5
-Janna/Sett (IO/PZ),Kayle (BW/MT),1,2,0.5
-Jayce/Lux (DE/PZ),Galio/Morgana (DE/FR),1,2,0.5
-Galio/Morgana (DE/FR),Jayce/Lux (DE/PZ),1,2,0.5
 Morgana/Riven (MT/NX),Senna/Veigar (BC/SI),1,2,0.5
 Senna/Veigar (BC/SI),Morgana/Riven (MT/NX),1,2,0.5
+Aatrox/Kayn (RU/RU),Galio/Morgana (DE/FR),1,2,0.5
+Galio/Morgana (DE/FR),Aatrox/Kayn (RU/RU),1,2,0.5
 Aatrox/Kayn (RU/RU),Morgana/Viktor (MT/PZ),1,2,0.5
 Morgana/Viktor (MT/PZ),Aatrox/Kayn (RU/RU),1,2,0.5
 Kayle (BW/MT),Senna/Veigar (PZ/SI),1,2,0.5
 Senna/Veigar (PZ/SI),Kayle (BW/MT),1,2,0.5
 Janna (PZ/SI),Aatrox/Kayn (RU/RU),1,2,0.5
 Aatrox/Kayn (RU/RU),Janna (PZ/SI),1,2,0.5
-Karma/Sett (FR/IO),Karma/Sett (FR/IO),1,2,0.5
-Janna/Lee Sin/Viktor (IO/PZ),Jayce/Lux (DE/PZ),1,2,0.5
-Jayce/Lux (DE/PZ),Janna/Lee Sin/Viktor (IO/PZ),1,2,0.5
 Galio/Tahm Kench (BW/DE),Senna/Veigar (BC/SI),1,2,0.5
 Senna/Veigar (BC/SI),Galio/Tahm Kench (BW/DE),1,2,0.5
 Senna/Veigar (BC/SI),Galio/Morgana (DE/MT),1,2,0.5
 Galio/Morgana (DE/MT),Senna/Veigar (BC/SI),1,2,0.5
-Maokai/Nautilus (BW/SI),Karma/Sett (FR/IO),1,2,0.5
-Karma/Sett (FR/IO),Maokai/Nautilus (BW/SI),1,2,0.5
-Galio/Morgana (DE/FR),Kayle (BW/MT),1,2,0.5
-Kayle (BW/MT),Galio/Morgana (DE/FR),1,2,0.5
 Aatrox/Kayn (RU/RU),Janna/Viktor (IO/PZ),1,2,0.5
 Janna/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),1,2,0.5
 Lee Sin/Viktor (IO/PZ),Lee Sin/Viktor (IO/PZ),1,2,0.5
 Akshan/Lee Sin (IO/SH),Nasus/Thresh (SI/SH),1,2,0.5
 Nasus/Thresh (SI/SH),Akshan/Lee Sin (IO/SH),1,2,0.5
+Lee Sin/Viktor (IO/PZ),Championless (BW/PZ),1,2,0.5
+Championless (BW/PZ),Lee Sin/Viktor (IO/PZ),1,2,0.5
 Akshan/Lee Sin (IO/SH),Galio/Morgana (DE/FR),1,2,0.5
 Galio/Morgana (DE/FR),Akshan/Lee Sin (IO/SH),1,2,0.5
+Morgana/Riven (MT/NX),Rumble/Sion (BC/NX),1,2,0.5
+Rumble/Sion (BC/NX),Morgana/Riven (MT/NX),1,2,0.5
+Janna/Viktor (IO/PZ),Akshan/Varus (SH/RU),1,2,0.5
+Akshan/Varus (SH/RU),Janna/Viktor (IO/PZ),1,2,0.5
 Sett/Viktor (IO/PZ),Riven/Viktor (NX/PZ),1,2,0.5
 Riven/Viktor (NX/PZ),Sett/Viktor (IO/PZ),1,2,0.5
 Akshan/Lee Sin (IO/SH),Championless (SI),1,2,0.5
 Championless (SI),Akshan/Lee Sin (IO/SH),1,2,0.5
+Maokai (BW/SI),Aatrox/Kayn (RU/RU),1,2,0.5
+Aatrox/Kayn (RU/RU),Maokai (BW/SI),1,2,0.5
 Aatrox (RU/BW),Sett/Viktor (IO/PZ),1,2,0.5
 Sett/Viktor (IO/PZ),Aatrox (RU/BW),1,2,0.5
 Lee Sin/Viktor (IO/PZ),Janna/Viktor (PZ/SI),1,2,0.5
 Janna/Viktor (PZ/SI),Lee Sin/Viktor (IO/PZ),1,2,0.5
 Lee Sin/Viktor (IO/PZ),Kayle (BW/MT),1,2,0.5
 Kayle (BW/MT),Lee Sin/Viktor (IO/PZ),1,2,0.5
-Lee Sin/Viktor (IO/PZ),Akshan/Varus (SH/RU),1,2,0.5
-Akshan/Varus (SH/RU),Lee Sin/Viktor (IO/PZ),1,2,0.5
+Maokai/Nautilus (BW/SI),Galio/Morgana (DE/MT),1,2,0.5
+Galio/Morgana (DE/MT),Maokai/Nautilus (BW/SI),1,2,0.5
 Gangplank/Sejuani (BW/FR),Sett/Viktor (IO/PZ),1,2,0.5
 Sett/Viktor (IO/PZ),Gangplank/Sejuani (BW/FR),1,2,0.5
 Maokai/Nautilus (BW/SI),Galio/Illaoi (BW/DE),1,2,0.5
 Galio/Illaoi (BW/DE),Maokai/Nautilus (BW/SI),1,2,0.5
+Riven/Viktor (NX/PZ),Kayle (BW/MT),1,2,0.5
+Kayle (BW/MT),Riven/Viktor (NX/PZ),1,2,0.5
 Galio/Morgana (DE/MT),Sett/Viktor (IO/PZ),1,2,0.5
 Sett/Viktor (IO/PZ),Galio/Morgana (DE/MT),1,2,0.5
-Akshan/Sett (IO/SH),Maokai/Nautilus (BW/SI),1,2,0.5
-Maokai/Nautilus (BW/SI),Akshan/Sett (IO/SH),1,2,0.5
-Maokai (BW/SI),Akshan/Lee Sin (IO/SH),1,2,0.5
-Akshan/Lee Sin (IO/SH),Maokai (BW/SI),1,2,0.5
+Championless (PZ/SI),Aatrox/Kayn (RU/RU),1,2,0.5
+Aatrox/Kayn (RU/RU),Championless (PZ/SI),1,2,0.5
+Senna/Veigar (BC/SI),Janna/Viktor (PZ/SI),1,2,0.5
+Janna/Viktor (PZ/SI),Senna/Veigar (BC/SI),1,2,0.5
 Sett/Viktor (IO/PZ),Sett/Viktor (IO/PZ),1,2,0.5
 Jayce/Morgana (MT/PZ),Maokai/Nautilus (BW/SI),1,2,0.5
 Maokai/Nautilus (BW/SI),Jayce/Morgana (MT/PZ),1,2,0.5
-Senna/Veigar (BC/SI),Championless (PZ/SI),1,2,0.5
-Championless (PZ/SI),Senna/Veigar (BC/SI),1,2,0.5
 Aatrox (RU/BW),Nasus/Senna (SI/SH),1,2,0.5
 Nasus/Senna (SI/SH),Aatrox (RU/BW),1,2,0.5
+Riven/Viktor (NX/PZ),Akshan/Varus (SH/RU),1,2,0.5
+Akshan/Varus (SH/RU),Riven/Viktor (NX/PZ),1,2,0.5
+Akshan/Lee Sin (IO/SH),Janna/Viktor (IO/PZ),1,2,0.5
+Janna/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),1,2,0.5
 Akshan/Sett (IO/SH),Akshan/Sett (IO/SH),1,2,0.5
+Volibear (FR/SI),Fiora/Jarvan IV/Shen (DE/IO),1,2,0.5
+Fiora/Jarvan IV/Shen (DE/IO),Volibear (FR/SI),1,2,0.5
+Maokai (BW/SI),Championless (PZ/SI),1,2,0.5
+Championless (PZ/SI),Maokai (BW/SI),1,2,0.5
+Sion (NX/SI),Akshan/Lee Sin (IO/SH),1,2,0.5
+Akshan/Lee Sin (IO/SH),Sion (NX/SI),1,2,0.5
+Aurelion Sol/Shyvana (DE/MT),Master Yi/Taliyah (IO/SH),1,2,0.5
+Master Yi/Taliyah (IO/SH),Aurelion Sol/Shyvana (DE/MT),1,2,0.5
 Galio (DE/FR),Sett (IO/SH),1,2,0.5
 Sett (IO/SH),Galio (DE/FR),1,2,0.5
 Senna/Veigar (BC/SI),Janna (PZ/SI),1,2,0.5
 Janna (PZ/SI),Senna/Veigar (BC/SI),1,2,0.5
 Maokai/Nautilus (BW/SI),Galio (DE/FR),1,2,0.5
 Galio (DE/FR),Maokai/Nautilus (BW/SI),1,2,0.5
-Championless (PZ/SI),Championless (PZ/SI),1,2,0.5
-Championless (MT/SI),Akshan/Varus (SH/RU),1,2,0.5
-Akshan/Varus (SH/RU),Championless (MT/SI),1,2,0.5
 Maokai/Nautilus (BW/SI),Akshan/Morgana (MT/SH),1,2,0.5
 Akshan/Morgana (MT/SH),Maokai/Nautilus (BW/SI),1,2,0.5
+Senna/Veigar (BC/SI),Morgana/Shyvana (DE/MT),1,2,0.5
+Morgana/Shyvana (DE/MT),Senna/Veigar (BC/SI),1,2,0.5
+Nasus/Senna (SI/SH),Senna/Veigar (BC/SI),1,2,0.5
+Senna/Veigar (BC/SI),Nasus/Senna (SI/SH),1,2,0.5
 Jayce/Lux (DE/PZ),Nasus/Senna (SI/SH),1,2,0.5
 Nasus/Senna (SI/SH),Jayce/Lux (DE/PZ),1,2,0.5
 Senna/Veigar (BC/SI),Jayce/Morgana (MT/PZ),1,2,0.5
 Jayce/Morgana (MT/PZ),Senna/Veigar (BC/SI),1,2,0.5
-Senna/Veigar (BC/SI),Maokai (BW/SI),1,2,0.5
-Maokai (BW/SI),Senna/Veigar (BC/SI),1,2,0.5
-Senna/Veigar (BC/SI),Akshan/Lee Sin (IO/SH),6,7,0.857142857142857
-Akshan/Lee Sin (IO/SH),Senna/Veigar (BC/SI),1,7,0.142857142857143
-Senna/Veigar (BC/SI),Jayce/Lux (DE/PZ),3,16,0.1875
-Jayce/Lux (DE/PZ),Senna/Veigar (BC/SI),13,16,0.8125
+Maokai/Nautilus (BW/SI),Nasus/Senna (SI/SH),1,2,0.5
+Nasus/Senna (SI/SH),Maokai/Nautilus (BW/SI),1,2,0.5
+Senna/Veigar (BC/SI),Illaoi (BW/SI),1,2,0.5
+Illaoi (BW/SI),Senna/Veigar (BC/SI),1,2,0.5
+Karma/Sett (FR/IO),Galio (DE/NX),1,2,0.5
+Galio (DE/NX),Karma/Sett (FR/IO),1,2,0.5
+Championless (MT/SI),Championless (MT/SI),1,2,0.5
+Senna/Veigar (BC/SI),Akshan/Lee Sin (IO/SH),8,12,0.666666666666667
+Aatrox/Kayn (RU/RU),Senna/Veigar (BC/SI),8,12,0.666666666666667
+Akshan/Lee Sin (IO/SH),Senna/Veigar (BC/SI),4,12,0.333333333333333
+Senna/Veigar (BC/SI),Aatrox/Kayn (RU/RU),4,12,0.333333333333333
+Kayle (BW/MT),Janna/Sett (IO/PZ),2,3,0.666666666666667
+Maokai/Nautilus (BW/SI),Galio/Morgana (DE/FR),2,3,0.666666666666667
+Jayce/Lux (DE/PZ),Janna/Lee Sin/Viktor (IO/PZ),2,3,0.666666666666667
+Akshan/Varus (SH/RU),Rumble/Sion (BC/NX),2,3,0.666666666666667
+Championless (SI),Aurelion Sol/Volibear (FR/MT),2,3,0.666666666666667
+Janna/Viktor (IO/PZ),Senna/Veigar (BC/SI),2,3,0.666666666666667
+Championless (SI),Sett/Viktor (IO/PZ),2,3,0.666666666666667
+Maokai/Nautilus (BW/SI),Jayce/Sett (IO/PZ),2,3,0.666666666666667
+Akshan/Varus (SH/RU),Championless (SI/SH),2,3,0.666666666666667
+Maokai/Nautilus (BW/SI),Akshan/Sett (IO/SH),2,3,0.666666666666667
+Akshan/Lee Sin (IO/SH),Maokai (BW/SI),2,3,0.666666666666667
+Janna/Viktor (IO/PZ),Championless (SI),2,3,0.666666666666667
+Janna (IO/PZ),Maokai/Nautilus (BW/SI),2,3,0.666666666666667
+Jayce/Lux (DE/PZ),Riven/Viktor (NX/PZ),2,3,0.666666666666667
+Riven/Shen (IO/NX),Maokai/Nautilus (BW/SI),2,3,0.666666666666667
+Rumble/Sion (BC/NX),Lee Sin/Viktor (IO/PZ),2,3,0.666666666666667
+Kayle (BW/MT),Championless (MT/SI),2,3,0.666666666666667
+Janna/Sett (IO/PZ),Senna/Veigar (BC/SI),2,3,0.666666666666667
+Janna/Sett (IO/PZ),Kayle (BW/MT),1,3,0.333333333333333
+Galio/Morgana (DE/FR),Maokai/Nautilus (BW/SI),1,3,0.333333333333333
+Janna/Lee Sin/Viktor (IO/PZ),Jayce/Lux (DE/PZ),1,3,0.333333333333333
+Rumble/Sion (BC/NX),Akshan/Varus (SH/RU),1,3,0.333333333333333
+Aurelion Sol/Volibear (FR/MT),Championless (SI),1,3,0.333333333333333
+Senna/Veigar (BC/SI),Janna/Viktor (IO/PZ),1,3,0.333333333333333
+Sett/Viktor (IO/PZ),Championless (SI),1,3,0.333333333333333
+Jayce/Sett (IO/PZ),Maokai/Nautilus (BW/SI),1,3,0.333333333333333
+Championless (SI/SH),Akshan/Varus (SH/RU),1,3,0.333333333333333
+Akshan/Sett (IO/SH),Maokai/Nautilus (BW/SI),1,3,0.333333333333333
+Maokai (BW/SI),Akshan/Lee Sin (IO/SH),1,3,0.333333333333333
+Championless (SI),Janna/Viktor (IO/PZ),1,3,0.333333333333333
+Maokai/Nautilus (BW/SI),Janna (IO/PZ),1,3,0.333333333333333
+Riven/Viktor (NX/PZ),Jayce/Lux (DE/PZ),1,3,0.333333333333333
+Maokai/Nautilus (BW/SI),Riven/Shen (IO/NX),1,3,0.333333333333333
+Lee Sin/Viktor (IO/PZ),Rumble/Sion (BC/NX),1,3,0.333333333333333
+Championless (MT/SI),Kayle (BW/MT),1,3,0.333333333333333
+Senna/Veigar (BC/SI),Janna/Sett (IO/PZ),1,3,0.333333333333333
+Senna/Veigar (BC/SI),Jayce/Lux (DE/PZ),4,18,0.222222222222222
+Jayce/Lux (DE/PZ),Senna/Veigar (BC/SI),14,18,0.777777777777778
 Janna/Sett (IO/PZ),Akshan/Varus (SH/RU),3,3,1
-Akshan/Varus (SH/RU),Sett (IO/SH),3,3,1
-Karma/Sett (FR/IO),Aurelion Sol/Shyvana (DE/MT),3,3,1
 Swain (NX/PZ),Senna/Veigar (BC/SI),3,3,1
+Kayle (BW/MT),Aatrox (RU/BW),3,3,1
+Maokai/Nautilus (BW/SI),Mordekaiser/Norra (BC/SI),3,3,1
 Akshan/Varus (SH/RU),Senna (PZ/SI),3,3,1
 Sett/Viktor (IO/PZ),Maokai (BW/SI),3,3,1
+Kayle (BW/MT),Sion (NX/SI),3,3,1
 Maokai (BW/SI),Kayle (BW/MT),3,3,1
 Sett/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),3,3,1
+Akshan/Sett (IO/SH),Kayle (BW/MT),3,3,1
+Aatrox/Kayn (RU/RU),Sion (NX/SI),3,3,1
+Lux: Illuminated/Vex (BC/DE),Aurelion Sol/Shyvana (DE/MT),3,3,1
 Akshan/Varus (SH/RU),Janna/Sett (IO/PZ),0,3,0
-Sett (IO/SH),Akshan/Varus (SH/RU),0,3,0
-Aurelion Sol/Shyvana (DE/MT),Karma/Sett (FR/IO),0,3,0
 Senna/Veigar (BC/SI),Swain (NX/PZ),0,3,0
+Aatrox (RU/BW),Kayle (BW/MT),0,3,0
+Mordekaiser/Norra (BC/SI),Maokai/Nautilus (BW/SI),0,3,0
 Senna (PZ/SI),Akshan/Varus (SH/RU),0,3,0
 Maokai (BW/SI),Sett/Viktor (IO/PZ),0,3,0
+Sion (NX/SI),Kayle (BW/MT),0,3,0
 Kayle (BW/MT),Maokai (BW/SI),0,3,0
 Aatrox/Kayn (RU/RU),Sett/Viktor (IO/PZ),0,3,0
-Jayce/Lux (DE/PZ),Akshan/Lee Sin (IO/SH),5,11,0.454545454545455
-Akshan/Lee Sin (IO/SH),Jayce/Lux (DE/PZ),6,11,0.545454545454545
-Maokai/Nautilus (BW/SI),Akshan/Varus (SH/RU),8,30,0.266666666666667
-Akshan/Varus (SH/RU),Maokai/Nautilus (BW/SI),22,30,0.733333333333333
-Jayce/Lux (DE/PZ),Championless (SI),2,4,0.5
-Championless (SI),Jayce/Lux (DE/PZ),2,4,0.5
-Akshan/Lee Sin (IO/SH),Aatrox/Kayn (RU/RU),2,4,0.5
-Aatrox/Kayn (RU/RU),Akshan/Lee Sin (IO/SH),2,4,0.5
+Kayle (BW/MT),Akshan/Sett (IO/SH),0,3,0
+Sion (NX/SI),Aatrox/Kayn (RU/RU),0,3,0
+Aurelion Sol/Shyvana (DE/MT),Lux: Illuminated/Vex (BC/DE),0,3,0
+Sett (IO/SH),Akshan/Varus (SH/RU),0,4,0
+Aurelion Sol/Shyvana (DE/MT),Karma/Sett (FR/IO),0,4,0
+Akshan/Varus (SH/RU),Morgana/Riven (MT/NX),0,4,0
+Akshan/Varus (SH/RU),Galio/Morgana (DE/FR),0,4,0
+Championless (PZ/SI),Jayce/Lux (DE/PZ),0,4,0
+Akshan/Varus (SH/RU),Sett (IO/SH),4,4,1
+Karma/Sett (FR/IO),Aurelion Sol/Shyvana (DE/MT),4,4,1
+Morgana/Riven (MT/NX),Akshan/Varus (SH/RU),4,4,1
+Galio/Morgana (DE/FR),Akshan/Varus (SH/RU),4,4,1
+Jayce/Lux (DE/PZ),Championless (PZ/SI),4,4,1
+Jayce/Lux (DE/PZ),Akshan/Lee Sin (IO/SH),7,14,0.5
+Akshan/Lee Sin (IO/SH),Jayce/Lux (DE/PZ),7,14,0.5
+Akshan/Lee Sin (IO/SH),Akshan/Lee Sin (IO/SH),7,14,0.5
+Maokai/Nautilus (BW/SI),Sett/Viktor (IO/PZ),7,14,0.5
+Sett/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),7,14,0.5
+Maokai/Nautilus (BW/SI),Akshan/Varus (SH/RU),14,51,0.274509803921569
+Akshan/Varus (SH/RU),Maokai/Nautilus (BW/SI),37,51,0.725490196078431
+Jayce/Lux (DE/PZ),Championless (SI),2,5,0.4
+Aatrox/Kayn (RU/RU),Championless (SI),2,5,0.4
+Senna/Veigar (BC/SI),Championless (MT/SI),2,5,0.4
+Lee Sin/Viktor (IO/PZ),Jayce/Lux (DE/PZ),2,5,0.4
+Janna/Senna (PZ/SI),Maokai/Nautilus (BW/SI),2,5,0.4
+Jayce/Lux (DE/PZ),Championless (MT/SI),2,5,0.4
+Championless (SI),Jayce/Lux (DE/PZ),3,5,0.6
+Championless (SI),Aatrox/Kayn (RU/RU),3,5,0.6
+Championless (MT/SI),Senna/Veigar (BC/SI),3,5,0.6
+Jayce/Lux (DE/PZ),Lee Sin/Viktor (IO/PZ),3,5,0.6
+Maokai/Nautilus (BW/SI),Janna/Senna (PZ/SI),3,5,0.6
+Championless (MT/SI),Jayce/Lux (DE/PZ),3,5,0.6
+Senna/Veigar (BC/SI),Maokai/Nautilus (BW/SI),12,47,0.25531914893617
+Maokai/Nautilus (BW/SI),Senna/Veigar (BC/SI),35,47,0.74468085106383
+Akshan/Lee Sin (IO/SH),Aatrox/Kayn (RU/RU),3,6,0.5
+Aatrox/Kayn (RU/RU),Akshan/Lee Sin (IO/SH),3,6,0.5
+Championless (SI),Championless (SI),3,6,0.5
+Championless (MT/SI),Maokai/Nautilus (BW/SI),3,6,0.5
+Maokai/Nautilus (BW/SI),Championless (MT/SI),3,6,0.5
+Aatrox/Kayn (RU/RU),Aatrox/Kayn (RU/RU),3,6,0.5
+Kayle (BW/MT),Sett/Viktor (IO/PZ),3,6,0.5
+Sett/Viktor (IO/PZ),Kayle (BW/MT),3,6,0.5
+Janna/Viktor (IO/PZ),Janna/Viktor (IO/PZ),3,6,0.5
+Championless (SI),Kayle (BW/MT),2,8,0.25
+Maokai/Nautilus (BW/SI),Championless (PZ/SI),2,8,0.25
+Kayle (BW/MT),Championless (SI),6,8,0.75
+Championless (PZ/SI),Maokai/Nautilus (BW/SI),6,8,0.75
+Senna/Veigar (BC/SI),Senna/Veigar (BC/SI),14,28,0.5
+Senna/Veigar (BC/SI),Akshan/Varus (SH/RU),3,15,0.2
+Akshan/Varus (SH/RU),Senna/Veigar (BC/SI),12,15,0.8
+Jayce/Lux (DE/PZ),Jayce/Lux (DE/PZ),16,32,0.5
+Akshan/Varus (SH/RU),Akshan/Varus (SH/RU),18,36,0.5
+Jayce/Lux (DE/PZ),Galio/Morgana (DE/FR),2,4,0.5
+Galio/Morgana (DE/FR),Jayce/Lux (DE/PZ),2,4,0.5
+Karma/Sett (FR/IO),Karma/Sett (FR/IO),2,4,0.5
 Championless (SI),Akshan/Varus (SH/RU),2,4,0.5
 Akshan/Varus (SH/RU),Championless (SI),2,4,0.5
-Championless (SI),Championless (SI),2,4,0.5
-Aatrox/Kayn (RU/RU),Championless (SI),2,4,0.5
-Championless (SI),Aatrox/Kayn (RU/RU),2,4,0.5
-Sett/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),2,4,0.5
-Akshan/Lee Sin (IO/SH),Sett/Viktor (IO/PZ),2,4,0.5
-Maokai (BW/SI),Maokai/Nautilus (BW/SI),2,4,0.5
-Maokai/Nautilus (BW/SI),Maokai (BW/SI),2,4,0.5
-Kayle (BW/MT),Kayle (BW/MT),2,4,0.5
-Senna/Veigar (BC/SI),Maokai/Nautilus (BW/SI),9,33,0.272727272727273
-Maokai/Nautilus (BW/SI),Senna/Veigar (BC/SI),24,33,0.727272727272727
-Championless (SI),Kayle (BW/MT),2,7,0.285714285714286
-Maokai/Nautilus (BW/SI),Rumble/Sion (BC/NX),2,7,0.285714285714286
-Kayle (BW/MT),Jayce/Lux (DE/PZ),2,7,0.285714285714286
-Kayle (BW/MT),Championless (SI),5,7,0.714285714285714
-Rumble/Sion (BC/NX),Maokai/Nautilus (BW/SI),5,7,0.714285714285714
-Jayce/Lux (DE/PZ),Kayle (BW/MT),5,7,0.714285714285714
-Senna/Veigar (BC/SI),Senna/Veigar (BC/SI),10,20,0.5
-Senna/Veigar (BC/SI),Akshan/Varus (SH/RU),2,9,0.222222222222222
-Senna/Veigar (BC/SI),Kayle (BW/MT),2,9,0.222222222222222
-Sett/Viktor (IO/PZ),Jayce/Lux (DE/PZ),2,9,0.222222222222222
-Akshan/Varus (SH/RU),Senna/Veigar (BC/SI),7,9,0.777777777777778
-Kayle (BW/MT),Senna/Veigar (BC/SI),7,9,0.777777777777778
-Jayce/Lux (DE/PZ),Sett/Viktor (IO/PZ),7,9,0.777777777777778
-Jayce/Lux (DE/PZ),Jayce/Lux (DE/PZ),11,22,0.5
-Akshan/Varus (SH/RU),Akshan/Varus (SH/RU),17,34,0.5
+Maokai/Nautilus (BW/SI),Karma/Sett (FR/IO),2,4,0.5
+Karma/Sett (FR/IO),Maokai/Nautilus (BW/SI),2,4,0.5
+Championless (PZ/SI),Championless (PZ/SI),2,4,0.5
 Aatrox/Kayn (RU/RU),Morgana/Riven (MT/NX),3,4,0.75
 Akshan/Lee Sin (IO/SH),Riven/Viktor (NX/PZ),3,4,0.75
-Jayce/Lux (DE/PZ),Lee Sin/Viktor (IO/PZ),3,4,0.75
+Kayle (BW/MT),Galio/Morgana (DE/FR),3,4,0.75
+Akshan/Varus (SH/RU),Lee Sin/Viktor (IO/PZ),3,4,0.75
+Lee Sin/Viktor (IO/PZ),Senna/Veigar (BC/SI),3,4,0.75
+Championless (SI),Senna/Veigar (BC/SI),3,4,0.75
+Riven/Viktor (NX/PZ),Maokai/Nautilus (BW/SI),3,4,0.75
+Aatrox/Kayn (RU/RU),Lee Sin/Viktor (IO/PZ),3,4,0.75
+Aatrox/Kayn (RU/RU),Championless (MT/SI),3,4,0.75
+Akshan/Varus (SH/RU),Championless (MT/SI),3,4,0.75
+Senna/Veigar (BC/SI),Janna/Senna (PZ/SI),3,4,0.75
+Maokai (BW/SI),Senna/Veigar (BC/SI),3,4,0.75
 Championless (MT/SI),Akshan/Lee Sin (IO/SH),3,4,0.75
 Morgana/Riven (MT/NX),Aatrox/Kayn (RU/RU),1,4,0.25
 Riven/Viktor (NX/PZ),Akshan/Lee Sin (IO/SH),1,4,0.25
-Lee Sin/Viktor (IO/PZ),Jayce/Lux (DE/PZ),1,4,0.25
+Galio/Morgana (DE/FR),Kayle (BW/MT),1,4,0.25
+Lee Sin/Viktor (IO/PZ),Akshan/Varus (SH/RU),1,4,0.25
+Senna/Veigar (BC/SI),Lee Sin/Viktor (IO/PZ),1,4,0.25
+Senna/Veigar (BC/SI),Championless (SI),1,4,0.25
+Maokai/Nautilus (BW/SI),Riven/Viktor (NX/PZ),1,4,0.25
+Lee Sin/Viktor (IO/PZ),Aatrox/Kayn (RU/RU),1,4,0.25
+Championless (MT/SI),Aatrox/Kayn (RU/RU),1,4,0.25
+Championless (MT/SI),Akshan/Varus (SH/RU),1,4,0.25
+Janna/Senna (PZ/SI),Senna/Veigar (BC/SI),1,4,0.25
+Senna/Veigar (BC/SI),Maokai (BW/SI),1,4,0.25
 Akshan/Lee Sin (IO/SH),Championless (MT/SI),1,4,0.25
-Maokai/Nautilus (BW/SI),Galio/Morgana (DE/FR),2,3,0.666666666666667
-Jayce/Lux (DE/PZ),Aatrox/Kayn (RU/RU),2,3,0.666666666666667
-Akshan/Varus (SH/RU),Rumble/Sion (BC/NX),2,3,0.666666666666667
-Championless (SI),Aurelion Sol/Volibear (FR/MT),2,3,0.666666666666667
-Championless (SI),Senna/Veigar (BC/SI),2,3,0.666666666666667
-Championless (SI),Sett/Viktor (IO/PZ),2,3,0.666666666666667
-Lee Sin/Viktor (IO/PZ),Senna/Veigar (BC/SI),2,3,0.666666666666667
-Maokai/Nautilus (BW/SI),Jayce/Sett (IO/PZ),2,3,0.666666666666667
-Janna/Viktor (IO/PZ),Championless (SI),2,3,0.666666666666667
-Jayce/Lux (DE/PZ),Championless (MT/SI),2,3,0.666666666666667
-Rumble/Sion (BC/NX),Lee Sin/Viktor (IO/PZ),2,3,0.666666666666667
-Senna/Veigar (BC/SI),Janna/Senna (PZ/SI),2,3,0.666666666666667
-Galio/Morgana (DE/FR),Maokai/Nautilus (BW/SI),1,3,0.333333333333333
-Aatrox/Kayn (RU/RU),Jayce/Lux (DE/PZ),1,3,0.333333333333333
-Rumble/Sion (BC/NX),Akshan/Varus (SH/RU),1,3,0.333333333333333
-Aurelion Sol/Volibear (FR/MT),Championless (SI),1,3,0.333333333333333
-Senna/Veigar (BC/SI),Championless (SI),1,3,0.333333333333333
-Sett/Viktor (IO/PZ),Championless (SI),1,3,0.333333333333333
-Senna/Veigar (BC/SI),Lee Sin/Viktor (IO/PZ),1,3,0.333333333333333
-Jayce/Sett (IO/PZ),Maokai/Nautilus (BW/SI),1,3,0.333333333333333
-Championless (SI),Janna/Viktor (IO/PZ),1,3,0.333333333333333
-Championless (MT/SI),Jayce/Lux (DE/PZ),1,3,0.333333333333333
-Lee Sin/Viktor (IO/PZ),Rumble/Sion (BC/NX),1,3,0.333333333333333
-Janna/Senna (PZ/SI),Senna/Veigar (BC/SI),1,3,0.333333333333333
-Akshan/Lee Sin (IO/SH),Maokai/Nautilus (BW/SI),5,10,0.5
-Maokai/Nautilus (BW/SI),Akshan/Lee Sin (IO/SH),5,10,0.5
-Aatrox/Kayn (RU/RU),Akshan/Varus (SH/RU),3,7,0.428571428571429
-Sett/Viktor (IO/PZ),Akshan/Varus (SH/RU),3,7,0.428571428571429
-Akshan/Varus (SH/RU),Aatrox/Kayn (RU/RU),4,7,0.571428571428571
-Akshan/Varus (SH/RU),Sett/Viktor (IO/PZ),4,7,0.571428571428571
-Championless (PZ/SI),Maokai/Nautilus (BW/SI),4,5,0.8
-Maokai/Nautilus (BW/SI),Lee Sin/Viktor (IO/PZ),4,5,0.8
-Sion (NX/SI),Maokai/Nautilus (BW/SI),4,5,0.8
-Maokai/Nautilus (BW/SI),Championless (PZ/SI),1,5,0.2
-Lee Sin/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),1,5,0.2
-Maokai/Nautilus (BW/SI),Sion (NX/SI),1,5,0.2
-Maokai/Nautilus (BW/SI),Championless (SI),3,10,0.3
-Championless (SI),Maokai/Nautilus (BW/SI),7,10,0.7
-Akshan/Varus (SH/RU),Kayle (BW/MT),10,17,0.588235294117647
-Kayle (BW/MT),Akshan/Varus (SH/RU),7,17,0.411764705882353
-Kayle (BW/MT),Akshan/Lee Sin (IO/SH),6,8,0.75
-Akshan/Lee Sin (IO/SH),Kayle (BW/MT),2,8,0.25
-Akshan/Varus (SH/RU),Galio/Morgana (DE/FR),0,4,0
-Akshan/Lee Sin (IO/SH),Lee Sin/Viktor (IO/PZ),0,4,0
-Championless (SI/SH),Maokai/Nautilus (BW/SI),0,4,0
-Janna/Viktor (IO/PZ),Kayle (BW/MT),0,4,0
-Galio/Morgana (DE/FR),Akshan/Varus (SH/RU),4,4,1
-Lee Sin/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),4,4,1
-Maokai/Nautilus (BW/SI),Championless (SI/SH),4,4,1
-Kayle (BW/MT),Janna/Viktor (IO/PZ),4,4,1
-Akshan/Lee Sin (IO/SH),Akshan/Lee Sin (IO/SH),4,8,0.5
+Jayce/Lux (DE/PZ),Aatrox/Kayn (RU/RU),4,5,0.8
+Sion (NX/SI),Senna/Veigar (BC/SI),4,5,0.8
+Aatrox/Kayn (RU/RU),Jayce/Lux (DE/PZ),1,5,0.2
+Senna/Veigar (BC/SI),Sion (NX/SI),1,5,0.2
+Akshan/Lee Sin (IO/SH),Maokai/Nautilus (BW/SI),10,18,0.555555555555556
+Maokai/Nautilus (BW/SI),Akshan/Lee Sin (IO/SH),8,18,0.444444444444444
+Aatrox/Kayn (RU/RU),Akshan/Varus (SH/RU),5,11,0.454545454545455
+Akshan/Varus (SH/RU),Aatrox/Kayn (RU/RU),6,11,0.545454545454545
+Senna/Veigar (BC/SI),Kayle (BW/MT),2,11,0.181818181818182
+Kayle (BW/MT),Senna/Veigar (BC/SI),9,11,0.818181818181818
+Maokai/Nautilus (BW/SI),Rumble/Sion (BC/NX),3,9,0.333333333333333
+Kayle (BW/MT),Jayce/Lux (DE/PZ),3,9,0.333333333333333
+Rumble/Sion (BC/NX),Maokai/Nautilus (BW/SI),6,9,0.666666666666667
+Jayce/Lux (DE/PZ),Kayle (BW/MT),6,9,0.666666666666667
+Maokai/Nautilus (BW/SI),Championless (SI),6,21,0.285714285714286
+Championless (SI),Maokai/Nautilus (BW/SI),15,21,0.714285714285714
+Akshan/Varus (SH/RU),Kayle (BW/MT),15,26,0.576923076923077
+Kayle (BW/MT),Akshan/Varus (SH/RU),11,26,0.423076923076923
+Kayle (BW/MT),Akshan/Lee Sin (IO/SH),6,10,0.6
+Akshan/Lee Sin (IO/SH),Kayle (BW/MT),4,10,0.4
+Sett/Viktor (IO/PZ),Akshan/Varus (SH/RU),4,11,0.363636363636364
+Akshan/Varus (SH/RU),Sett/Viktor (IO/PZ),7,11,0.636363636363636
+Jayce/Lux (DE/PZ),Sett/Viktor (IO/PZ),7,9,0.777777777777778
+Sett/Viktor (IO/PZ),Jayce/Lux (DE/PZ),2,9,0.222222222222222
+Lee Sin/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),6,6,1
+Akshan/Lee Sin (IO/SH),Lee Sin/Viktor (IO/PZ),0,6,0
+Kayle (BW/MT),Maokai/Nautilus (BW/SI),34,52,0.653846153846154
+Maokai/Nautilus (BW/SI),Kayle (BW/MT),18,52,0.346153846153846
+Kayle (BW/MT),Aatrox/Kayn (RU/RU),4,8,0.5
+Aatrox/Kayn (RU/RU),Kayle (BW/MT),4,8,0.5
 Maokai/Nautilus (BW/SI),Janna/Viktor (IO/PZ),4,8,0.5
 Janna/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),4,8,0.5
-Maokai/Nautilus (BW/SI),Senna (PZ/SI),3,6,0.5
-Senna (PZ/SI),Maokai/Nautilus (BW/SI),3,6,0.5
-Aatrox/Kayn (RU/RU),Aatrox/Kayn (RU/RU),3,6,0.5
-Janna/Viktor (IO/PZ),Janna/Viktor (IO/PZ),3,6,0.5
-Kayle (BW/MT),Maokai/Nautilus (BW/SI),26,40,0.65
-Maokai/Nautilus (BW/SI),Kayle (BW/MT),14,40,0.35
-Aatrox/Kayn (RU/RU),Kayle (BW/MT),2,5,0.4
-Sion (NX/SI),Akshan/Varus (SH/RU),2,5,0.4
-Kayle (BW/MT),Sett/Viktor (IO/PZ),2,5,0.4
-Kayle (BW/MT),Aatrox/Kayn (RU/RU),3,5,0.6
-Akshan/Varus (SH/RU),Sion (NX/SI),3,5,0.6
-Sett/Viktor (IO/PZ),Kayle (BW/MT),3,5,0.6
-Sett/Viktor (IO/PZ),Senna/Veigar (BC/SI),6,6,1
-Senna/Veigar (BC/SI),Sett/Viktor (IO/PZ),0,6,0
-Maokai/Nautilus (BW/SI),Sett/Viktor (IO/PZ),7,11,0.636363636363636
-Sett/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),4,11,0.363636363636364
+Maokai/Nautilus (BW/SI),Senna (PZ/SI),5,9,0.555555555555556
+Senna (PZ/SI),Maokai/Nautilus (BW/SI),4,9,0.444444444444444
+Maokai/Nautilus (BW/SI),Championless (SI/SH),5,8,0.625
+Championless (SI/SH),Maokai/Nautilus (BW/SI),3,8,0.375
+Sett/Viktor (IO/PZ),Senna/Veigar (BC/SI),6,7,0.857142857142857
+Senna/Veigar (BC/SI),Sett/Viktor (IO/PZ),1,7,0.142857142857143
+Maokai/Nautilus (BW/SI),Lee Sin/Viktor (IO/PZ),4,7,0.571428571428571
+Akshan/Lee Sin (IO/SH),Sett/Viktor (IO/PZ),4,7,0.571428571428571
+Maokai (BW/SI),Maokai/Nautilus (BW/SI),4,7,0.571428571428571
+Lee Sin/Viktor (IO/PZ),Maokai/Nautilus (BW/SI),3,7,0.428571428571429
+Sett/Viktor (IO/PZ),Akshan/Lee Sin (IO/SH),3,7,0.428571428571429
+Maokai/Nautilus (BW/SI),Maokai (BW/SI),3,7,0.428571428571429
+Kayle (BW/MT),Kayle (BW/MT),6,12,0.5
+Kayle (BW/MT),Janna/Viktor (IO/PZ),5,5,1
+Janna/Viktor (IO/PZ),Kayle (BW/MT),0,5,0
+Senna/Veigar (BC/SI),Championless (PZ/SI),1,6,0.166666666666667
+Championless (PZ/SI),Senna/Veigar (BC/SI),5,6,0.833333333333333
+Sion (NX/SI),Maokai/Nautilus (BW/SI),8,10,0.8
+Maokai/Nautilus (BW/SI),Sion (NX/SI),2,10,0.2
