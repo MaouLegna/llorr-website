@@ -210,8 +210,8 @@ Renekton (SH),Ashe/LeBlanc (FR/NX),1,2,0.5
 Ashe/LeBlanc (FR/NX),Renekton (SH),1,2,0.5
 Ashe/Gnar (DE/FR),Braum/Zoe (FR/MT),1,2,0.5
 Braum/Zoe (FR/MT),Ashe/Gnar (DE/FR),1,2,0.5
-Sivir/Udyr (FR/SH),Ashe (FR/PZ),1,2,0.5
-Ashe (FR/PZ),Sivir/Udyr (FR/SH),1,2,0.5
+Braum/Zoe (FR/MT),Ashe (FR/SI),1,2,0.5
+Ashe (FR/SI),Braum/Zoe (FR/MT),1,2,0.5
 Ashe/LeBlanc (FR/NX),Ezreal/Twisted Fate (BW/PZ),1,2,0.5
 Ezreal/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),1,2,0.5
 LeBlanc/Sivir (NX/SH),Championless (MT/SI),1,2,0.5
@@ -233,6 +233,8 @@ Kalista (PZ/SI),Seraphine/Zoe (MT/PZ),1,2,0.5
 Seraphine/Zoe (MT/PZ),Kalista (PZ/SI),1,2,0.5
 Darius/Swain (NX/SI),Ashe/LeBlanc (FR/NX),1,2,0.5
 Ashe/LeBlanc (FR/NX),Darius/Swain (NX/SI),1,2,0.5
+Leona/Yasuo (IO/MT),Fiora/Udyr (DE/FR),1,2,0.5
+Fiora/Udyr (DE/FR),Leona/Yasuo (IO/MT),1,2,0.5
 Caitlyn/Teemo (BC/PZ),Ezreal/Seraphine (PZ/SI),1,2,0.5
 Ezreal/Seraphine (PZ/SI),Caitlyn/Teemo (BC/PZ),1,2,0.5
 Caitlyn/Teemo (BC/PZ),Lulu/Shen (DE/IO),1,2,0.5
@@ -374,8 +376,6 @@ Master Yi/Udyr (FR/IO),Ezreal/Swain (NX/PZ),1,2,0.5
 Ezreal/Swain (NX/PZ),Master Yi/Udyr (FR/IO),1,2,0.5
 Master Yi/Udyr (FR/IO),Elise (SI),1,2,0.5
 Elise (SI),Master Yi/Udyr (FR/IO),1,2,0.5
-Ashe (FR/PZ),Ashe/Janna (FR/PZ),1,2,0.5
-Ashe/Janna (FR/PZ),Ashe (FR/PZ),1,2,0.5
 Kalista (SI),Samira/Twisted Fate (BW/NX),1,2,0.5
 Samira/Twisted Fate (BW/NX),Kalista (SI),1,2,0.5
 Braum/Udyr (DE/FR),Garen (DE/SH),1,2,0.5
@@ -447,8 +447,6 @@ Gwen/Vayne (DE/SI),Janna (IO/PZ),1,2,0.5
 Janna (IO/PZ),Gwen/Vayne (DE/SI),1,2,0.5
 Pantheon/Zoe (DE/MT),Norra/Swain (BC/NX),1,2,0.5
 Norra/Swain (BC/NX),Pantheon/Zoe (DE/MT),1,2,0.5
-Nidalee (BC/SH),Lulu/Shen (DE/IO),1,2,0.5
-Lulu/Shen (DE/IO),Nidalee (BC/SH),1,2,0.5
 Ashe/LeBlanc (FR/NX),Aphelios/Zoe (MT/PZ),1,2,0.5
 Aphelios/Zoe (MT/PZ),Ashe/LeBlanc (FR/NX),1,2,0.5
 Aphelios/Zoe (MT/PZ),Braum/Zoe (FR/MT),1,2,0.5
@@ -461,11 +459,8 @@ Championless (SI),Udyr/Zoe (FR/MT),1,2,0.5
 Udyr/Zoe (FR/MT),Championless (SI),1,2,0.5
 Ezreal/Seraphine (PZ/SI),Garen/Udyr (DE/FR),1,2,0.5
 Garen/Udyr (DE/FR),Ezreal/Seraphine (PZ/SI),1,2,0.5
-Fiora/Udyr (DE/FR),Fiora/Udyr (DE/FR),1,2,0.5
 Darius/Gnar (FR/NX),Irelia/Zed (IO/SH),1,2,0.5
 Irelia/Zed (IO/SH),Darius/Gnar (FR/NX),1,2,0.5
-Swain/Udyr (FR/NX),Ashe/LeBlanc (FR/NX),1,2,0.5
-Ashe/LeBlanc (FR/NX),Swain/Udyr (FR/NX),1,2,0.5
 Leona/Yasuo (IO/MT),Ashe/Sejuani (FR/SI),1,2,0.5
 Ashe/Sejuani (FR/SI),Leona/Yasuo (IO/MT),1,2,0.5
 Master Yi/Udyr (FR/IO),Master Yi/Udyr (FR/IO),1,2,0.5
@@ -505,6 +500,8 @@ Akshan/Fiora (DE/SH),Braum/Zoe (FR/MT),1,2,0.5
 Braum/Zoe (FR/MT),Akshan/Fiora (DE/SH),1,2,0.5
 Darius/LeBlanc (FR/NX),Caitlyn/Swain (NX/PZ),1,2,0.5
 Caitlyn/Swain (NX/PZ),Darius/LeBlanc (FR/NX),1,2,0.5
+Darius/Gwen (NX/SI),Gnar/Neeko (FR/RU),1,2,0.5
+Gnar/Neeko (FR/RU),Darius/Gwen (NX/SI),1,2,0.5
 Ashe/LeBlanc (FR/NX),Akshan/Zed (IO/SH),1,2,0.5
 Akshan/Zed (IO/SH),Ashe/LeBlanc (FR/NX),1,2,0.5
 Braum/Lulu (FR/IO),Ashe/LeBlanc (FR/NX),1,2,0.5
@@ -519,14 +516,16 @@ Akshan/Samira (NX/SH),Annie/Jhin (RU/NX),1,2,0.5
 Annie/Jhin (RU/NX),Akshan/Samira (NX/SH),1,2,0.5
 Katarina/Yasuo (IO/NX),Darius/LeBlanc (FR/NX),1,2,0.5
 Darius/LeBlanc (FR/NX),Katarina/Yasuo (IO/NX),1,2,0.5
-Ashe (FR/PZ),Udyr (FR/NX),1,2,0.5
-Udyr (FR/NX),Ashe (FR/PZ),1,2,0.5
 Miss Fortune/Sejuani (BW/FR),Teemo/Tristana (BC/SI),1,2,0.5
 Teemo/Tristana (BC/SI),Miss Fortune/Sejuani (BW/FR),1,2,0.5
 Bard/Garen (RU/DE),Bard/Garen (RU/DE),1,2,0.5
-Braum/Udyr (DE/FR),Garen/Udyr (DE/FR),1,2,0.5
-Garen/Udyr (DE/FR),Braum/Udyr (DE/FR),1,2,0.5
 Braum/Udyr (DE/FR),Braum/Udyr (DE/FR),1,2,0.5
+Udyr (FR/MT),Udyr (DE/FR),1,2,0.5
+Udyr (DE/FR),Udyr (FR/MT),1,2,0.5
+Caitlyn/Swain (NX/PZ),Darius/Gwen (NX/SI),1,2,0.5
+Darius/Gwen (NX/SI),Caitlyn/Swain (NX/PZ),1,2,0.5
+Gwen/Katarina (NX/SI),Lulu/Shen (DE/IO),1,2,0.5
+Lulu/Shen (DE/IO),Gwen/Katarina (NX/SI),1,2,0.5
 Sejuani/Teemo (FR/PZ),Kalista (SI),1,2,0.5
 Kalista (SI),Sejuani/Teemo (FR/PZ),1,2,0.5
 Ashe (FR/PZ),Gnar/Seraphine (BC/PZ),1,2,0.5
@@ -666,8 +665,6 @@ Bard/Norra (BC/RU),Akshan/Master Yi (IO/SH),1,2,0.5
 Akshan/Master Yi (IO/SH),Bard/Norra (BC/RU),1,2,0.5
 Gnar/Nidalee (BC/SH),Leona/Yasuo (IO/MT),1,2,0.5
 Leona/Yasuo (IO/MT),Gnar/Nidalee (BC/SH),1,2,0.5
-Janna/Nilah (BW/PZ),Akshan/Samira (NX/SH),1,2,0.5
-Akshan/Samira (NX/SH),Janna/Nilah (BW/PZ),1,2,0.5
 Jhin/Yasuo (IO/RU),Championless (SI),1,2,0.5
 Championless (SI),Jhin/Yasuo (IO/RU),1,2,0.5
 Nilah/Twisted Fate (BW/PZ),Akshan/LeBlanc (NX/SH),1,2,0.5
@@ -807,6 +804,14 @@ Lulu/Shen (DE/IO),Ashe (FR/SI),1,2,0.5
 Ashe (FR/SI),Lulu/Shen (DE/IO),1,2,0.5
 LeBlanc/Udyr (FR/NX),Sejuani/Swain (FR/NX),1,2,0.5
 Sejuani/Swain (FR/NX),LeBlanc/Udyr (FR/NX),1,2,0.5
+LeBlanc/Udyr (FR/NX),Garen/Udyr (DE/FR),1,2,0.5
+Garen/Udyr (DE/FR),LeBlanc/Udyr (FR/NX),1,2,0.5
+Fiora/Udyr (DE/FR),Master Yi/Yasuo (IO/SH),1,2,0.5
+Master Yi/Yasuo (IO/SH),Fiora/Udyr (DE/FR),1,2,0.5
+Master Yi/Yasuo (IO/SH),Ashe (FR/PZ),1,2,0.5
+Ashe (FR/PZ),Master Yi/Yasuo (IO/SH),1,2,0.5
+Fiora/Udyr (DE/FR),Lux: Illuminated/Shen (DE/IO),1,2,0.5
+Lux: Illuminated/Shen (DE/IO),Fiora/Udyr (DE/FR),1,2,0.5
 Ezreal/Seraphine (IO/PZ),Aphelios/Zoe (IO/MT),1,3,0.333333333333333
 Kalista (SI),Aphelios/Zoe (IO/MT),1,3,0.333333333333333
 Ashe/LeBlanc (FR/NX),Fiora (DE/SH),1,3,0.333333333333333
@@ -861,6 +866,8 @@ Udyr/Zed (FR/IO),Braum/Zoe (FR/MT),1,3,0.333333333333333
 Gnar/LeBlanc (FR/NX),Nidalee (BC/SH),1,3,0.333333333333333
 Ezreal/Janna (IO/PZ),Akshan/Sivir (DE/SH),1,3,0.333333333333333
 Ashe (FR/SI),Ashe (FR/PZ),1,3,0.333333333333333
+Sivir/Udyr (FR/SH),Ashe (FR/PZ),1,3,0.333333333333333
+Ashe/Janna (FR/PZ),Ashe (FR/PZ),1,3,0.333333333333333
 Kalista/LeBlanc (NX/SI),Championless (SI),1,3,0.333333333333333
 Samira/Teemo (NX/PZ),Ashe/LeBlanc (FR/NX),1,3,0.333333333333333
 Championless (MT/SI),Janna (PZ/SI),1,3,0.333333333333333
@@ -870,7 +877,6 @@ Garen (DE/SH),Championless (SI),1,3,0.333333333333333
 Caitlyn/Swain (NX/PZ),Master Yi/Nami (BW/IO),1,3,0.333333333333333
 Fiora/Udyr (DE/FR),Championless (PZ/SI),1,3,0.333333333333333
 Caitlyn/Teemo (BC/PZ),Akshan/Pantheon (MT/SH),1,3,0.333333333333333
-Nidalee (BC/SH),Championless (PZ/SI),1,3,0.333333333333333
 Janna (PZ/SI),Swain/Udyr (FR/NX),1,3,0.333333333333333
 LeBlanc/Udyr (FR/NX),Championless (PZ/SI),1,3,0.333333333333333
 Swain/Yasuo (IO/NX),LeBlanc/Sivir (NX/SH),1,3,0.333333333333333
@@ -878,7 +884,8 @@ Nilah/Twisted Fate (BW/PZ),Caitlyn/Teemo (BW/PZ),1,3,0.333333333333333
 Neeko/Norra (BC/RU),Ashe/LeBlanc (FR/NX),1,3,0.333333333333333
 Darius/Gwen (NX/SI),Gnar/Nidalee (BC/SH),1,3,0.333333333333333
 Master Yi/Udyr (FR/IO),Ashe/Caitlyn (FR/PZ),1,3,0.333333333333333
-Fiora/Shen (DE/IO),Garen/Udyr (DE/FR),1,3,0.333333333333333
+Nidalee (BC/SH),Garen/Udyr (DE/FR),1,3,0.333333333333333
+Ashe/Caitlyn (FR/PZ),Nidalee (BC/SH),1,3,0.333333333333333
 Ashe/LeBlanc (FR/NX),Hecarim (SI),1,3,0.333333333333333
 Lulu/Shen (DE/IO),Akshan/Master Yi (IO/SH),1,3,0.333333333333333
 Championless (SI),Caitlyn (BC/PZ),1,3,0.333333333333333
@@ -894,7 +901,6 @@ Teemo/Zoe (BC/MT),Championless (SI),1,3,0.333333333333333
 Garen/Swain (DE/NX),Championless (SI),1,3,0.333333333333333
 Gnar/Tristana (BC/BW),Ashe (FR/PZ),1,3,0.333333333333333
 Hecarim/Kalista (IO/SI),Kalista (SI),1,3,0.333333333333333
-Darius/Gwen (NX/SI),Annie/Jhin (RU/NX),1,3,0.333333333333333
 Championless (PZ/SI),Gnar/Nidalee (BC/SH),1,3,0.333333333333333
 Championless (PZ/SI),Janna/Nilah/Twisted Fate (BW/PZ),1,3,0.333333333333333
 Master Yi/Udyr (FR/IO),Nidalee (BC/SH),1,3,0.333333333333333
@@ -920,6 +926,7 @@ Ezreal/Seraphine (PZ/SI),Nidalee (BC/SH),1,3,0.333333333333333
 Lulu/Shen (DE/IO),Ezreal/Seraphine (PZ/SI),1,3,0.333333333333333
 LeBlanc/Udyr (FR/NX),Elise/Nilah (BW/SI),1,3,0.333333333333333
 Janna (IO/PZ),Janna/Twisted Fate (BW/PZ),1,3,0.333333333333333
+Garen (DE),Nilah/Twisted Fate (BW/PZ),1,3,0.333333333333333
 Ashe/Udyr (FR/IO),Ashe/LeBlanc (FR/NX),1,3,0.333333333333333
 Braum/Zoe (FR/MT),Yasuo (IO/PZ),1,3,0.333333333333333
 Fiora/Shen (DE/IO),Gnar/Nidalee (BC/SH),1,3,0.333333333333333
@@ -940,13 +947,16 @@ Akshan/Samira (NX/SH),Janna (IO/PZ),1,3,0.333333333333333
 Nilah/Twisted Fate (BW/PZ),Neeko/Teemo (BC/RU),1,3,0.333333333333333
 Championless (SI),Yasuo (IO/NX),1,3,0.333333333333333
 Janna (IO/PZ),Nilah/Twisted Fate (BW/PZ),1,3,0.333333333333333
+Lulu/Shen (DE/IO),Nidalee (BC/SH),1,3,0.333333333333333
 Annie/Jhin (RU/NX),Championless (PZ/SI),1,3,0.333333333333333
 Nilah/Twisted Fate (BW/PZ),Akshan/Gwen (SI/SH),1,3,0.333333333333333
 Ashe/LeBlanc (FR/NX),Lulu/Shen (BC/IO),1,3,0.333333333333333
 Janna/Seraphine (IO/PZ),Nilah/Twisted Fate (BW/PZ),1,3,0.333333333333333
+Swain/Udyr (FR/NX),Ashe/LeBlanc (FR/NX),1,3,0.333333333333333
 Ashe/Caitlyn (FR/PZ),Akshan/Master Yi (IO/SH),1,3,0.333333333333333
 Seraphine/Zoe (MT/PZ),Master Yi/Udyr (FR/IO),1,3,0.333333333333333
 Diana/Zoe (FR/MT),Championless (SI),1,3,0.333333333333333
+Fiora/Udyr (DE/FR),Darius/Gwen (NX/SI),1,3,0.333333333333333
 Braum/Udyr (FR/MT),Kalista (SI),1,3,0.333333333333333
 Gwen/LeBlanc (NX/SI),Ashe (FR/PZ),1,3,0.333333333333333
 Gwen/LeBlanc (NX/SI),Nilah/Twisted Fate (BW/PZ),1,3,0.333333333333333
@@ -965,8 +975,10 @@ Fiora/Garen (DE/FR),Fiora/Udyr (DE/FR),1,3,0.333333333333333
 Braum/Zoe (FR/MT),Fiora/Garen (DE/FR),1,3,0.333333333333333
 Kai'Sa/Pantheon (MT/SH),Akshan/Master Yi (IO/SH),1,3,0.333333333333333
 Ashe (FR),Ashe (FR/PZ),1,3,0.333333333333333
-Ashe/LeBlanc (FR/NX),Gnar/Neeko (FR/RU),1,3,0.333333333333333
+Udyr (FR/NX),Ashe (FR/PZ),1,3,0.333333333333333
+Garen/Udyr (DE/FR),Braum/Udyr (DE/FR),1,3,0.333333333333333
 Darius/Gwen (NX/SI),Fiora/Shen (DE/IO),1,3,0.333333333333333
+Nidalee (BC/SH),Fiora/Udyr (DE/FR),1,3,0.333333333333333
 Ashe (FR/PZ),Kalista/Lucian (DE/SI),1,3,0.333333333333333
 Championless (SI),Gwen/Kalista (SI),1,3,0.333333333333333
 Fizz/Zoe (BC/MT),Ashe/LeBlanc (FR/NX),1,3,0.333333333333333
@@ -990,7 +1002,6 @@ Udyr/Vayne (DE/FR),Ashe (FR/PZ),1,3,0.333333333333333
 Aphelios/Gnar (FR/MT),Braum/Zoe (FR/MT),1,3,0.333333333333333
 Caitlyn (FR/PZ),Braum/Zoe (FR/MT),1,3,0.333333333333333
 Ashe (FR/PZ),Kai'Sa/Pantheon (MT/SH),1,3,0.333333333333333
-LeBlanc/Sivir (NX/SH),Darius/Gnar (FR/NX),1,3,0.333333333333333
 Ashe/LeBlanc (FR/NX),Gwen/Irelia/Zed (IO/SI),1,3,0.333333333333333
 Nilah/Twisted Fate (BW/PZ),Gwen/Irelia/Zed (IO/SI),1,3,0.333333333333333
 Aphelios/Gnar (FR/MT),Ashe/LeBlanc (FR/NX),1,3,0.333333333333333
@@ -1006,9 +1017,9 @@ Fiora/Shen (DE/IO),Janna/Master Yi (IO/PZ),1,3,0.333333333333333
 Darius/Gnar/LeBlanc (FR/NX),Braum/Zoe (FR/MT),1,3,0.333333333333333
 Gwen/Katarina (NX/SI),Braum (FR/IO),1,3,0.333333333333333
 Ashe/LeBlanc (FR/NX),Gnar/Sejuani (BC/FR),1,3,0.333333333333333
+Akshan/Samira (NX/SH),Janna/Nilah (BW/PZ),1,3,0.333333333333333
 Lulu/Shen (DE/IO),LeBlanc (FR/NX),1,3,0.333333333333333
 Gwen/Hecarim (SI),Braum/Gnar/Zed (FR/IO),1,3,0.333333333333333
-Gnar/Sejuani (BC/FR),Braum/Zoe (FR/MT),1,3,0.333333333333333
 Lux: Illuminated/Neeko (DE/RU),Kalista (SI),1,3,0.333333333333333
 Caitlyn/Norra (BC/PZ),Ashe (FR/PZ),1,3,0.333333333333333
 Ezreal/Seraphine (PZ/SI),Garen/Lux: Illuminated (DE/IO),1,3,0.333333333333333
@@ -1077,6 +1088,8 @@ Braum/Zoe (FR/MT),Udyr/Zed (FR/IO),2,3,0.666666666666667
 Nidalee (BC/SH),Gnar/LeBlanc (FR/NX),2,3,0.666666666666667
 Akshan/Sivir (DE/SH),Ezreal/Janna (IO/PZ),2,3,0.666666666666667
 Ashe (FR/PZ),Ashe (FR/SI),2,3,0.666666666666667
+Ashe (FR/PZ),Sivir/Udyr (FR/SH),2,3,0.666666666666667
+Ashe (FR/PZ),Ashe/Janna (FR/PZ),2,3,0.666666666666667
 Championless (SI),Kalista/LeBlanc (NX/SI),2,3,0.666666666666667
 Ashe/LeBlanc (FR/NX),Samira/Teemo (NX/PZ),2,3,0.666666666666667
 Janna (PZ/SI),Championless (MT/SI),2,3,0.666666666666667
@@ -1086,7 +1099,6 @@ Championless (SI),Garen (DE/SH),2,3,0.666666666666667
 Master Yi/Nami (BW/IO),Caitlyn/Swain (NX/PZ),2,3,0.666666666666667
 Championless (PZ/SI),Fiora/Udyr (DE/FR),2,3,0.666666666666667
 Akshan/Pantheon (MT/SH),Caitlyn/Teemo (BC/PZ),2,3,0.666666666666667
-Championless (PZ/SI),Nidalee (BC/SH),2,3,0.666666666666667
 Swain/Udyr (FR/NX),Janna (PZ/SI),2,3,0.666666666666667
 Championless (PZ/SI),LeBlanc/Udyr (FR/NX),2,3,0.666666666666667
 LeBlanc/Sivir (NX/SH),Swain/Yasuo (IO/NX),2,3,0.666666666666667
@@ -1094,7 +1106,8 @@ Caitlyn/Teemo (BW/PZ),Nilah/Twisted Fate (BW/PZ),2,3,0.666666666666667
 Ashe/LeBlanc (FR/NX),Neeko/Norra (BC/RU),2,3,0.666666666666667
 Gnar/Nidalee (BC/SH),Darius/Gwen (NX/SI),2,3,0.666666666666667
 Ashe/Caitlyn (FR/PZ),Master Yi/Udyr (FR/IO),2,3,0.666666666666667
-Garen/Udyr (DE/FR),Fiora/Shen (DE/IO),2,3,0.666666666666667
+Garen/Udyr (DE/FR),Nidalee (BC/SH),2,3,0.666666666666667
+Nidalee (BC/SH),Ashe/Caitlyn (FR/PZ),2,3,0.666666666666667
 Hecarim (SI),Ashe/LeBlanc (FR/NX),2,3,0.666666666666667
 Akshan/Master Yi (IO/SH),Lulu/Shen (DE/IO),2,3,0.666666666666667
 Caitlyn (BC/PZ),Championless (SI),2,3,0.666666666666667
@@ -1110,7 +1123,6 @@ Championless (SI),Teemo/Zoe (BC/MT),2,3,0.666666666666667
 Championless (SI),Garen/Swain (DE/NX),2,3,0.666666666666667
 Ashe (FR/PZ),Gnar/Tristana (BC/BW),2,3,0.666666666666667
 Kalista (SI),Hecarim/Kalista (IO/SI),2,3,0.666666666666667
-Annie/Jhin (RU/NX),Darius/Gwen (NX/SI),2,3,0.666666666666667
 Gnar/Nidalee (BC/SH),Championless (PZ/SI),2,3,0.666666666666667
 Janna/Nilah/Twisted Fate (BW/PZ),Championless (PZ/SI),2,3,0.666666666666667
 Nidalee (BC/SH),Master Yi/Udyr (FR/IO),2,3,0.666666666666667
@@ -1136,6 +1148,7 @@ Nidalee (BC/SH),Ezreal/Seraphine (PZ/SI),2,3,0.666666666666667
 Ezreal/Seraphine (PZ/SI),Lulu/Shen (DE/IO),2,3,0.666666666666667
 Elise/Nilah (BW/SI),LeBlanc/Udyr (FR/NX),2,3,0.666666666666667
 Janna/Twisted Fate (BW/PZ),Janna (IO/PZ),2,3,0.666666666666667
+Nilah/Twisted Fate (BW/PZ),Garen (DE),2,3,0.666666666666667
 Ashe/LeBlanc (FR/NX),Ashe/Udyr (FR/IO),2,3,0.666666666666667
 Yasuo (IO/PZ),Braum/Zoe (FR/MT),2,3,0.666666666666667
 Gnar/Nidalee (BC/SH),Fiora/Shen (DE/IO),2,3,0.666666666666667
@@ -1156,13 +1169,16 @@ Janna (IO/PZ),Akshan/Samira (NX/SH),2,3,0.666666666666667
 Neeko/Teemo (BC/RU),Nilah/Twisted Fate (BW/PZ),2,3,0.666666666666667
 Yasuo (IO/NX),Championless (SI),2,3,0.666666666666667
 Nilah/Twisted Fate (BW/PZ),Janna (IO/PZ),2,3,0.666666666666667
+Nidalee (BC/SH),Lulu/Shen (DE/IO),2,3,0.666666666666667
 Championless (PZ/SI),Annie/Jhin (RU/NX),2,3,0.666666666666667
 Akshan/Gwen (SI/SH),Nilah/Twisted Fate (BW/PZ),2,3,0.666666666666667
 Lulu/Shen (BC/IO),Ashe/LeBlanc (FR/NX),2,3,0.666666666666667
 Nilah/Twisted Fate (BW/PZ),Janna/Seraphine (IO/PZ),2,3,0.666666666666667
+Ashe/LeBlanc (FR/NX),Swain/Udyr (FR/NX),2,3,0.666666666666667
 Akshan/Master Yi (IO/SH),Ashe/Caitlyn (FR/PZ),2,3,0.666666666666667
 Master Yi/Udyr (FR/IO),Seraphine/Zoe (MT/PZ),2,3,0.666666666666667
 Championless (SI),Diana/Zoe (FR/MT),2,3,0.666666666666667
+Darius/Gwen (NX/SI),Fiora/Udyr (DE/FR),2,3,0.666666666666667
 Kalista (SI),Braum/Udyr (FR/MT),2,3,0.666666666666667
 Ashe (FR/PZ),Gwen/LeBlanc (NX/SI),2,3,0.666666666666667
 Nilah/Twisted Fate (BW/PZ),Gwen/LeBlanc (NX/SI),2,3,0.666666666666667
@@ -1181,8 +1197,10 @@ Fiora/Udyr (DE/FR),Fiora/Garen (DE/FR),2,3,0.666666666666667
 Fiora/Garen (DE/FR),Braum/Zoe (FR/MT),2,3,0.666666666666667
 Akshan/Master Yi (IO/SH),Kai'Sa/Pantheon (MT/SH),2,3,0.666666666666667
 Ashe (FR/PZ),Ashe (FR),2,3,0.666666666666667
-Gnar/Neeko (FR/RU),Ashe/LeBlanc (FR/NX),2,3,0.666666666666667
+Ashe (FR/PZ),Udyr (FR/NX),2,3,0.666666666666667
+Braum/Udyr (DE/FR),Garen/Udyr (DE/FR),2,3,0.666666666666667
 Fiora/Shen (DE/IO),Darius/Gwen (NX/SI),2,3,0.666666666666667
+Fiora/Udyr (DE/FR),Nidalee (BC/SH),2,3,0.666666666666667
 Kalista/Lucian (DE/SI),Ashe (FR/PZ),2,3,0.666666666666667
 Gwen/Kalista (SI),Championless (SI),2,3,0.666666666666667
 Ashe/LeBlanc (FR/NX),Fizz/Zoe (BC/MT),2,3,0.666666666666667
@@ -1206,7 +1224,6 @@ Ashe (FR/PZ),Udyr/Vayne (DE/FR),2,3,0.666666666666667
 Braum/Zoe (FR/MT),Aphelios/Gnar (FR/MT),2,3,0.666666666666667
 Braum/Zoe (FR/MT),Caitlyn (FR/PZ),2,3,0.666666666666667
 Kai'Sa/Pantheon (MT/SH),Ashe (FR/PZ),2,3,0.666666666666667
-Darius/Gnar (FR/NX),LeBlanc/Sivir (NX/SH),2,3,0.666666666666667
 Gwen/Irelia/Zed (IO/SI),Ashe/LeBlanc (FR/NX),2,3,0.666666666666667
 Gwen/Irelia/Zed (IO/SI),Nilah/Twisted Fate (BW/PZ),2,3,0.666666666666667
 Ashe/LeBlanc (FR/NX),Aphelios/Gnar (FR/MT),2,3,0.666666666666667
@@ -1222,9 +1239,9 @@ Janna/Master Yi (IO/PZ),Fiora/Shen (DE/IO),2,3,0.666666666666667
 Braum/Zoe (FR/MT),Darius/Gnar/LeBlanc (FR/NX),2,3,0.666666666666667
 Braum (FR/IO),Gwen/Katarina (NX/SI),2,3,0.666666666666667
 Gnar/Sejuani (BC/FR),Ashe/LeBlanc (FR/NX),2,3,0.666666666666667
+Janna/Nilah (BW/PZ),Akshan/Samira (NX/SH),2,3,0.666666666666667
 LeBlanc (FR/NX),Lulu/Shen (DE/IO),2,3,0.666666666666667
 Braum/Gnar/Zed (FR/IO),Gwen/Hecarim (SI),2,3,0.666666666666667
-Braum/Zoe (FR/MT),Gnar/Sejuani (BC/FR),2,3,0.666666666666667
 Kalista (SI),Lux: Illuminated/Neeko (DE/RU),2,3,0.666666666666667
 Ashe (FR/PZ),Caitlyn/Norra (BC/PZ),2,3,0.666666666666667
 Garen/Lux: Illuminated (DE/IO),Ezreal/Seraphine (PZ/SI),2,3,0.666666666666667
@@ -1261,16 +1278,15 @@ Gwen/Katarina (NX/SI),Udyr/Zed (FR/IO),1,4,0.25
 Braum (FR/IO),Akshan/Master Yi (IO/SH),1,4,0.25
 Lux: Illuminated/Shen (DE/IO),Braum/Zoe (FR/MT),1,4,0.25
 Katarina/Udyr (FR/NX),Braum/Zoe (FR/MT),1,4,0.25
-Braum/Zoe (FR/MT),Sivir/Udyr (FR/SH),1,4,0.25
 Ezreal/Janna/Nilah (BW/PZ),Ashe/LeBlanc (FR/NX),1,4,0.25
 Ashe/LeBlanc (FR/NX),Draven/Pantheon (MT/NX),1,4,0.25
 Championless (BW/MT),Ashe (FR/PZ),1,4,0.25
 Master Yi/Nami (BW/IO),Braum/Zoe (FR/MT),1,4,0.25
 Hecarim/Kalista (IO/SI),Ashe (FR/PZ),1,4,0.25
 Lulu/Shen (DE/IO),Lulu/Zed (DE/IO),1,4,0.25
+Fiora/Shen (DE/IO),Garen/Udyr (DE/FR),1,4,0.25
 Braum/Gnar (FR/IO),Championless (SI),1,4,0.25
 Kalista/LeBlanc (NX/SI),Ashe/LeBlanc (FR/NX),1,4,0.25
-Darius/Gwen (NX/SI),Ashe/Caitlyn (FR/PZ),1,4,0.25
 Master Yi/Zoe (IO/MT),Darius/Gnar (FR/NX),1,4,0.25
 Janna (IO/PZ),Nidalee (BC/SH),1,4,0.25
 Championless (PZ/SI),Gwen/Vayne (DE/SI),1,4,0.25
@@ -1291,9 +1307,9 @@ Janna (IO/PZ),Lulu/Shen (DE/IO),1,4,0.25
 Braum/Udyr (DE/FR),Darius/Gnar (FR/NX),1,4,0.25
 Akshan/Pantheon (MT/SH),Gnar/Nidalee (BC/SH),1,4,0.25
 Garen/Neeko (DE/RU),Braum/Zoe (FR/MT),1,4,0.25
+Akshan/Sivir (DE/SH),Ashe (FR/PZ),1,4,0.25
 Leona/Yasuo (IO/MT),Master Yi/Udyr (FR/IO),1,4,0.25
 Braum/Sejuani/Udyr (DE/FR),Championless (SI),1,4,0.25
-Ashe (FR/PZ),Fiora/Udyr (DE/FR),1,4,0.25
 Nilah/Twisted Fate (BW/PZ),Seraphine/Twisted Fate (BW/PZ),1,4,0.25
 Championless (SI),Akshan/Zed (IO/SH),1,4,0.25
 Braum/Udyr (FR/MT),Braum/Zoe (FR/MT),1,4,0.25
@@ -1313,9 +1329,11 @@ Championless (SI),Akshan/Aphelios (MT/SH),1,4,0.25
 Janna (PZ/SI),Shen/Sivir (IO/SH),1,4,0.25
 Janna/Nilah (BW/PZ),Fizz (BW/FR),1,4,0.25
 Annie/Elise (NX/SI),Ashe (FR/PZ),1,4,0.25
+LeBlanc/Sivir (NX/SH),Darius/Gnar (FR/NX),1,4,0.25
 Ashe/LeBlanc (FR/NX),Ashe (FR/SI),1,4,0.25
 Ezreal/Seraphine (PZ/SI),Championless (MT/SI),1,4,0.25
 Garen/Shen (DE/IO),Nilah/Twisted Fate (BW/PZ),1,4,0.25
+Gnar/Sejuani (BC/FR),Braum/Zoe (FR/MT),1,4,0.25
 Nilah/Twisted Fate (BW/PZ),Darius/Gwen/Hecarim (NX/SI),1,4,0.25
 Braum/Zoe (FR/MT),Darius/Gwen/Hecarim (NX/SI),1,4,0.25
 Ezreal/Seraphine (PZ/SI),Master Yi (IO/MT),1,4,0.25
@@ -1345,16 +1363,15 @@ Udyr/Zed (FR/IO),Gwen/Katarina (NX/SI),3,4,0.75
 Akshan/Master Yi (IO/SH),Braum (FR/IO),3,4,0.75
 Braum/Zoe (FR/MT),Lux: Illuminated/Shen (DE/IO),3,4,0.75
 Braum/Zoe (FR/MT),Katarina/Udyr (FR/NX),3,4,0.75
-Sivir/Udyr (FR/SH),Braum/Zoe (FR/MT),3,4,0.75
 Ashe/LeBlanc (FR/NX),Ezreal/Janna/Nilah (BW/PZ),3,4,0.75
 Draven/Pantheon (MT/NX),Ashe/LeBlanc (FR/NX),3,4,0.75
 Ashe (FR/PZ),Championless (BW/MT),3,4,0.75
 Braum/Zoe (FR/MT),Master Yi/Nami (BW/IO),3,4,0.75
 Ashe (FR/PZ),Hecarim/Kalista (IO/SI),3,4,0.75
 Lulu/Zed (DE/IO),Lulu/Shen (DE/IO),3,4,0.75
+Garen/Udyr (DE/FR),Fiora/Shen (DE/IO),3,4,0.75
 Championless (SI),Braum/Gnar (FR/IO),3,4,0.75
 Ashe/LeBlanc (FR/NX),Kalista/LeBlanc (NX/SI),3,4,0.75
-Ashe/Caitlyn (FR/PZ),Darius/Gwen (NX/SI),3,4,0.75
 Darius/Gnar (FR/NX),Master Yi/Zoe (IO/MT),3,4,0.75
 Nidalee (BC/SH),Janna (IO/PZ),3,4,0.75
 Gwen/Vayne (DE/SI),Championless (PZ/SI),3,4,0.75
@@ -1375,9 +1392,9 @@ Lulu/Shen (DE/IO),Janna (IO/PZ),3,4,0.75
 Darius/Gnar (FR/NX),Braum/Udyr (DE/FR),3,4,0.75
 Gnar/Nidalee (BC/SH),Akshan/Pantheon (MT/SH),3,4,0.75
 Braum/Zoe (FR/MT),Garen/Neeko (DE/RU),3,4,0.75
+Ashe (FR/PZ),Akshan/Sivir (DE/SH),3,4,0.75
 Master Yi/Udyr (FR/IO),Leona/Yasuo (IO/MT),3,4,0.75
 Championless (SI),Braum/Sejuani/Udyr (DE/FR),3,4,0.75
-Fiora/Udyr (DE/FR),Ashe (FR/PZ),3,4,0.75
 Seraphine/Twisted Fate (BW/PZ),Nilah/Twisted Fate (BW/PZ),3,4,0.75
 Akshan/Zed (IO/SH),Championless (SI),3,4,0.75
 Braum/Zoe (FR/MT),Braum/Udyr (FR/MT),3,4,0.75
@@ -1397,9 +1414,11 @@ Akshan/Aphelios (MT/SH),Championless (SI),3,4,0.75
 Shen/Sivir (IO/SH),Janna (PZ/SI),3,4,0.75
 Fizz (BW/FR),Janna/Nilah (BW/PZ),3,4,0.75
 Ashe (FR/PZ),Annie/Elise (NX/SI),3,4,0.75
+Darius/Gnar (FR/NX),LeBlanc/Sivir (NX/SH),3,4,0.75
 Ashe (FR/SI),Ashe/LeBlanc (FR/NX),3,4,0.75
 Championless (MT/SI),Ezreal/Seraphine (PZ/SI),3,4,0.75
 Nilah/Twisted Fate (BW/PZ),Garen/Shen (DE/IO),3,4,0.75
+Braum/Zoe (FR/MT),Gnar/Sejuani (BC/FR),3,4,0.75
 Darius/Gwen/Hecarim (NX/SI),Nilah/Twisted Fate (BW/PZ),3,4,0.75
 Darius/Gwen/Hecarim (NX/SI),Braum/Zoe (FR/MT),3,4,0.75
 Master Yi (IO/MT),Ezreal/Seraphine (PZ/SI),3,4,0.75
@@ -1510,7 +1529,6 @@ Udyr/Zed (FR/IO),Katarina/Yasuo (IO/NX),2,2,1
 Kalista (SI),Ezreal/Janna (IO/PZ),2,2,1
 Akshan/Master Yi (IO/SH),Fizz/Samira (BW/NX),2,2,1
 Ashe/LeBlanc (FR/NX),Ashe/Gnar (DE/FR),2,2,1
-Fiora/Udyr (DE/FR),LeBlanc/Sivir (NX/SH),2,2,1
 Ashe/Caitlyn (FR/PZ),Janna/Nilah (BW/PZ),2,2,1
 Fizz (BW/FR),Ezreal/Twisted Fate (BW/PZ),2,2,1
 Ezreal/Twisted Fate (BW/PZ),Ashe (FR/PZ),2,2,1
@@ -1537,8 +1555,6 @@ Championless (SI),Gnar/Sejuani (FR/PZ),2,2,1
 Neeko/Norra (BC/RU),Caitlyn/Teemo (BC/PZ),2,2,1
 Ashe/Caitlyn (FR/PZ),Janna/Nilah/Twisted Fate (BW/PZ),2,2,1
 Darius/Gwen (NX/SI),Championless (BW/FR),2,2,1
-Garen/Udyr (DE/FR),Nidalee (BC/SH),2,2,1
-Nidalee (BC/SH),Ashe/Caitlyn (FR/PZ),2,2,1
 Ashe/Sejuani (FR),Caitlyn/Teemo (BC/PZ),2,2,1
 Ashe/LeBlanc (FR/NX),Gnar/Swain (BC/NX),2,2,1
 Darius/Gnar (FR/NX),Lux: Illuminated/Shen (DE/IO),2,2,1
@@ -1547,7 +1563,7 @@ LeBlanc/Udyr (FR/NX),Master Yi/Nami (BW/IO),2,2,1
 Garen (DE),Caitlyn/Swain (NX/PZ),2,2,1
 Swain/Twisted Fate (BW/NX),Janna/Master Yi (IO/PZ),2,2,1
 LeBlanc/Sivir (NX/SH),Gwen/Vayne (DE/SI),2,2,1
-Gwen/Kalista (NX/SI),Nilah/Twisted Fate (BW/PZ),2,2,1
+Janna/Nilah (BW/PZ),Gwen/Kalista (NX/SI),2,2,1
 Gwen/Kalista (NX/SI),Gnar/Nidalee (BC/SH),2,2,1
 Kalista/LeBlanc (NX/SI),Norra (BC/SI),2,2,1
 Ashe (FR/PZ),Norra (BC/PZ),2,2,1
@@ -1572,6 +1588,7 @@ Darius/Gnar (FR/NX),Darius/Swain (NX/SI),2,2,1
 Braum/Zoe (FR/MT),Hecarim/Kalista (IO/SI),2,2,1
 Nidalee (BC/SH),Janna/Master Yi (IO/PZ),2,2,1
 Championless (PZ/SI),Braum/Udyr (DE/FR),2,2,1
+Akshan/Samira (NX/SH),Braum/Udyr (DE/FR),2,2,1
 Braum/Udyr (DE/FR),Braum/Udyr (FR/MT),2,2,1
 Swain/Yasuo (IO/NX),Braum/Udyr (DE/FR),2,2,1
 Darius/Gwen (NX/SI),Swain/Yasuo (IO/NX),2,2,1
@@ -1599,7 +1616,6 @@ Akshan/Ekko (PZ/SH),Ashe (FR/PZ),2,2,1
 Ashe/LeBlanc (FR/NX),Darius/Yasuo (IO/NX),2,2,1
 Gnar/Tristana (BC/BW),Elise (SI),2,2,1
 Championless (BC/SI),Katarina/Yasuo (IO/NX),2,2,1
-Braum/Zoe (FR/MT),Udyr (FR/MT),2,2,1
 Caitlyn/Swain (NX/PZ),LeBlanc/Sivir (NX/SH),2,2,1
 Gnar/Tristana (BC/BW),Darius/Gnar (FR/NX),2,2,1
 Nidalee (BC/SH),Miss Fortune/Quinn (BW/DE),2,2,1
@@ -1628,10 +1644,9 @@ Caitlyn/Swain (NX/PZ),Janna/Nilah (BW/PZ),2,2,1
 Janna/Nilah (BW/PZ),Lulu/Shen (DE/IO),2,2,1
 Swain/Twisted Fate (BW/NX),Janna/Twisted Fate (BW/PZ),2,2,1
 Ashe/Udyr (FR/IO),Master Yi/Vayne (DE/IO),2,2,1
-Akshan/Sivir (DE/SH),Nilah/Twisted Fate (BW/PZ),2,2,1
-Nilah/Twisted Fate (BW/PZ),Garen (DE),2,2,1
 Nilah/Twisted Fate (BW/PZ),Braum/Udyr (FR/MT),2,2,1
 Hecarim/Kalista (IO/SI),Janna/Nilah/Twisted Fate (BW/PZ),2,2,1
+Braum/Udyr (DE/FR),Fiora/Udyr (DE/FR),2,2,1
 Miss Fortune/Teemo (BC/BW),Championless (SI),2,2,1
 Janna/Nilah/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),2,2,1
 Neeko/Teemo (BC/RU),Hecarim/Kalista (IO/SI),2,2,1
@@ -1784,6 +1799,7 @@ Shen/Sivir (IO/SH),Gwen/Katarina (NX/SI),2,2,1
 Akshan/Vayne (DE/SH),Ashe (FR/PZ),2,2,1
 Ezreal/LeBlanc/Swain (NX/PZ),Lulu/Shen (DE/IO),2,2,1
 Katarina/Yasuo (IO/NX),Udyr/Vayne (DE/FR),2,2,1
+Akshan/Udyr (FR/SH),Annie/Jhin (RU/NX),2,2,1
 Janna/Master Yi (IO/PZ),Swain/Yasuo (IO/NX),2,2,1
 Nilah/Twisted Fate (BW/PZ),Fiora/Pantheon (DE/MT),2,2,1
 Katarina/Yasuo (IO/NX),Akshan/LeBlanc (NX/SH),2,2,1
@@ -1871,6 +1887,7 @@ Garen/Lux: Illuminated (DE/IO),Sejuani/Udyr (DE/FR),2,2,1
 Ashe/Caitlyn (FR/PZ),Katarina/LeBlanc/Miss Fortune (BW/NX),2,2,1
 Miss Fortune/Sejuani (BW/FR),Ezreal/Seraphine (BC/PZ),2,2,1
 Miss Fortune/Sejuani (BW/FR),Braum/Zoe (FR/MT),2,2,1
+Lulu/Shen (DE/IO),Fiora/Udyr (DE/FR),2,2,1
 Teemo/Tristana (BC/SI),Ezreal/Janna (PZ/SI),2,2,1
 Kalista (SI),Fizz/Nami/Twisted Fate (BC/BW),2,2,1
 LeBlanc (FR/NX),Championless (IO/PZ),0,2,0
@@ -1976,7 +1993,6 @@ Katarina/Yasuo (IO/NX),Udyr/Zed (FR/IO),0,2,0
 Ezreal/Janna (IO/PZ),Kalista (SI),0,2,0
 Fizz/Samira (BW/NX),Akshan/Master Yi (IO/SH),0,2,0
 Ashe/Gnar (DE/FR),Ashe/LeBlanc (FR/NX),0,2,0
-LeBlanc/Sivir (NX/SH),Fiora/Udyr (DE/FR),0,2,0
 Janna/Nilah (BW/PZ),Ashe/Caitlyn (FR/PZ),0,2,0
 Ezreal/Twisted Fate (BW/PZ),Fizz (BW/FR),0,2,0
 Ashe (FR/PZ),Ezreal/Twisted Fate (BW/PZ),0,2,0
@@ -2003,8 +2019,6 @@ Gnar/Sejuani (FR/PZ),Championless (SI),0,2,0
 Caitlyn/Teemo (BC/PZ),Neeko/Norra (BC/RU),0,2,0
 Janna/Nilah/Twisted Fate (BW/PZ),Ashe/Caitlyn (FR/PZ),0,2,0
 Championless (BW/FR),Darius/Gwen (NX/SI),0,2,0
-Nidalee (BC/SH),Garen/Udyr (DE/FR),0,2,0
-Ashe/Caitlyn (FR/PZ),Nidalee (BC/SH),0,2,0
 Caitlyn/Teemo (BC/PZ),Ashe/Sejuani (FR),0,2,0
 Gnar/Swain (BC/NX),Ashe/LeBlanc (FR/NX),0,2,0
 Lux: Illuminated/Shen (DE/IO),Darius/Gnar (FR/NX),0,2,0
@@ -2013,7 +2027,7 @@ Master Yi/Nami (BW/IO),LeBlanc/Udyr (FR/NX),0,2,0
 Caitlyn/Swain (NX/PZ),Garen (DE),0,2,0
 Janna/Master Yi (IO/PZ),Swain/Twisted Fate (BW/NX),0,2,0
 Gwen/Vayne (DE/SI),LeBlanc/Sivir (NX/SH),0,2,0
-Nilah/Twisted Fate (BW/PZ),Gwen/Kalista (NX/SI),0,2,0
+Gwen/Kalista (NX/SI),Janna/Nilah (BW/PZ),0,2,0
 Gnar/Nidalee (BC/SH),Gwen/Kalista (NX/SI),0,2,0
 Norra (BC/SI),Kalista/LeBlanc (NX/SI),0,2,0
 Norra (BC/PZ),Ashe (FR/PZ),0,2,0
@@ -2038,6 +2052,7 @@ Darius/Swain (NX/SI),Darius/Gnar (FR/NX),0,2,0
 Hecarim/Kalista (IO/SI),Braum/Zoe (FR/MT),0,2,0
 Janna/Master Yi (IO/PZ),Nidalee (BC/SH),0,2,0
 Braum/Udyr (DE/FR),Championless (PZ/SI),0,2,0
+Braum/Udyr (DE/FR),Akshan/Samira (NX/SH),0,2,0
 Braum/Udyr (FR/MT),Braum/Udyr (DE/FR),0,2,0
 Braum/Udyr (DE/FR),Swain/Yasuo (IO/NX),0,2,0
 Swain/Yasuo (IO/NX),Darius/Gwen (NX/SI),0,2,0
@@ -2065,7 +2080,6 @@ Ashe (FR/PZ),Akshan/Ekko (PZ/SH),0,2,0
 Darius/Yasuo (IO/NX),Ashe/LeBlanc (FR/NX),0,2,0
 Elise (SI),Gnar/Tristana (BC/BW),0,2,0
 Katarina/Yasuo (IO/NX),Championless (BC/SI),0,2,0
-Udyr (FR/MT),Braum/Zoe (FR/MT),0,2,0
 LeBlanc/Sivir (NX/SH),Caitlyn/Swain (NX/PZ),0,2,0
 Darius/Gnar (FR/NX),Gnar/Tristana (BC/BW),0,2,0
 Miss Fortune/Quinn (BW/DE),Nidalee (BC/SH),0,2,0
@@ -2094,10 +2108,9 @@ Janna/Nilah (BW/PZ),Caitlyn/Swain (NX/PZ),0,2,0
 Lulu/Shen (DE/IO),Janna/Nilah (BW/PZ),0,2,0
 Janna/Twisted Fate (BW/PZ),Swain/Twisted Fate (BW/NX),0,2,0
 Master Yi/Vayne (DE/IO),Ashe/Udyr (FR/IO),0,2,0
-Nilah/Twisted Fate (BW/PZ),Akshan/Sivir (DE/SH),0,2,0
-Garen (DE),Nilah/Twisted Fate (BW/PZ),0,2,0
 Braum/Udyr (FR/MT),Nilah/Twisted Fate (BW/PZ),0,2,0
 Janna/Nilah/Twisted Fate (BW/PZ),Hecarim/Kalista (IO/SI),0,2,0
+Fiora/Udyr (DE/FR),Braum/Udyr (DE/FR),0,2,0
 Championless (SI),Miss Fortune/Teemo (BC/BW),0,2,0
 Ashe/LeBlanc (FR/NX),Janna/Nilah/Twisted Fate (BW/PZ),0,2,0
 Hecarim/Kalista (IO/SI),Neeko/Teemo (BC/RU),0,2,0
@@ -2250,6 +2263,7 @@ Gwen/Katarina (NX/SI),Shen/Sivir (IO/SH),0,2,0
 Ashe (FR/PZ),Akshan/Vayne (DE/SH),0,2,0
 Lulu/Shen (DE/IO),Ezreal/LeBlanc/Swain (NX/PZ),0,2,0
 Udyr/Vayne (DE/FR),Katarina/Yasuo (IO/NX),0,2,0
+Annie/Jhin (RU/NX),Akshan/Udyr (FR/SH),0,2,0
 Swain/Yasuo (IO/NX),Janna/Master Yi (IO/PZ),0,2,0
 Fiora/Pantheon (DE/MT),Nilah/Twisted Fate (BW/PZ),0,2,0
 Akshan/LeBlanc (NX/SH),Katarina/Yasuo (IO/NX),0,2,0
@@ -2337,6 +2351,7 @@ Sejuani/Udyr (DE/FR),Garen/Lux: Illuminated (DE/IO),0,2,0
 Katarina/LeBlanc/Miss Fortune (BW/NX),Ashe/Caitlyn (FR/PZ),0,2,0
 Ezreal/Seraphine (BC/PZ),Miss Fortune/Sejuani (BW/FR),0,2,0
 Braum/Zoe (FR/MT),Miss Fortune/Sejuani (BW/FR),0,2,0
+Fiora/Udyr (DE/FR),Lulu/Shen (DE/IO),0,2,0
 Ezreal/Janna (PZ/SI),Teemo/Tristana (BC/SI),0,2,0
 Fizz/Nami/Twisted Fate (BC/BW),Kalista (SI),0,2,0
 Championless (IO/PZ),Championless (SI/SH),1,1,1
@@ -2947,6 +2962,11 @@ Ashe/LeBlanc (FR/NX),Ashe/Renekton (FR/SH),1,1,1
 Gnar/LeBlanc (FR/NX),Sivir/Udyr (FR/SH),1,1,1
 Sivir/Udyr (FR/SH),Nilah/Twisted Fate (BW/PZ),1,1,1
 Nilah/Twisted Fate (BW/PZ),Ashe/Renekton (FR/SH),1,1,1
+Sivir/Udyr (FR/SH),Ashe/Renekton (FR/SH),1,1,1
+Championless (MT/SI),Akshan/Sivir (DE/SH),1,1,1
+Gwen/Katarina (NX/SI),Sivir/Udyr (FR/SH),1,1,1
+Sivir/Udyr (FR/SH),LeBlanc (FR/NX),1,1,1
+Ashe/LeBlanc (FR/NX),Sivir/Udyr (FR/SH),1,1,1
 Neeko/Nidalee/Renekton (RU/SH),Swain/Udyr (FR/NX),1,1,1
 Ashe/Braum (FR/PZ),Ashe/LeBlanc (FR/NX),1,1,1
 Ashe/Caitlyn (FR/PZ),Akshan/Ekko (PZ/SH),1,1,1
@@ -3044,7 +3064,6 @@ Ezreal/Seraphine (BC/PZ),Master Yi/Pantheon (IO/MT),1,1,1
 Ezreal/Seraphine (BC/PZ),Darius/Swain (NX/SI),1,1,1
 Ezreal/Seraphine (BC/PZ),Ashe/Janna (FR/PZ),1,1,1
 Championless (IO/PZ),Master Yi/Udyr (FR/IO),1,1,1
-Fiora/Udyr (DE/FR),Leona/Yasuo (IO/MT),1,1,1
 Ashe (FR/PZ),Darius/Yasuo (IO/NX),1,1,1
 Nilah/Twisted Fate (BW/PZ),Ashe (FR),1,1,1
 Master Yi/Nami (BW/IO),Gwen/Katarina (NX/SI),1,1,1
@@ -3156,7 +3175,6 @@ Championless (SI),Tristana (BC/DE),1,1,1
 Championless (SI),Neeko/Renekton (RU/SH),1,1,1
 Darius/Yasuo (IO/NX),LeBlanc/Udyr (FR/NX),1,1,1
 LeBlanc/Udyr (FR/NX),Diana/Nocturne (MT/SI),1,1,1
-Janna/Nilah (BW/PZ),Gwen/Kalista (NX/SI),1,1,1
 Gwen/Kalista (NX/SI),Darius (FR/NX),1,1,1
 Gwen/Kalista (NX/SI),Aphelios/Nami (BW/MT),1,1,1
 Gwen/Kalista (NX/SI),Lux: Illuminated/Master Yi (DE/IO),1,1,1
@@ -3309,7 +3327,6 @@ Caitlyn/Norra (BC/PZ),Championless (SI/SH),1,1,1
 Championless (SI/SH),LeBlanc/Udyr (FR/NX),1,1,1
 Championless (PZ/SI),Championless (SI/SH),1,1,1
 Kalista (SI),Janna/Nami (BW/PZ),1,1,1
-Akshan/Samira (NX/SH),Braum/Udyr (DE/FR),1,1,1
 Championless (MT/SI),Braum/Udyr (DE/FR),1,1,1
 Darius/Gwen (NX/SI),Akshan/Sivir (PZ/SH),1,1,1
 Annie/Katarina (BC/NX),Championless (MT/SI),1,1,1
@@ -3713,7 +3730,6 @@ Master Yi/Vayne (DE/IO),Janna/Twisted Fate (BW/PZ),1,1,1
 Nilah/Twisted Fate (BW/PZ),Master Yi/Vayne (DE/IO),1,1,1
 Ezreal/Seraphine (IO/PZ),Neeko/Teemo (BC/RU),1,1,1
 Akshan/Sivir (DE/SH),Quinn/Vayne (DE/PZ),1,1,1
-Braum/Udyr (DE/FR),Fiora/Udyr (DE/FR),1,1,1
 Ashe (FR/PZ),Ashe/Udyr (FR/IO),1,1,1
 Gwen/Zed (IO/SI),Gnar/Nidalee (BC/SH),1,1,1
 Ezreal/Janna/Nilah (BW/PZ),Ashe (FR/PZ),1,1,1
@@ -4170,7 +4186,6 @@ Annie/Jhin (RU/NX),Lulu/Zed (BC/IO),1,1,1
 Janna/Twisted Fate (BW/PZ),Janna/Nilah/Twisted Fate (BW/PZ),1,1,1
 Ashe (FR),Swain/Udyr (FR/NX),1,1,1
 Braum (DE/FR),Championless (PZ/SI),1,1,1
-Darius/Gwen (NX/SI),Fiora/Udyr (DE/FR),1,1,1
 Nilah/Twisted Fate (BW/PZ),Irelia/Miss Fortune (BW/IO),1,1,1
 Nidalee (BC/SH),Lulu/Tristana (BC/DE),1,1,1
 Janna (FR/PZ),Ahri/Kennen (IO/MT),1,1,1
@@ -4306,7 +4321,6 @@ Ashe (FR/PZ),Aphelios/Braum/Zoe (FR/MT),1,1,1
 Caitlyn/Teemo (BC/PZ),Janna/Nilah (BW/PZ),1,1,1
 Ashe (FR/SI),Fiora/Udyr (DE/FR),1,1,1
 Teemo/Tristana (BC/SI),Darius/Gwen (NX/SI),1,1,1
-Darius/Gwen (NX/SI),Gnar/Neeko (FR/RU),1,1,1
 Ezreal/Seraphine (PZ/SI),Teemo/Tristana (BC/SI),1,1,1
 Gnar/Neeko (FR/RU),Teemo/Tristana (BC/SI),1,1,1
 Teemo/Tristana (BC/SI),LeBlanc/Sivir (NX/SH),1,1,1
@@ -4405,9 +4419,28 @@ Udyr (FR/NX),LeBlanc/Sivir (NX/SH),1,1,1
 Sejuani/Teemo (BC/FR),Nilah/Twisted Fate (BW/PZ),1,1,1
 Neeko (FR/RU),Gnar/Renekton (FR/SH),1,1,1
 Neeko (FR/RU),Gwen/Kalista (NX/SI),1,1,1
-Udyr (FR/MT),Udyr (DE/FR),1,1,1
 Gnar/Udyr (DE/FR),Lulu/Shen (DE/IO),1,1,1
+Gwen/Katarina (NX/SI),Gnar/Neeko (FR/RU),1,1,1
 Sejuani/Teemo (BC/FR),Leona/Yasuo (IO/MT),1,1,1
+Gnar/LeBlanc (FR/NX),Swain/Udyr (FR/NX),1,1,1
+Bard/Garen (RU/DE),Neeko (FR/RU),1,1,1
+Ashe (FR/PZ),Zoe (FR/MT),1,1,1
+Ashe/Caitlyn (FR/PZ),Lulu/Shen (DE/IO),1,1,1
+Leona/Yasuo (IO/MT),Gnar/Renekton (FR/SH),1,1,1
+Udyr (FR/MT),Sejuani/Teemo (BC/FR),1,1,1
+Udyr (FR/MT),Gnar/Renekton (FR/SH),1,1,1
+Udyr (FR/MT),Darius/Gwen (NX/SI),1,1,1
+Udyr (FR/NX),Ashe/LeBlanc (FR/NX),1,1,1
+Gnar/Renekton (FR/SH),Ashe/LeBlanc (FR/NX),1,1,1
+Fiora/Udyr (DE/FR),Miss Fortune/Swain (BW/NX),1,1,1
+Darius/Gnar (FR/NX),Fiora/Lux: Illuminated (DE/SH),1,1,1
+Darius/Gnar (FR/NX),Udyr (FR/MT),1,1,1
+Championless (SI),Udyr (FR/MT),1,1,1
+Udyr (FR/MT),Gnar/Udyr (DE/FR),1,1,1
+Draven/Sejuani (FR/NX),Ashe (FR/PZ),1,1,1
+Akshan/Braum (FR/SH),Nilah/Twisted Fate (BW/PZ),1,1,1
+Kalista (SI),Braum (DE/FR),1,1,1
+Lux: Illuminated/Shen (DE/IO),Ashe (FR/PZ),1,1,1
 Championless (PZ/SI),Championless (FR/SI),1,1,1
 Caitlyn/Nami (BW/PZ),Championless (PZ/SI),1,1,1
 Championless (PZ/SI),Fizz/Zoe (BC/MT),1,1,1
@@ -5152,7 +5185,6 @@ Fiora/Pantheon (DE/MT),Nami/Zoe (BW/MT),1,1,1
 Garen/Udyr (DE/FR),Nami/Norra (BC/BW),1,1,1
 Garen/Udyr (DE/FR),Diana/Nocturne (MT/SI),1,1,1
 Gwen/Kalista (NX/SI),Akshan/Udyr (FR/SH),1,1,1
-Akshan/Udyr (FR/SH),Annie/Jhin (RU/NX),1,1,1
 Akshan/Udyr (FR/SH),Championless (SI),1,1,1
 Akshan/Udyr (FR/SH),Akshan/Fiora (DE/SH),1,1,1
 Caitlyn/Darius (NX/PZ),Akshan/Udyr (FR/SH),1,1,1
@@ -5175,6 +5207,7 @@ Braum (FR/MT),Fiora/Pantheon (DE/MT),1,1,1
 Darius/Gnar (FR/NX),Miss Fortune/Sejuani (BW/FR),1,1,1
 Ashe (FR/PZ),Ekko/Kalista (PZ/SI),1,1,1
 Caitlyn (BC/PZ),Ashe (FR/PZ),1,1,1
+Bard/Caitlyn/Teemo (RU/PZ),Leona/Yasuo (IO/MT),1,1,1
 Leona/Yasuo (IO/MT),Udyr (FR/MT),1,1,1
 Darius/Gnar (FR/NX),Championless (BW/PZ),1,1,1
 Gwen/Katarina (NX/SI),Udyr (FR/MT),1,1,1
@@ -5324,7 +5357,6 @@ Caitlyn/Norra/Teemo (BC/PZ),Championpile (DE/FR),1,1,1
 Darius/Gwen (NX/SI),Pantheon/Udyr (FR/MT),1,1,1
 Teemo/Zoe (BC/MT),Swain (FR/NX),1,1,1
 Darius/Gnar (FR/NX),Irelia/Samira (IO/NX),1,1,1
-Darius/Gwen (NX/SI),Caitlyn/Swain (NX/PZ),1,1,1
 Championless (MT/SI),Caitlyn/Swain (NX/PZ),1,1,1
 Miss Fortune/Quinn/Vayne (BW/DE),Bard/The Poro King (RU/RU),1,1,1
 Darius/Gnar/LeBlanc (FR/NX),Braum (FR/IO),1,1,1
@@ -5471,7 +5503,6 @@ Akshan/Udyr (FR/SH),Lulu/Tristana (BC/IO),1,1,1
 Sejuani/Udyr (FR/PZ),Ashe/LeBlanc (FR/NX),1,1,1
 Ashe/LeBlanc (FR/NX),Annie/Jhin/Katarina (RU/NX),1,1,1
 Udyr/Vayne (DE/FR),Bard/Caitlyn/Teemo (RU/PZ),1,1,1
-Ashe (FR/SI),Braum/Zoe (FR/MT),1,1,1
 Championless (MT/SI),Caitlyn (FR/PZ),1,1,1
 Braum (FR/IO),Gwen/Hecarim (SI),1,1,1
 Gnar/Sejuani (BC/FR),Ashe/Sejuani (FR/NX),1,1,1
@@ -6043,6 +6074,8 @@ Ekko/Nilah/Twisted Fate (BW/PZ),Hecarim/Zed (IO/SI),1,1,1
 Braum (FR/IO),Akshan/Pantheon (MT/SH),1,1,1
 Darius/Gwen/Hecarim (NX/SI),Akshan/Renekton (SH),1,1,1
 Sejuani/Swain (FR/NX),Ezreal/Janna (PZ/SI),1,1,1
+Darius/Gnar (FR/NX),Ashe/Braum/LeBlanc (FR/NX),1,1,1
+Darius/Gnar (FR/NX),Aphelios/Diana (MT/NX),1,1,1
 Garen (BW/DE),Braum/Zoe (FR/MT),1,1,1
 Ezreal/Seraphine (IO/PZ),Ashe (FR/PZ),1,1,1
 Championpile (DE/SH),Braum (FR/IO),1,1,1
@@ -6071,6 +6104,7 @@ Lucian/Udyr (DE/FR),Zoe (FR/MT),1,1,1
 Norra/Zoe (BC/MT),Lucian/Udyr (DE/FR),1,1,1
 Braum (FR/MT),Nami/Udyr (BW/FR),1,1,1
 Darius/Gnar/LeBlanc (FR/NX),LeBlanc/Yasuo (IO/NX),1,1,1
+Darius/Gnar (FR/NX),Janna/Teemo/Udyr (FR/PZ),1,1,1
 Darius/LeBlanc (FR/NX),Ezreal/Nami (BW/PZ),1,1,1
 Championless (SI),Kalista (NX/SI),1,1,1
 Ashe/Sejuani (FR/SI),Annie/Jhin/Swain (RU/NX),1,1,1
@@ -6210,7 +6244,6 @@ Championpile (MT/SH),Leona/Yasuo (IO/MT),1,1,1
 Championpile (MT/SH),Annie/Jhin (RU/NX),1,1,1
 Lulu/Shen (DE/IO),Gnar/Sejuani/Teemo (BC/FR),1,1,1
 Swain/Udyr (FR/NX),Championpile (MT/SH),1,1,1
-Lulu/Shen (DE/IO),Fiora/Udyr (DE/FR),1,1,1
 Nilah/Twisted Fate (BW/PZ),Akshan/Ekko (PZ/SH),1,1,1
 Championless (MT),Swain/Udyr (FR/NX),1,1,1
 Swain/Udyr (FR/NX),Norra/Zoe (BC/MT),1,1,1
@@ -6261,17 +6294,35 @@ Garen/Udyr (DE/FR),Akshan/Samira (NX/SH),1,1,1
 Sejuani/Teemo (FR/PZ),Samira/Udyr (FR/NX),1,1,1
 LeBlanc/Udyr (FR/NX),Gnar/Nidalee (BC/SH),1,1,1
 Samira/Udyr (FR/NX),Gwen/LeBlanc (NX/SI),1,1,1
-LeBlanc/Udyr (FR/NX),Garen/Udyr (DE/FR),1,1,1
 Fiora/Udyr (DE/FR),Darius/LeBlanc (FR/NX),1,1,1
 Championless (NX/SI),Samira/Udyr (FR/NX),1,1,1
 Samira/Udyr (FR/NX),Braum/Janna (FR/PZ),1,1,1
 Samira/Udyr (FR/NX),Braum/Zoe (FR/MT),1,1,1
 Darius/Gwen (NX/SI),Braum/Janna (FR/PZ),1,1,1
-Fiora/Udyr (DE/FR),Nidalee (BC/SH),1,1,1
 Ashe/Janna (FR/PZ),Braum (FR/MT),1,1,1
 Championless (MT/SI),Zoe (FR/MT),1,1,1
 Ashe/Janna (FR/PZ),Akshan/Samira (NX/SH),1,1,1
-Master Yi/Yasuo (IO/SH),Fiora/Udyr (DE/FR),1,1,1
+Ashe/Braum/LeBlanc (FR/NX),Braum/Zoe (FR/MT),1,1,1
+Master Yi/Yasuo (IO/SH),Leona/Yasuo (IO/MT),1,1,1
+Darius/Sejuani (FR/NX),Sejuani/Swain (FR/NX),1,1,1
+Master Yi/Yasuo (IO/SH),Lux: Illuminated/Shen (DE/IO),1,1,1
+Ashe/Gwen (FR/SI),Annie/Jhin (RU/NX),1,1,1
+Ashe (FR/PZ),Ashe/Braum/LeBlanc (FR/NX),1,1,1
+Ashe/LeBlanc (FR/NX),Akshan/Renekton (SH),1,1,1
+Garen/Udyr (DE/FR),Darius/Gnar/LeBlanc (FR/NX),1,1,1
+Fiora/Udyr (DE/FR),Darius/Gnar/LeBlanc (FR/NX),1,1,1
+Braum/Fiora (DE/FR),Darius/Gwen (NX/SI),1,1,1
+Braum/Fiora (DE/FR),Sejuani/Udyr (FR/NX),1,1,1
+Braum/Zoe (FR/MT),Sejuani/Udyr (FR/NX),1,1,1
+Braum/Fiora (DE/FR),Ashe/LeBlanc (FR/NX),1,1,1
+Lulu/Shen (DE/IO),Master Yi/Yasuo (IO/SH),1,1,1
+Braum/Fiora (DE/FR),Fiora/Udyr (DE/FR),1,1,1
+Sejuani/Teemo (BC/FR),Darius/Gnar/LeBlanc (FR/NX),1,1,1
+Fiora/Udyr (DE/FR),Sejuani/Teemo (BC/FR),1,1,1
+Swain/Twisted Fate (BW/NX),Caitlyn/Swain (NX/PZ),1,1,1
+Swain/Twisted Fate (BW/NX),Fiora/Shen (DE/IO),1,1,1
+Fiora/Udyr (DE/FR),Leona/Zed (IO/MT),1,1,1
+Lulu/Shen (IO),Ashe/LeBlanc (FR/NX),1,1,1
 Championless (SI/SH),Championless (IO/PZ),0,1,0
 Darius/Katarina/LeBlanc (FR/NX),Nilah/Twisted Fate (BW/PZ),0,1,0
 Elise/Nocturne (NX/SI),Nilah/Twisted Fate (BW/PZ),0,1,0
@@ -6880,6 +6931,11 @@ Ashe/Renekton (FR/SH),Ashe/LeBlanc (FR/NX),0,1,0
 Sivir/Udyr (FR/SH),Gnar/LeBlanc (FR/NX),0,1,0
 Nilah/Twisted Fate (BW/PZ),Sivir/Udyr (FR/SH),0,1,0
 Ashe/Renekton (FR/SH),Nilah/Twisted Fate (BW/PZ),0,1,0
+Ashe/Renekton (FR/SH),Sivir/Udyr (FR/SH),0,1,0
+Akshan/Sivir (DE/SH),Championless (MT/SI),0,1,0
+Sivir/Udyr (FR/SH),Gwen/Katarina (NX/SI),0,1,0
+LeBlanc (FR/NX),Sivir/Udyr (FR/SH),0,1,0
+Sivir/Udyr (FR/SH),Ashe/LeBlanc (FR/NX),0,1,0
 Swain/Udyr (FR/NX),Neeko/Nidalee/Renekton (RU/SH),0,1,0
 Ashe/LeBlanc (FR/NX),Ashe/Braum (FR/PZ),0,1,0
 Akshan/Ekko (PZ/SH),Ashe/Caitlyn (FR/PZ),0,1,0
@@ -6977,7 +7033,6 @@ Master Yi/Pantheon (IO/MT),Ezreal/Seraphine (BC/PZ),0,1,0
 Darius/Swain (NX/SI),Ezreal/Seraphine (BC/PZ),0,1,0
 Ashe/Janna (FR/PZ),Ezreal/Seraphine (BC/PZ),0,1,0
 Master Yi/Udyr (FR/IO),Championless (IO/PZ),0,1,0
-Leona/Yasuo (IO/MT),Fiora/Udyr (DE/FR),0,1,0
 Darius/Yasuo (IO/NX),Ashe (FR/PZ),0,1,0
 Ashe (FR),Nilah/Twisted Fate (BW/PZ),0,1,0
 Gwen/Katarina (NX/SI),Master Yi/Nami (BW/IO),0,1,0
@@ -7089,7 +7144,6 @@ Tristana (BC/DE),Championless (SI),0,1,0
 Neeko/Renekton (RU/SH),Championless (SI),0,1,0
 LeBlanc/Udyr (FR/NX),Darius/Yasuo (IO/NX),0,1,0
 Diana/Nocturne (MT/SI),LeBlanc/Udyr (FR/NX),0,1,0
-Gwen/Kalista (NX/SI),Janna/Nilah (BW/PZ),0,1,0
 Darius (FR/NX),Gwen/Kalista (NX/SI),0,1,0
 Aphelios/Nami (BW/MT),Gwen/Kalista (NX/SI),0,1,0
 Lux: Illuminated/Master Yi (DE/IO),Gwen/Kalista (NX/SI),0,1,0
@@ -7242,7 +7296,6 @@ Championless (SI/SH),Caitlyn/Norra (BC/PZ),0,1,0
 LeBlanc/Udyr (FR/NX),Championless (SI/SH),0,1,0
 Championless (SI/SH),Championless (PZ/SI),0,1,0
 Janna/Nami (BW/PZ),Kalista (SI),0,1,0
-Braum/Udyr (DE/FR),Akshan/Samira (NX/SH),0,1,0
 Braum/Udyr (DE/FR),Championless (MT/SI),0,1,0
 Akshan/Sivir (PZ/SH),Darius/Gwen (NX/SI),0,1,0
 Championless (MT/SI),Annie/Katarina (BC/NX),0,1,0
@@ -7646,7 +7699,6 @@ Janna/Twisted Fate (BW/PZ),Master Yi/Vayne (DE/IO),0,1,0
 Master Yi/Vayne (DE/IO),Nilah/Twisted Fate (BW/PZ),0,1,0
 Neeko/Teemo (BC/RU),Ezreal/Seraphine (IO/PZ),0,1,0
 Quinn/Vayne (DE/PZ),Akshan/Sivir (DE/SH),0,1,0
-Fiora/Udyr (DE/FR),Braum/Udyr (DE/FR),0,1,0
 Ashe/Udyr (FR/IO),Ashe (FR/PZ),0,1,0
 Gnar/Nidalee (BC/SH),Gwen/Zed (IO/SI),0,1,0
 Ashe (FR/PZ),Ezreal/Janna/Nilah (BW/PZ),0,1,0
@@ -8103,7 +8155,6 @@ Lulu/Zed (BC/IO),Annie/Jhin (RU/NX),0,1,0
 Janna/Nilah/Twisted Fate (BW/PZ),Janna/Twisted Fate (BW/PZ),0,1,0
 Swain/Udyr (FR/NX),Ashe (FR),0,1,0
 Championless (PZ/SI),Braum (DE/FR),0,1,0
-Fiora/Udyr (DE/FR),Darius/Gwen (NX/SI),0,1,0
 Irelia/Miss Fortune (BW/IO),Nilah/Twisted Fate (BW/PZ),0,1,0
 Lulu/Tristana (BC/DE),Nidalee (BC/SH),0,1,0
 Ahri/Kennen (IO/MT),Janna (FR/PZ),0,1,0
@@ -8239,7 +8290,6 @@ Aphelios/Braum/Zoe (FR/MT),Ashe (FR/PZ),0,1,0
 Janna/Nilah (BW/PZ),Caitlyn/Teemo (BC/PZ),0,1,0
 Fiora/Udyr (DE/FR),Ashe (FR/SI),0,1,0
 Darius/Gwen (NX/SI),Teemo/Tristana (BC/SI),0,1,0
-Gnar/Neeko (FR/RU),Darius/Gwen (NX/SI),0,1,0
 Teemo/Tristana (BC/SI),Ezreal/Seraphine (PZ/SI),0,1,0
 Teemo/Tristana (BC/SI),Gnar/Neeko (FR/RU),0,1,0
 LeBlanc/Sivir (NX/SH),Teemo/Tristana (BC/SI),0,1,0
@@ -8338,9 +8388,28 @@ LeBlanc/Sivir (NX/SH),Udyr (FR/NX),0,1,0
 Nilah/Twisted Fate (BW/PZ),Sejuani/Teemo (BC/FR),0,1,0
 Gnar/Renekton (FR/SH),Neeko (FR/RU),0,1,0
 Gwen/Kalista (NX/SI),Neeko (FR/RU),0,1,0
-Udyr (DE/FR),Udyr (FR/MT),0,1,0
 Lulu/Shen (DE/IO),Gnar/Udyr (DE/FR),0,1,0
+Gnar/Neeko (FR/RU),Gwen/Katarina (NX/SI),0,1,0
 Leona/Yasuo (IO/MT),Sejuani/Teemo (BC/FR),0,1,0
+Swain/Udyr (FR/NX),Gnar/LeBlanc (FR/NX),0,1,0
+Neeko (FR/RU),Bard/Garen (RU/DE),0,1,0
+Zoe (FR/MT),Ashe (FR/PZ),0,1,0
+Lulu/Shen (DE/IO),Ashe/Caitlyn (FR/PZ),0,1,0
+Gnar/Renekton (FR/SH),Leona/Yasuo (IO/MT),0,1,0
+Sejuani/Teemo (BC/FR),Udyr (FR/MT),0,1,0
+Gnar/Renekton (FR/SH),Udyr (FR/MT),0,1,0
+Darius/Gwen (NX/SI),Udyr (FR/MT),0,1,0
+Ashe/LeBlanc (FR/NX),Udyr (FR/NX),0,1,0
+Ashe/LeBlanc (FR/NX),Gnar/Renekton (FR/SH),0,1,0
+Miss Fortune/Swain (BW/NX),Fiora/Udyr (DE/FR),0,1,0
+Fiora/Lux: Illuminated (DE/SH),Darius/Gnar (FR/NX),0,1,0
+Udyr (FR/MT),Darius/Gnar (FR/NX),0,1,0
+Udyr (FR/MT),Championless (SI),0,1,0
+Gnar/Udyr (DE/FR),Udyr (FR/MT),0,1,0
+Ashe (FR/PZ),Draven/Sejuani (FR/NX),0,1,0
+Nilah/Twisted Fate (BW/PZ),Akshan/Braum (FR/SH),0,1,0
+Braum (DE/FR),Kalista (SI),0,1,0
+Ashe (FR/PZ),Lux: Illuminated/Shen (DE/IO),0,1,0
 Championless (FR/SI),Championless (PZ/SI),0,1,0
 Championless (PZ/SI),Caitlyn/Nami (BW/PZ),0,1,0
 Fizz/Zoe (BC/MT),Championless (PZ/SI),0,1,0
@@ -9085,7 +9154,6 @@ Nami/Zoe (BW/MT),Fiora/Pantheon (DE/MT),0,1,0
 Nami/Norra (BC/BW),Garen/Udyr (DE/FR),0,1,0
 Diana/Nocturne (MT/SI),Garen/Udyr (DE/FR),0,1,0
 Akshan/Udyr (FR/SH),Gwen/Kalista (NX/SI),0,1,0
-Annie/Jhin (RU/NX),Akshan/Udyr (FR/SH),0,1,0
 Championless (SI),Akshan/Udyr (FR/SH),0,1,0
 Akshan/Fiora (DE/SH),Akshan/Udyr (FR/SH),0,1,0
 Akshan/Udyr (FR/SH),Caitlyn/Darius (NX/PZ),0,1,0
@@ -9108,6 +9176,7 @@ Fiora/Pantheon (DE/MT),Braum (FR/MT),0,1,0
 Miss Fortune/Sejuani (BW/FR),Darius/Gnar (FR/NX),0,1,0
 Ekko/Kalista (PZ/SI),Ashe (FR/PZ),0,1,0
 Ashe (FR/PZ),Caitlyn (BC/PZ),0,1,0
+Leona/Yasuo (IO/MT),Bard/Caitlyn/Teemo (RU/PZ),0,1,0
 Udyr (FR/MT),Leona/Yasuo (IO/MT),0,1,0
 Championless (BW/PZ),Darius/Gnar (FR/NX),0,1,0
 Udyr (FR/MT),Gwen/Katarina (NX/SI),0,1,0
@@ -9257,7 +9326,6 @@ Championpile (DE/FR),Caitlyn/Norra/Teemo (BC/PZ),0,1,0
 Pantheon/Udyr (FR/MT),Darius/Gwen (NX/SI),0,1,0
 Swain (FR/NX),Teemo/Zoe (BC/MT),0,1,0
 Irelia/Samira (IO/NX),Darius/Gnar (FR/NX),0,1,0
-Caitlyn/Swain (NX/PZ),Darius/Gwen (NX/SI),0,1,0
 Caitlyn/Swain (NX/PZ),Championless (MT/SI),0,1,0
 Bard/The Poro King (RU/RU),Miss Fortune/Quinn/Vayne (BW/DE),0,1,0
 Braum (FR/IO),Darius/Gnar/LeBlanc (FR/NX),0,1,0
@@ -9404,7 +9472,6 @@ Lulu/Tristana (BC/IO),Akshan/Udyr (FR/SH),0,1,0
 Ashe/LeBlanc (FR/NX),Sejuani/Udyr (FR/PZ),0,1,0
 Annie/Jhin/Katarina (RU/NX),Ashe/LeBlanc (FR/NX),0,1,0
 Bard/Caitlyn/Teemo (RU/PZ),Udyr/Vayne (DE/FR),0,1,0
-Braum/Zoe (FR/MT),Ashe (FR/SI),0,1,0
 Caitlyn (FR/PZ),Championless (MT/SI),0,1,0
 Gwen/Hecarim (SI),Braum (FR/IO),0,1,0
 Ashe/Sejuani (FR/NX),Gnar/Sejuani (BC/FR),0,1,0
@@ -9976,6 +10043,8 @@ Hecarim/Zed (IO/SI),Ekko/Nilah/Twisted Fate (BW/PZ),0,1,0
 Akshan/Pantheon (MT/SH),Braum (FR/IO),0,1,0
 Akshan/Renekton (SH),Darius/Gwen/Hecarim (NX/SI),0,1,0
 Ezreal/Janna (PZ/SI),Sejuani/Swain (FR/NX),0,1,0
+Ashe/Braum/LeBlanc (FR/NX),Darius/Gnar (FR/NX),0,1,0
+Aphelios/Diana (MT/NX),Darius/Gnar (FR/NX),0,1,0
 Braum/Zoe (FR/MT),Garen (BW/DE),0,1,0
 Ashe (FR/PZ),Ezreal/Seraphine (IO/PZ),0,1,0
 Braum (FR/IO),Championpile (DE/SH),0,1,0
@@ -10004,6 +10073,7 @@ Zoe (FR/MT),Lucian/Udyr (DE/FR),0,1,0
 Lucian/Udyr (DE/FR),Norra/Zoe (BC/MT),0,1,0
 Nami/Udyr (BW/FR),Braum (FR/MT),0,1,0
 LeBlanc/Yasuo (IO/NX),Darius/Gnar/LeBlanc (FR/NX),0,1,0
+Janna/Teemo/Udyr (FR/PZ),Darius/Gnar (FR/NX),0,1,0
 Ezreal/Nami (BW/PZ),Darius/LeBlanc (FR/NX),0,1,0
 Kalista (NX/SI),Championless (SI),0,1,0
 Annie/Jhin/Swain (RU/NX),Ashe/Sejuani (FR/SI),0,1,0
@@ -10143,7 +10213,6 @@ Leona/Yasuo (IO/MT),Championpile (MT/SH),0,1,0
 Annie/Jhin (RU/NX),Championpile (MT/SH),0,1,0
 Gnar/Sejuani/Teemo (BC/FR),Lulu/Shen (DE/IO),0,1,0
 Championpile (MT/SH),Swain/Udyr (FR/NX),0,1,0
-Fiora/Udyr (DE/FR),Lulu/Shen (DE/IO),0,1,0
 Akshan/Ekko (PZ/SH),Nilah/Twisted Fate (BW/PZ),0,1,0
 Swain/Udyr (FR/NX),Championless (MT),0,1,0
 Norra/Zoe (BC/MT),Swain/Udyr (FR/NX),0,1,0
@@ -10194,24 +10263,42 @@ Akshan/Samira (NX/SH),Garen/Udyr (DE/FR),0,1,0
 Samira/Udyr (FR/NX),Sejuani/Teemo (FR/PZ),0,1,0
 Gnar/Nidalee (BC/SH),LeBlanc/Udyr (FR/NX),0,1,0
 Gwen/LeBlanc (NX/SI),Samira/Udyr (FR/NX),0,1,0
-Garen/Udyr (DE/FR),LeBlanc/Udyr (FR/NX),0,1,0
 Darius/LeBlanc (FR/NX),Fiora/Udyr (DE/FR),0,1,0
 Samira/Udyr (FR/NX),Championless (NX/SI),0,1,0
 Braum/Janna (FR/PZ),Samira/Udyr (FR/NX),0,1,0
 Braum/Zoe (FR/MT),Samira/Udyr (FR/NX),0,1,0
 Braum/Janna (FR/PZ),Darius/Gwen (NX/SI),0,1,0
-Nidalee (BC/SH),Fiora/Udyr (DE/FR),0,1,0
 Braum (FR/MT),Ashe/Janna (FR/PZ),0,1,0
 Zoe (FR/MT),Championless (MT/SI),0,1,0
 Akshan/Samira (NX/SH),Ashe/Janna (FR/PZ),0,1,0
-Fiora/Udyr (DE/FR),Master Yi/Yasuo (IO/SH),0,1,0
+Braum/Zoe (FR/MT),Ashe/Braum/LeBlanc (FR/NX),0,1,0
+Leona/Yasuo (IO/MT),Master Yi/Yasuo (IO/SH),0,1,0
+Sejuani/Swain (FR/NX),Darius/Sejuani (FR/NX),0,1,0
+Lux: Illuminated/Shen (DE/IO),Master Yi/Yasuo (IO/SH),0,1,0
+Annie/Jhin (RU/NX),Ashe/Gwen (FR/SI),0,1,0
+Ashe/Braum/LeBlanc (FR/NX),Ashe (FR/PZ),0,1,0
+Akshan/Renekton (SH),Ashe/LeBlanc (FR/NX),0,1,0
+Darius/Gnar/LeBlanc (FR/NX),Garen/Udyr (DE/FR),0,1,0
+Darius/Gnar/LeBlanc (FR/NX),Fiora/Udyr (DE/FR),0,1,0
+Darius/Gwen (NX/SI),Braum/Fiora (DE/FR),0,1,0
+Sejuani/Udyr (FR/NX),Braum/Fiora (DE/FR),0,1,0
+Sejuani/Udyr (FR/NX),Braum/Zoe (FR/MT),0,1,0
+Ashe/LeBlanc (FR/NX),Braum/Fiora (DE/FR),0,1,0
+Master Yi/Yasuo (IO/SH),Lulu/Shen (DE/IO),0,1,0
+Fiora/Udyr (DE/FR),Braum/Fiora (DE/FR),0,1,0
+Darius/Gnar/LeBlanc (FR/NX),Sejuani/Teemo (BC/FR),0,1,0
+Sejuani/Teemo (BC/FR),Fiora/Udyr (DE/FR),0,1,0
+Caitlyn/Swain (NX/PZ),Swain/Twisted Fate (BW/NX),0,1,0
+Fiora/Shen (DE/IO),Swain/Twisted Fate (BW/NX),0,1,0
+Leona/Zed (IO/MT),Fiora/Udyr (DE/FR),0,1,0
+Ashe/LeBlanc (FR/NX),Lulu/Shen (IO),0,1,0
 Ashe/LeBlanc (FR/NX),Championless (SI/SH),2,6,0.333333333333333
 Ashe (FR/PZ),Ezreal/Janna (IO/PZ),2,6,0.333333333333333
 Braum/Zoe (FR/MT),Garen (DE/SH),2,6,0.333333333333333
+Akshan/Udyr (FR/SH),Ashe (FR/PZ),2,6,0.333333333333333
 Miss Fortune/Quinn (BW/DE),Ashe/LeBlanc (FR/NX),2,6,0.333333333333333
 Ezreal/Seraphine (BC/PZ),Ashe/LeBlanc (FR/NX),2,6,0.333333333333333
 Darius/Gnar (FR/NX),Nidalee (BC/SH),2,6,0.333333333333333
-Gnar/Nidalee (BC/SH),Janna/Nilah (BW/PZ),2,6,0.333333333333333
 Annie/Jhin (RU/NX),Janna/Nilah (BW/PZ),2,6,0.333333333333333
 Gnar/Neeko (FR/RU),Braum/Zoe (FR/MT),2,6,0.333333333333333
 Norra/Zoe (BC/MT),Braum/Zoe (FR/MT),2,6,0.333333333333333
@@ -10219,21 +10306,25 @@ Draven/Jinx (NX/PZ),Braum/Zoe (FR/MT),2,6,0.333333333333333
 Ashe/LeBlanc (FR/NX),Teemo/Tristana (BC/SI),2,6,0.333333333333333
 Ezreal/Seraphine (PZ/SI),Gnar/LeBlanc (FR/NX),2,6,0.333333333333333
 Akshan/Gwen (SI/SH),Championless (SI),2,6,0.333333333333333
+Ashe/LeBlanc (FR/NX),Gwen/Kalista (NX/SI),2,6,0.333333333333333
 Braum/Udyr (DE/FR),Darius/Gwen (NX/SI),2,6,0.333333333333333
 Annie/Jhin (RU/NX),Nidalee (BC/SH),2,6,0.333333333333333
 Janna/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),2,6,0.333333333333333
+Nilah/Twisted Fate (BW/PZ),Udyr (DE/FR),2,6,0.333333333333333
 Kalista/Lucian (DE/SI),Ashe/LeBlanc (FR/NX),2,6,0.333333333333333
 Darius/Gnar (FR/NX),Darius/Gwen (NX/SI),2,6,0.333333333333333
 Janna/Twisted Fate (BW/PZ),Braum/Zoe (FR/MT),2,6,0.333333333333333
+Ashe (FR),Ashe/LeBlanc (FR/NX),2,6,0.333333333333333
+LeBlanc/Sivir (NX/SH),Lulu/Shen (DE/IO),2,6,0.333333333333333
 Gnar/Seraphine (BC/PZ),Braum/Zoe (FR/MT),2,6,0.333333333333333
 Master Yi/Nidalee (IO/SH),Braum/Zoe (FR/MT),2,6,0.333333333333333
 Championless (SI/SH),Ashe/LeBlanc (FR/NX),4,6,0.666666666666667
 Ezreal/Janna (IO/PZ),Ashe (FR/PZ),4,6,0.666666666666667
 Garen (DE/SH),Braum/Zoe (FR/MT),4,6,0.666666666666667
+Ashe (FR/PZ),Akshan/Udyr (FR/SH),4,6,0.666666666666667
 Ashe/LeBlanc (FR/NX),Miss Fortune/Quinn (BW/DE),4,6,0.666666666666667
 Ashe/LeBlanc (FR/NX),Ezreal/Seraphine (BC/PZ),4,6,0.666666666666667
 Nidalee (BC/SH),Darius/Gnar (FR/NX),4,6,0.666666666666667
-Janna/Nilah (BW/PZ),Gnar/Nidalee (BC/SH),4,6,0.666666666666667
 Janna/Nilah (BW/PZ),Annie/Jhin (RU/NX),4,6,0.666666666666667
 Braum/Zoe (FR/MT),Gnar/Neeko (FR/RU),4,6,0.666666666666667
 Braum/Zoe (FR/MT),Norra/Zoe (BC/MT),4,6,0.666666666666667
@@ -10241,18 +10332,24 @@ Braum/Zoe (FR/MT),Draven/Jinx (NX/PZ),4,6,0.666666666666667
 Teemo/Tristana (BC/SI),Ashe/LeBlanc (FR/NX),4,6,0.666666666666667
 Gnar/LeBlanc (FR/NX),Ezreal/Seraphine (PZ/SI),4,6,0.666666666666667
 Championless (SI),Akshan/Gwen (SI/SH),4,6,0.666666666666667
+Gwen/Kalista (NX/SI),Ashe/LeBlanc (FR/NX),4,6,0.666666666666667
 Darius/Gwen (NX/SI),Braum/Udyr (DE/FR),4,6,0.666666666666667
 Nidalee (BC/SH),Annie/Jhin (RU/NX),4,6,0.666666666666667
 Ashe/LeBlanc (FR/NX),Janna/Twisted Fate (BW/PZ),4,6,0.666666666666667
+Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),4,6,0.666666666666667
 Ashe/LeBlanc (FR/NX),Kalista/Lucian (DE/SI),4,6,0.666666666666667
 Darius/Gwen (NX/SI),Darius/Gnar (FR/NX),4,6,0.666666666666667
 Braum/Zoe (FR/MT),Janna/Twisted Fate (BW/PZ),4,6,0.666666666666667
+Ashe/LeBlanc (FR/NX),Ashe (FR),4,6,0.666666666666667
+Lulu/Shen (DE/IO),LeBlanc/Sivir (NX/SH),4,6,0.666666666666667
 Braum/Zoe (FR/MT),Gnar/Seraphine (BC/PZ),4,6,0.666666666666667
 Braum/Zoe (FR/MT),Master Yi/Nidalee (IO/SH),4,6,0.666666666666667
-Championless (SI),Ashe/LeBlanc (FR/NX),100,165,0.606060606060606
-Ashe/LeBlanc (FR/NX),Championless (SI),65,165,0.393939393939394
+Championless (SI),Ashe/LeBlanc (FR/NX),100,166,0.602409638554217
+Ashe/LeBlanc (FR/NX),Championless (SI),66,166,0.397590361445783
 Akshan/Pantheon (MT/SH),Nilah/Twisted Fate (BW/PZ),3,6,0.5
 Nilah/Twisted Fate (BW/PZ),Akshan/Pantheon (MT/SH),3,6,0.5
+Gnar/Nidalee (BC/SH),Kalista (SI),3,6,0.5
+Kalista (SI),Gnar/Nidalee (BC/SH),3,6,0.5
 Nilah/Twisted Fate (BW/PZ),Leona/Yasuo (IO/MT),3,6,0.5
 Leona/Yasuo (IO/MT),Nilah/Twisted Fate (BW/PZ),3,6,0.5
 Championless (SI),Sejuani/Teemo (FR/PZ),3,6,0.5
@@ -10268,11 +10365,8 @@ Darius/Gnar (FR/NX),Braum (FR/IO),3,6,0.5
 Ashe/LeBlanc (FR/NX),Lulu/Zed (DE/IO),3,6,0.5
 Lulu/Zed (DE/IO),Ashe/LeBlanc (FR/NX),3,6,0.5
 Gnar/Neeko (FR/RU),Gnar/Neeko (FR/RU),3,6,0.5
-Gwen/Katarina (NX/SI),Gwen/Katarina (NX/SI),3,6,0.5
 Ezreal/Seraphine (PZ/SI),Janna/Nilah (BW/PZ),3,6,0.5
 Janna/Nilah (BW/PZ),Ezreal/Seraphine (PZ/SI),3,6,0.5
-Ashe (FR/PZ),Gnar/Nidalee (BC/SH),3,6,0.5
-Gnar/Nidalee (BC/SH),Ashe (FR/PZ),3,6,0.5
 Lulu/Shen (DE/IO),Championless (SI),3,6,0.5
 Championless (SI),Lulu/Shen (DE/IO),3,6,0.5
 Lulu/Shen (DE/IO),Lulu/Shen (DE/IO),3,6,0.5
@@ -10292,24 +10386,14 @@ Janna/Master Yi (IO/PZ),Ashe (FR/PZ),3,6,0.5
 Janna (IO/PZ),Janna (IO/PZ),3,6,0.5
 Nilah/Twisted Fate (BW/PZ),Championless (SI),46,77,0.597402597402597
 Championless (SI),Nilah/Twisted Fate (BW/PZ),31,77,0.402597402597403
-Ashe/LeBlanc (FR/NX),Nilah/Twisted Fate (BW/PZ),49,116,0.422413793103448
-Nilah/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),67,116,0.577586206896552
-Janna/Nilah (BW/PZ),Nilah/Twisted Fate (BW/PZ),9,13,0.692307692307692
-Ashe/LeBlanc (FR/NX),Janna (PZ/SI),9,13,0.692307692307692
-Ashe/LeBlanc (FR/NX),Garen/Udyr (DE/FR),9,13,0.692307692307692
-Akshan/Master Yi (IO/SH),Championless (PZ/SI),9,13,0.692307692307692
-Nilah/Twisted Fate (BW/PZ),Swain/Yasuo (IO/NX),9,13,0.692307692307692
-Ashe (FR/PZ),Darius/Gwen (NX/SI),9,13,0.692307692307692
-Swain/Yasuo (IO/NX),Ashe (FR/PZ),9,13,0.692307692307692
-Nilah/Twisted Fate (BW/PZ),Championless (MT/SI),9,13,0.692307692307692
-Nilah/Twisted Fate (BW/PZ),Janna/Nilah (BW/PZ),4,13,0.307692307692308
-Janna (PZ/SI),Ashe/LeBlanc (FR/NX),4,13,0.307692307692308
-Garen/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),4,13,0.307692307692308
-Championless (PZ/SI),Akshan/Master Yi (IO/SH),4,13,0.307692307692308
-Swain/Yasuo (IO/NX),Nilah/Twisted Fate (BW/PZ),4,13,0.307692307692308
-Darius/Gwen (NX/SI),Ashe (FR/PZ),4,13,0.307692307692308
-Ashe (FR/PZ),Swain/Yasuo (IO/NX),4,13,0.307692307692308
-Championless (MT/SI),Nilah/Twisted Fate (BW/PZ),4,13,0.307692307692308
+Ashe/LeBlanc (FR/NX),Nilah/Twisted Fate (BW/PZ),50,118,0.423728813559322
+Nilah/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),68,118,0.576271186440678
+Janna/Nilah (BW/PZ),Nilah/Twisted Fate (BW/PZ),10,14,0.714285714285714
+Championless (SI),Annie/Jhin (RU/NX),10,14,0.714285714285714
+Braum/Zoe (FR/MT),Janna/Nilah (BW/PZ),10,14,0.714285714285714
+Nilah/Twisted Fate (BW/PZ),Janna/Nilah (BW/PZ),4,14,0.285714285714286
+Annie/Jhin (RU/NX),Championless (SI),4,14,0.285714285714286
+Janna/Nilah (BW/PZ),Braum/Zoe (FR/MT),4,14,0.285714285714286
 Nilah/Twisted Fate (BW/PZ),Akshan/Master Yi (IO/SH),13,21,0.619047619047619
 Ezreal/Seraphine (PZ/SI),Nilah/Twisted Fate (BW/PZ),13,21,0.619047619047619
 Akshan/Master Yi (IO/SH),Nilah/Twisted Fate (BW/PZ),8,21,0.380952380952381
@@ -10321,10 +10405,8 @@ Ashe (FR/PZ),LeBlanc/Sivir (NX/SH),7,14,0.5
 Gwen/Vayne (DE/SI),Nilah/Twisted Fate (BW/PZ),7,14,0.5
 Nilah/Twisted Fate (BW/PZ),Gwen/Vayne (DE/SI),7,14,0.5
 Ezreal/Seraphine (PZ/SI),Ezreal/Seraphine (PZ/SI),7,14,0.5
-Darius/Gnar (FR/NX),Nilah/Twisted Fate (BW/PZ),9,17,0.529411764705882
-Championless (SI),Ashe/Caitlyn (FR/PZ),9,17,0.529411764705882
-Nilah/Twisted Fate (BW/PZ),Darius/Gnar (FR/NX),8,17,0.470588235294118
-Ashe/Caitlyn (FR/PZ),Championless (SI),8,17,0.470588235294118
+Darius/Gnar (FR/NX),Nilah/Twisted Fate (BW/PZ),10,18,0.555555555555556
+Nilah/Twisted Fate (BW/PZ),Darius/Gnar (FR/NX),8,18,0.444444444444444
 Ashe/LeBlanc (FR/NX),Akshan/Master Yi (IO/SH),15,33,0.454545454545455
 Akshan/Master Yi (IO/SH),Ashe/LeBlanc (FR/NX),18,33,0.545454545454545
 Aphelios/Zoe (IO/MT),Championless (SI),6,13,0.461538461538462
@@ -10339,15 +10421,13 @@ Leona/Yasuo (IO/MT),Braum/Zoe (FR/MT),7,13,0.538461538461538
 Lulu/Shen (DE/IO),Ashe/LeBlanc (FR/NX),7,13,0.538461538461538
 Ashe/LeBlanc (FR/NX),Aphelios/Zoe (IO/MT),4,7,0.571428571428571
 Darius/Gnar (FR/NX),Garen/Udyr (DE/FR),4,7,0.571428571428571
+Janna/Nilah (BW/PZ),Gnar/Nidalee (BC/SH),4,7,0.571428571428571
 LeBlanc/Sivir (NX/SH),Kalista (SI),4,7,0.571428571428571
-Ashe/LeBlanc (FR/NX),Lux: Illuminated/Shen (DE/IO),4,7,0.571428571428571
 Ashe/LeBlanc (FR/NX),Akshan/Sivir (NX/SH),4,7,0.571428571428571
 Akshan/Gwen (SI/SH),Ashe/LeBlanc (FR/NX),4,7,0.571428571428571
-Ashe (FR/PZ),Caitlyn/Swain (NX/PZ),4,7,0.571428571428571
 Caitlyn/Teemo (BC/PZ),Championless (PZ/SI),4,7,0.571428571428571
 Ashe (FR/PZ),Championless (BC/SI),4,7,0.571428571428571
 Janna/Nilah (BW/PZ),Darius/Gwen (NX/SI),4,7,0.571428571428571
-Braum/Udyr (DE/FR),Ashe (FR/PZ),4,7,0.571428571428571
 Braum/Zoe (FR/MT),Akshan/Samira (NX/SH),4,7,0.571428571428571
 Janna/Master Yi (IO/PZ),Nilah/Twisted Fate (BW/PZ),4,7,0.571428571428571
 Nilah/Twisted Fate (BW/PZ),Gwen/Hecarim (SI),4,7,0.571428571428571
@@ -10356,15 +10436,13 @@ Gwen/Hecarim (SI),Ashe (FR/PZ),4,7,0.571428571428571
 Braum/Zoe (FR/MT),Gwen/Hecarim (SI),4,7,0.571428571428571
 Aphelios/Zoe (IO/MT),Ashe/LeBlanc (FR/NX),3,7,0.428571428571429
 Garen/Udyr (DE/FR),Darius/Gnar (FR/NX),3,7,0.428571428571429
+Gnar/Nidalee (BC/SH),Janna/Nilah (BW/PZ),3,7,0.428571428571429
 Kalista (SI),LeBlanc/Sivir (NX/SH),3,7,0.428571428571429
-Lux: Illuminated/Shen (DE/IO),Ashe/LeBlanc (FR/NX),3,7,0.428571428571429
 Akshan/Sivir (NX/SH),Ashe/LeBlanc (FR/NX),3,7,0.428571428571429
 Ashe/LeBlanc (FR/NX),Akshan/Gwen (SI/SH),3,7,0.428571428571429
-Caitlyn/Swain (NX/PZ),Ashe (FR/PZ),3,7,0.428571428571429
 Championless (PZ/SI),Caitlyn/Teemo (BC/PZ),3,7,0.428571428571429
 Championless (BC/SI),Ashe (FR/PZ),3,7,0.428571428571429
 Darius/Gwen (NX/SI),Janna/Nilah (BW/PZ),3,7,0.428571428571429
-Ashe (FR/PZ),Braum/Udyr (DE/FR),3,7,0.428571428571429
 Akshan/Samira (NX/SH),Braum/Zoe (FR/MT),3,7,0.428571428571429
 Nilah/Twisted Fate (BW/PZ),Janna/Master Yi (IO/PZ),3,7,0.428571428571429
 Gwen/Hecarim (SI),Nilah/Twisted Fate (BW/PZ),3,7,0.428571428571429
@@ -10388,7 +10466,6 @@ Kai'Sa/Pantheon (MT/SH),LeBlanc (FR/NX),0,3,0
 Gnar/Nidalee (BC/SH),Draven/Jinx (NX/PZ),0,3,0
 Akshan/Pantheon (MT/SH),Annie/Jhin (RU/NX),0,3,0
 Akshan/Sivir (MT/SH),Ashe/LeBlanc (FR/NX),0,3,0
-Aphelios/Gnar (FR/MT),Ashe (FR/PZ),0,3,0
 Norra/Teemo (BC/PZ),Championless (SI),0,3,0
 Annie/Jhin (RU/NX),Kalista (SI),0,3,0
 Ezreal/Janna (IO/PZ),Miss Fortune/Twisted Fate (BW/NX),0,3,0
@@ -10410,7 +10487,6 @@ Swain/Yasuo (IO/NX),Gwen/Vayne (DE/SI),0,3,0
 Akshan/Sivir (NX/SH),Swain/Yasuo (IO/NX),0,3,0
 LeBlanc/Udyr (FR/NX),Darius/Gwen (NX/SI),0,3,0
 Darius/Gwen (NX/SI),Akshan/Ekko (PZ/SH),0,3,0
-Akshan/Sivir (DE/SH),Ashe/LeBlanc (FR/NX),0,3,0
 Ashe (FR/PZ),Ezreal/Seraphine (BC/PZ),0,3,0
 Norra (BC/SI),Ashe/LeBlanc (FR/NX),0,3,0
 Master Yi/Nami (BW/IO),Ashe/LeBlanc (FR/NX),0,3,0
@@ -10419,6 +10495,7 @@ Swain/Yasuo (IO/NX),Caitlyn/Swain (NX/PZ),0,3,0
 Garen/Udyr (DE/FR),Gwen/Vayne (DE/SI),0,3,0
 Hecarim/Kalista (SI),Ashe/LeBlanc (FR/NX),0,3,0
 Braum/Zoe (FR/MT),Gwen/Kalista (NX/SI),0,3,0
+Nilah/Twisted Fate (BW/PZ),Gwen/Kalista (NX/SI),0,3,0
 Garen (DE),Darius/Gnar (FR/NX),0,3,0
 Master Yi/Nami (BW/IO),Darius/Gwen (NX/SI),0,3,0
 Leona/Yasuo (IO/MT),Kalista (SI),0,3,0
@@ -10430,6 +10507,7 @@ Nidalee (BC/SH),Shen/Sivir (IO/SH),0,3,0
 Championless (BW/FR),Nilah/Twisted Fate (BW/PZ),0,3,0
 Evelynn/Kai'Sa (RU/SH),Ashe/LeBlanc (FR/NX),0,3,0
 Kalista/Lucian (DE/SI),Kalista (SI),0,3,0
+Udyr (FR/MT),Braum/Zoe (FR/MT),0,3,0
 Zoe (FR/MT),Gnar/Nidalee (BC/SH),0,3,0
 Gwen/Kalista (SI/SH),Ashe/LeBlanc (FR/NX),0,3,0
 Kai'Sa/The Poro King (RU/SH),Ashe/LeBlanc (FR/NX),0,3,0
@@ -10440,7 +10518,6 @@ Championless (SI/SH),Janna (FR/PZ),0,3,0
 Braum/Udyr (FR/MT),Ashe (FR/PZ),0,3,0
 Janna/Nilah/Twisted Fate (BW/PZ),Swain/Yasuo (IO/NX),0,3,0
 Quinn/Vayne (DE/PZ),Annie/Jhin (RU/NX),0,3,0
-Akshan/Sivir (DE/SH),Ashe (FR/PZ),0,3,0
 Master Yi/Zoe (IO/MT),Championless (SI/SH),0,3,0
 Quinn/Vayne (DE/PZ),Ashe/LeBlanc (FR/NX),0,3,0
 Braum (FR/NX),Ashe/LeBlanc (FR/NX),0,3,0
@@ -10508,7 +10585,6 @@ LeBlanc (FR/NX),Kai'Sa/Pantheon (MT/SH),3,3,1
 Draven/Jinx (NX/PZ),Gnar/Nidalee (BC/SH),3,3,1
 Annie/Jhin (RU/NX),Akshan/Pantheon (MT/SH),3,3,1
 Ashe/LeBlanc (FR/NX),Akshan/Sivir (MT/SH),3,3,1
-Ashe (FR/PZ),Aphelios/Gnar (FR/MT),3,3,1
 Championless (SI),Norra/Teemo (BC/PZ),3,3,1
 Kalista (SI),Annie/Jhin (RU/NX),3,3,1
 Miss Fortune/Twisted Fate (BW/NX),Ezreal/Janna (IO/PZ),3,3,1
@@ -10530,7 +10606,6 @@ Gwen/Vayne (DE/SI),Swain/Yasuo (IO/NX),3,3,1
 Swain/Yasuo (IO/NX),Akshan/Sivir (NX/SH),3,3,1
 Darius/Gwen (NX/SI),LeBlanc/Udyr (FR/NX),3,3,1
 Akshan/Ekko (PZ/SH),Darius/Gwen (NX/SI),3,3,1
-Ashe/LeBlanc (FR/NX),Akshan/Sivir (DE/SH),3,3,1
 Ezreal/Seraphine (BC/PZ),Ashe (FR/PZ),3,3,1
 Ashe/LeBlanc (FR/NX),Norra (BC/SI),3,3,1
 Ashe/LeBlanc (FR/NX),Master Yi/Nami (BW/IO),3,3,1
@@ -10539,6 +10614,7 @@ Caitlyn/Swain (NX/PZ),Swain/Yasuo (IO/NX),3,3,1
 Gwen/Vayne (DE/SI),Garen/Udyr (DE/FR),3,3,1
 Ashe/LeBlanc (FR/NX),Hecarim/Kalista (SI),3,3,1
 Gwen/Kalista (NX/SI),Braum/Zoe (FR/MT),3,3,1
+Gwen/Kalista (NX/SI),Nilah/Twisted Fate (BW/PZ),3,3,1
 Darius/Gnar (FR/NX),Garen (DE),3,3,1
 Darius/Gwen (NX/SI),Master Yi/Nami (BW/IO),3,3,1
 Kalista (SI),Leona/Yasuo (IO/MT),3,3,1
@@ -10550,6 +10626,7 @@ Shen/Sivir (IO/SH),Nidalee (BC/SH),3,3,1
 Nilah/Twisted Fate (BW/PZ),Championless (BW/FR),3,3,1
 Ashe/LeBlanc (FR/NX),Evelynn/Kai'Sa (RU/SH),3,3,1
 Kalista (SI),Kalista/Lucian (DE/SI),3,3,1
+Braum/Zoe (FR/MT),Udyr (FR/MT),3,3,1
 Gnar/Nidalee (BC/SH),Zoe (FR/MT),3,3,1
 Ashe/LeBlanc (FR/NX),Gwen/Kalista (SI/SH),3,3,1
 Ashe/LeBlanc (FR/NX),Kai'Sa/The Poro King (RU/SH),3,3,1
@@ -10560,7 +10637,6 @@ Janna (FR/PZ),Championless (SI/SH),3,3,1
 Ashe (FR/PZ),Braum/Udyr (FR/MT),3,3,1
 Swain/Yasuo (IO/NX),Janna/Nilah/Twisted Fate (BW/PZ),3,3,1
 Annie/Jhin (RU/NX),Quinn/Vayne (DE/PZ),3,3,1
-Ashe (FR/PZ),Akshan/Sivir (DE/SH),3,3,1
 Championless (SI/SH),Master Yi/Zoe (IO/MT),3,3,1
 Ashe/LeBlanc (FR/NX),Quinn/Vayne (DE/PZ),3,3,1
 Ashe/LeBlanc (FR/NX),Braum (FR/NX),3,3,1
@@ -10645,8 +10721,6 @@ Championless (PZ/SI),Diana/Nami (BW/MT),2,4,0.5
 Diana/Nami (BW/MT),Championless (PZ/SI),2,4,0.5
 Fiora/Shen (DE/IO),Fiora/Shen (DE/IO),2,4,0.5
 Janna/Nilah (BW/PZ),Janna/Nilah (BW/PZ),2,4,0.5
-Annie/Jhin (RU/NX),Gwen/Katarina (NX/SI),2,4,0.5
-Gwen/Katarina (NX/SI),Annie/Jhin (RU/NX),2,4,0.5
 Lulu/Zed (DE/IO),Braum/Zoe (FR/MT),2,4,0.5
 Braum/Zoe (FR/MT),Lulu/Zed (DE/IO),2,4,0.5
 Janna/Nilah (BW/PZ),Braum (FR/IO),2,4,0.5
@@ -10658,6 +10732,8 @@ Braum/Zoe (FR/MT),Akshan/Sivir (DE/SH),2,4,0.5
 Akshan/Sivir (DE/SH),Braum/Zoe (FR/MT),2,4,0.5
 Braum/Zoe (FR/MT),Gnar/LeBlanc (FR/NX),2,4,0.5
 Gnar/LeBlanc (FR/NX),Braum/Zoe (FR/MT),2,4,0.5
+Championless (PZ/SI),Nidalee (BC/SH),2,4,0.5
+Nidalee (BC/SH),Championless (PZ/SI),2,4,0.5
 Ashe/LeBlanc (FR/NX),Seraphine/Zoe (MT/PZ),2,4,0.5
 Seraphine/Zoe (MT/PZ),Ashe/LeBlanc (FR/NX),2,4,0.5
 Championless (BW/MT),Championless (PZ/SI),2,4,0.5
@@ -10678,6 +10754,8 @@ Draven/Pantheon (MT/NX),Championless (SI),2,4,0.5
 Championless (SI),Draven/Pantheon (MT/NX),2,4,0.5
 Championless (BC/SI),Ashe/LeBlanc (FR/NX),2,4,0.5
 Ashe/LeBlanc (FR/NX),Championless (BC/SI),2,4,0.5
+Annie/Jhin (RU/NX),Darius/Gwen (NX/SI),2,4,0.5
+Darius/Gwen (NX/SI),Annie/Jhin (RU/NX),2,4,0.5
 Annie/Samira (NX/PZ),Ashe/LeBlanc (FR/NX),2,4,0.5
 Ashe/LeBlanc (FR/NX),Annie/Samira (NX/PZ),2,4,0.5
 Neeko/Teemo (BC/RU),Annie/Jhin (RU/NX),2,4,0.5
@@ -10700,6 +10778,7 @@ Norra/Zoe (BC/MT),Darius/Gnar (FR/NX),2,4,0.5
 Darius/Gnar (FR/NX),Norra/Zoe (BC/MT),2,4,0.5
 Swain/Twisted Fate (BW/NX),Kalista (SI),2,4,0.5
 Kalista (SI),Swain/Twisted Fate (BW/NX),2,4,0.5
+Fiora/Udyr (DE/FR),Fiora/Udyr (DE/FR),2,4,0.5
 Swain/Twisted Fate (BW/NX),Swain/Twisted Fate (BW/NX),2,4,0.5
 Janna/Master Yi (IO/PZ),Janna/Master Yi (IO/PZ),2,4,0.5
 Janna/Master Yi (IO/PZ),Annie/Jhin (RU/NX),2,4,0.5
@@ -10708,6 +10787,8 @@ Teemo/Tristana (BC/SI),Nilah/Twisted Fate (BW/PZ),2,4,0.5
 Nilah/Twisted Fate (BW/PZ),Teemo/Tristana (BC/SI),2,4,0.5
 Akshan/Master Yi (IO/SH),Fiora/Garen (DE/FR),2,4,0.5
 Fiora/Garen (DE/FR),Akshan/Master Yi (IO/SH),2,4,0.5
+Ashe/LeBlanc (FR/NX),Gnar/Neeko (FR/RU),2,4,0.5
+Gnar/Neeko (FR/RU),Ashe/LeBlanc (FR/NX),2,4,0.5
 Championless (SI),Fizz (BW/FR),2,4,0.5
 Fizz (BW/FR),Championless (SI),2,4,0.5
 Ashe (FR/PZ),Fizz (BW/FR),2,4,0.5
@@ -10728,88 +10809,6 @@ Darius/Gwen/Hecarim (NX/SI),Ashe (FR/PZ),2,4,0.5
 Ashe (FR/PZ),Darius/Gwen/Hecarim (NX/SI),2,4,0.5
 Gwen/Renekton (SI/SH),Ashe (FR/PZ),2,4,0.5
 Ashe (FR/PZ),Gwen/Renekton (SI/SH),2,4,0.5
-Gnar/Nidalee (BC/SH),Kalista (SI),3,5,0.6
-Quinn/Vayne (DE/PZ),Championless (SI),3,5,0.6
-Championless (SI),Championless (BC/SI),3,5,0.6
-Championless (SI),Ezreal/Janna (IO/PZ),3,5,0.6
-Championless (SI),Akshan/Sivir (NX/SH),3,5,0.6
-Nilah/Twisted Fate (BW/PZ),Kai'Sa/Pantheon (MT/SH),3,5,0.6
-Ashe (FR/PZ),Akshan/Udyr (FR/SH),3,5,0.6
-Ashe (FR/PZ),Gnar/Udyr (DE/FR),3,5,0.6
-Kalista (SI),Akshan/Pantheon (MT/SH),3,5,0.6
-Fiora/Shen (DE/IO),Annie/Jhin (RU/NX),3,5,0.6
-Akshan/Master Yi (IO/SH),Janna (PZ/SI),3,5,0.6
-Janna/Nilah (BW/PZ),Fiora/Shen (DE/IO),3,5,0.6
-Gwen/Katarina (NX/SI),Akshan/Master Yi (IO/SH),3,5,0.6
-Championless (PZ/SI),Ashe/Sejuani (FR/SI),3,5,0.6
-Draven/Jinx (NX/PZ),Akshan/Master Yi (IO/SH),3,5,0.6
-Janna/Nilah (BW/PZ),Akshan/Master Yi (IO/SH),3,5,0.6
-Ezreal/Janna (PZ/SI),Ashe (FR/PZ),3,5,0.6
-Ashe (FR/PZ),Gnar/LeBlanc (FR/NX),3,5,0.6
-Ezreal/Seraphine (PZ/SI),Championless (PZ/SI),3,5,0.6
-Ezreal/Seraphine (PZ/SI),Fiora/Udyr (DE/FR),3,5,0.6
-Championless (SI),Gwen/Kalista (NX/SI),3,5,0.6
-Ashe/LeBlanc (FR/NX),Championless (FR/MT),3,5,0.6
-Nidalee (BC/SH),Janna (PZ/SI),3,5,0.6
-Gwen/Kalista (NX/SI),Ashe/LeBlanc (FR/NX),3,5,0.6
-Ezreal/Seraphine (PZ/SI),Master Yi/Udyr (FR/IO),3,5,0.6
-Ashe/LeBlanc (FR/NX),Ezreal/Nilah/Twisted Fate (BW/PZ),3,5,0.6
-Championless (SI),Pantheon/Vayne (DE/MT),3,5,0.6
-Sejuani/Teemo (BC/FR),Championless (SI),3,5,0.6
-Neeko (FR/RU),Braum/Zoe (FR/MT),3,5,0.6
-Ashe (FR/PZ),Seraphine/Zoe (MT/PZ),3,5,0.6
-Braum/Zoe (FR/MT),Teemo/Tristana (BC/SI),3,5,0.6
-Ashe (FR/PZ),Akshan/Gwen (SI/SH),3,5,0.6
-Ashe/LeBlanc (FR/NX),Ashe (FR),3,5,0.6
-Championless (MT/SI),Braum/Zoe (FR/MT),3,5,0.6
-Janna/Nilah (BW/PZ),Janna (PZ/SI),3,5,0.6
-Akshan/Master Yi (IO/SH),Gwen/Hecarim (SI),3,5,0.6
-Darius/Gnar (FR/NX),Gwen/Katarina (NX/SI),3,5,0.6
-Lulu/Shen (DE/IO),LeBlanc/Sivir (NX/SH),3,5,0.6
-Braum/Zoe (FR/MT),Kai'Sa/Sivir (DE/SH),3,5,0.6
-Braum (FR/IO),Braum/Zoe (FR/MT),3,5,0.6
-Norra/Zoe (BC/MT),Ezreal/Seraphine (PZ/SI),3,5,0.6
-Kalista (SI),Gnar/Nidalee (BC/SH),2,5,0.4
-Championless (SI),Quinn/Vayne (DE/PZ),2,5,0.4
-Championless (BC/SI),Championless (SI),2,5,0.4
-Ezreal/Janna (IO/PZ),Championless (SI),2,5,0.4
-Akshan/Sivir (NX/SH),Championless (SI),2,5,0.4
-Kai'Sa/Pantheon (MT/SH),Nilah/Twisted Fate (BW/PZ),2,5,0.4
-Akshan/Udyr (FR/SH),Ashe (FR/PZ),2,5,0.4
-Gnar/Udyr (DE/FR),Ashe (FR/PZ),2,5,0.4
-Akshan/Pantheon (MT/SH),Kalista (SI),2,5,0.4
-Annie/Jhin (RU/NX),Fiora/Shen (DE/IO),2,5,0.4
-Janna (PZ/SI),Akshan/Master Yi (IO/SH),2,5,0.4
-Fiora/Shen (DE/IO),Janna/Nilah (BW/PZ),2,5,0.4
-Akshan/Master Yi (IO/SH),Gwen/Katarina (NX/SI),2,5,0.4
-Ashe/Sejuani (FR/SI),Championless (PZ/SI),2,5,0.4
-Akshan/Master Yi (IO/SH),Draven/Jinx (NX/PZ),2,5,0.4
-Akshan/Master Yi (IO/SH),Janna/Nilah (BW/PZ),2,5,0.4
-Ashe (FR/PZ),Ezreal/Janna (PZ/SI),2,5,0.4
-Gnar/LeBlanc (FR/NX),Ashe (FR/PZ),2,5,0.4
-Championless (PZ/SI),Ezreal/Seraphine (PZ/SI),2,5,0.4
-Fiora/Udyr (DE/FR),Ezreal/Seraphine (PZ/SI),2,5,0.4
-Gwen/Kalista (NX/SI),Championless (SI),2,5,0.4
-Championless (FR/MT),Ashe/LeBlanc (FR/NX),2,5,0.4
-Janna (PZ/SI),Nidalee (BC/SH),2,5,0.4
-Ashe/LeBlanc (FR/NX),Gwen/Kalista (NX/SI),2,5,0.4
-Master Yi/Udyr (FR/IO),Ezreal/Seraphine (PZ/SI),2,5,0.4
-Ezreal/Nilah/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),2,5,0.4
-Pantheon/Vayne (DE/MT),Championless (SI),2,5,0.4
-Championless (SI),Sejuani/Teemo (BC/FR),2,5,0.4
-Braum/Zoe (FR/MT),Neeko (FR/RU),2,5,0.4
-Seraphine/Zoe (MT/PZ),Ashe (FR/PZ),2,5,0.4
-Teemo/Tristana (BC/SI),Braum/Zoe (FR/MT),2,5,0.4
-Akshan/Gwen (SI/SH),Ashe (FR/PZ),2,5,0.4
-Ashe (FR),Ashe/LeBlanc (FR/NX),2,5,0.4
-Braum/Zoe (FR/MT),Championless (MT/SI),2,5,0.4
-Janna (PZ/SI),Janna/Nilah (BW/PZ),2,5,0.4
-Gwen/Hecarim (SI),Akshan/Master Yi (IO/SH),2,5,0.4
-Gwen/Katarina (NX/SI),Darius/Gnar (FR/NX),2,5,0.4
-LeBlanc/Sivir (NX/SH),Lulu/Shen (DE/IO),2,5,0.4
-Kai'Sa/Sivir (DE/SH),Braum/Zoe (FR/MT),2,5,0.4
-Braum/Zoe (FR/MT),Braum (FR/IO),2,5,0.4
-Ezreal/Seraphine (PZ/SI),Norra/Zoe (BC/MT),2,5,0.4
 Kalista (SI),Nidalee (BC/SH),1,5,0.2
 Braum (FR/MT),Championless (SI),1,5,0.2
 Ezreal/Seraphine (IO/PZ),Ashe/LeBlanc (FR/NX),1,5,0.2
@@ -10827,6 +10826,7 @@ Kai'Sa/Pantheon (MT/SH),Ashe/LeBlanc (FR/NX),1,5,0.2
 Caitlyn/Swain (NX/PZ),Championless (PZ/SI),1,5,0.2
 Akshan/Pantheon (MT/SH),Braum/Zoe (FR/MT),1,5,0.2
 Fizz/Samira (BW/NX),Ashe/LeBlanc (FR/NX),1,5,0.2
+Nilah/Twisted Fate (BW/PZ),Akshan/Sivir (DE/SH),1,5,0.2
 Ashe/LeBlanc (FR/NX),Championless (BW/MT),1,5,0.2
 Championless (PZ/SI),Kalista (SI),1,5,0.2
 Ashe/Caitlyn (FR/PZ),Ezreal/Seraphine (PZ/SI),1,5,0.2
@@ -10835,13 +10835,13 @@ Nidalee (BC/SH),Darius/Gwen (NX/SI),1,5,0.2
 Swain/Yasuo (IO/NX),Championless (PZ/SI),1,5,0.2
 Championless (FR/MT),Championless (SI),1,5,0.2
 Caitlyn/Teemo (BC/PZ),Akshan/Master Yi (IO/SH),1,5,0.2
+Lulu/Shen (DE/IO),Darius/Gnar (FR/NX),1,5,0.2
 Kai'Sa/Sivir (DE/SH),Ashe/LeBlanc (FR/NX),1,5,0.2
 Janna/Nilah/Twisted Fate (BW/PZ),Nilah/Twisted Fate (BW/PZ),1,5,0.2
 Championless (PZ/SI),Championless (MT/SI),1,5,0.2
 Ashe (FR/PZ),Sejuani/Swain (FR/NX),1,5,0.2
 Hecarim/Kalista (IO/SI),Championless (SI),1,5,0.2
 Katarina/Yasuo (IO/NX),Ezreal/Seraphine (PZ/SI),1,5,0.2
-Nilah/Twisted Fate (BW/PZ),Udyr (DE/FR),1,5,0.2
 Ezreal/Seraphine (PZ/SI),Kalista (SI),1,5,0.2
 Ashe/LeBlanc (FR/NX),Neeko (FR/RU),1,5,0.2
 Neeko/Teemo (BC/RU),Braum/Zoe (FR/MT),1,5,0.2
@@ -10871,6 +10871,7 @@ Ashe/LeBlanc (FR/NX),Kai'Sa/Pantheon (MT/SH),4,5,0.8
 Championless (PZ/SI),Caitlyn/Swain (NX/PZ),4,5,0.8
 Braum/Zoe (FR/MT),Akshan/Pantheon (MT/SH),4,5,0.8
 Ashe/LeBlanc (FR/NX),Fizz/Samira (BW/NX),4,5,0.8
+Akshan/Sivir (DE/SH),Nilah/Twisted Fate (BW/PZ),4,5,0.8
 Championless (BW/MT),Ashe/LeBlanc (FR/NX),4,5,0.8
 Kalista (SI),Championless (PZ/SI),4,5,0.8
 Ezreal/Seraphine (PZ/SI),Ashe/Caitlyn (FR/PZ),4,5,0.8
@@ -10879,13 +10880,13 @@ Darius/Gwen (NX/SI),Nidalee (BC/SH),4,5,0.8
 Championless (PZ/SI),Swain/Yasuo (IO/NX),4,5,0.8
 Championless (SI),Championless (FR/MT),4,5,0.8
 Akshan/Master Yi (IO/SH),Caitlyn/Teemo (BC/PZ),4,5,0.8
+Darius/Gnar (FR/NX),Lulu/Shen (DE/IO),4,5,0.8
 Ashe/LeBlanc (FR/NX),Kai'Sa/Sivir (DE/SH),4,5,0.8
 Nilah/Twisted Fate (BW/PZ),Janna/Nilah/Twisted Fate (BW/PZ),4,5,0.8
 Championless (MT/SI),Championless (PZ/SI),4,5,0.8
 Sejuani/Swain (FR/NX),Ashe (FR/PZ),4,5,0.8
 Championless (SI),Hecarim/Kalista (IO/SI),4,5,0.8
 Ezreal/Seraphine (PZ/SI),Katarina/Yasuo (IO/NX),4,5,0.8
-Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),4,5,0.8
 Kalista (SI),Ezreal/Seraphine (PZ/SI),4,5,0.8
 Neeko (FR/RU),Ashe/LeBlanc (FR/NX),4,5,0.8
 Braum/Zoe (FR/MT),Neeko/Teemo (BC/RU),4,5,0.8
@@ -10898,41 +10899,113 @@ Ashe (FR/PZ),Braum (FR/MT),4,5,0.8
 Ashe (FR/PZ),Caitlyn (FR/PZ),4,5,0.8
 Kalista (SI),Katarina/Yasuo (IO/NX),4,5,0.8
 Ashe/LeBlanc (FR/NX),Championless (FR/IO),4,5,0.8
-Championless (SI),Championless (SI),82,164,0.5
-Darius/Gnar (FR/NX),Championless (SI),33,52,0.634615384615385
-Championless (SI),Darius/Gnar (FR/NX),19,52,0.365384615384615
+Championless (SI),Championless (SI),84,168,0.5
+Darius/Gnar (FR/NX),Championless (SI),34,54,0.62962962962963
+Championless (SI),Darius/Gnar (FR/NX),20,54,0.37037037037037
 Championless (SI),Janna (PZ/SI),16,22,0.727272727272727
 Janna (PZ/SI),Championless (SI),6,22,0.272727272727273
 Championless (SI),Ezreal/Seraphine (IO/PZ),6,7,0.857142857142857
 Lulu/Zed (DE/IO),Akshan/Pantheon (MT/SH),6,7,0.857142857142857
-Braum/Zoe (FR/MT),Caitlyn/Swain (NX/PZ),6,7,0.857142857142857
 Kalista (SI),Caitlyn/Swain (NX/PZ),6,7,0.857142857142857
 Ashe/LeBlanc (FR/NX),Akshan/Samira (NX/SH),6,7,0.857142857142857
 Ashe (FR/PZ),Caitlyn/Teemo (BC/PZ),6,7,0.857142857142857
 Ezreal/Seraphine (IO/PZ),Championless (SI),1,7,0.142857142857143
 Akshan/Pantheon (MT/SH),Lulu/Zed (DE/IO),1,7,0.142857142857143
-Caitlyn/Swain (NX/PZ),Braum/Zoe (FR/MT),1,7,0.142857142857143
 Caitlyn/Swain (NX/PZ),Kalista (SI),1,7,0.142857142857143
 Akshan/Samira (NX/SH),Ashe/LeBlanc (FR/NX),1,7,0.142857142857143
 Caitlyn/Teemo (BC/PZ),Ashe (FR/PZ),1,7,0.142857142857143
 Championless (SI),Akshan/Pantheon (MT/SH),8,14,0.571428571428571
 Braum/Zoe (FR/MT),Gnar/Nidalee (BC/SH),8,14,0.571428571428571
-Fiora/Udyr (DE/FR),Braum/Zoe (FR/MT),8,14,0.571428571428571
-Ashe/LeBlanc (FR/NX),Gwen/Katarina (NX/SI),8,14,0.571428571428571
 Master Yi/Udyr (FR/IO),Nilah/Twisted Fate (BW/PZ),8,14,0.571428571428571
 Akshan/Pantheon (MT/SH),Championless (SI),6,14,0.428571428571429
 Gnar/Nidalee (BC/SH),Braum/Zoe (FR/MT),6,14,0.428571428571429
-Braum/Zoe (FR/MT),Fiora/Udyr (DE/FR),6,14,0.428571428571429
-Gwen/Katarina (NX/SI),Ashe/LeBlanc (FR/NX),6,14,0.428571428571429
 Nilah/Twisted Fate (BW/PZ),Master Yi/Udyr (FR/IO),6,14,0.428571428571429
-Fiora/Shen (DE/IO),Ashe/LeBlanc (FR/NX),12,15,0.8
-Ashe/LeBlanc (FR/NX),Fiora/Shen (DE/IO),3,15,0.2
+Fiora/Shen (DE/IO),Ashe/LeBlanc (FR/NX),13,16,0.8125
+Championless (SI),Swain/Yasuo (IO/NX),13,16,0.8125
+Ashe/LeBlanc (FR/NX),Fiora/Shen (DE/IO),3,16,0.1875
+Swain/Yasuo (IO/NX),Championless (SI),3,16,0.1875
+Quinn/Vayne (DE/PZ),Championless (SI),3,5,0.6
+Championless (SI),Championless (BC/SI),3,5,0.6
+Championless (SI),Ezreal/Janna (IO/PZ),3,5,0.6
+Championless (SI),Akshan/Sivir (NX/SH),3,5,0.6
+Nilah/Twisted Fate (BW/PZ),Kai'Sa/Pantheon (MT/SH),3,5,0.6
+Ashe (FR/PZ),Gnar/Udyr (DE/FR),3,5,0.6
+Kalista (SI),Akshan/Pantheon (MT/SH),3,5,0.6
+Fiora/Shen (DE/IO),Annie/Jhin (RU/NX),3,5,0.6
+Akshan/Master Yi (IO/SH),Janna (PZ/SI),3,5,0.6
+Janna/Nilah (BW/PZ),Fiora/Shen (DE/IO),3,5,0.6
+Gwen/Katarina (NX/SI),Akshan/Master Yi (IO/SH),3,5,0.6
+Championless (PZ/SI),Ashe/Sejuani (FR/SI),3,5,0.6
+Draven/Jinx (NX/PZ),Akshan/Master Yi (IO/SH),3,5,0.6
+Janna/Nilah (BW/PZ),Akshan/Master Yi (IO/SH),3,5,0.6
+Gwen/Katarina (NX/SI),Annie/Jhin (RU/NX),3,5,0.6
+Ezreal/Janna (PZ/SI),Ashe (FR/PZ),3,5,0.6
+Ashe (FR/PZ),Gnar/LeBlanc (FR/NX),3,5,0.6
+Ezreal/Seraphine (PZ/SI),Championless (PZ/SI),3,5,0.6
+Ezreal/Seraphine (PZ/SI),Fiora/Udyr (DE/FR),3,5,0.6
+Championless (SI),Gwen/Kalista (NX/SI),3,5,0.6
+Ashe/LeBlanc (FR/NX),Championless (FR/MT),3,5,0.6
+Nidalee (BC/SH),Janna (PZ/SI),3,5,0.6
+Ashe/Caitlyn (FR/PZ),Darius/Gwen (NX/SI),3,5,0.6
+Ezreal/Seraphine (PZ/SI),Master Yi/Udyr (FR/IO),3,5,0.6
+Ashe/LeBlanc (FR/NX),Ezreal/Nilah/Twisted Fate (BW/PZ),3,5,0.6
+Championless (SI),Pantheon/Vayne (DE/MT),3,5,0.6
+Sejuani/Teemo (BC/FR),Championless (SI),3,5,0.6
+Neeko (FR/RU),Braum/Zoe (FR/MT),3,5,0.6
+Ashe (FR/PZ),Seraphine/Zoe (MT/PZ),3,5,0.6
+Braum/Zoe (FR/MT),Teemo/Tristana (BC/SI),3,5,0.6
+Ashe (FR/PZ),Akshan/Gwen (SI/SH),3,5,0.6
+Championless (MT/SI),Braum/Zoe (FR/MT),3,5,0.6
+Janna/Nilah (BW/PZ),Janna (PZ/SI),3,5,0.6
+Akshan/Master Yi (IO/SH),Gwen/Hecarim (SI),3,5,0.6
+Darius/Gnar (FR/NX),Gwen/Katarina (NX/SI),3,5,0.6
+Braum/Zoe (FR/MT),Kai'Sa/Sivir (DE/SH),3,5,0.6
+Braum (FR/IO),Braum/Zoe (FR/MT),3,5,0.6
+Norra/Zoe (BC/MT),Ezreal/Seraphine (PZ/SI),3,5,0.6
+Championless (SI),Quinn/Vayne (DE/PZ),2,5,0.4
+Championless (BC/SI),Championless (SI),2,5,0.4
+Ezreal/Janna (IO/PZ),Championless (SI),2,5,0.4
+Akshan/Sivir (NX/SH),Championless (SI),2,5,0.4
+Kai'Sa/Pantheon (MT/SH),Nilah/Twisted Fate (BW/PZ),2,5,0.4
+Gnar/Udyr (DE/FR),Ashe (FR/PZ),2,5,0.4
+Akshan/Pantheon (MT/SH),Kalista (SI),2,5,0.4
+Annie/Jhin (RU/NX),Fiora/Shen (DE/IO),2,5,0.4
+Janna (PZ/SI),Akshan/Master Yi (IO/SH),2,5,0.4
+Fiora/Shen (DE/IO),Janna/Nilah (BW/PZ),2,5,0.4
+Akshan/Master Yi (IO/SH),Gwen/Katarina (NX/SI),2,5,0.4
+Ashe/Sejuani (FR/SI),Championless (PZ/SI),2,5,0.4
+Akshan/Master Yi (IO/SH),Draven/Jinx (NX/PZ),2,5,0.4
+Akshan/Master Yi (IO/SH),Janna/Nilah (BW/PZ),2,5,0.4
+Annie/Jhin (RU/NX),Gwen/Katarina (NX/SI),2,5,0.4
+Ashe (FR/PZ),Ezreal/Janna (PZ/SI),2,5,0.4
+Gnar/LeBlanc (FR/NX),Ashe (FR/PZ),2,5,0.4
+Championless (PZ/SI),Ezreal/Seraphine (PZ/SI),2,5,0.4
+Fiora/Udyr (DE/FR),Ezreal/Seraphine (PZ/SI),2,5,0.4
+Gwen/Kalista (NX/SI),Championless (SI),2,5,0.4
+Championless (FR/MT),Ashe/LeBlanc (FR/NX),2,5,0.4
+Janna (PZ/SI),Nidalee (BC/SH),2,5,0.4
+Darius/Gwen (NX/SI),Ashe/Caitlyn (FR/PZ),2,5,0.4
+Master Yi/Udyr (FR/IO),Ezreal/Seraphine (PZ/SI),2,5,0.4
+Ezreal/Nilah/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),2,5,0.4
+Pantheon/Vayne (DE/MT),Championless (SI),2,5,0.4
+Championless (SI),Sejuani/Teemo (BC/FR),2,5,0.4
+Braum/Zoe (FR/MT),Neeko (FR/RU),2,5,0.4
+Seraphine/Zoe (MT/PZ),Ashe (FR/PZ),2,5,0.4
+Teemo/Tristana (BC/SI),Braum/Zoe (FR/MT),2,5,0.4
+Akshan/Gwen (SI/SH),Ashe (FR/PZ),2,5,0.4
+Braum/Zoe (FR/MT),Championless (MT/SI),2,5,0.4
+Janna (PZ/SI),Janna/Nilah (BW/PZ),2,5,0.4
+Gwen/Hecarim (SI),Akshan/Master Yi (IO/SH),2,5,0.4
+Gwen/Katarina (NX/SI),Darius/Gnar (FR/NX),2,5,0.4
+Kai'Sa/Sivir (DE/SH),Braum/Zoe (FR/MT),2,5,0.4
+Braum/Zoe (FR/MT),Braum (FR/IO),2,5,0.4
+Ezreal/Seraphine (PZ/SI),Norra/Zoe (BC/MT),2,5,0.4
 Fiora/Shen (DE/IO),Championless (SI),13,30,0.433333333333333
 Ezreal/Seraphine (PZ/SI),Championless (SI),13,30,0.433333333333333
 Championless (SI),Fiora/Shen (DE/IO),17,30,0.566666666666667
 Championless (SI),Ezreal/Seraphine (PZ/SI),17,30,0.566666666666667
-Championless (SI),Kalista (SI),16,35,0.457142857142857
-Kalista (SI),Championless (SI),19,35,0.542857142857143
+Championless (SI),Kalista (SI),17,37,0.45945945945946
+Kalista (SI),Championless (SI),20,37,0.540540540540541
 Darius/Gwen (NX/SI),Championless (SI),8,20,0.4
 Championless (SI),Darius/Gwen (NX/SI),12,20,0.6
 Fiora (DE/SH),Championless (SI),1,6,0.166666666666667
@@ -10951,7 +11024,6 @@ Janna/Twisted Fate (BW/PZ),Nilah/Twisted Fate (BW/PZ),1,6,0.166666666666667
 Janna (FR/PZ),Braum/Zoe (FR/MT),1,6,0.166666666666667
 Ashe/LeBlanc (FR/NX),Seraphine/Twisted Fate (BW/PZ),1,6,0.166666666666667
 Gnar/Swain (BC/NX),Championless (SI),1,6,0.166666666666667
-Ashe (FR/PZ),Gwen/Irelia (IO/SI),1,6,0.166666666666667
 Caitlyn/Norra (BC/PZ),Ashe/LeBlanc (FR/NX),1,6,0.166666666666667
 Championless (SI),Fiora (DE/SH),5,6,0.833333333333333
 Fiora/Udyr (DE/FR),Gnar/Nidalee (BC/SH),5,6,0.833333333333333
@@ -10969,13 +11041,14 @@ Nilah/Twisted Fate (BW/PZ),Janna/Twisted Fate (BW/PZ),5,6,0.833333333333333
 Braum/Zoe (FR/MT),Janna (FR/PZ),5,6,0.833333333333333
 Seraphine/Twisted Fate (BW/PZ),Ashe/LeBlanc (FR/NX),5,6,0.833333333333333
 Championless (SI),Gnar/Swain (BC/NX),5,6,0.833333333333333
-Gwen/Irelia (IO/SI),Ashe (FR/PZ),5,6,0.833333333333333
 Ashe/LeBlanc (FR/NX),Caitlyn/Norra (BC/PZ),5,6,0.833333333333333
 Norra/Zoe (BC/MT),Championless (SI),3,13,0.230769230769231
 Ashe/LeBlanc (FR/NX),Swain/Twisted Fate (BW/NX),3,13,0.230769230769231
+Caitlyn/Teemo (BC/PZ),Ashe/LeBlanc (FR/NX),3,13,0.230769230769231
 Braum/Zoe (FR/MT),Ashe/Caitlyn (FR/PZ),3,13,0.230769230769231
 Championless (SI),Norra/Zoe (BC/MT),10,13,0.769230769230769
 Swain/Twisted Fate (BW/NX),Ashe/LeBlanc (FR/NX),10,13,0.769230769230769
+Ashe/LeBlanc (FR/NX),Caitlyn/Teemo (BC/PZ),10,13,0.769230769230769
 Ashe/Caitlyn (FR/PZ),Braum/Zoe (FR/MT),10,13,0.769230769230769
 Udyr/Vayne (DE/FR),Championless (SI),4,8,0.5
 Championless (SI),Udyr/Vayne (DE/FR),4,8,0.5
@@ -10985,6 +11058,7 @@ Ashe/LeBlanc (FR/NX),Braum (FR/IO),4,8,0.5
 Braum (FR/IO),Ashe/LeBlanc (FR/NX),4,8,0.5
 Championless (SI),Lulu/Zed (DE/IO),4,8,0.5
 Lulu/Zed (DE/IO),Championless (SI),4,8,0.5
+Gwen/Katarina (NX/SI),Gwen/Katarina (NX/SI),4,8,0.5
 Janna/Nilah (BW/PZ),Ashe (FR/PZ),4,8,0.5
 Ashe (FR/PZ),Janna/Nilah (BW/PZ),4,8,0.5
 LeBlanc/Udyr (FR/NX),Ashe (FR/PZ),4,8,0.5
@@ -10992,10 +11066,10 @@ Ashe (FR/PZ),LeBlanc/Udyr (FR/NX),4,8,0.5
 Darius/Gwen (NX/SI),Darius/Gwen (NX/SI),4,8,0.5
 Ashe/LeBlanc (FR/NX),Sejuani/Swain (FR/NX),4,8,0.5
 Sejuani/Swain (FR/NX),Ashe/LeBlanc (FR/NX),4,8,0.5
-Ashe (FR/PZ),Leona/Yasuo (IO/MT),4,8,0.5
-Leona/Yasuo (IO/MT),Ashe (FR/PZ),4,8,0.5
 Nilah/Twisted Fate (BW/PZ),Ashe/Caitlyn (FR/PZ),4,8,0.5
 Ashe/Caitlyn (FR/PZ),Nilah/Twisted Fate (BW/PZ),4,8,0.5
+Ashe (FR/PZ),Braum/Udyr (DE/FR),4,8,0.5
+Braum/Udyr (DE/FR),Ashe (FR/PZ),4,8,0.5
 Kalista (SI),Kalista (SI),4,8,0.5
 Akshan/Sivir (BC/SH),Braum/Zoe (FR/MT),4,8,0.5
 Braum/Zoe (FR/MT),Akshan/Sivir (BC/SH),4,8,0.5
@@ -11006,52 +11080,49 @@ Gwen/LeBlanc (NX/SI),Braum/Zoe (FR/MT),0,6,0
 Udyr (DE/FR),Braum/Zoe (FR/MT),0,6,0
 Seraphine/Zoe (MT/PZ),Championless (SI),0,6,0
 Championless (PZ/SI),Lulu/Shen (DE/IO),0,6,0
+Akshan/Udyr (FR/SH),Ashe/LeBlanc (FR/NX),0,6,0
 Darius/Gnar (FR/NX),Janna (PZ/SI),6,6,1
 Braum/Zoe (FR/MT),Gwen/LeBlanc (NX/SI),6,6,1
 Braum/Zoe (FR/MT),Udyr (DE/FR),6,6,1
 Championless (SI),Seraphine/Zoe (MT/PZ),6,6,1
 Lulu/Shen (DE/IO),Championless (PZ/SI),6,6,1
+Ashe/LeBlanc (FR/NX),Akshan/Udyr (FR/SH),6,6,1
 Akshan/Master Yi (IO/SH),Kalista (SI),5,12,0.416666666666667
-Fiora/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),5,12,0.416666666666667
 Darius/Gnar (FR/NX),Kalista (SI),5,12,0.416666666666667
 Janna (PZ/SI),Braum/Zoe (FR/MT),5,12,0.416666666666667
-Braum/Zoe (FR/MT),Gwen/Katarina (NX/SI),5,12,0.416666666666667
 Janna (IO/PZ),Championless (SI),5,12,0.416666666666667
 Braum/Udyr (DE/FR),Championless (SI),5,12,0.416666666666667
 Kalista (SI),Akshan/Master Yi (IO/SH),7,12,0.583333333333333
-Ashe/LeBlanc (FR/NX),Fiora/Udyr (DE/FR),7,12,0.583333333333333
 Kalista (SI),Darius/Gnar (FR/NX),7,12,0.583333333333333
 Braum/Zoe (FR/MT),Janna (PZ/SI),7,12,0.583333333333333
-Gwen/Katarina (NX/SI),Braum/Zoe (FR/MT),7,12,0.583333333333333
 Championless (SI),Janna (IO/PZ),7,12,0.583333333333333
 Championless (SI),Braum/Udyr (DE/FR),7,12,0.583333333333333
 Darius/Gwen (NX/SI),Ashe/LeBlanc (FR/NX),6,25,0.24
 Ashe/LeBlanc (FR/NX),Darius/Gwen (NX/SI),19,25,0.76
 Championless (SI),Akshan/Master Yi (IO/SH),20,34,0.588235294117647
 Akshan/Master Yi (IO/SH),Championless (SI),14,34,0.411764705882353
-Swain/Yasuo (IO/NX),Championless (SI),3,16,0.1875
-Caitlyn/Swain (NX/PZ),Championless (SI),3,16,0.1875
-Championless (SI),Swain/Yasuo (IO/NX),13,16,0.8125
-Championless (SI),Caitlyn/Swain (NX/PZ),13,16,0.8125
 Gnar/Nidalee (BC/SH),Championless (SI),15,25,0.6
 Championless (SI),Gnar/Nidalee (BC/SH),10,25,0.4
+Fiora/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),7,17,0.411764705882353
+Championless (MT/SI),Ashe/LeBlanc (FR/NX),7,17,0.411764705882353
+Ashe/LeBlanc (FR/NX),Fiora/Udyr (DE/FR),10,17,0.588235294117647
+Ashe/LeBlanc (FR/NX),Championless (MT/SI),10,17,0.588235294117647
 Ashe (FR/PZ),Championless (SI),40,88,0.454545454545455
 Championless (SI),Ashe (FR/PZ),48,88,0.545454545454545
 Ashe (FR/PZ),Kalista (SI),8,23,0.347826086956522
-Braum/Zoe (FR/MT),Lulu/Shen (DE/IO),8,23,0.347826086956522
 Kalista (SI),Ashe (FR/PZ),15,23,0.652173913043478
-Lulu/Shen (DE/IO),Braum/Zoe (FR/MT),15,23,0.652173913043478
-Darius/Gnar (FR/NX),Darius/Gnar (FR/NX),11,22,0.5
+Darius/Gnar (FR/NX),Darius/Gnar (FR/NX),12,24,0.5
+Darius/Gnar (FR/NX),Ashe/LeBlanc (FR/NX),23,60,0.383333333333333
+Ashe/LeBlanc (FR/NX),Darius/Gnar (FR/NX),37,60,0.616666666666667
 Nilah/Twisted Fate (BW/PZ),Kalista (SI),11,22,0.5
 Kalista (SI),Nilah/Twisted Fate (BW/PZ),11,22,0.5
-Darius/Gnar (FR/NX),Ashe/LeBlanc (FR/NX),20,55,0.363636363636364
-Ashe/LeBlanc (FR/NX),Darius/Gnar (FR/NX),35,55,0.636363636363636
 Championless (SI),Kalista (PZ/SI),3,8,0.375
 Gnar/Neeko (FR/RU),Ashe (FR/PZ),3,8,0.375
 Nilah/Twisted Fate (BW/PZ),Kai'Sa/Sivir (DE/SH),3,8,0.375
 Janna/Nilah/Twisted Fate (BW/PZ),Championless (SI),3,8,0.375
 Master Yi/Udyr (FR/IO),Swain/Yasuo (IO/NX),3,8,0.375
 Ashe (FR/PZ),Gwen/Vayne (DE/SI),3,8,0.375
+Caitlyn/Swain (NX/PZ),Ashe (FR/PZ),3,8,0.375
 Nilah/Twisted Fate (BW/PZ),LeBlanc/Udyr (FR/NX),3,8,0.375
 Darius/Gwen (NX/SI),Nilah/Twisted Fate (BW/PZ),3,8,0.375
 Ashe/LeBlanc (FR/NX),Sejuani/Teemo (FR/PZ),3,8,0.375
@@ -11062,6 +11133,7 @@ Kai'Sa/Sivir (DE/SH),Nilah/Twisted Fate (BW/PZ),5,8,0.625
 Championless (SI),Janna/Nilah/Twisted Fate (BW/PZ),5,8,0.625
 Swain/Yasuo (IO/NX),Master Yi/Udyr (FR/IO),5,8,0.625
 Gwen/Vayne (DE/SI),Ashe (FR/PZ),5,8,0.625
+Ashe (FR/PZ),Caitlyn/Swain (NX/PZ),5,8,0.625
 LeBlanc/Udyr (FR/NX),Nilah/Twisted Fate (BW/PZ),5,8,0.625
 Nilah/Twisted Fate (BW/PZ),Darius/Gwen (NX/SI),5,8,0.625
 Sejuani/Teemo (FR/PZ),Ashe/LeBlanc (FR/NX),5,8,0.625
@@ -11074,22 +11146,24 @@ Akshan/Master Yi (IO/SH),Braum/Zoe (FR/MT),23,45,0.511111111111111
 Braum/Zoe (FR/MT),Akshan/Master Yi (IO/SH),22,45,0.488888888888889
 Ashe/LeBlanc (FR/NX),Kalista (SI),14,39,0.358974358974359
 Kalista (SI),Ashe/LeBlanc (FR/NX),25,39,0.641025641025641
-Ashe/LeBlanc (FR/NX),Championless (PZ/SI),25,45,0.555555555555556
-Championless (PZ/SI),Ashe/LeBlanc (FR/NX),20,45,0.444444444444444
+Ashe/LeBlanc (FR/NX),Championless (PZ/SI),26,46,0.565217391304348
+Championless (PZ/SI),Ashe/LeBlanc (FR/NX),20,46,0.434782608695652
 Gnar/Neeko (FR/RU),Championless (SI),0,4,0
 Braum/Zoe (FR/MT),Quinn/Vayne (DE/PZ),0,4,0
 Championless (BW/MT),Aphelios/Zoe (IO/MT),0,4,0
 Ezreal/Janna (IO/PZ),LeBlanc (FR/NX),0,4,0
+Aphelios/Gnar (FR/MT),Ashe (FR/PZ),0,4,0
 Ezreal/Seraphine (BC/PZ),Championless (SI),0,4,0
 LeBlanc (FR/NX),Fiora/Udyr (DE/FR),0,4,0
 Ezreal/Janna (PZ/SI),Kalista (SI),0,4,0
 Akshan/Pantheon (MT/SH),Ashe (FR/PZ),0,4,0
+LeBlanc/Sivir (NX/SH),Fiora/Udyr (DE/FR),0,4,0
 Evelynn/Kai'Sa (RU/SH),Championless (SI),0,4,0
 Janna (FR/PZ),Ashe (FR/PZ),0,4,0
+Akshan/Sivir (DE/SH),Ashe/LeBlanc (FR/NX),0,4,0
 Udyr (DE/FR),Ashe/LeBlanc (FR/NX),0,4,0
 Akshan/Garen (DE/SH),Ashe/LeBlanc (FR/NX),0,4,0
 Norra/Swain (BC/NX),Championless (SI),0,4,0
-Lulu/Shen (DE/IO),Darius/Gnar (FR/NX),0,4,0
 Vayne/Zed (DE/IO),Ashe/LeBlanc (FR/NX),0,4,0
 Annie/Jhin (RU/NX),Master Yi/Zoe (IO/MT),0,4,0
 Hecarim (SI),Championless (SI),0,4,0
@@ -11099,7 +11173,6 @@ Shen/Sivir (IO/SH),Ezreal/Seraphine (PZ/SI),0,4,0
 Aphelios/Seraphine (MT/PZ),Championless (SI),0,4,0
 Janna/Master Yi (IO/PZ),LeBlanc/Sivir (NX/SH),0,4,0
 LeBlanc/Sivir (NX/SH),Fiora/Shen (DE/IO),0,4,0
-Akshan/Fiora (DE/SH),Ashe/LeBlanc (FR/NX),0,4,0
 Ashe (FR/SI),Nilah/Twisted Fate (BW/PZ),0,4,0
 Garen/Lux: Illuminated (DE),Braum/Zoe (FR/MT),0,4,0
 Janna/Seraphine (IO/PZ),Championless (SI),0,4,0
@@ -11112,16 +11185,18 @@ Championless (SI),Gnar/Neeko (FR/RU),4,4,1
 Quinn/Vayne (DE/PZ),Braum/Zoe (FR/MT),4,4,1
 Aphelios/Zoe (IO/MT),Championless (BW/MT),4,4,1
 LeBlanc (FR/NX),Ezreal/Janna (IO/PZ),4,4,1
+Ashe (FR/PZ),Aphelios/Gnar (FR/MT),4,4,1
 Championless (SI),Ezreal/Seraphine (BC/PZ),4,4,1
 Fiora/Udyr (DE/FR),LeBlanc (FR/NX),4,4,1
 Kalista (SI),Ezreal/Janna (PZ/SI),4,4,1
 Ashe (FR/PZ),Akshan/Pantheon (MT/SH),4,4,1
+Fiora/Udyr (DE/FR),LeBlanc/Sivir (NX/SH),4,4,1
 Championless (SI),Evelynn/Kai'Sa (RU/SH),4,4,1
 Ashe (FR/PZ),Janna (FR/PZ),4,4,1
+Ashe/LeBlanc (FR/NX),Akshan/Sivir (DE/SH),4,4,1
 Ashe/LeBlanc (FR/NX),Udyr (DE/FR),4,4,1
 Ashe/LeBlanc (FR/NX),Akshan/Garen (DE/SH),4,4,1
 Championless (SI),Norra/Swain (BC/NX),4,4,1
-Darius/Gnar (FR/NX),Lulu/Shen (DE/IO),4,4,1
 Ashe/LeBlanc (FR/NX),Vayne/Zed (DE/IO),4,4,1
 Master Yi/Zoe (IO/MT),Annie/Jhin (RU/NX),4,4,1
 Championless (SI),Hecarim (SI),4,4,1
@@ -11131,7 +11206,6 @@ Ezreal/Seraphine (PZ/SI),Shen/Sivir (IO/SH),4,4,1
 Championless (SI),Aphelios/Seraphine (MT/PZ),4,4,1
 LeBlanc/Sivir (NX/SH),Janna/Master Yi (IO/PZ),4,4,1
 Fiora/Shen (DE/IO),LeBlanc/Sivir (NX/SH),4,4,1
-Ashe/LeBlanc (FR/NX),Akshan/Fiora (DE/SH),4,4,1
 Nilah/Twisted Fate (BW/PZ),Ashe (FR/SI),4,4,1
 Braum/Zoe (FR/MT),Garen/Lux: Illuminated (DE),4,4,1
 Championless (SI),Janna/Seraphine (IO/PZ),4,4,1
@@ -11141,8 +11215,10 @@ Janna (PZ/SI),Ezreal/Seraphine (PZ/SI),4,4,1
 Nilah/Twisted Fate (BW/PZ),Pantheon/Udyr (FR/MT),4,4,1
 Darius/Gwen/Hecarim (NX/SI),Gwen/Katarina (NX/SI),4,4,1
 Ashe/LeBlanc (FR/NX),Annie/Jhin (RU/NX),9,15,0.6
+Ashe/LeBlanc (FR/NX),Gwen/Katarina (NX/SI),9,15,0.6
 Katarina/Yasuo (IO/NX),Ashe/LeBlanc (FR/NX),9,15,0.6
 Annie/Jhin (RU/NX),Ashe/LeBlanc (FR/NX),6,15,0.4
+Gwen/Katarina (NX/SI),Ashe/LeBlanc (FR/NX),6,15,0.4
 Ashe/LeBlanc (FR/NX),Katarina/Yasuo (IO/NX),6,15,0.4
 Nilah/Twisted Fate (BW/PZ),Nilah/Twisted Fate (BW/PZ),58,116,0.5
 Ashe/LeBlanc (FR/NX),Ezreal/Janna (IO/PZ),6,9,0.666666666666667
@@ -11155,9 +11231,10 @@ Darius/Gnar (FR/NX),Katarina/Yasuo (IO/NX),3,9,0.333333333333333
 Braum/Zoe (FR/MT),Sejuani/Swain (FR/NX),3,9,0.333333333333333
 Janna (IO/PZ),Ashe (FR/PZ),3,9,0.333333333333333
 Ashe (FR/PZ),Udyr (DE/FR),3,9,0.333333333333333
-Braum/Zoe (FR/MT),Nilah/Twisted Fate (BW/PZ),89,143,0.622377622377622
-Nilah/Twisted Fate (BW/PZ),Braum/Zoe (FR/MT),54,143,0.377622377622378
+Braum/Zoe (FR/MT),Nilah/Twisted Fate (BW/PZ),91,146,0.623287671232877
+Nilah/Twisted Fate (BW/PZ),Braum/Zoe (FR/MT),55,146,0.376712328767123
 Kai'Sa/Pantheon (MT/SH),Championless (SI),6,8,0.75
+Nilah/Twisted Fate (BW/PZ),LeBlanc (FR/NX),6,8,0.75
 Braum/Zoe (FR/MT),Kai'Sa/Pantheon (MT/SH),6,8,0.75
 Championless (PZ/SI),Janna/Nilah (BW/PZ),6,8,0.75
 Ashe (FR/PZ),Sejuani/Teemo (FR/PZ),6,8,0.75
@@ -11165,6 +11242,7 @@ Nilah/Twisted Fate (BW/PZ),Fiora/Shen (DE/IO),6,8,0.75
 Nilah/Twisted Fate (BW/PZ),Katarina/Yasuo (IO/NX),6,8,0.75
 Braum/Zoe (FR/MT),Udyr/Vayne (DE/FR),6,8,0.75
 Championless (SI),Kai'Sa/Pantheon (MT/SH),2,8,0.25
+LeBlanc (FR/NX),Nilah/Twisted Fate (BW/PZ),2,8,0.25
 Kai'Sa/Pantheon (MT/SH),Braum/Zoe (FR/MT),2,8,0.25
 Janna/Nilah (BW/PZ),Championless (PZ/SI),2,8,0.25
 Sejuani/Teemo (FR/PZ),Ashe (FR/PZ),2,8,0.25
@@ -11173,49 +11251,47 @@ Katarina/Yasuo (IO/NX),Nilah/Twisted Fate (BW/PZ),2,8,0.25
 Udyr/Vayne (DE/FR),Braum/Zoe (FR/MT),2,8,0.25
 Akshan/Pantheon (MT/SH),Ashe/LeBlanc (FR/NX),3,10,0.3
 Gwen/Vayne (DE/SI),Ashe/LeBlanc (FR/NX),3,10,0.3
-Gwen/Katarina (NX/SI),Nilah/Twisted Fate (BW/PZ),3,10,0.3
 Nilah/Twisted Fate (BW/PZ),Lulu/Shen (DE/IO),3,10,0.3
 Ashe/LeBlanc (FR/NX),Akshan/Pantheon (MT/SH),7,10,0.7
 Ashe/LeBlanc (FR/NX),Gwen/Vayne (DE/SI),7,10,0.7
-Nilah/Twisted Fate (BW/PZ),Gwen/Katarina (NX/SI),7,10,0.7
 Lulu/Shen (DE/IO),Nilah/Twisted Fate (BW/PZ),7,10,0.7
-Ashe (FR/PZ),Ashe/LeBlanc (FR/NX),88,123,0.715447154471545
-Ashe/LeBlanc (FR/NX),Ashe (FR/PZ),35,123,0.284552845528455
-Darius/Gnar (FR/NX),Braum/Zoe (FR/MT),17,37,0.45945945945946
-Braum/Zoe (FR/MT),Darius/Gnar (FR/NX),20,37,0.540540540540541
+Ashe (FR/PZ),Ashe/LeBlanc (FR/NX),90,127,0.708661417322835
+Ashe/LeBlanc (FR/NX),Ashe (FR/PZ),37,127,0.291338582677165
+Darius/Gnar (FR/NX),Braum/Zoe (FR/MT),17,38,0.447368421052632
+Braum/Zoe (FR/MT),Darius/Gnar (FR/NX),21,38,0.552631578947369
 Darius/Gnar (FR/NX),Ashe (FR/PZ),13,29,0.448275862068966
 Ashe (FR/PZ),Darius/Gnar (FR/NX),16,29,0.551724137931035
-Ashe (FR/PZ),Braum/Zoe (FR/MT),60,108,0.555555555555556
-Braum/Zoe (FR/MT),Ashe (FR/PZ),48,108,0.444444444444444
-Championless (SI),Leona/Yasuo (IO/MT),7,9,0.777777777777778
-Ashe (FR/PZ),Katarina/Yasuo (IO/NX),7,9,0.777777777777778
-Nilah/Twisted Fate (BW/PZ),LeBlanc/Sivir (NX/SH),7,9,0.777777777777778
-Braum/Zoe (FR/MT),Janna (IO/PZ),7,9,0.777777777777778
-Leona/Yasuo (IO/MT),Championless (SI),2,9,0.222222222222222
-Katarina/Yasuo (IO/NX),Ashe (FR/PZ),2,9,0.222222222222222
-LeBlanc/Sivir (NX/SH),Nilah/Twisted Fate (BW/PZ),2,9,0.222222222222222
-Janna (IO/PZ),Braum/Zoe (FR/MT),2,9,0.222222222222222
-Ashe/LeBlanc (FR/NX),Ashe/LeBlanc (FR/NX),88,176,0.5
-Ashe/LeBlanc (FR/NX),LeBlanc/Sivir (NX/SH),13,28,0.464285714285714
-LeBlanc/Sivir (NX/SH),Ashe/LeBlanc (FR/NX),15,28,0.535714285714286
-Aphelios/Zoe (IO/MT),Braum/Zoe (FR/MT),2,10,0.2
-Fiora/Shen (DE/IO),Ashe (FR/PZ),2,10,0.2
-Nilah/Twisted Fate (BW/PZ),Braum/Udyr (DE/FR),2,10,0.2
+Ashe (FR/PZ),Braum/Zoe (FR/MT),63,116,0.543103448275862
+Braum/Zoe (FR/MT),Ashe (FR/PZ),53,116,0.456896551724138
+Championless (SI),Leona/Yasuo (IO/MT),8,10,0.8
 Braum/Zoe (FR/MT),Aphelios/Zoe (IO/MT),8,10,0.8
+Braum/Zoe (FR/MT),Caitlyn/Swain (NX/PZ),8,10,0.8
 Ashe (FR/PZ),Fiora/Shen (DE/IO),8,10,0.8
-Braum/Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),8,10,0.8
+Leona/Yasuo (IO/MT),Championless (SI),2,10,0.2
+Aphelios/Zoe (IO/MT),Braum/Zoe (FR/MT),2,10,0.2
+Caitlyn/Swain (NX/PZ),Braum/Zoe (FR/MT),2,10,0.2
+Fiora/Shen (DE/IO),Ashe (FR/PZ),2,10,0.2
+Ashe/LeBlanc (FR/NX),Ashe/LeBlanc (FR/NX),92,184,0.5
+Ashe/LeBlanc (FR/NX),LeBlanc/Sivir (NX/SH),14,30,0.466666666666667
+LeBlanc/Sivir (NX/SH),Ashe/LeBlanc (FR/NX),16,30,0.533333333333333
 Akshan/Master Yi (IO/SH),Akshan/Master Yi (IO/SH),10,20,0.5
 Championless (PZ/SI),Championless (PZ/SI),10,20,0.5
 Ashe/LeBlanc (FR/NX),Gnar/Nidalee (BC/SH),17,23,0.739130434782609
 Gnar/Nidalee (BC/SH),Ashe/LeBlanc (FR/NX),6,23,0.260869565217391
 Akshan/Master Yi (IO/SH),Ashe (FR/PZ),8,22,0.363636363636364
 Ashe (FR/PZ),Akshan/Master Yi (IO/SH),14,22,0.636363636363636
-Nidalee (BC/SH),Ashe (FR/PZ),13,23,0.565217391304348
-Ashe (FR/PZ),Championless (PZ/SI),13,23,0.565217391304348
-Ashe (FR/PZ),Nidalee (BC/SH),10,23,0.434782608695652
-Championless (PZ/SI),Ashe (FR/PZ),10,23,0.434782608695652
+Braum/Zoe (FR/MT),Fiora/Udyr (DE/FR),10,19,0.526315789473684
+Fiora/Udyr (DE/FR),Braum/Zoe (FR/MT),9,19,0.473684210526316
+Nidalee (BC/SH),Ashe (FR/PZ),14,24,0.583333333333333
+Ashe/LeBlanc (FR/NX),Nidalee (BC/SH),14,24,0.583333333333333
+Braum/Zoe (FR/MT),Darius/Gwen (NX/SI),14,24,0.583333333333333
+Ashe (FR/PZ),Nidalee (BC/SH),10,24,0.416666666666667
+Nidalee (BC/SH),Ashe/LeBlanc (FR/NX),10,24,0.416666666666667
+Darius/Gwen (NX/SI),Braum/Zoe (FR/MT),10,24,0.416666666666667
 Championless (SI),Championless (PZ/SI),18,31,0.580645161290323
 Championless (PZ/SI),Championless (SI),13,31,0.419354838709677
+Ashe (FR/PZ),Championless (PZ/SI),13,23,0.565217391304348
+Championless (PZ/SI),Ashe (FR/PZ),10,23,0.434782608695652
 Championless (BW/MT),Championless (SI),5,10,0.5
 Championless (SI),Championless (BW/MT),5,10,0.5
 Annie/Jhin (RU/NX),Annie/Jhin (RU/NX),5,10,0.5
@@ -11224,48 +11300,56 @@ Championless (PZ/SI),Darius/Gnar (FR/NX),5,10,0.5
 Katarina/Yasuo (IO/NX),Katarina/Yasuo (IO/NX),5,10,0.5
 Draven/Jinx (NX/PZ),Championless (SI),5,7,0.714285714285714
 Akshan/Master Yi (IO/SH),Akshan/Pantheon (MT/SH),5,7,0.714285714285714
-Nilah/Twisted Fate (BW/PZ),LeBlanc (FR/NX),5,7,0.714285714285714
 Ezreal/Seraphine (PZ/SI),Fiora/Shen (DE/IO),5,7,0.714285714285714
 Lulu/Zed (DE/IO),Ashe (FR/PZ),5,7,0.714285714285714
 Nilah/Twisted Fate (BW/PZ),Gnar/LeBlanc (FR/NX),5,7,0.714285714285714
 Ashe/LeBlanc (FR/NX),Master Yi/Pantheon (IO/MT),5,7,0.714285714285714
-Gwen/Kalista (NX/SI),Ashe (FR/PZ),5,7,0.714285714285714
 Championless (PZ/SI),Swain/Twisted Fate (BW/NX),5,7,0.714285714285714
 Ashe/LeBlanc (FR/NX),Gnar/Udyr (DE/FR),5,7,0.714285714285714
 Janna/Master Yi (IO/PZ),Ashe/LeBlanc (FR/NX),5,7,0.714285714285714
 Seraphine/Zoe (MT/PZ),Nilah/Twisted Fate (BW/PZ),5,7,0.714285714285714
 Swain/Twisted Fate (BW/NX),Nilah/Twisted Fate (BW/PZ),5,7,0.714285714285714
 Sejuani/Teemo (FR/PZ),Braum/Zoe (FR/MT),5,7,0.714285714285714
+Gwen/Irelia (IO/SI),Ashe (FR/PZ),5,7,0.714285714285714
 Championless (SI),Draven/Jinx (NX/PZ),2,7,0.285714285714286
 Akshan/Pantheon (MT/SH),Akshan/Master Yi (IO/SH),2,7,0.285714285714286
-LeBlanc (FR/NX),Nilah/Twisted Fate (BW/PZ),2,7,0.285714285714286
 Fiora/Shen (DE/IO),Ezreal/Seraphine (PZ/SI),2,7,0.285714285714286
 Ashe (FR/PZ),Lulu/Zed (DE/IO),2,7,0.285714285714286
 Gnar/LeBlanc (FR/NX),Nilah/Twisted Fate (BW/PZ),2,7,0.285714285714286
 Master Yi/Pantheon (IO/MT),Ashe/LeBlanc (FR/NX),2,7,0.285714285714286
-Ashe (FR/PZ),Gwen/Kalista (NX/SI),2,7,0.285714285714286
 Swain/Twisted Fate (BW/NX),Championless (PZ/SI),2,7,0.285714285714286
 Gnar/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),2,7,0.285714285714286
 Ashe/LeBlanc (FR/NX),Janna/Master Yi (IO/PZ),2,7,0.285714285714286
 Nilah/Twisted Fate (BW/PZ),Seraphine/Zoe (MT/PZ),2,7,0.285714285714286
 Nilah/Twisted Fate (BW/PZ),Swain/Twisted Fate (BW/NX),2,7,0.285714285714286
 Braum/Zoe (FR/MT),Sejuani/Teemo (FR/PZ),2,7,0.285714285714286
-Championless (SI),Annie/Jhin (RU/NX),10,14,0.714285714285714
-Braum/Zoe (FR/MT),Janna/Nilah (BW/PZ),10,14,0.714285714285714
-Annie/Jhin (RU/NX),Championless (SI),4,14,0.285714285714286
-Janna/Nilah (BW/PZ),Braum/Zoe (FR/MT),4,14,0.285714285714286
-Braum/Zoe (FR/MT),Annie/Jhin (RU/NX),13,18,0.722222222222222
-Braum/Zoe (FR/MT),Championless (PZ/SI),13,18,0.722222222222222
-Annie/Jhin (RU/NX),Braum/Zoe (FR/MT),5,18,0.277777777777778
-Championless (PZ/SI),Braum/Zoe (FR/MT),5,18,0.277777777777778
+Ashe (FR/PZ),Gwen/Irelia (IO/SI),2,7,0.285714285714286
+Janna (PZ/SI),Ashe/LeBlanc (FR/NX),4,13,0.307692307692308
+Garen/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),4,13,0.307692307692308
+Championless (PZ/SI),Akshan/Master Yi (IO/SH),4,13,0.307692307692308
+Swain/Yasuo (IO/NX),Nilah/Twisted Fate (BW/PZ),4,13,0.307692307692308
+Ashe (FR/PZ),Swain/Yasuo (IO/NX),4,13,0.307692307692308
+Championless (MT/SI),Nilah/Twisted Fate (BW/PZ),4,13,0.307692307692308
+Ashe/LeBlanc (FR/NX),Janna (PZ/SI),9,13,0.692307692307692
+Ashe/LeBlanc (FR/NX),Garen/Udyr (DE/FR),9,13,0.692307692307692
+Akshan/Master Yi (IO/SH),Championless (PZ/SI),9,13,0.692307692307692
+Nilah/Twisted Fate (BW/PZ),Swain/Yasuo (IO/NX),9,13,0.692307692307692
+Swain/Yasuo (IO/NX),Ashe (FR/PZ),9,13,0.692307692307692
+Nilah/Twisted Fate (BW/PZ),Championless (MT/SI),9,13,0.692307692307692
+Braum/Zoe (FR/MT),Annie/Jhin (RU/NX),13,19,0.68421052631579
+Annie/Jhin (RU/NX),Braum/Zoe (FR/MT),6,19,0.315789473684211
 Braum/Udyr (DE/FR),Braum/Zoe (FR/MT),4,10,0.4
+Braum/Zoe (FR/MT),Sivir/Udyr (FR/SH),4,10,0.4
 Championless (SI),Teemo/Tristana (BC/SI),4,10,0.4
 Hecarim/Zed (IO/SI),Braum/Zoe (FR/MT),4,10,0.4
 Darius/Gwen/Hecarim (NX/SI),Ashe/LeBlanc (FR/NX),4,10,0.4
 Braum/Zoe (FR/MT),Braum/Udyr (DE/FR),6,10,0.6
+Sivir/Udyr (FR/SH),Braum/Zoe (FR/MT),6,10,0.6
 Teemo/Tristana (BC/SI),Championless (SI),6,10,0.6
 Braum/Zoe (FR/MT),Hecarim/Zed (IO/SI),6,10,0.6
 Ashe/LeBlanc (FR/NX),Darius/Gwen/Hecarim (NX/SI),6,10,0.6
+Braum/Zoe (FR/MT),Championless (PZ/SI),13,18,0.722222222222222
+Championless (PZ/SI),Braum/Zoe (FR/MT),5,18,0.277777777777778
 Championless (SI),Janna/Nilah (BW/PZ),5,20,0.25
 Janna/Nilah (BW/PZ),Championless (SI),15,20,0.75
 Braum/Zoe (FR/MT),Ezreal/Seraphine (PZ/SI),25,29,0.862068965517241
@@ -11275,12 +11359,12 @@ Nilah/Twisted Fate (BW/PZ),Annie/Jhin (RU/NX),14,21,0.666666666666667
 Master Yi/Udyr (FR/IO),Braum/Zoe (FR/MT),7,21,0.333333333333333
 Annie/Jhin (RU/NX),Nilah/Twisted Fate (BW/PZ),7,21,0.333333333333333
 Janna/Nilah (BW/PZ),Gwen/Katarina (NX/SI),5,5,1
+Ashe/LeBlanc (FR/NX),Akshan/Fiora (DE/SH),5,5,1
 Ezreal/Seraphine (PZ/SI),LeBlanc/Sivir (NX/SH),5,5,1
 Championless (SI),Gwen/LeBlanc (NX/SI),5,5,1
 Championless (SI),Master Yi/Nami (BW/IO),5,5,1
 Darius/Gnar (FR/NX),Caitlyn/Swain (NX/PZ),5,5,1
 Ashe/LeBlanc (FR/NX),Akshan/Ekko (PZ/SH),5,5,1
-Ashe/LeBlanc (FR/NX),Akshan/Udyr (FR/SH),5,5,1
 Nilah/Twisted Fate (BW/PZ),Hecarim/Kalista (IO/SI),5,5,1
 Nilah/Twisted Fate (BW/PZ),Norra/Zoe (BC/MT),5,5,1
 Braum/Zoe (FR/MT),Lulu/Norra (BC/PZ),5,5,1
@@ -11288,12 +11372,12 @@ Annie/Jhin (RU/NX),Akshan/Master Yi (IO/SH),5,5,1
 Aphelios/Gnar (FR/MT),Nilah/Twisted Fate (BW/PZ),5,5,1
 Garen/Lux: Illuminated (DE/IO),Braum (FR/IO),5,5,1
 Gwen/Katarina (NX/SI),Janna/Nilah (BW/PZ),0,5,0
+Akshan/Fiora (DE/SH),Ashe/LeBlanc (FR/NX),0,5,0
 LeBlanc/Sivir (NX/SH),Ezreal/Seraphine (PZ/SI),0,5,0
 Gwen/LeBlanc (NX/SI),Championless (SI),0,5,0
 Master Yi/Nami (BW/IO),Championless (SI),0,5,0
 Caitlyn/Swain (NX/PZ),Darius/Gnar (FR/NX),0,5,0
 Akshan/Ekko (PZ/SH),Ashe/LeBlanc (FR/NX),0,5,0
-Akshan/Udyr (FR/SH),Ashe/LeBlanc (FR/NX),0,5,0
 Hecarim/Kalista (IO/SI),Nilah/Twisted Fate (BW/PZ),0,5,0
 Norra/Zoe (BC/MT),Nilah/Twisted Fate (BW/PZ),0,5,0
 Lulu/Norra (BC/PZ),Braum/Zoe (FR/MT),0,5,0
@@ -11306,84 +11390,82 @@ Braum/Zoe (FR/MT),Fiora/Shen (DE/IO),11,18,0.611111111111111
 Fiora/Shen (DE/IO),Braum/Zoe (FR/MT),7,18,0.388888888888889
 Braum/Zoe (FR/MT),LeBlanc/Udyr (FR/NX),4,12,0.333333333333333
 Nilah/Twisted Fate (BW/PZ),Fiora/Udyr (DE/FR),4,12,0.333333333333333
-Gwen/Katarina (NX/SI),Ashe (FR/PZ),4,12,0.333333333333333
 Gnar/LeBlanc (FR/NX),Ashe/LeBlanc (FR/NX),4,12,0.333333333333333
+Nilah/Twisted Fate (BW/PZ),Garen/Udyr (DE/FR),4,12,0.333333333333333
 Ashe (FR/PZ),Swain/Twisted Fate (BW/NX),4,12,0.333333333333333
 Master Yi/Zoe (IO/MT),Ashe/LeBlanc (FR/NX),4,12,0.333333333333333
+Annie/Jhin (RU/NX),Ashe (FR/PZ),4,12,0.333333333333333
 LeBlanc/Udyr (FR/NX),Braum/Zoe (FR/MT),8,12,0.666666666666667
 Fiora/Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),8,12,0.666666666666667
-Ashe (FR/PZ),Gwen/Katarina (NX/SI),8,12,0.666666666666667
 Ashe/LeBlanc (FR/NX),Gnar/LeBlanc (FR/NX),8,12,0.666666666666667
+Garen/Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),8,12,0.666666666666667
 Swain/Twisted Fate (BW/NX),Ashe (FR/PZ),8,12,0.666666666666667
 Ashe/LeBlanc (FR/NX),Master Yi/Zoe (IO/MT),8,12,0.666666666666667
+Ashe (FR/PZ),Annie/Jhin (RU/NX),8,12,0.666666666666667
 Akshan/Pantheon (MT/SH),Gwen/Katarina (NX/SI),0,7,0
 Katarina/Miss Fortune (BW/NX),Ashe (FR/PZ),0,7,0
 Gwen/Katarina (NX/SI),Akshan/Pantheon (MT/SH),7,7,1
 Ashe (FR/PZ),Katarina/Miss Fortune (BW/NX),7,7,1
-Nidalee (BC/SH),Braum/Zoe (FR/MT),9,25,0.36
-Braum/Zoe (FR/MT),Nidalee (BC/SH),16,25,0.64
-Braum/Zoe (FR/MT),Braum/Zoe (FR/MT),107,214,0.5
+Nidalee (BC/SH),Braum/Zoe (FR/MT),10,27,0.37037037037037
+Braum/Zoe (FR/MT),Nidalee (BC/SH),17,27,0.62962962962963
+Braum/Zoe (FR/MT),Braum/Zoe (FR/MT),113,226,0.5
 Braum/Zoe (FR/MT),Katarina/Yasuo (IO/NX),8,15,0.533333333333333
 Championless (SI),LeBlanc/Udyr (FR/NX),8,15,0.533333333333333
-Nilah/Twisted Fate (BW/PZ),Gnar/Nidalee (BC/SH),8,15,0.533333333333333
 Katarina/Yasuo (IO/NX),Braum/Zoe (FR/MT),7,15,0.466666666666667
 LeBlanc/Udyr (FR/NX),Championless (SI),7,15,0.466666666666667
-Gnar/Nidalee (BC/SH),Nilah/Twisted Fate (BW/PZ),7,15,0.466666666666667
 LeBlanc/Udyr (FR/NX),Ashe/LeBlanc (FR/NX),6,11,0.545454545454545
 Nidalee (BC/SH),Nilah/Twisted Fate (BW/PZ),6,11,0.545454545454545
 Braum/Zoe (FR/MT),Swain/Twisted Fate (BW/NX),6,11,0.545454545454545
 Nilah/Twisted Fate (BW/PZ),Shen/Sivir (IO/SH),6,11,0.545454545454545
 Braum/Zoe (FR/MT),Shen/Sivir (IO/SH),6,11,0.545454545454545
+Fiora/Udyr (DE/FR),Ashe (FR/PZ),6,11,0.545454545454545
 Ashe/LeBlanc (FR/NX),LeBlanc/Udyr (FR/NX),5,11,0.454545454545455
 Nilah/Twisted Fate (BW/PZ),Nidalee (BC/SH),5,11,0.454545454545455
 Swain/Twisted Fate (BW/NX),Braum/Zoe (FR/MT),5,11,0.454545454545455
 Shen/Sivir (IO/SH),Nilah/Twisted Fate (BW/PZ),5,11,0.454545454545455
 Shen/Sivir (IO/SH),Braum/Zoe (FR/MT),5,11,0.454545454545455
+Ashe (FR/PZ),Fiora/Udyr (DE/FR),5,11,0.454545454545455
 Kalista (SI),Braum/Zoe (FR/MT),29,44,0.659090909090909
 Braum/Zoe (FR/MT),Kalista (SI),15,44,0.340909090909091
-Braum/Zoe (FR/MT),Garen/Udyr (DE/FR),7,11,0.636363636363636
-Ashe/LeBlanc (FR/NX),Braum/Udyr (DE/FR),7,11,0.636363636363636
-Garen/Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),7,11,0.636363636363636
-Ashe/LeBlanc (FR/NX),Janna (IO/PZ),7,11,0.636363636363636
-Ashe (FR/PZ),Annie/Jhin (RU/NX),7,11,0.636363636363636
-Championless (SI),Championless (MT/SI),7,11,0.636363636363636
-Janna/Master Yi (IO/PZ),Championless (SI),7,11,0.636363636363636
-Braum/Zoe (FR/MT),Janna/Master Yi (IO/PZ),7,11,0.636363636363636
-Ashe (FR/PZ),Master Yi/Udyr (FR/IO),7,11,0.636363636363636
-Ashe (FR/PZ),Championless (MT/SI),7,11,0.636363636363636
-Championless (SI),Janna/Twisted Fate (BW/PZ),7,11,0.636363636363636
-Garen/Udyr (DE/FR),Braum/Zoe (FR/MT),4,11,0.363636363636364
-Braum/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),4,11,0.363636363636364
-Nilah/Twisted Fate (BW/PZ),Garen/Udyr (DE/FR),4,11,0.363636363636364
-Janna (IO/PZ),Ashe/LeBlanc (FR/NX),4,11,0.363636363636364
-Annie/Jhin (RU/NX),Ashe (FR/PZ),4,11,0.363636363636364
-Championless (MT/SI),Championless (SI),4,11,0.363636363636364
-Championless (SI),Janna/Master Yi (IO/PZ),4,11,0.363636363636364
-Janna/Master Yi (IO/PZ),Braum/Zoe (FR/MT),4,11,0.363636363636364
-Master Yi/Udyr (FR/IO),Ashe (FR/PZ),4,11,0.363636363636364
-Championless (MT/SI),Ashe (FR/PZ),4,11,0.363636363636364
-Janna/Twisted Fate (BW/PZ),Championless (SI),4,11,0.363636363636364
-Braum/Zoe (FR/MT),Championless (SI),46,127,0.362204724409449
-Championless (SI),Braum/Zoe (FR/MT),81,127,0.637795275590551
-Ashe/LeBlanc (FR/NX),Braum/Zoe (FR/MT),79,155,0.509677419354839
-Braum/Zoe (FR/MT),Ashe/LeBlanc (FR/NX),76,155,0.490322580645161
-Ashe (FR/PZ),Nilah/Twisted Fate (BW/PZ),21,74,0.283783783783784
-Nilah/Twisted Fate (BW/PZ),Ashe (FR/PZ),53,74,0.716216216216216
-Championless (PZ/SI),Nilah/Twisted Fate (BW/PZ),9,16,0.5625
-Caitlyn/Swain (NX/PZ),Ashe/LeBlanc (FR/NX),9,16,0.5625
-Gwen/Vayne (DE/SI),Braum/Zoe (FR/MT),9,16,0.5625
-Nilah/Twisted Fate (BW/PZ),Championless (PZ/SI),7,16,0.4375
-Ashe/LeBlanc (FR/NX),Caitlyn/Swain (NX/PZ),7,16,0.4375
-Braum/Zoe (FR/MT),Gwen/Vayne (DE/SI),7,16,0.4375
-Championless (MT/SI),Ashe/LeBlanc (FR/NX),7,17,0.411764705882353
-Ashe/LeBlanc (FR/NX),Championless (MT/SI),10,17,0.588235294117647
+Braum/Zoe (FR/MT),Garen/Udyr (DE/FR),8,13,0.615384615384615
 Championless (SI),Katarina/Yasuo (IO/NX),8,13,0.615384615384615
 Nidalee (BC/SH),Championless (SI),8,13,0.615384615384615
 Ashe/Caitlyn (FR/PZ),Ashe (FR/PZ),8,13,0.615384615384615
+Garen/Udyr (DE/FR),Braum/Zoe (FR/MT),5,13,0.384615384615385
 Katarina/Yasuo (IO/NX),Championless (SI),5,13,0.384615384615385
 Championless (SI),Nidalee (BC/SH),5,13,0.384615384615385
 Ashe (FR/PZ),Ashe/Caitlyn (FR/PZ),5,13,0.384615384615385
-Ashe (FR/PZ),Ashe (FR/PZ),47,94,0.5
+Braum/Zoe (FR/MT),Championless (SI),46,127,0.362204724409449
+Championless (SI),Braum/Zoe (FR/MT),81,127,0.637795275590551
+Gwen/Katarina (NX/SI),Braum/Zoe (FR/MT),11,20,0.55
+Braum/Zoe (FR/MT),Gwen/Katarina (NX/SI),9,20,0.45
+Ashe (FR/PZ),Gwen/Katarina (NX/SI),9,14,0.642857142857143
+Gwen/Katarina (NX/SI),Ashe (FR/PZ),5,14,0.357142857142857
+Gwen/Katarina (NX/SI),Nilah/Twisted Fate (BW/PZ),3,12,0.25
+Nilah/Twisted Fate (BW/PZ),Gwen/Katarina (NX/SI),9,12,0.75
+Ashe/LeBlanc (FR/NX),Braum/Zoe (FR/MT),82,166,0.493975903614458
+Braum/Zoe (FR/MT),Ashe/LeBlanc (FR/NX),84,166,0.506024096385542
+Ashe (FR/PZ),Nilah/Twisted Fate (BW/PZ),21,75,0.28
+Nilah/Twisted Fate (BW/PZ),Ashe (FR/PZ),54,75,0.72
+Championless (PZ/SI),Nilah/Twisted Fate (BW/PZ),9,16,0.5625
+Caitlyn/Swain (NX/PZ),Ashe/LeBlanc (FR/NX),9,16,0.5625
+Gwen/Vayne (DE/SI),Braum/Zoe (FR/MT),9,16,0.5625
+Nilah/Twisted Fate (BW/PZ),Gnar/Nidalee (BC/SH),9,16,0.5625
+Nilah/Twisted Fate (BW/PZ),Championless (PZ/SI),7,16,0.4375
+Ashe/LeBlanc (FR/NX),Caitlyn/Swain (NX/PZ),7,16,0.4375
+Braum/Zoe (FR/MT),Gwen/Vayne (DE/SI),7,16,0.4375
+Gnar/Nidalee (BC/SH),Nilah/Twisted Fate (BW/PZ),7,16,0.4375
+Lux: Illuminated/Shen (DE/IO),Ashe/LeBlanc (FR/NX),4,9,0.444444444444444
+Gnar/Nidalee (BC/SH),Ashe (FR/PZ),4,9,0.444444444444444
+Ashe/LeBlanc (FR/NX),Janna (FR/PZ),4,9,0.444444444444444
+Leona/Yasuo (IO/MT),Ashe (FR/PZ),4,9,0.444444444444444
+Darius/Gwen/Hecarim (NX/SI),Championless (SI),4,9,0.444444444444444
+Ashe/LeBlanc (FR/NX),Lux: Illuminated/Shen (DE/IO),5,9,0.555555555555556
+Ashe (FR/PZ),Gnar/Nidalee (BC/SH),5,9,0.555555555555556
+Janna (FR/PZ),Ashe/LeBlanc (FR/NX),5,9,0.555555555555556
+Ashe (FR/PZ),Leona/Yasuo (IO/MT),5,9,0.555555555555556
+Championless (SI),Darius/Gwen/Hecarim (NX/SI),5,9,0.555555555555556
+Ashe (FR/PZ),Ashe (FR/PZ),51,102,0.5
 Ashe/LeBlanc (FR/NX),Ashe/Caitlyn (FR/PZ),3,11,0.272727272727273
 Shen/Sivir (IO/SH),Championless (SI),3,11,0.272727272727273
 Nilah/Twisted Fate (BW/PZ),Caitlyn/Teemo (BC/PZ),3,11,0.272727272727273
@@ -11396,10 +11478,28 @@ Swain/Yasuo (IO/NX),Ashe/LeBlanc (FR/NX),9,26,0.346153846153846
 Ashe/LeBlanc (FR/NX),Swain/Yasuo (IO/NX),17,26,0.653846153846154
 Championless (SI),Sejuani/Swain (FR/NX),8,8,1
 Sejuani/Swain (FR/NX),Championless (SI),0,8,0
+Ashe/Caitlyn (FR/PZ),Championless (SI),8,17,0.470588235294118
+Championless (SI),Ashe/Caitlyn (FR/PZ),9,17,0.529411764705882
 Ashe (FR/PZ),Ezreal/Seraphine (PZ/SI),16,24,0.666666666666667
 Ezreal/Seraphine (PZ/SI),Ashe (FR/PZ),8,24,0.333333333333333
-Nidalee (BC/SH),Ashe/LeBlanc (FR/NX),10,24,0.416666666666667
-Ashe/LeBlanc (FR/NX),Nidalee (BC/SH),14,24,0.583333333333333
+Ashe/LeBlanc (FR/NX),Braum/Udyr (DE/FR),7,11,0.636363636363636
+Ashe/LeBlanc (FR/NX),Janna (IO/PZ),7,11,0.636363636363636
+Championless (SI),Championless (MT/SI),7,11,0.636363636363636
+Janna/Master Yi (IO/PZ),Championless (SI),7,11,0.636363636363636
+Braum/Zoe (FR/MT),Janna/Master Yi (IO/PZ),7,11,0.636363636363636
+Ashe (FR/PZ),Master Yi/Udyr (FR/IO),7,11,0.636363636363636
+Ashe (FR/PZ),Championless (MT/SI),7,11,0.636363636363636
+Championless (SI),Janna/Twisted Fate (BW/PZ),7,11,0.636363636363636
+Braum/Udyr (DE/FR),Ashe/LeBlanc (FR/NX),4,11,0.363636363636364
+Janna (IO/PZ),Ashe/LeBlanc (FR/NX),4,11,0.363636363636364
+Championless (MT/SI),Championless (SI),4,11,0.363636363636364
+Championless (SI),Janna/Master Yi (IO/PZ),4,11,0.363636363636364
+Janna/Master Yi (IO/PZ),Braum/Zoe (FR/MT),4,11,0.363636363636364
+Master Yi/Udyr (FR/IO),Ashe (FR/PZ),4,11,0.363636363636364
+Championless (MT/SI),Ashe (FR/PZ),4,11,0.363636363636364
+Janna/Twisted Fate (BW/PZ),Championless (SI),4,11,0.363636363636364
+Caitlyn/Swain (NX/PZ),Championless (SI),3,17,0.176470588235294
+Championless (SI),Caitlyn/Swain (NX/PZ),14,17,0.823529411764706
 Ashe/LeBlanc (FR/NX),Master Yi/Udyr (FR/IO),20,33,0.606060606060606
 Master Yi/Udyr (FR/IO),Ashe/LeBlanc (FR/NX),13,33,0.393939393939394
 Braum/Zoe (FR/MT),Swain/Yasuo (IO/NX),12,22,0.545454545454545
@@ -11408,12 +11508,12 @@ Janna/Nilah (BW/PZ),Ashe/LeBlanc (FR/NX),12,22,0.545454545454545
 Swain/Yasuo (IO/NX),Braum/Zoe (FR/MT),10,22,0.454545454545455
 Championless (SI),LeBlanc/Sivir (NX/SH),10,22,0.454545454545455
 Ashe/LeBlanc (FR/NX),Janna/Nilah (BW/PZ),10,22,0.454545454545455
-Darius/Gwen (NX/SI),Braum/Zoe (FR/MT),9,22,0.409090909090909
-Braum/Zoe (FR/MT),Darius/Gwen (NX/SI),13,22,0.590909090909091
-Ashe (FR/PZ),Lulu/Shen (DE/IO),12,18,0.666666666666667
-Lulu/Shen (DE/IO),Ashe (FR/PZ),6,18,0.333333333333333
+Ashe (FR/PZ),Lulu/Shen (DE/IO),12,19,0.631578947368421
+Lulu/Shen (DE/IO),Ashe (FR/PZ),7,19,0.368421052631579
 Master Yi/Udyr (FR/IO),Championless (PZ/SI),9,11,0.818181818181818
+Braum/Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),9,11,0.818181818181818
 Championless (PZ/SI),Master Yi/Udyr (FR/IO),2,11,0.181818181818182
+Nilah/Twisted Fate (BW/PZ),Braum/Udyr (DE/FR),2,11,0.181818181818182
 Braum/Zoe (FR/MT),Caitlyn/Teemo (BC/PZ),16,17,0.941176470588235
 Caitlyn/Teemo (BC/PZ),Braum/Zoe (FR/MT),1,17,0.0588235294117647
 LeBlanc/Sivir (NX/SH),Braum/Zoe (FR/MT),7,23,0.304347826086957
@@ -11422,20 +11522,24 @@ Nilah/Twisted Fate (BW/PZ),Caitlyn/Swain (NX/PZ),3,14,0.214285714285714
 Caitlyn/Swain (NX/PZ),Nilah/Twisted Fate (BW/PZ),11,14,0.785714285714286
 Caitlyn/Teemo (BC/PZ),Championless (SI),4,15,0.266666666666667
 Championless (SI),Caitlyn/Teemo (BC/PZ),11,15,0.733333333333333
-Ashe (FR/PZ),Garen/Udyr (DE/FR),9,10,0.9
-Garen/Udyr (DE/FR),Ashe (FR/PZ),1,10,0.1
-Janna (FR/PZ),Ashe/LeBlanc (FR/NX),5,9,0.555555555555556
-Championless (SI),Darius/Gwen/Hecarim (NX/SI),5,9,0.555555555555556
-Ashe/LeBlanc (FR/NX),Janna (FR/PZ),4,9,0.444444444444444
-Darius/Gwen/Hecarim (NX/SI),Championless (SI),4,9,0.444444444444444
+Ashe (FR/PZ),Garen/Udyr (DE/FR),10,11,0.909090909090909
+Garen/Udyr (DE/FR),Ashe (FR/PZ),1,11,0.0909090909090909
+Ashe (FR/PZ),Gwen/Kalista (NX/SI),2,9,0.222222222222222
+Katarina/Yasuo (IO/NX),Ashe (FR/PZ),2,9,0.222222222222222
+LeBlanc/Sivir (NX/SH),Nilah/Twisted Fate (BW/PZ),2,9,0.222222222222222
+Janna (IO/PZ),Braum/Zoe (FR/MT),2,9,0.222222222222222
+Gwen/Kalista (NX/SI),Ashe (FR/PZ),7,9,0.777777777777778
+Ashe (FR/PZ),Katarina/Yasuo (IO/NX),7,9,0.777777777777778
+Nilah/Twisted Fate (BW/PZ),LeBlanc/Sivir (NX/SH),7,9,0.777777777777778
+Braum/Zoe (FR/MT),Janna (IO/PZ),7,9,0.777777777777778
 Swain/Twisted Fate (BW/NX),Championless (SI),6,16,0.375
 Championless (SI),Swain/Twisted Fate (BW/NX),10,16,0.625
 Ashe/LeBlanc (FR/NX),Shen/Sivir (IO/SH),6,12,0.5
 Shen/Sivir (IO/SH),Ashe/LeBlanc (FR/NX),6,12,0.5
 Championless (SI),Master Yi/Udyr (FR/IO),19,23,0.826086956521739
 Master Yi/Udyr (FR/IO),Championless (SI),4,23,0.173913043478261
-Caitlyn/Teemo (BC/PZ),Ashe/LeBlanc (FR/NX),3,12,0.25
-Ashe/LeBlanc (FR/NX),Caitlyn/Teemo (BC/PZ),9,12,0.75
+Ashe (FR/PZ),Darius/Gwen (NX/SI),10,15,0.666666666666667
+Darius/Gwen (NX/SI),Ashe (FR/PZ),5,15,0.333333333333333
 Master Yi/Udyr (FR/IO),Caitlyn/Teemo (BC/PZ),7,8,0.875
 Ashe (FR/PZ),Shen/Sivir (IO/SH),7,8,0.875
 Braum/Sejuani/Udyr (DE/FR),Nilah/Twisted Fate (BW/PZ),7,8,0.875
@@ -11444,5 +11548,7 @@ Shen/Sivir (IO/SH),Ashe (FR/PZ),1,8,0.125
 Nilah/Twisted Fate (BW/PZ),Braum/Sejuani/Udyr (DE/FR),1,8,0.125
 Championless (SI),Janna (FR/PZ),8,9,0.888888888888889
 Janna (FR/PZ),Championless (SI),1,9,0.111111111111111
+Braum/Zoe (FR/MT),Lulu/Shen (DE/IO),9,24,0.375
+Lulu/Shen (DE/IO),Braum/Zoe (FR/MT),15,24,0.625
 Ashe (FR/PZ),Braum (FR/IO),12,13,0.923076923076923
 Braum (FR/IO),Ashe (FR/PZ),1,13,0.0769230769230769
